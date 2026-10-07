@@ -23,8 +23,6 @@ _NUM_ARTIGO = r"\d+\s*(?:[ºo°]|[.º])?(?:\s*-\s*[A-Z])?"
 _NUM_PARAGRAFO = r"\d+\s*(?:[ºo°])?(?:\s*-\s*[A-Z])?"
 _ROMANO = r"[IVXLCDM]+(?:\s*-\s*[A-Z])?"
 
-_SEPARADOR = r"(?:\s*[-–—]\s*|\s+|\s*\.\s*)"
-
 PADROES: list[tuple[Tipo, re.Pattern]] = [
     (Tipo.ARTIGO, re.compile(
         rf"^Art(?:igo)?\s*\.?\s*(?P<num>{_NUM_ARTIGO})\s*[-–—.]?\s*(?P<resto>.*)$", re.I)),
