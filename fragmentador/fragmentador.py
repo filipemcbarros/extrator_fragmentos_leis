@@ -79,6 +79,14 @@ def fragmentar(texto: TextoExtraido, origem: str = "") -> Lei:
         if reconhecido and reconhecido[0] is Tipo.ITEM and not alinea_aberta:
             reconhecido = None
 
+        # Dispositivo aberto ainda sem texto não se fecha: quando a fonte põe o
+        # rótulo sozinho na linha ("a)"), a seguinte é o texto dele, mesmo que
+        # comece por algo que pareça rótulo de nível acima ("§ 1º do art. 2º;").
+        if (reconhecido and pilha and not pilha[-1].texto
+                and pilha[-1].nivel >= NIVEL[Tipo.ARTIGO]
+                and NIVEL[reconhecido[0]] < pilha[-1].nivel):
+            reconhecido = None
+
         if reconhecido is None:
             if not corpo_comecou:
                 preambulo.append(linha)

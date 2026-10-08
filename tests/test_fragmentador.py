@@ -116,6 +116,26 @@ class TestHierarquia(unittest.TestCase):
         alinea = [f for f in lei.percorrer() if f.tipo is Tipo.ALINEA][0]
         self.assertEqual(alinea.caminho(), "CAPITULO I, Art. 1º, § 1º, II, b)")
 
+    def test_rotulo_sozinho_na_linha_recebe_a_seguinte(self):
+        """Lei 15.348/2026: a alínea vem só com "a)" e o texto parece rótulo."""
+        lei = arvore(
+            "Art. 9º Ficam revogados:",
+            "I - os seguintes dispositivos da Lei nº 14.237:",
+            "a)",
+            "§ 1º do art. 2º;",
+            "b)",
+            "art. 6º;",
+            "Art. 10. Esta Lei entra em vigor.",
+        )
+        self.assertEqual([a.numero for a in lei.por_tipo(Tipo.ARTIGO)], ["9º", "10"])
+        self.assertEqual(lei.por_tipo(Tipo.PARAGRAFO), [])
+        alineas = lei.por_tipo(Tipo.ALINEA)
+        self.assertEqual([a.texto for a in alineas], ["§ 1º do art. 2º;", "art. 6º;"])
+
+    def test_artigo_minusculo_e_remissao(self):
+        self.assertIsNone(reconhecer("art. 6º da Lei nº 14.237;"))
+        self.assertIs(reconhecer("ART. 1º Fica criado...")[0], Tipo.ARTIGO)
+
     def test_texto_continua_na_linha_seguinte(self):
         lei = arvore("Art. 1º Primeira parte", "segunda parte do caput.")
         self.assertEqual(lei.dispositivos[0].texto, "Primeira parte segunda parte do caput.")
@@ -149,6 +169,8 @@ class TestFecho(unittest.TestCase):
     def test_reconhece_local_e_data(self):
         self.assertTrue(eh_fecho("Brasília, 30 de agosto de 1970; 149º da Independência"))
         self.assertTrue(eh_fecho("Sala das Sessões, em 1º de abril"))
+        # Lei promulgada pelo Presidente do Congresso (15.458/2026).
+        self.assertTrue(eh_fecho("Brasília, em 3 de julho de 2026; 205º da Independência"))
 
     def test_nao_confunde_cidade_no_meio_do_texto(self):
         self.assertFalse(eh_fecho("Art. 2º As obras em Brasília observarão o disposto nesta Lei."))

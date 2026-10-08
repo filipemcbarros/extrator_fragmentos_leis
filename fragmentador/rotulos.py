@@ -24,8 +24,10 @@ _NUM_PARAGRAFO = r"\d+\s*(?:[ºo°])?(?:\s*-\s*[A-Z])?"
 _ROMANO = r"[IVXLCDM]+(?:\s*-\s*[A-Z])?"
 
 PADROES: list[tuple[Tipo, re.Pattern]] = [
+    # Sem re.I: o rótulo é "Art." ou "ART."; "art. 6º" em minúscula é remissão
+    # dentro do texto — por exemplo, o conteúdo de uma alínea de revogação.
     (Tipo.ARTIGO, re.compile(
-        rf"^Art(?:igo)?\s*\.?\s*(?P<num>{_NUM_ARTIGO})\s*[-–—.]?\s*(?P<resto>.*)$", re.I)),
+        rf"^(?:Art|ART)(?:igo|IGO)?\s*\.?\s*(?P<num>{_NUM_ARTIGO})\s*[-–—.]?\s*(?P<resto>.*)$")),
     (Tipo.PARAGRAFO, re.compile(
         r"^(?P<num>Par[áa]grafo\s+[úu]nico)\s*[-–—.:]?\s*(?P<resto>.*)$", re.I)),
     (Tipo.PARAGRAFO, re.compile(
@@ -49,7 +51,8 @@ AGRUPADORES: list[tuple[Tipo, re.Pattern]] = [
 
 #: Fecho de promulgação: a partir dele o que vem é assinatura, não dispositivo.
 #:
-#: Exige cidade seguida de data por extenso ("Brasília, 30 de agosto de 1970"),
+#: Exige cidade seguida de data por extenso ("Brasília, 30 de agosto de 1970",
+#: ou "Brasília, em 3 de julho de 2026" nas leis promulgadas pelo Congresso),
 #: e não apenas o nome da cidade: topônimos aparecem com frequência no corpo da
 #: lei, e um casamento frouxo encerraria o texto no meio.
 #:
@@ -57,7 +60,7 @@ AGRUPADORES: list[tuple[Tipo, re.Pattern]] = [
 #: grupo repetido com espaço opcional dentro provoca retrocesso catastrófico nas
 #: linhas longas que nunca chegam à vírgula — e as linhas da lei são longas.
 _FECHO = re.compile(
-    r"^(?:[^,\n]{2,60},\s*\d{1,2}[ºo°]?\s+de\s+[^\s,]{3,20}\s+de\s+\d{4}"
+    r"^(?:[^,\n]{2,60},\s*(?:em\s+)?\d{1,2}[ºo°]?\s+de\s+[^\s,]{3,20}\s+de\s+\d{4}"
     r"|Sala das Sess[õo]es)",
     re.I,
 )

@@ -19,16 +19,27 @@ def baixar(url: str, tempo_limite: int = 60) -> str:
     """Baixa a página e devolve o HTML como texto."""
     resposta = requests.get(url, headers=CABECALHOS, timeout=tempo_limite)
     resposta.raise_for_status()
-    # Páginas antigas do acervo declaram o charset só no meta; sem isto, acentos
-    # chegam trocados quando o cabeçalho HTTP omite a codificação.
-    if not resposta.encoding or resposta.encoding.lower() == "iso-8859-1":
-        resposta.encoding = resposta.apparent_encoding or "utf-8"
-    return resposta.text
+    return decodificar(resposta.content)
+
+
+def decodificar(conteudo: bytes) -> str:
+    """Decodifica o HTML sem confiar no charset declarado.
+
+    O acervo mistura páginas recentes em UTF-8 com antigas em Latin-1, e nem
+    sempre o cabeçalho HTTP diz a verdade. Bytes Latin-1 com acento quase nunca
+    formam UTF-8 válido, então a tentativa estrita em UTF-8 é um teste confiável;
+    se falha, o texto é Windows-1252, superconjunto do Latin-1 que ainda cobre as
+    aspas curvas e o travessão.
+    """
+    try:
+        return conteudo.decode("utf-8")
+    except UnicodeDecodeError:
+        return conteudo.decode("cp1252", errors="replace")
 
 
 def ler(caminho: str | pathlib.Path) -> str:
     """Lê o HTML de um arquivo local."""
-    return pathlib.Path(caminho).read_text(encoding="utf-8", errors="replace")
+    return decodificar(pathlib.Path(caminho).read_bytes())
 
 
 def obter(referencia: str) -> str:

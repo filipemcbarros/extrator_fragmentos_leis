@@ -49,6 +49,33 @@ for alinea in lei.por_tipo(Tipo.ALINEA):
     # TITULO I, CAPITULO I, Art. 1º, § 3º, II, a) -> sejam exigidas para a obtenção...
 ```
 
+## Coleta em lote por ano
+
+Percorre a [busca de legislação da Câmara](https://www.camara.leg.br/legislacao/busca),
+abre cada norma, segue o link "Texto - Publicação Original" e fragmenta o texto:
+
+```bash
+python -m fragmentador.coleta --ano 2026            # todas as leis ordinárias de 2026
+python -m fragmentador.coleta --ano 2026 --limite 5 # só as 5 primeiras, para testar
+```
+
+O resultado fica isolado em `coleta/<ano>/`, versionado junto com o código:
+
+```
+coleta/2026/
+  json/<slug>.json   uma lei fragmentada por arquivo, com o campo "norma" apontando a página de origem
+  html/<slug>.html   a publicação original baixada, para refragmentar sem voltar à rede
+  indice.json        desfecho de cada lei: arquivo gerado, contagem de estruturas ou erro
+```
+
+Uma nova execução reaproveita o HTML já baixado e só busca na rede o que falta;
+`--forcar` baixa tudo de novo. A pausa entre pedidos é de 1 s (`--pausa`).
+
+A busca é ordenada por data: a ordenação padrão, por relevância, não é estável
+entre páginas e chegou a omitir 12 das 206 leis de 2026. Leis sem publicação
+original no acervo (há as que só trazem retificação parcial) ficam no índice com
+erro e a lista dos textos disponíveis.
+
 ## A hierarquia
 
 Segue a articulação da Lei Complementar 95/1998. A unidade básica é o artigo; o
@@ -123,6 +150,7 @@ fragmentador/
   extracao.py     HTML -> linhas de texto (Legin e genérico)
   fragmentador.py linhas -> árvore de dispositivos
   fonte.py        obtenção do HTML, por URL ou arquivo
+  coleta.py       coleta em lote: busca da Câmara -> JSON por lei
   cli.py          linha de comando
 tests/            suíte em unittest, sem dependências
 exemplos/         páginas reais usadas na conferência
