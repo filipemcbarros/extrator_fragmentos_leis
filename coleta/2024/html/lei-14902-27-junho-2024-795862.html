@@ -1,0 +1,947 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 14.902, DE 27 DE JUNHO DE 2024 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Institui o Programa Mobilidade Verde e Inovação (Programa Mover); altera o Decreto-Lei nº 1.804, de 3 de setembro de 1980; e revoga dispositivos da Lei nº 13.755, de 10 de dezembro de 2018. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 14.902, DE 27 DE JUNHO DE 2024 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-14902-27-junho-2024-795862-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-14902-27-junho-2024-795862-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-14902-27-junho-2024-795862-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-14902-27-junho-2024-795862-veto-172232-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-14902-27-junho-2024-795862-promulgacaodevetos-175778-pl.html">Promulgação de Vetos</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=2422697">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-14902-27-junho-2024-795862-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 14.902, DE 27 DE JUNHO DE 2024</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Institui o Programa Mobilidade Verde e Inovação (Programa Mover); altera o Decreto-Lei nº 1.804, de 3 de setembro de 1980; e revoga dispositivos da Lei nº 13.755, de 10 de dezembro de 2018. 
+						</p>
+				
+						<div class="texto">
+							<STRONG>&nbsp;&nbsp;&nbsp;&nbsp; O PRESIDENTE DA REPÚBLICA</STRONG><BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR><BR>
+<CENTER>CAPÍTULO I<BR>DISPOSIÇÕES PRELIMINARES </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Esta Lei institui o Programa Mobilidade Verde e Inovação (Programa Mover), com as seguintes medidas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - requisitos obrigatórios para a comercialização de veículos novos produzidos no País e para a importação de veículos novos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - regime de incentivos à realização de atividades de pesquisa e desenvolvimento para as indústrias de mobilidade e logística; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - regime de autopeças não produzidas; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - Fundo Nacional de Desenvolvimento Industrial e Tecnológico (FNDIT). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O Programa Mover deve seguir os objetivos da neoindustrialização e as missões definidas em política industrial aprovada conforme o disposto no art. 18 da Lei nº 11.080, de 30 de dezembro de 2004, e tem a finalidade de apoiar o desenvolvimento tecnológico, a competitividade global, a integração nas cadeias globais de valor, a descarbonização, o alinhamento a uma economia de baixo carbono no ecossistema produtivo e inovador de automóveis, de caminhões e de seus implementos rodoviários, de ônibus, de chassis com motor, de máquinas autopropulsadas e de autopeças. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º São diretrizes do Programa Mover: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - incremento da eficiência energética, do desempenho estrutural e da disponibilidade de tecnologias assistivas à direção dos veículos comercializados no País; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - aumento dos investimentos em pesquisa, desenvolvimento e inovação no País; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - estímulo à produção de novas tecnologias e inovações, de acordo com as tendências tecnológicas globais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - incremento da produtividade das indústrias para a mobilidade e logística; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - promoção do uso de biocombustíveis, de outros combustíveis de baixo teor de carbono e de formas alternativas de propulsão e valorização da matriz energética brasileira; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - garantia da capacitação técnica e da qualificação profissional no setor de mobilidade e logística; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - garantia da expansão ou da manutenção do emprego no setor de mobilidade e logística; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - expansão da participação da indústria automotiva instalada no País nas cadeias globais de valor; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - promoção do uso de sistemas produtivos mais eficientes, com vistas ao alcance da neutralidade de emissões de carbono. <BR><BR><BR>
+<CENTER>CAPÍTULO II <BR>DOS REQUISITOS OBRIGATÓRIOS PARA A COMERCIALIZAÇÃO<BR>E PARA A IMPORTAÇÃO DE VEÍCULOS NOVOS NO PAÍS<STRONG> </STRONG></CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;O Poder Executivo federal estabelecerá requisitos obrigatórios para a comercialização de veículos novos produzidos no País e para a importação de veículos novos classificados sob os códigos 87.01 a 87.05 da Tabela de Incidência do Imposto sobre Produtos Industrializados (Tipi), aprovada pelo Decreto nº 11.158, de 29 de julho de 2022, relativos a: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - eficiência energética veicular no ciclo do tanque à roda e emissão de dióxido de carbono (eficiência energético-ambiental) no ciclo do poço à roda; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - reciclabilidade veicular; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - rotulagem veicular integrada; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - desempenho estrutural e tecnologias assistivas à direção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O estabelecimento dos requisitos previstos no <I>caput</I> deste artigo considerará critérios quantitativos e qualitativos, como o número de veículos comercializados e o atingimento de padrões internacionais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O cumprimento dos requisitos previstos no <I>caput</I> deste artigo será comprovado perante o Ministério do Desenvolvimento, Indústria, Comércio e Serviços, que definirá os termos e os prazos de comprovação e emitirá ato de registro dos compromissos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O disposto no <I>caput</I> deste artigo não eximirá os veículos da obtenção prévia: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - do Certificado de Adequação à Legislação de Trânsito (CAT) e do código de marca-modelo-versão do veículo no Registro Nacional de Veículos Automotores (Renavam), obtido na Secretaria Nacional de Trânsito do Ministério dos Transportes; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - da Licença para Uso da Configuração de Veículo ou Motor (LCVM), obtida no Instituto Brasileiro do Meio Ambiente e dos Recursos Naturais Renováveis (Ibama). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Adicionalmente ao disposto no <I>caput</I> deste artigo, a partir de 2027 serão estabelecidos requisitos obrigatórios relacionados à pegada de carbono do produto, no ciclo do berço ao túmulo, e serão definidas metas por escopo a partir de 1º de janeiro de 2032, na forma prevista em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Para fins do disposto neste artigo, considera-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ciclo do tanque à roda: análise de ciclo de vida que considera as emissões de gases de efeito estufa associadas à operação de veículos leves e pesados dentro de um ciclo de uso padronizado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - ciclo do poço à roda: ciclo de vida que considera as emissões de gases de efeito estufa que se originam desde a fase de extração de recursos naturais, passa pela produção e pela distribuição da fonte energética, até seu uso em veículos leves e pesados de passageiros e comerciais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - ciclo do berço ao túmulo: ciclo de vida que considera as emissões de gases de efeito estufa incorporadas no ciclo do poço à roda, acrescidas aquelas geradas desde a extração de recursos e na fabricação de autopeças, na montagem e no descarte dos veículos leves e pesados de passageiros e comerciais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - Intensidade de Carbono da Fonte de Energia (ICE): relação entre a emissão de gases de efeito estufa, com base em avaliação do ciclo de vida, computada no processo produtivo do combustível ou da fonte energética e em seu uso, expressa em gramas de dióxido de carbono equivalente por megajoule (gCO2eq/MJ); e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - reciclabilidade: percentual em massa de um veículo novo potencialmente passível de ser reutilizada, reciclada ou recuperada energeticamente, combinado com compensação antecipada dos materiais pela reciclagem dos veículos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º O Poder Executivo federal estabelecerá, para fins de apuração do atendimento ao requisito de emissão de dióxido de carbono, os valores de ICE e a participação dos combustíveis líquidos ou gasosos ou da energia elétrica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º Os fabricantes e os importadores de veículos não poderão ser penalizados pelo não atendimento ao requisito de emissão de dióxido de carbono devido a divergências entre os valores de ICE médio e de participação dos combustíveis líquidos ou gasosos ou da energia elétrica, de que trata o § 6º deste artigo, e aqueles observados de maneira efetiva ao longo do período para o qual as metas foram definidas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º Para fins do disposto no inciso III do <I>caput</I> deste artigo, o Programa Brasileiro de Etiquetagem Veicular divulgará as informações para o consumidor dos gases de efeito estufa, consideradas as diferentes metas a serem definidas no âmbito do Programa Mover. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;A empresa interessada em obter o ato de registro dos compromissos de que trata o § 2º do art. 2º desta Lei deverá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - comprovar que está formalmente autorizada a: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>realizar, no território nacional, as atividades de prestação de serviços de assistência técnica e de organização de rede de distribuição; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>utilizar as marcas do fabricante em relação aos veículos objeto de importação, mediante documento válido no País; e </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - apresentar, até 31 de dezembro de 2026, ao Ministério do Desenvolvimento, Indústria, Comércio e Serviços: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>registro de inventário de carbono das plantas de origem dos veículos comercializados no País; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>registro da pegada de carbono dos veículos comercializados no País, conforme o disposto em regulamento. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O descumprimento das metas de que tratam os incisos II e III do <I>caput</I> do art. 2º desta Lei ensejará o cancelamento do ato de registro dos compromissos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Fica dispensada a emissão de ato de registro dos compromissos para as importações de veículos realizadas por pessoa física ou jurídica sem vínculo direto com o fabricante. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O importador deverá informar ao importador autorizado da marca, quando houver, sobre a entrada dos veículos no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O importador autorizado da marca ficará sujeito à responsabilidade de oferecer aos veículos de que trata o <I>caput</I> deste artigo, que sejam do mesmo modelo e versão daqueles comercializados pelo importador autorizado da marca, a mesma garantia de fábrica, bem como de realizar manutenções, <I>recalls</I> e revisões periódicas, sem que haja qualquer diferenciação de cobrança ou prazos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Para fins de controle de desembaraço aduaneiro das importações referidas no <I>caput</I> deste artigo, a verificação física é o procedimento fiscal destinado a obter elementos para confirmar que o veículo é novo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A fiscalização aduaneira, caso considere necessário, poderá solicitar a assistência técnica para constatação do estado físico da mercadoria na verificação física de que trata o § 3º deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;A importação ou a comercialização dos veículos de que trata o art. 2º desta Lei sem o ato de registro dos compromissos de que trata o § 2º do referido artigo, por parte do fabricante ou do importador, acarretarão multa compensatória de 20% (vinte por cento) incidente sobre a receita decorrente da venda dos veículos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Na hipótese de veículos importados, as multas compensatórias de que trata o <I>caput</I> deste artigo incidirão no momento da nacionalização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;O não cumprimento das metas de eficiência energética de que trata o inciso I do <I>caput</I> do art. 2º desta Lei ensejará multa compensatória, nos seguintes valores: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - considerado o ciclo do tanque à roda: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>R$ 50,00 (cinquenta reais), para até o primeiro centésimo, inclusive, maior que o consumo energético correspondente à meta de eficiência energética estabelecida, expressa em megajoules por quilômetro; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>R$ 90,00 (noventa reais), a partir do primeiro centésimo, exclusive, até o segundo centésimo, inclusive, maior que o consumo energético correspondente à meta de eficiência energética estabelecida, expressa em megajoules por quilômetro; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>R$ 270,00 (duzentos e setenta reais), a partir do segundo centésimo, exclusive, até o terceiro centésimo, inclusive, maior que o consumo energético correspondente à meta de eficiência energética estabelecida, expressa em megajoules por quilômetro; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>R$ 360,00 (trezentos e sessenta reais), a partir do terceiro centésimo, exclusive, para cada centésimo maior que o consumo energético correspondente à meta de eficiência energética estabelecida, expressa em megajoules por quilômetro; ou </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - considerado o ciclo do poço à roda: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>R$ 70,00 (setenta reais), para até o primeiro grama de dióxido de carbono equivalente por quilômetro, inclusive, maior que a meta de eficiência energética estabelecida; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>R$ 125,00 (cento e vinte e cinco reais), a partir do primeiro grama de dióxido de carbono equivalente por quilômetro, exclusive, até o segundo grama de dióxido de carbono equivalente por quilômetro, inclusive, maior que a meta de eficiência energética estabelecida; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>R$ 375,00 (trezentos e setenta e cinco reais), a partir do segundo grama de dióxido de carbono equivalente por quilômetro, exclusive, até o terceiro grama de dióxido de carbono equivalente por quilômetro, inclusive, maior que a meta de eficiência energética estabelecida; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>R$ 500,00 (quinhentos reais), a partir do terceiro grama de dióxido de carbono equivalente por quilômetro, exclusive, para cada grama de dióxido de carbono equivalente por quilômetro maior que a meta de eficiência energética estabelecida. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O não atendimento às metas de eficiência energética nos ciclos do tanque à roda e do poço à roda ensejará a aplicação somente da multa de maior valor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;O descumprimento da meta de desempenho estrutural associado a tecnologias assistivas à direção de que trata o inciso IV do <I>caput</I> do art. 2º desta Lei ensejará multa compensatória, nos seguintes valores: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - R$ 50,00 (cinquenta reais), para até 5% (cinco por cento), inclusive, menor que a meta estabelecida; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - R$ 90,00 (noventa reais), de 5% (cinco por cento), exclusive, até 10% (dez por cento), inclusive, menor que a meta estabelecida; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - R$ 270,00 (duzentos e setenta reais), de 10% (dez por cento), exclusive, até 15% (quinze por cento), inclusive, menor que a meta estabelecida; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - R$ 360,00 (trezentos e sessenta reais), de 15% (quinze por cento), exclusive, até 20% (vinte por cento), inclusive, menor que a meta estabelecida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Para os percentuais acima de 20% (vinte por cento) menor que a meta estabelecida, a multa compensatória será de R$ 360,00 (trezentos e sessenta reais), com acréscimo desse valor a cada 5 (cinco) pontos percentuais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Os valores de que tratam os arts. 6º e 7º desta Lei serão multiplicados pelo número de veículos licenciados a partir da data de entrada em vigor do regulamento desta Lei e serão pagos na forma de realização de investimentos, no País, em projetos de pesquisa, desenvolvimento e inovação em programas prioritários de apoio ao desenvolvimento industrial e tecnológico para o setor automotivo e sua cadeia, de que trata o art. 27 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O somatório das multas compensatórias de que tratam os arts. 6º e 7º desta Lei estará limitado a 20% (vinte por cento) da receita decorrente da venda dos veículos que não cumprirem os requisitos obrigatórios de que trata o art. 2º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Na hipótese de veículos importados, o limite de que trata o § 1º deste artigo incidirá sobre o respectivo valor aduaneiro acrescido dos tributos incidentes na nacionalização. <BR><BR><BR>
+<CENTER>CAPÍTULO III <BR>DA TRIBUTAÇÃO E DOS VEÍCULOS SUSTENTÁVEIS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Com vistas a uma tributação destinada à sustentabilidade da mobilidade e logística do País, o Poder Executivo federal definirá as alíquotas do Imposto sobre Produtos Industrializados (IPI) de acordo com os atributos dos veículos de que trata o art. 2º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para fins do disposto no <I>caput</I> deste artigo, será utilizada metodologia de bônus e <EM>malus</EM>, de acordo com as externalidades negativas ou positivas dos veículos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No caso dos veículos que atendam a requisitos específicos, regulamento estabelecerá as alíquotas, que terão, no mínimo, a seguinte diferenciação: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - 2 (dois) pontos percentuais em relação ao requisito de eficiência energética, considerado como parâmetro o ciclo do tanque à roda; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - 1 (um) ponto percentual em relação ao requisito de desempenho estrutural e tecnologias assistivas à direção; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - 2 (dois) pontos percentuais em relação ao requisito de reciclabilidade, a partir de 1º de janeiro de 2025. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Além dos requisitos estabelecidos no art. 2º desta Lei, serão também considerados na tributação de que trata o <I>caput</I> deste artigo os seguintes atributos dos produtos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - fonte de energia e tecnologia de propulsão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - potência do veículo; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - pegada de carbono do produto, na forma do disposto no § 4º do art. 2º deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A diferenciação de alíquotas de que trata o § 2º deste artigo poderá ser progressiva ao longo do tempo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Até 31 de dezembro de 2026, os veículos híbridos equipados com motor que utilize exclusivamente etanol, ou motor que utilize, alternativa ou simultaneamente, gasolina e etanol (<I>flexible fuel engine</I>), terão diferenciação de alíquota de até 3 (três) pontos percentuais em relação aos veículos convencionais, de classe e categoria similares, equipados com esse mesmo tipo de motor, nos termos de regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Ato do Poder Executivo federal poderá definir outros requisitos, observadas as diretrizes estabelecidas no § 2º do art. 1º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º O disposto neste artigo aplicar-se-á aos automóveis e veículos comerciais leves. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º Para fins do disposto neste artigo, será concedido tratamento isonômico aos bens nacionais e importados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º A regulamentação prevista neste artigo não prescindirá da avaliação do impacto fiscal e da comprovação de sua adequação orçamentária e financeira, conforme as regras fiscais aplicáveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 10. (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;A partir de 1º de janeiro de 2027, por meio de metodologia de bônus e <EM>malus</EM> definida em ato do Ministério do Desenvolvimento, Indústria, Comércio e Serviços, as externalidades negativas e positivas dos veículos serão quantificadas e poderão ser compensadas, em caso de resultado negativo, sob a forma de projetos de pesquisa, desenvolvimento e inovação e de programas prioritários de apoio ao desenvolvimento industrial e tecnológico para o setor automotivo e sua cadeia, de que trata o art. 27 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Na definição da quantificação das externalidades negativas e positivas, o ato previsto no <I>caput</I> deste artigo observará o limite máximo de 25% (vinte e cinco por cento) incidente sobre a receita decorrente da venda dos veículos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;As empresas com ato de registro dos compromissos de que trata o § 2º do art. 2º desta Lei poderão requerer ao Ministério do Desenvolvimento, Indústria, Comércio e Serviços registro de versão sustentável de cada marca e modelo, que atenda a critérios de sustentabilidade ambiental, social e econômica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Será considerado sustentável o automóvel ou veículo comercial leve que atender aos critérios específicos relativos a: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - emissão de dióxido de carbono (eficiência energético-ambiental), considerado o ciclo do poço à roda; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - reciclabilidade veicular; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - realização de etapas fabris no País; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - categoria do veículo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Para ser caracterizado como sustentável, o veículo deverá enquadrar-se nos índices de cada um dos critérios previstos no § 1º deste artigo, conforme previsto em ato do Poder Executivo federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Os veículos sustentáveis de que trata este artigo poderão ter alíquota específica de IPI, nos termos de regulamento. <BR><BR><BR>
+<CENTER>CAPÍTULO IV <BR>DO REGIME DE INCENTIVOS À REALIZAÇÃO DE ATIVIDADES DE PESQUISA<BR>E DESENVOLVIMENTO E DE PRODUÇÃO TECNOLÓGICA </CENTER><BR><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Das Diretrizes e das Modalidades de Habilitação </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Fica instituído regime de incentivos à realização de atividades de pesquisa e desenvolvimento e de produção tecnológica para as indústrias de mobilidade e logística. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;Poderão habilitar-se ao regime de incentivos de que trata o art. 12 desta Lei as empresas que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - produzam, no País, os produtos automotivos abrangidos pelo Acordo de Complementação Econômica nº 14, firmado pela República Federativa do Brasil e pela República Argentina, e seus Protocolos Adicionais, os sistemas e as soluções estratégicas para mobilidade e logística e seus insumos, matérias-primas e componentes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - tenham projeto de desenvolvimento e produção tecnológica aprovado para a produção, no País, de novos produtos ou de novos modelos de produtos existentes a que se refere o inciso I deste <I>caput</I>, conforme o disposto em ato do Ministério do Desenvolvimento, Indústria, Comércio e Serviços; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - desenvolvam, no País, serviços de pesquisa, desenvolvimento, inovação ou engenharia destinados à cadeia automotiva, com integração às cadeias globais de valor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As empresas de que trata o <I>caput</I> deste artigo deverão: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ser tributadas pelo regime de lucro real; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - possuir centro de custo de pesquisa e desenvolvimento; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - estar em situação regular quanto aos tributos federais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A habilitação ao regime de incentivos à realização de atividades de pesquisa e desenvolvimento de que trata o art. 12 desta Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - será concedida por meio de ato do Secretário de Desenvolvimento Industrial, Inovação, Comércio e Serviços do Ministério do Desenvolvimento, Indústria, Comércio e Serviços, com a comprovação anual do atendimento aos compromissos assumidos; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - discriminará a modalidade de habilitação da empresa dentre aquelas previstas no <I>caput</I> deste artigo e as modalidades de projeto de desenvolvimento e produção tecnológica, conforme o disposto em ato do Ministério do Desenvolvimento, Indústria, Comércio e Serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Ato do Ministério do Desenvolvimento, Indústria, Comércio e Serviços relacionará os sistemas e as soluções estratégicas para mobilidade e logística de que trata o inciso I do <I>caput</I> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Para fins do disposto no inciso II do <I>caput</I> deste artigo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - poderão ser habilitados também projetos de: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>relocalização de unidades industriais, linhas de produção ou células de produção, conforme procedimentos de importação de bens usados, para a produção de produtos automotivos, incluídos equipamentos e aparelhos para controle da qualidade do processo fabril e para realização de pesquisa e desenvolvimento; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>instalação de unidades destinadas à reciclagem ou à economia circular na cadeia automotiva; ou </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>(VETADO); </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - deverá o projeto de desenvolvimento e produção tecnológica compreender investimentos em ativos fixos e em pesquisa e desenvolvimento; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - deverá ser solicitada habilitação específica para cada fábrica, planta industrial ou linha de produção que a empresa pretenda instalar, e cada habilitação poderá ser prorrogada somente uma vez, desde que cumprido o cronograma do projeto de instalação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Encerrado o prazo de que trata o art. 31 e observado o disposto no art. 35 desta Lei, todas as habilitações vigentes serão consideradas canceladas e cessarão seus efeitos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º Ato do Ministério do Desenvolvimento, Indústria, Comércio e Serviços estabelecerá termos, limites e condições para a habilitação ao regime de que trata o art. 12 desta Lei. <BR><BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Dos Requisitos para a Habilitação </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Para fins de habilitação ao regime de que trata o art. 12 desta Lei, ato do Ministério do Desenvolvimento, Indústria, Comércio e Serviços estabelecerá requisitos relativos a dispêndios mínimos com pesquisa e desenvolvimento tecnológico no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os dispêndios de que trata o <I>caput</I> deste artigo poderão ser realizados sob a forma de aportes ao FNDIT, conforme disposto em regulamento do Poder Executivo federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O aporte de que trata o § 1º deste artigo, conforme o disposto em regulamento do Poder Executivo federal, desonera as empresas beneficiárias da responsabilidade quanto à sua efetiva e adequada utilização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Nas hipóteses de glosa ou de necessidade de complementação residual de dispêndios em pesquisa e desenvolvimento tecnológico de que trata o <I>caput</I> deste artigo, a empresa poderá cumprir o compromisso por meio de aporte ao FNDIT. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O cumprimento dos requisitos de que trata este artigo será comprovado perante o Ministério do Desenvolvimento, Indústria, Comércio e Serviços, que definirá os termos e os prazos de comprovação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º O Ministério do Desenvolvimento, Indústria, Comércio e Serviços encaminhará à Secretaria Especial da Receita Federal do Brasil do Ministério da Fazenda os resultados das auditorias relativas ao cumprimento dos requisitos de habilitação ao regime de que trata o art. 12 desta Lei. <BR><BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Dos Incentivos </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;A pessoa jurídica habilitada no regime de que trata o art. 12 desta Lei que atender aos requisitos previstos nesta Seção poderá usufruir de créditos financeiros relativos a: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - dispêndios em pesquisa e desenvolvimento realizados no País; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - investimentos em produção tecnológica realizados no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para fruição dos créditos financeiros de que trata esta Lei, a pessoa jurídica interessada deverá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - estar habilitada na forma da Seção I e II deste Capítulo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - obter autorização prévia para o respectivo projeto perante o Ministério do Desenvolvimento, Indústria, Comércio e Serviços, nos termos, nos limites e nas condições por este estabelecidos; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - respeitar o cronograma físico-financeiro do projeto, conforme aprovado pelo Ministério do Desenvolvimento, Indústria, Comércio e Serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os créditos financeiros de que trata esta Lei serão limitados aos seguintes valores globais para cada ano-calendário: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - 2024: R$ 3.500.000.000,00 (três bilhões e quinhentos milhões de reais); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - 2025: R$ 3.800.000.000,00 (três bilhões e oitocentos milhões de reais); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - 2026: R$ 3.900.000.000,00 (três bilhões e novecentos milhões de reais); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - 2027: R$ 4.000.000.000,00 (quatro bilhões de reais); e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - 2028: R$ 4.100.000.000,00 (quatro bilhões e cem milhões de reais). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Poderão ser autorizados créditos financeiros para utilização nos anos-calendário subsequentes, com vistas a contemplar os projetos plurianuais, respeitados os limites anuais previstos no § 2º deste artigo e o prazo de que trata o art. 31 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Os valores de que trata o § 2º deste artigo deverão ser previstos no projeto de lei orçamentária anual encaminhado pelo Poder Executivo federal ao Congresso Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;O crédito financeiro relativo aos dispêndios em pesquisa e desenvolvimento de que trata o art. 15 desta Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - corresponderá a 50% (cinquenta por cento) dos dispêndios realizados; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - estará limitado a 5% (cinco por cento) da receita bruta total de venda de bens e serviços do segundo mês-calendário anterior ao mês de apuração do crédito, excluídos os impostos e as contribuições incidentes sobre a venda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O valor dos dispêndios a que se refere o <I>caput</I> que não puder ser utilizado em razão do limite estabelecido no inciso II do <I>caput</I> deste artigo poderá ser utilizado nos meses subsequentes, sem prejuízo da observância aos referidos limites. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O cálculo do crédito financeiro poderá ser realizado e ajustado em períodos cumulativos, abatidos eventuais créditos financeiros cujo ressarcimento ou compensação já tenha sido solicitado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Na hipótese de os dispêndios a que se refere o <I>caput</I> deste artigo não atingirem o mínimo em determinado ano-calendário, a empresa habilitada poderá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - aplicar o valor residual cumulativamente com o valor do dispêndio mínimo para o ano-calendário imediatamente posterior; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - utilizar eventual excesso de dispêndio realizado nos 2 (dois) anos-calendário imediatamente anteriores, a partir do início da vigência da habilitação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O benefício de que trata este artigo não incidirá sobre os seguintes percentuais de dispêndios em pesquisa e desenvolvimento: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - para automóveis e veículos comerciais leves: 0,6% (seis décimos por cento) da receita bruta total de venda de bens e serviços, excluídos os impostos e as contribuições incidentes sobre a venda; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - para caminhões e ônibus: 0,3% (três décimos por cento) da receita bruta total de venda de bens e serviços, excluídos os impostos e as contribuições incidentes sobre a venda; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - para autopeças e sistemas automotivos: 0,3% (três décimos por cento) da receita bruta total de venda de bens e serviços, excluídos os impostos e as contribuições incidentes sobre a venda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º A fruição dos créditos previstos neste artigo sujeitar-se-á aos limites e às condições previstos no art. 15 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Os créditos financeiros de que trata esta Lei corresponderão a crédito da Contribuição Social sobre o Lucro Líquido (CSLL). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O valor dos créditos financeiros apurados nos termos desta Lei será reconhecido no resultado operacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os créditos financeiros apurados nos termos desta Lei poderão ser objeto de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - compensação com débitos próprios, vincendos ou vencidos, relativos a tributos administrados pela Secretaria Especial da Receita Federal do Brasil do Ministério da Fazenda, observada a legislação específica; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - ressarcimento em dinheiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Se o crédito financeiro não tiver sido objeto de compensação, a Secretaria Especial da Receita Federal do Brasil do Ministério da Fazenda efetuará o seu ressarcimento no quadragésimo oitavo mês, contado da data do pedido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Para as empresas habilitadas nos termos do inciso I do <I>caput</I> do art. 13, o crédito financeiro de que trata o art. 16 desta Lei poderá ser acrescido cumulativamente pelos seguintes indicadores, conforme previsto em ato do Ministério do Desenvolvimento, Indústria, Comércio e Serviços: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - realização pela empresa, no País, de atividades fabris e de infraestrutura de engenharia, diretamente ou por terceiros; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - diversificação de mercados dos produtos e serviços desenvolvidos ou produzidos no País, com integração às cadeias globais de valor; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - produção no País de: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>tecnologias de propulsão avançadas e sustentáveis, inclusive seus sistemas auxiliares; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>veículos com tecnologias de propulsão avançadas e sustentáveis ou equipamentos de abastecimento ou recarga dessas tecnologias de propulsão avançadas e sustentáveis; ou </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>sistemas eletrônicos embarcados em veículos que possibilitem a tomada de decisões complexas, de forma independente da atuação humana. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para fins do disposto nos incisos I e II do <I>caput</I> deste artigo, a soma dos créditos adicionais não poderá exceder o valor de 20 (vinte) pontos percentuais e deverá ser ponderada segundo os pesos definidos na metodologia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Em cumprimento ao disposto no § 1º deste artigo, o crédito financeiro de que trata o art. 16 desta Lei será acrescido de até 20 (vinte) pontos percentuais e estará limitado a 7% (sete por cento) da receita bruta total de venda de bens e serviços do segundo mês-calendário anterior ao mês de apuração do crédito, excluídos os impostos e as contribuições incidentes sobre a venda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Para fins do disposto no inciso III do <I>caput</I> deste artigo, o crédito adicional não poderá exceder o valor de 250 (duzentos e cinquenta) pontos percentuais e deverá ser ponderado pela maturidade tecnológica da manufatura para o desenvolvimento ou a produção no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Em cumprimento ao disposto no § 3º deste artigo, o crédito financeiro de que trata o art. 16 desta Lei será acrescido de até 250 (duzentos e cinquenta) pontos percentuais e estará limitado a 13% (treze por cento) da receita bruta total decorrente da venda dos produtos de que trata o inciso III do <I>caput</I> deste artigo do segundo mês-calendário anterior ao mês de apuração do crédito, excluídos os impostos e as contribuições incidentes sobre a venda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º No caso das empresas habilitadas que realizem, no País, desenvolvimento e gestão global de tecnologia e de marca própria de veículo ou de autopeça, o limite de que trata o § 4º será de 16% (dezesseis por cento) da receita bruta total decorrente da venda dos produtos de que trata o inciso III do <I>caput</I> deste artigo do segundo mês-calendário anterior ao mês de apuração do crédito, excluídos os impostos e as contribuições incidentes sobre a venda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Os créditos adicionais apresentados nos §§ 1º e 3º poderão ser utilizados cumulativamente para o atingimento dos limites de que tratam os §§ 4º e 5º deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º A escala MRL (<I>Manufacturing Readiness Levels</I>) é adotada para designar os níveis de maturidade de um processo de produção (ativo intangível), de modo a indicar o quão pronto se encontra um processo em sua escala de desenvolvimento, conforme detalhado em ato do Ministério do Desenvolvimento, Indústria, Comércio e Serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º As empresas habilitadas nos termos dos incisos II e III do <I>caput</I> do art. 13 desta Lei poderão ter o crédito financeiro acrescido em até 20 (vinte) pontos percentuais, de acordo com o volume de investimentos realizados no País, conforme previsto em ato do Ministério do Desenvolvimento, Indústria, Comércio e Serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º A aplicação do disposto neste artigo sujeitar-se-á aos limites e às condições previstos no art. 15 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;A pessoa jurídica habilitada nos termos do inciso II do <I>caput</I> do art. 13 que tenha projeto para desenvolvimento e produção dos produtos de que trata o inciso III do <I>caput</I> do art. 18 desta Lei, além dos demais benefícios de que trata este Capítulo, fará jus a crédito financeiro em contrapartida aos investimentos em ativos fixos e em pesquisa e desenvolvimento, inclusive engenharia automotiva. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O crédito financeiro de que trata o <I>caput</I> deste artigo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - corresponderá aos seguintes percentuais, aplicados sobre os investimentos em ativos fixos e em pesquisa e desenvolvimento, inclusive engenharia automotiva: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>12,5% (doze inteiros e cinco décimos por cento) dos investimentos para produção de veículos automotores; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>25% (vinte e cinco por cento) dos investimentos para a produção de autopeças ou sistemas e soluções estratégicas, conforme o disposto em regulamento; e </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - estará condicionado, em conformidade com os termos e as condições estabelecidos em regulamento: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>à aprovação prévia do projeto de investimento e produção tecnológica de que trata o <I>caput</I> deste artigo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>ao cumprimento do cronograma físico-financeiro e de produção constante do projeto de desenvolvimento e produção tecnológica; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>ao alcance dos indicadores de que tratam os incisos I e II do <I>caput</I> do art. 18 desta Lei. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A aplicação do disposto neste artigo sujeitar-se-á aos limites e às condições previstos no art. 15 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;As empresas habilitadas nos termos da alínea <EM>a</EM> do inciso I do § 4º do art. 13 desta Lei, além de usufruirem dos demais benefícios de que trata este Capítulo, poderão apurar crédito financeiro correspondente ao: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - Imposto de Importação incidente na importação de unidades industriais, linhas de produção ou células de produção, bem como equipamentos e aparelhos para controle da qualidade do processo fabril e para realização de pesquisa e desenvolvimento que não tenham similar de produção nacional; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - Imposto sobre a Renda das Pessoas Jurídicas (IRPJ) e CSLL incidentes sobre o lucro tributável da parcela correspondente à exportação de produtos industrializados no âmbito do projeto de desenvolvimento e produção tecnológica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A fruição dos créditos previstos neste artigo sujeitar-se-á aos limites e às condições previstos no art. 15 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;Os benefícios fiscais de que trata esta Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - não são cumulativos com os benefícios previstos nos arts. 1º a 26 da Lei nº 13.755, de 10 de dezembro de 2018, e no Decreto-Lei nº 288, de 28 de fevereiro de 1967; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - observado o parágrafo único deste artigo, não excluem os benefícios previstos na Lei nº 8.248, de 23 de outubro de 1991, no art. 11-C da Lei nº 9.440, de 14 de março de 1997, no art. 1º da Lei nº 9.826, de 23 de agosto de 1999, no regime especial de tributação de que trata o art. 56 da Medida Provisória nº 2.158-35, de 24 de agosto de 2001, na Lei nº 11.196, de 21 de novembro de 2005, e na Lei nº 11.484, de 31 de maio de 2007. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Os projetos de pesquisa e desenvolvimento realizados como contrapartida aos benefícios da Lei nº 8.248, de 23 de outubro de 1991, do art. 11-C da Lei nº 9.440, de 14 de março de 1997, do art. 1º da Lei nº 9.826, de 23 de agosto de 1999, e da Lei nº 11.484, de 31 de maio de 2007, não podem ser beneficiados no âmbito do regime de que trata o art. 12 desta Lei. <BR><BR><BR>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Do Acompanhamento </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;Fica instituído o Grupo de Acompanhamento do Programa Mover, composto de representantes do Ministério do Desenvolvimento, Indústria, Comércio e Serviços, do Ministério da Fazenda, do Ministério de Minas e Energia e do Ministério da Ciência, Tecnologia e Inovação, com o objetivo de definir os critérios para monitoramento dos impactos do Programa Mover, conforme o disposto em ato do Ministro de Estado do Desenvolvimento, Indústria, Comércio e Serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O Grupo de Acompanhamento deverá divulgar, anualmente, relatório com os resultados econômicos e técnicos oriundos da aplicação do Programa Mover no ano anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O relatório de que trata o § 1º deste artigo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - será elaborado pelo Ministério do Desenvolvimento, Indústria, Comércio e Serviços, sob a supervisão do Grupo de Acompanhamento; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - deverá conter os impactos decorrentes dos dispêndios beneficiados pelo Programa Mover na produção, no emprego, nos investimentos, na inovação e na agregação de valor do setor automobilístico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O Grupo de Acompanhamento poderá contar com o apoio de comitê técnico consultivo formado por representantes do setor empresarial, dos trabalhadores da indústria automotiva e da comunidade científica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Ficam criados o Observatório Nacional das Indústrias para a Mobilidade Verde e o Conselho Gestor do Observatório, constituído por representantes do governo, do setor empresarial, dos trabalhadores e da comunidade científica, responsável, entre outras atribuições, por acompanhar o impacto do Programa Mover no setor e na sociedade, conforme o disposto em ato do Ministro de Estado do Desenvolvimento, Indústria, Comércio e Serviços. <BR><BR><BR>
+<CENTER><B>Seção V </CENTER></B>
+<CENTER><B>Dos Efeitos do Descumprimento da Legislação </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;O descumprimento de requisitos, de compromissos, de condições e de obrigações acessórias no âmbito deste Capítulo poderá acarretar as seguintes penalidades: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - cancelamento da habilitação com efeitos retroativos; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - suspensão da habilitação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;O cancelamento da habilitação: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - poderá ser aplicado nas hipóteses de: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>descumprimento dos requisitos de que trata o art. 14 desta Lei; ou </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>não realização do projeto de desenvolvimento e produção tecnológica de que trata o inciso II do <I>caput</I> do art. 13 desta Lei; e </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - implicará o recolhimento do valor equivalente aos créditos financeiros ressarcidos ou compensados ou o estorno dos referidos créditos financeiros formados em virtude do benefício até o último dia útil do mês seguinte ao cancelamento da habilitação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Na hipótese de a empresa possuir mais de uma habilitação ao regime de que trata o art. 12 desta Lei, o cancelamento de uma delas não afetará as demais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O recolhimento do valor de que trata o inciso II do <I>caput</I> deste artigo retroagirá ao início do ano-calendário em que ocorrer o fato que deu causa ao cancelamento da habilitação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;A suspensão da habilitação poderá ser aplicada nas hipóteses de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - verificação de não atendimento, pela empresa habilitada, da condição de que trata o inciso III do § 1º do art. 13 desta Lei; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - descumprimento, por mais de 3 (três) meses consecutivos, de obrigação acessória relativa ao Programa Mover prevista nesta Lei, em seu regulamento ou em normas complementares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Ficará suspenso o usufruto dos benefícios de que trata esta Lei enquanto não forem sanados os motivos que deram causa à suspensão da habilitação. <BR><BR><BR>
+<CENTER>CAPÍTULO V <BR>DO REGIME DE AUTOPEÇAS NÃO PRODUZIDAS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;O regime de autopeças não produzidas, de que trata o art. 6º do Acordo sobre a Política Automotiva Comum entre a República Argentina e a República Federativa do Brasil, anexo ao Trigésimo Oitavo Protocolo Adicional ao Acordo de Complementação Econômica nº 14, para importação das partes, peças, componentes, conjuntos e subconjuntos, acabados e semiacabados, e pneumáticos, sem capacidade de produção nacional equivalente, todos novos, destinados à produção de produtos automotivos, deverá obedecer ao disposto neste Capítulo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A Câmara de Comércio Exterior aprovará a relação de autopeças não produzidas no Mercado Comum do Sul (Mercosul), contempladas no Acordo sobre a Política Automotiva Comum entre a República Argentina e a República Federativa do Brasil, anexo ao Trigésimo Oitavo Protocolo Adicional ao Acordo de Complementação Econômica nº 14, por classificação fiscal na Nomenclatura Comum do Mercosul (NCM). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º As empresas importadoras ficam autorizadas a aderir, facultativamente, ao regime referido no <I>caput</I> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º As empresas importadoras que não aderirem ao regime referido no <I>caput</I> deste artigo ficam obrigadas ao recolhimento normal do Imposto de Importação do bem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O Ministério do Desenvolvimento, Indústria, Comércio e Serviços estabelecerá os termos, os limites e as condições para a habilitação ao regime previsto no <I>caput</I> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º As empresas habilitadas na data de publicação desta Lei no regime de autopeças não produzidas, de que trata o art. 6º do Acordo sobre a Política Automotiva Comum entre a República Argentina e a República Federativa do Brasil, anexo ao Trigésimo Oitavo Protocolo Adicional ao Acordo de Complementação Econômica nº 14, terão o prazo de 120 (cento e vinte) dias, contado da data de entrada em vigor desta Lei, para requerer nova habilitação nos termos do § 4º deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;A habilitação prevista no art. 26 desta Lei ficará condicionada à realização de investimentos no País, pela empresa interessada, correspondentes a 2% (dois por cento) do valor aduaneiro em projetos de pesquisa, desenvolvimento e inovação em programas prioritários de apoio ao desenvolvimento industrial e tecnológico para o setor automotivo e sua cadeia aderentes às diretrizes previstas no § 2º do art. 1º desta Lei, conforme o disposto em regulamento do Poder Executivo federal, em parceria com: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - Instituição Científica, Tecnológica e de Inovação (ICT); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - entidades brasileiras de ensino, oficiais ou reconhecidas pelo poder público; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - empresas públicas dotadas de personalidade jurídica de direito privado que mantenham fundos de investimento destinados a empresas de base tecnológica, com foco no desenvolvimento e na sustentabilidade industrial e tecnológica para a mobilidade e logística; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - organizações sociais, qualificadas conforme o disposto na Lei nº 9.637, de 15 de maio de 1998, ou serviços sociais autônomos, que mantenham contrato de gestão com o governo federal e que promovam e incentivem a realização de projetos de pesquisa aplicada, desenvolvimento e inovação para o setor automotivo e sua cadeia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Para fins de controle e gerenciamento da adequação da aplicação do valor previsto no <I>caput</I> deste artigo, o Poder Executivo federal poderá prever a obrigatoriedade de centralização dos aportes em fundo privado, conforme o disposto em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;A empresa habilitada no regime previsto no art. 26 deverá comprovar anualmente a realização dos aportes de que trata o art. 27 desta Lei, conforme o disposto em regulamento do Poder Executivo federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Aplicar-se-á multa sancionatória de 30% (trinta por cento) sobre a diferença entre o valor do aporte de que trata o <I>caput</I> do art. 27 desta Lei e o valor efetivamente realizado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Ficará dispensada a aplicação da multa prevista no § 1º deste artigo na hipótese de pagamento espontâneo, desde que efetuado até o segundo mês subsequente ao aporte a menor e em parcela única, devendo este valor ser acrescido de juros e multa de mora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Após o início do processo administrativo fiscalizatório, o valor da multa prevista no § 1º deste artigo fica reduzido em 50% (cinquenta por cento) caso o beneficiário realize o pagamento do valor devido notificado, incluídos juros e multa de mora, até o vigésimo dia subsequente à data de recebimento do termo de início de fiscalização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A partir do vigésimo primeiro dia, contado do recebimento do termo de início de fiscalização, encerrar-se-á a possibilidade de pagamento na forma prevista no § 3º, e o beneficiário ficará sujeito à multa sancionatória prevista no § 1º deste artigo, sobre a qual passam a incidir juros e multa de mora, sem prejuízo do encaminhamento para inscrição em dívida ativa da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Os valores devidos em atraso serão acrescidos de multa de mora, calculada à taxa de 0,33% (trinta e três centésimos por cento) por dia de atraso, limitada a 20% (vinte por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º A multa de que trata o § 5º deste artigo será calculada a partir do primeiro dia útil subsequente ao do vencimento do prazo previsto para a realização do aporte até o dia em que ocorrer o seu pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º Sobre os valores devidos em atraso incidirão juros de mora calculados à taxa referencial do Sistema Especial de Liquidação e de Custódia (Selic), para títulos federais, acumulada mensalmente, a partir do primeiro dia do mês subsequente ao do vencimento do prazo até o último dia do mês anterior ao do recolhimento, e de 1% (um por cento) no mês de recolhimento. <BR><BR><BR>
+<CENTER>CAPÍTULO VI <BR>DO FUNDO NACIONAL DE DESENVOLVIMENTO INDUSTRIAL E TECNOLÓGICO </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Fica o Banco Nacional de Desenvolvimento Econômico e Social (BNDES) autorizado a instituir o Fundo Nacional de Desenvolvimento Industrial e Tecnológico (FNDIT), com a finalidade de captar recursos oriundos de políticas industriais para a utilização em apoio financeiro aos programas e aos projetos prioritários de desenvolvimento industrial, científico e tecnológico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O FNDIT será formado por recursos oriundos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - da obrigação de que trata o art. 27 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - da realização de dispêndios em pesquisa e desenvolvimento tecnológico, nos termos do § 1º do art. 14 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - de glosa ou de necessidade de complementação residual dos dispêndios em pesquisa e desenvolvimento tecnológico, nos termos do § 3º do art. 14 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - do rendimento de aplicações do próprio fundo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - da remuneração e do retorno de operações com recursos do fundo; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - de outras fontes cuja possibilidade de destinação ao FNDIT esteja prevista em legislação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O FNDIT terá natureza privada e consistirá em conta contábil específica mantida pelo BNDES, que promoverá a gestão e a administração dos recursos do fundo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A gestão e a destinação de recursos do FNDIT observarão o disposto em ato do Ministério do Desenvolvimento, Indústria, Comércio e Serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Fica criado o Conselho Diretor do FNDIT, órgão colegiado no âmbito do Ministério do Desenvolvimento, Indústria, Comércio e Serviços, cujas composição e competências serão estabelecidas em ato do Poder Executivo federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Outras fontes de recursos do FNDIT serão definidas nas normas de políticas industriais que prevejam mecanismos de depósitos de recursos para desenvolvimento industrial, científico e tecnológico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Na hipótese de o FNDIT não estar em funcionamento, o aporte dos recursos a que se refere o § 1º deste artigo deverá ser realizado diretamente em contas específicas das instituições coordenadoras dos programas prioritários de apoio ao desenvolvimento industrial e tecnológico para as indústrias de mobilidade e logística. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º O risco das operações realizadas com recursos do FNDIT será integralmente suportado pelo fundo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º O FNDIT não se caracteriza como fundo de investimentos nem se vincula diretamente ao sistema financeiro e bancário nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º Os recursos recebidos pelo FNDIT são isentos do IRPJ e da CSLL, inclusive no que se refere aos ganhos líquidos mensais das aplicações finalísticas realizadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 10. Ficam reduzidas a 0 (zero) as alíquotas da Contribuição para os Programas de Integração Social e de Formação do Patrimônio do Servidor Público (Contribuição para o PIS/Pasep) e da Contribuição para o Financiamento da Seguridade Social (Cofins) incidentes sobre receitas e ganhos líquidos do FNDIT. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 11. Os recursos recebidos pelo BNDES na qualidade de instituição coordenadora para programa prioritário de apoio ao desenvolvimento industrial, científico e tecnológico para as indústrias de mobilidade e logística, no âmbito da Lei nº 13.755, de 10 de dezembro de 2018, poderão ser transferidos ao FNDIT. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;As empresas que possuem obrigações de investimento em pesquisa, desenvolvimento tecnológico e inovação decorrentes de outorgas ou de delegações firmadas por agências reguladoras ficam autorizadas a cumprir seus compromissos por meio de destinação dos correspondentes recursos ao FNDIT. <BR><BR><BR>
+<CENTER>CAPÍTULO VII <BR>DISPOSIÇÕES FINAIS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;Os incentivos previstos nos arts. 15 a 20 desta Lei terão prazo de vigência de 5 (cinco) anos, na forma do disposto no art. 143 da Lei nº 14.436, de 9 de agosto de 2022. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;O art. 1º do Decreto-Lei nº 1.804, de 3 de setembro de 1980, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 1º&nbsp;............................................................................................................... <BR>............................................................................................................................. <BR><BR>§ 2º A tributação simplificada poderá efetuar-se pela classificação genérica dos bens em um ou mais grupos, aplicando-se alíquotas constantes ou progressivas em função do valor das remessas, não superiores a 400% (quatrocentos por cento) e não inferiores às alíquotas da tabela progressiva apresentada no § 2º-A deste artigo, bem como limitadas ao valor máximo de US$ 3.000,00 (três mil dólares norte-americanos). <BR><BR>§ 2º-A O imposto de importação do regime de tributação simplificada de que dispõe o art. 1º deste Decreto-Lei será calculado conforme as alíquotas e a parcela a deduzir da seguinte tabela progressiva: </DIR>
+<DIR>
+<TABLE class=MsoTableGrid style="BORDER-TOP: medium none; BORDER-RIGHT: medium none; WIDTH: 451.95pt; BORDER-COLLAPSE: collapse; BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt" cellSpacing=0 cellPadding=0 width=603 border=1>
+<TBODY>
+<TR style="mso-yfti-irow: 0; mso-yfti-firstrow: yes">
+<TD style="BORDER-TOP: windowtext 1pt solid; BORDER-RIGHT: windowtext 1pt solid; WIDTH: 83.4pt; BORDER-BOTTOM: windowtext 1pt solid; PADDING-BOTTOM: 0cm; PADDING-TOP: 0cm; PADDING-LEFT: 5.4pt; BORDER-LEFT: windowtext 1pt solid; PADDING-RIGHT: 5.4pt; BACKGROUND-COLOR: transparent; mso-border-alt: solid windowtext .5pt" vAlign=top width=111>
+<P class=MsoNormal style="TEXT-ALIGN: center; MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal" align=center><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"'>De (US$)<?xml:namespace prefix = "o" ns = "urn:schemas-microsoft-com:office:office" /><o:p></o:p></SPAN></P></TD>
+<TD style="BORDER-TOP: windowtext 1pt solid; BORDER-RIGHT: windowtext 1pt solid; WIDTH: 92.1pt; BORDER-BOTTOM: windowtext 1pt solid; PADDING-BOTTOM: 0cm; PADDING-TOP: 0cm; PADDING-LEFT: 5.4pt; BORDER-LEFT: #f0f0f0; PADDING-RIGHT: 5.4pt; BACKGROUND-COLOR: transparent; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt" vAlign=top width=123>
+<P class=MsoNormal style="TEXT-ALIGN: center; MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal" align=center><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"'>Até (US$)<o:p></o:p></SPAN></P></TD>
+<TD style="BORDER-TOP: windowtext 1pt solid; BORDER-RIGHT: windowtext 1pt solid; WIDTH: 92.15pt; BORDER-BOTTOM: windowtext 1pt solid; PADDING-BOTTOM: 0cm; PADDING-TOP: 0cm; PADDING-LEFT: 5.4pt; BORDER-LEFT: #f0f0f0; PADDING-RIGHT: 5.4pt; BACKGROUND-COLOR: transparent; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt" vAlign=top width=123>
+<P class=MsoNormal style="TEXT-ALIGN: center; MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal" align=center><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"'>Alíquota<o:p></o:p></SPAN></P></TD>
+<TD style="BORDER-TOP: windowtext 1pt solid; BORDER-RIGHT: windowtext 1pt solid; WIDTH: 184.3pt; BORDER-BOTTOM: windowtext 1pt solid; PADDING-BOTTOM: 0cm; PADDING-TOP: 0cm; PADDING-LEFT: 5.4pt; BORDER-LEFT: #f0f0f0; PADDING-RIGHT: 5.4pt; BACKGROUND-COLOR: transparent; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt" vAlign=top width=246>
+<P class=MsoNormal style="TEXT-ALIGN: center; MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal" align=center><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"'>Parcela a Deduzir do Imposto de Importação (US$)<o:p></o:p></SPAN></P></TD></TR>
+<TR style="mso-yfti-irow: 1">
+<TD style="BORDER-TOP: #f0f0f0; BORDER-RIGHT: windowtext 1pt solid; WIDTH: 83.4pt; BORDER-BOTTOM: windowtext 1pt solid; PADDING-BOTTOM: 0cm; PADDING-TOP: 0cm; PADDING-LEFT: 5.4pt; BORDER-LEFT: windowtext 1pt solid; PADDING-RIGHT: 5.4pt; BACKGROUND-COLOR: transparent; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt" vAlign=top width=111>
+<P class=MsoNormal style="TEXT-ALIGN: center; MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal" align=center><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"'>0<o:p></o:p></SPAN></P></TD>
+<TD style="BORDER-TOP: #f0f0f0; BORDER-RIGHT: windowtext 1pt solid; WIDTH: 92.1pt; BORDER-BOTTOM: windowtext 1pt solid; PADDING-BOTTOM: 0cm; PADDING-TOP: 0cm; PADDING-LEFT: 5.4pt; BORDER-LEFT: #f0f0f0; PADDING-RIGHT: 5.4pt; BACKGROUND-COLOR: transparent; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt" vAlign=top width=123>
+<P class=MsoNormal style="TEXT-ALIGN: center; MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal" align=center><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"'>50,00<o:p></o:p></SPAN></P></TD>
+<TD style="BORDER-TOP: #f0f0f0; BORDER-RIGHT: windowtext 1pt solid; WIDTH: 92.15pt; BORDER-BOTTOM: windowtext 1pt solid; PADDING-BOTTOM: 0cm; PADDING-TOP: 0cm; PADDING-LEFT: 5.4pt; BORDER-LEFT: #f0f0f0; PADDING-RIGHT: 5.4pt; BACKGROUND-COLOR: transparent; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt" vAlign=top width=123>
+<P class=MsoNormal style="TEXT-ALIGN: center; MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal" align=center><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"'>20,0%<o:p></o:p></SPAN></P></TD>
+<TD style="BORDER-TOP: #f0f0f0; BORDER-RIGHT: windowtext 1pt solid; WIDTH: 184.3pt; BORDER-BOTTOM: windowtext 1pt solid; PADDING-BOTTOM: 0cm; PADDING-TOP: 0cm; PADDING-LEFT: 5.4pt; BORDER-LEFT: #f0f0f0; PADDING-RIGHT: 5.4pt; BACKGROUND-COLOR: transparent; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt" vAlign=top width=246>
+<P class=MsoNormal style="TEXT-ALIGN: center; MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal" align=center><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"'>-<o:p></o:p></SPAN></P></TD></TR>
+<TR style="mso-yfti-irow: 2; mso-yfti-lastrow: yes">
+<TD style="BORDER-TOP: #f0f0f0; BORDER-RIGHT: windowtext 1pt solid; WIDTH: 83.4pt; BORDER-BOTTOM: windowtext 1pt solid; PADDING-BOTTOM: 0cm; PADDING-TOP: 0cm; PADDING-LEFT: 5.4pt; BORDER-LEFT: windowtext 1pt solid; PADDING-RIGHT: 5.4pt; BACKGROUND-COLOR: transparent; mso-border-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt" vAlign=top width=111>
+<P class=MsoNormal style="TEXT-ALIGN: center; MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal" align=center><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"'>50,01<o:p></o:p></SPAN></P></TD>
+<TD style="BORDER-TOP: #f0f0f0; BORDER-RIGHT: windowtext 1pt solid; WIDTH: 92.1pt; BORDER-BOTTOM: windowtext 1pt solid; PADDING-BOTTOM: 0cm; PADDING-TOP: 0cm; PADDING-LEFT: 5.4pt; BORDER-LEFT: #f0f0f0; PADDING-RIGHT: 5.4pt; BACKGROUND-COLOR: transparent; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt" vAlign=top width=123>
+<P class=MsoNormal style="TEXT-ALIGN: center; MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal" align=center><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"'>3.000,00<o:p></o:p></SPAN></P></TD>
+<TD style="BORDER-TOP: #f0f0f0; BORDER-RIGHT: windowtext 1pt solid; WIDTH: 92.15pt; BORDER-BOTTOM: windowtext 1pt solid; PADDING-BOTTOM: 0cm; PADDING-TOP: 0cm; PADDING-LEFT: 5.4pt; BORDER-LEFT: #f0f0f0; PADDING-RIGHT: 5.4pt; BACKGROUND-COLOR: transparent; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt" vAlign=top width=123>
+<P class=MsoNormal style="TEXT-ALIGN: center; MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal" align=center><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"'>60,0%<o:p></o:p></SPAN></P></TD>
+<TD style="BORDER-TOP: #f0f0f0; BORDER-RIGHT: windowtext 1pt solid; WIDTH: 184.3pt; BORDER-BOTTOM: windowtext 1pt solid; PADDING-BOTTOM: 0cm; PADDING-TOP: 0cm; PADDING-LEFT: 5.4pt; BORDER-LEFT: #f0f0f0; PADDING-RIGHT: 5.4pt; BACKGROUND-COLOR: transparent; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt; mso-border-top-alt: solid windowtext .5pt" vAlign=top width=246>
+<P class=MsoNormal style="TEXT-ALIGN: center; MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal" align=center><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"'>US$ 20,00<o:p></o:p></SPAN></P></TD></TR></TBODY></TABLE>............................................................................................................................" (NR)</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;Ficam convalidados os atos praticados com base na Medida Provisória nº 1.205, de 30 de dezembro de 2023. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;Ficam revogados os seguintes dispositivos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - arts. 1º a 29 da Lei nº 13.755, de 10 de dezembro de 2018; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - inciso II do <I>caput</I> do art. 2º do Decreto-Lei nº 1.804, de 3 de setembro de 1980. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Esta Lei entra em vigor na data de sua publicação e produzirá efeitos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - em 1º de abril de 2024, quanto aos arts. 9º a 11; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - na data de sua publicação, quanto aos demais dispositivos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 27 de junho de 2024; 203º da Independência e 136 da República. </P>
+<P>LUIZ INÁCIO LULA DA SILVA<BR>Luis Manuel Rebelo Fernandes <BR>Fernando Haddad <BR>Geraldo José Rodrigues Alckmin Filho </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 28/06/2024
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 28/6/2024, Página 1 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

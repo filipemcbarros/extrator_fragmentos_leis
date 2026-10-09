@@ -1,0 +1,932 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 13.986, DE 7 DE ABRIL DE 2020 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Institui o Fundo Garantidor Solidário (FGS); dispõe sobre o patrimônio rural em afetação, a Cédula Imobiliária Rural (CIR), a escrituração de títulos de crédito e a concessão de subvenção econômica para empresas cerealistas; altera as Leis nºs 8.427, de 27 de maio de 1992, 8.929, de 22 de agosto de 1994, 11.076, de 30 de dezembro de 2004, 10.931, de 2 de agosto de 2004, 12.865, de 9 de outubro de 2013, 5.709, de 7 de outubro de 1971, 6.634, de 2 de maio de 1979, 6.015, de 31 de dezembro de 1973, 7.827, de 27 de setembro de 1989, 8.212, de 24 de julho de 1991, 10.169, de 29 de dezembro de 2000, 11.116, de 18 de maio de 2005, 12.810, de 15 de maio de 2013, 13.340, de 28 de setembro de 2016, 13.576, de 26 de dezembro de 2017, e o Decreto-Lei nº 167, de 14 de fevereiro de 1967; revoga dispositivos das Leis nºs.728, de 14 de julho de 1965, e 13.476, de 28 de agosto de 2017, e dos Decretos-Leis nºs 13, de 18 de julho de 1966; 14, de 29 de julho de 1966; e 73, de 21 de novembro de 1966; e dá outras providências." />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 13.986, DE 7 DE ABRIL DE 2020 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-13986-7-abril-2020-789955-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-13986-7-abril-2020-789955-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-13986-7-abril-2020-789955-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-13986-7-abril-2020-789955-veto-160290-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-13986-7-abril-2020-789955-promulgacaodevetos-161327-pl.html">Promulgação de Vetos</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=2222884">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-13986-7-abril-2020-789955-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 13.986, DE 7 DE ABRIL DE 2020</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Institui o Fundo Garantidor Solidário (FGS); dispõe sobre o patrimônio rural em afetação, a Cédula Imobiliária Rural (CIR), a escrituração de títulos de crédito e a concessão de subvenção econômica para empresas cerealistas; altera as Leis nºs 8.427, de 27 de maio de 1992, 8.929, de 22 de agosto de 1994, 11.076, de 30 de dezembro de 2004, 10.931, de 2 de agosto de 2004, 12.865, de 9 de outubro de 2013, 5.709, de 7 de outubro de 1971, 6.634, de 2 de maio de 1979, 6.015, de 31 de dezembro de 1973, 7.827, de 27 de setembro de 1989, 8.212, de 24 de julho de 1991, 10.169, de 29 de dezembro de 2000, 11.116, de 18 de maio de 2005, 12.810, de 15 de maio de 2013, 13.340, de 28 de setembro de 2016, 13.576, de 26 de dezembro de 2017, e o Decreto-Lei nº 167, de 14 de fevereiro de 1967; revoga dispositivos das Leis nºs.728, de 14 de julho de 1965, e 13.476, de 28 de agosto de 2017, e dos Decretos-Leis nºs 13, de 18 de julho de 1966; 14, de 29 de julho de 1966; e 73, de 21 de novembro de 1966; e dá outras providências.
+						</p>
+				
+						<div class="texto">
+							&nbsp;<STRONG>&nbsp;&nbsp;&nbsp; O PRESIDENTE DA REPÚBLICA</STRONG> <BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER>CAPÍTULO I <BR>DO FUNDO GARANTIDOR SOLIDÁRIO </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;As operações de crédito realizadas por produtores rurais, incluídas as resultantes de consolidação de dívidas, poderão ser garantidas por Fundos Garantidores Solidários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O disposto no <I>caput</I> deste artigo também se aplica ao financiamento para implantação e operação de infraestruturas de conectividade rural. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Cada Fundo Garantidor Solidário (FGS) será composto de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - no mínimo 2 (dois) devedores; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o credor; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - o garantidor, se houver. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O Poder Executivo poderá limitar o número de devedores do FGS. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Os participantes integralizarão os recursos do FGS, observados a seguinte estrutura de cotas e os seguintes percentuais mínimos, incidentes sobre os saldos devedores das operações financeiras garantidas pelo FGS: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - cota primária, de responsabilidade dos devedores, correspondente a 4% (quatro por cento); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - cota secundária, de responsabilidade do credor ou, na hipótese de consolidação, dos credores originais, correspondente a 4% (quatro por cento); e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - cota terciária, de responsabilidade do garantidor, se houver, correspondente a 2% (dois por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A cota terciária poderá ser integralizada por meio da redução do saldo devedor do credor garantido pelo FGS. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Na hipótese de consolidação de dívidas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a instituição consolidadora poderá exigir a transferência das garantias oferecidas nas operações originais para a operação de consolidação; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - os percentuais de que trata o <I>caput</I> deste artigo incidirão sobre os valores que vierem a ser consolidados, considerando o crédito de cada um dos credores originais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Os percentuais estabelecidos para composição do FGS poderão ser majorados, desde que se mantenha a proporção entre as cotas de mesma categoria de participantes, permitida a alteração da proporcionalidade entre as cotas primária, secundária e terciária, se houver. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Os recursos integralizados, enquanto não quitadas todas as operações garantidas pelo FGS, não responderão por outras dívidas ou obrigações, presentes ou futuras, contraídas pelos participantes, independentemente da natureza dessa dívida ou obrigação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º A garantia prestada pelo FGS, nos termos do art. 1º desta Lei, ficará limitada aos recursos existentes nos respectivos fundos constituídos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º O FGS não pagará rendimentos aos seus cotistas, salvo na hipótese prevista no parágrafo único do art. 5º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;O ressarcimento ao credor ou, na hipótese de consolidação, à instituição consolidadora, ocorrerá por meio da utilização dos recursos do FGS, após o vencimento e o não pagamento da parcela ou operação, observada a seguinte ordem: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - cota primária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - cota secundária; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - cota terciária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;O FGS será extinto após a quitação de todas as dívidas por ele garantidas ou o exaurimento de seus recursos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Na hipótese de extinção do FGS pela quitação das dívidas, os recursos remanescentes, conforme disposto no art. 6º desta Lei, serão devolvidos aos cotistas de modo a repor os valores inicialmente aportados, considerada a proporção da integralização efetuada por cada um deles, nesta ordem: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - cota terciária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - cota secundária; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - cota primária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;O Estatuto do Fundo disporá sobre a forma de constituição do FGS e sua administração, a remuneração do administrador, a utilização dos recursos e sua forma de atualização, a representação ativa e passiva do fundo, entre outras disposições necessárias ao seu funcionamento. <BR><BR>
+<CENTER>CAPÍTULO II <BR>DO PATRIMÔNIO RURAL EM AFETAÇÃO </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;O proprietário de imóvel rural, pessoa natural ou jurídica, poderá submeter seu imóvel rural ou fração dele ao regime de afetação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>No regime de afetação de que trata o <I>caput</I> deste artigo, o terreno, as acessões e as benfeitorias nele fixadas, exceto as lavouras, os bens móveis e os semoventes, constituirão patrimônio rural em afetação, destinado a prestar garantias por meio da emissão de Cédula de Produto Rural (CPR), de que trata a Lei nº 8.929, de 22 de agosto de 1994, ou em operações financeiras contratadas pelo proprietário por meio de Cédula Imobiliária Rural (CIR). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Fica vedada a constituição de patrimônio rural em afetação incidente sobre: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o imóvel já gravado por hipoteca, por alienação fiduciária de coisa imóvel ou por outro ônus real, ou, ainda, que tenha registrada ou averbada em sua matrícula qualquer uma das informações de que trata o art. 54 da Lei nº 13.097, de 19 de janeiro de 2015; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a pequena propriedade rural de que trata a alínea "<EM>a</EM>" do inciso II do <I>caput</I> do art. 4º da Lei nº 8.629, de 25 de fevereiro de 1993; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - a área de tamanho inferior ao módulo rural ou à fração mínima de parcelamento, o que for menor, nos termos do art. 8º da Lei nº 5.868, de 12 de dezembro de 1972; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - o bem de família de que trata a Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil), exceto na situação prevista no § 2º do art. 4º da Lei nº 8.009, de 29 de março de 1990. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;O patrimônio rural em afetação é constituído por solicitação do proprietário por meio de registro no cartório de registro de imóveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Os bens e os direitos integrantes do patrimônio rural em afetação não se comunicam com os demais bens, direitos e obrigações do patrimônio geral do proprietário ou de outros patrimônios rurais em afetação por ele constituídos, nas seguintes condições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - desde que vinculado o patrimônio rural em afetação a CIR ou a CPR; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - na medida das garantias expressas na CIR ou na CPR a ele vinculadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Nenhuma garantia real, exceto por emissão de CIR ou de CPR, poderá ser constituída sobre o patrimônio rural em afetação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O imóvel rural, enquanto estiver sujeito ao regime de afetação de que trata esta Lei, ainda que de modo parcial, não poderá ser objeto de compra e venda, doação, parcelamento ou qualquer outro ato translativo de propriedade por iniciativa do proprietário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O patrimônio rural em afetação, ou parte dele, na medida da garantia vinculada a CIR ou a CPR: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - não poderá ser utilizado para realizar ou garantir o cumprimento de qualquer outra obrigação assumida pelo proprietário estranha àquela a qual esteja vinculado; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - é impenhorável e não poderá ser objeto de constrição judicial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O patrimônio rural em afetação ou a fração destes vinculados a CIR ou a CPR, incluídos o terreno, as acessões e as benfeitorias fixadas no terreno, exceto as lavouras, os bens móveis e os semoventes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - não são atingidos pelos efeitos da decretação de falência, insolvência civil ou recuperação judicial do proprietário de imóvel rural; e <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - não integram a massa concursal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º O disposto neste artigo não se aplica às obrigações trabalhistas, previdenciárias e fiscais do proprietário rural. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;O oficial de registro de imóveis protocolará e autuará a solicitação de registro do patrimônio rural em afetação e os documentos a ela vinculados, na forma estabelecida nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;A solicitação de que trata o art. 11 desta Lei será instruída com: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - os documentos comprobatórios: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>da inscrição do imóvel no Cadastro Nacional de Imóveis Rurais (CNIR), do domínio do requerente e da inexistência de ônus de qualquer espécie sobre o patrimônio do requerente e o imóvel rural; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>da inscrição do imóvel no Cadastro Ambiental Rural (CAR), nos termos da Lei nº 12.651, de 25 de maio de 2012; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>da regularidade fiscal, trabalhista e previdenciária do requerente; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>da certificação, perante o Sistema de Gestão Fundiária (Sigef) do Instituto Nacional de Colonização e Reforma Agrária (Incra), do georreferenciamento do imóvel do qual a totalidade ou a fração está sendo constituída como patrimônio rural em afetação; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a prova de atos que modifiquem ou limitem a propriedade do imóvel; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - o memorial de que constem os nomes dos ocupantes e confrontantes com a indicação das respectivas residências; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - a planta do imóvel, obtida a partir de memorial descritivo assinado por profissional habilitado e com a Anotação de Responsabilidade Técnica, que deverá conter as coordenadas dos vértices definidores dos limites dos imóveis rurais, georreferenciadas ao Sistema Geodésico Brasileiro e com precisão posicional adotada pelo Incra para a certificação do imóvel perante o Sigef/Incra; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - as coordenadas dos vértices definidores dos limites do patrimônio afetado, georreferenciadas ao Sistema Geodésico Brasileiro e com precisão posicional adotada pelo Incra para certificação do imóvel perante o Sigef/Incra. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os documentos de que tratam a alínea "<EM>c</EM>" do inciso I do <I>caput</I> deste artigo compreendem as certidões negativas de débitos fiscais perante as Fazendas Públicas, bem como de distribuição forense e de protestos do proprietário do imóvel, tanto no local de seu domicílio quanto no local do imóvel. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No caso de constituição de patrimônio rural em afetação sobre parte do imóvel rural, a fração não afetada deverá atender a todas as obrigações ambientais previstas em lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;O oficial de registro de imóveis, caso considere a solicitação de constituição de patrimônio rural em afetação de imóvel rural ou a instrução de que trata o art. 12 em desacordo com o disposto nesta Lei, concederá o prazo de 30 (trinta) dias, contado da data da decisão, para que o interessado faça as correções necessárias, sob pena de indeferimento da solicitação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O interessado poderá solicitar a reconsideração da decisão do oficial de registro de imóveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Incumbe ao proprietário que constituir o patrimônio rural em afetação: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - promover os atos necessários à administração e à preservação do patrimônio rural em afetação, inclusive por meio da adoção de medidas judiciais; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - manter-se adimplente com as obrigações tributárias e os encargos fiscais, previdenciários e trabalhistas de sua responsabilidade, incluída a remuneração dos trabalhadores rurais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;O cancelamento da afetação do imóvel rural, ou de sua fração, concretizase mediante sua averbação no cartório de registro de imóveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O cancelamento será instruído com requerimento do proprietário, que deverá comprovar a não existência de CIR e de CPR sobre o patrimônio a ser desafetado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A comprovação de que trata o § 1º deste artigo será realizada por meio de certidão emitida por entidade mencionada no art. 19 desta Lei, no caso de CIR, ou por meio de certidão emitida pelo cartório de registro de imóveis competente, no caso de CPR. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Sobre o imóvel rural, ou sua fração, para o qual haja requerimento de cancelamento do patrimônio rural em afetação não poderá ser emitida CIR ou CPR até a conclusão do pedido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;A emissão da CPR que utilizar como garantia o patrimônio rural em afetação atenderá ao disposto na Lei nº 8.929, de 22 de agosto de 1994, e deverá cumprir as normas previstas no <I>caput</I> e no § 1º do art. 19, no art. 21, nos incisos VIII e IX do <I>caput</I> e nos §§ 1º e 2º do art. 22 e nos arts. 24, 25 e 28 desta Lei. <BR><BR>
+<CENTER>CAPÍTULO III <BR>DA CÉDULA IMOBILIÁRIA RURAL </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Fica instituída a CIR, título de crédito nominativo, transferível e de livre negociação, representativa de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - promessa de pagamento em dinheiro, decorrente de operação de crédito de qualquer modalidade; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - obrigação de entregar, em favor do credor, bem imóvel rural, ou fração deste, vinculado ao patrimônio rural em afetação, e que seja garantia da operação de que trata o inciso I do <I>caput</I> deste artigo, nas hipóteses em que não houver o pagamento da operação até a data do vencimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Fica legitimado para emitir a CIR o proprietário de imóvel rural, pessoa natural ou jurídica, que houver constituído patrimônio rural em afetação na forma prevista no Capítulo II desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A CIR será garantida por parte ou por todo o patrimônio rural em afetação, observada a identificação prevista no inciso VIII do <I>caput</I> do art. 22 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A CIR poderá ser emitida sob a forma escritural, mediante lançamento em sistema de escrituração autorizado a funcionar pelo Banco Central do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;A CIR será levada a registro ou a depósito em entidade autorizada pelo Banco Central do Brasil a exercer a atividade de registro ou depósito centralizado de ativos financeiros e de valores mobiliários, nos termos da Lei nº 12.810, de 15 de maio de 2013, no prazo de 5 (cinco) dias úteis, contado da data de sua emissão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O registro ou o depósito realizado no prazo estabelecido no <I>caput</I> deste artigo é condição necessária para que a CIR tenha eficácia executiva sobre o patrimônio rural em afetação a ela vinculado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A CIR cartular será escritural enquanto permanecer depositada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º No período em que a CIR estiver depositada, o histórico dos negócios ocorridos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - não será transcrito no verso dos títulos; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - será anotado nos registros do sistema. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;A CIR poderá ser garantida por terceiros, inclusive por instituição financeira ou por seguradora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;A CIR é título executivo extrajudicial e representa dívida em dinheiro, certa, líquida e exigível, correspondente ao valor nela indicado ou ao saldo devedor da operação de crédito que representa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A CIR poderá receber aval, que constará do registro ou do depósito de que trata o <I>caput</I> do art. 19 ou da cártula. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Fica dispensado o protesto para assegurar o direito de regresso contra endossantes e avalistas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;A CIR conterá os seguintes requisitos lançados em seu contexto: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a denominação "Cédula Imobiliária Rural"; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a assinatura do emitente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - o nome do credor, permitida a cláusula à ordem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - a data e o local da emissão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - a promessa do emitente de pagar o valor da CIR em dinheiro, certo, líquido e exigível no seu vencimento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - a data e o local do pagamento da dívida e, na hipótese de pagamento parcelado, as datas e os valores de cada prestação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - a data de vencimento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - a identificação do patrimônio rural em afetação, ou de sua parte, correspondente à garantia oferecida na CIR; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - a autorização irretratável para que o oficial de registro de imóveis processe, em favor do credor, o registro de transmissão da propriedade do imóvel rural, ou da fração, constituinte do patrimônio rural em afetação vinculado à CIR, de acordo com o disposto no art. 28 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A identificação de que trata o inciso VIII do <I>caput</I> deste artigo conterá os números de registro e de matrícula do imóvel no cartório de registro de imóveis competente e as coordenadas dos vértices definidores dos limites da área vinculada à CIR, georreferenciadas ao Sistema Geodésico Brasileiro, observadas as vedações de que trata o art. 8º desta Lei e respeitadas as exigências estabelecidas pela legislação ambiental. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O patrimônio rural em afetação ou sua parte vinculada a cada CIR observará o disposto na legislação ambiental e no inciso III do <I>caput</I> do art. 8º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A CIR, sem que configure requisito essencial, poderá conter outras cláusulas não financeiras lançadas em seu registro, depósito ou cártula, as quais poderão constar de documento à parte, com a assinatura do emitente, incluída a menção a essa circunstância no registro, no depósito ou na cártula. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;A CIR poderá ser negociada somente nos mercados regulamentados de valores mobiliários quando registrada ou depositada em entidade autorizada pelo Banco Central do Brasil a exercer a atividade de registro ou depósito centralizado de ativos financeiros e de valores mobiliários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;O emitente usará, até a efetiva liquidação da obrigação garantida pela CIR, a suas expensas e risco, o imóvel rural objeto do patrimônio rural em afetação, conforme a sua destinação, e deverá empregar, na sua guarda, a diligência exigida por sua natureza. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Na hipótese de o bem constitutivo da garantia ser desapropriado ou danificado por fato imputável a terceiro, o credor será sub-rogado no direito à indenização devida pelo expropriante ou pelo terceiro causador do dano, até o montante necessário para liquidar ou amortizar a obrigação garantida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;O vencimento da CIR será antecipado, independentemente de aviso ou interpelação judicial ou extrajudicial, nas hipóteses de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - descumprimento das obrigações de que trata o inciso I do <I>caput </I>do art. 14 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - insolvência civil, falência ou recuperação judicial do emitente; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - existência de prática comprovada de desvio de bens e administração ruinosa do imóvel rural que constitui o patrimônio rural em afetação a ela vinculado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;O credor fica obrigado a informar à entidade autorizada no art. 19 desta Lei, sobre a liquidação da CIR no prazo máximo de 5 (cinco) dias úteis após sua efetivação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Vencida a CIR e não liquidado o crédito por ela representado, o credor poderá exercer de imediato o direito à transferência, para sua titularidade, do registro da propriedade da área rural que constitui o patrimônio rural em afetação, ou de sua fração, vinculado à CIR no cartório de registro de imóveis correspondente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Quando a área rural constitutiva do patrimônio rural em afetação vinculado à CIR estiver contida em imóvel rural de maior área, ou quando apenas parte do patrimônio rural em afetação estiver vinculada à CIR, o oficial de registro de imóveis, de ofício e à custa do beneficiário final, efetuará o desmembramento e estabelecerá a matrícula própria correspondente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Na hipótese prevista no <I>caput</I> deste artigo, aplica-se, no que couber, o disposto nos arts. 26 e 27 da Lei nº 9.514, de 20 de novembro de 1997, respeitado o disposto no § 3º deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Se, no segundo leilão de que trata o art. 27 da Lei nº 9.514, de 20 de novembro de 1997, o maior lance oferecido não for igual ou superior ao valor da dívida, somado ao das despesas, dos prêmios de seguro e dos encargos legais, incluídos os tributos, o credor poderá cobrar do devedor, por via executiva, o valor remanescente de seu crédito, sem nenhum direito de retenção ou indenização sobre o imóvel alienado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Aplicam-se à CIR, no que couber, as normas de direito cambial, com as seguintes modificações: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - os endossos deverão ser completos; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - os endossantes responderão somente pela existência da obrigação. <BR><BR>
+<CENTER>CAPÍTULO IV<BR>DO CERTIFICADO DE DEPÓSITO BANCÁRIO </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;O Certificado de Depósito Bancário (CDB) é título de crédito nominativo, transferível e de livre negociação, representativo de promessa de pagamento, em data futura, do valor depositado junto ao emissor, acrescido da remuneração convencionada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;O CDB somente poderá ser emitido por instituições financeiras que captem recursos sob a modalidade de depósitos a prazo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;O CDB conterá os seguintes requisitos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a denominação "Certificado de Depósito Bancário"; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o nome da instituição financeira emissora; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - o número de ordem, o local e a data de emissão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - o valor nominal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - a data de vencimento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - o nome do depositante; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - a taxa de juros, fixa ou flutuante, admitida a capitalização, ou outras formas de remuneração, inclusive baseadas em índices ou taxas de conhecimento público; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - a forma, a periodicidade e o local de pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;O CDB poderá ser emitido sob forma escritural, por meio do lançamento em sistema eletrônico do emissor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;O CDB poderá ser transferido por meio de endosso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Na hipótese de CDB emitido sob a forma escritural, o endosso de que trata o <I>caput</I> deste artigo ocorrerá exclusivamente por meio de anotação específica no sistema eletrônico da instituição emissora ou, quando tenha sido depositado em depositário central, por meio de anotação específica no sistema eletrônico correspondente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O endossante do CDB responderá pela existência do crédito, mas não pelo seu pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;A titularidade do CDB emitido sob forma escritural será atribuída exclusivamente por meio do lançamento no sistema eletrônico da instituição emissora ou, quando tenha sido depositado em depositário central, por meio de controle realizado no sistema eletrônico correspondente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A instituição emissora e o depositário central emitirão, mediante solicitação, certidão de inteiro teor do título. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A certidão de que trata o § 1º deste artigo poderá ser emitida na forma eletrônica, observados os requisitos de segurança que garantam a autenticidade e a integridade do documento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;O CDB é título executivo extrajudicial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A execução do CDB poderá ser promovida com base na certidão de inteiro teor de que trata o § 1º do art. 35 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;O crédito contra a instituição emissora relativo ao CDB não poderá ser objeto de penhora, arresto, sequestro, busca ou apreensão ou outro embaraço que impeça o pagamento da importância depositada e de sua remuneração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Observado o disposto no <I>caput</I> deste artigo, o CDB poderá ser penhorado por obrigação de seu titular. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Fica vedada a prorrogação do prazo de vencimento do CDB. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Será admitida a renovação do CDB com lastro na quantia depositada na data de seu vencimento e a sua remuneração, desde que haja nova contratação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;A legislação relativa a nota promissória aplica-se ao CDB, exceto naquilo em que contrariar o disposto nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Compete ao Conselho Monetário Nacional regulamentar o disposto neste Capítulo, inclusive quanto aos seguintes aspectos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - condições, limites e prazos para a emissão de CDB; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - tipos de instituições autorizadas a emitir CDB e requisitos específicos para a sua emissão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - índices, taxas ou metodologias permitidas para a remuneração do CDB; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - condições e prazos para resgate e vencimento do CDB. <BR><BR>
+<CENTER>CAPÍTULO V <BR>DA SUBVENÇÃO ECONÔMICA A PRODUTORES RURAIS E A COOPERATIVAS AGROPECUÁRIAS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;A Lei nº 8.427, de 27 de maio de 1992, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 1º&nbsp;.................................................................................................................... <BR><BR>§ 1º Consideram-se, igualmente, subvenção de encargos financeiros os bônus de adimplência e os rebates nos saldos devedores de financiamentos rurais concedidos, direta ou indiretamente, por instituições financeiras autorizadas a operar crédito rural. <BR>.............................................................................................................................." (NR)</DIR>
+<DIR>"Art. 1º-A.&nbsp;Para fins do disposto nesta Lei, o Banco Central do Brasil disponibilizará à Secretaria do Tesouro Nacional da Secretaria Especial de Fazenda do Ministério da Economia informações sobre operações de crédito rural existentes nos seus bancos de dados, na forma estabelecida em ato conjunto do Banco Central do Brasil e da Secretaria do Tesouro Nacional."</DIR>
+<DIR>"Art. 2º&nbsp;...................................................................................................................<BR>.................................................................................................................................. <BR><BR>VI - à concessão, em moeda nacional, de bonificação equivalente a um percentual do valor do prêmio pago na aquisição de contratos de opção privada de venda negociados em bolsas de mercadorias e futuros, nacionais ou internacionais. <BR><BR>§ 1º A concessão da subvenção a que se referem os incisos II, III, IV, V e VI do <I>caput</I> deste artigo exonera o Governo Federal da obrigação de adquirir o produto, que deverá ser comercializado pelo setor privado. <BR>.............................................................................................................................." (NR)</DIR>
+<DIR>"Art. 3º-B.&nbsp;O Conselho Monetário Nacional definirá os parâmetros e a metodologia de cálculo da subvenção ao prêmio pago na aquisição de contratos de opção privada de venda negociados em bolsas de mercadorias e futuros, de que trata o inciso VI do <I>caput</I> do art. 2º desta Lei."</DIR>
+<DIR>"Art. 4º&nbsp;A subvenção, sob a forma de equalização de taxas de juros, ficará limitada ao diferencial de taxas entre o custo de captação de recursos, acrescido dos custos administrativos e tributários a que estão sujeitas as instituições financeiras autorizadas a operar crédito rural nas suas operações ativas, e os encargos cobrados do tomador final do crédito rural. <BR><BR>§ 1º Na hipótese de os encargos cobrados do tomador final do crédito rural excederem o custo de captação dos recursos acrescido dos custos administrativos e tributários, as instituições financeiras autorizadas a operar crédito rural recolherão ao Tesouro Nacional o valor apurado, atualizado pelo índice que remunera a captação dos recursos. <BR>............................................................................................................................" (NR)</DIR>
+<DIR>"Art. 5º-A.&nbsp;Fica o Poder Executivo federal autorizado a conceder subvenções econômicas na forma de rebates, bônus de adimplência, garantia de preços de produtos agropecuários e outros benefícios a agricultores familiares, suas associações e suas cooperativas nas operações de crédito rural contratadas, ou que vierem a ser contratadas, com as instituições financeiras autorizadas a operar crédito rural no âmbito do Programa Nacional de Fortalecimento da Agricultura Familiar (Pronaf)." (NR)</DIR>
+<DIR>"Art. 6º&nbsp;A aplicação irregular das subvenções de que trata esta Lei sujeitará o infrator à devolução da subvenção econômica concedida, atualizada monetariamente pela taxa média referencial do Sistema Especial de Liquidação e de Custódia (Selic) ou por outro índice que venha a substituí-la. <BR><BR>§ 1º Para fins do <I>caput</I> deste artigo, considera-se aplicação irregular: <BR><BR>I - a contratação, por instituição financeira, de operação de crédito rural subvencionada em finalidade diversa da prevista nesta Lei e no seu regulamento; <BR><BR>II - a aplicação, pelo mutuário, dos recursos do crédito rural subvencionado em finalidade diversa da prevista nesta Lei, na regulamentação aplicável ou no respectivo contrato; <BR><BR>III - o acesso indevido, pelo mutuário, ao crédito rural subvencionado; ou <BR><BR>IV - a aplicação dos recursos provenientes de subvenção de preços em desacordo com o disposto no art. 2º desta Lei. <BR><BR>§ 2º A responsabilidade pela devolução da subvenção econômica, na forma de que trata o <I>caput</I> deste artigo, será: <BR><BR>I - da instituição financeira, na hipótese do inciso I do § 1º deste artigo, sem prejuízo das penalidades previstas na Lei nº 13.506, de 13 de novembro de 2017; <BR><BR>II - do mutuário, nas hipóteses dos incisos II e III do § 1º deste artigo, sem prejuízo das penalidades previstas nos arts. 19 e 20 da Lei nº 7.492, de 16 de junho de 1986; e <BR><BR>III - do beneficiário de subvenção de equalização de preços, na hipótese do inciso IV do § 1º deste artigo, sem prejuízo das penalidades previstas em lei. <BR><BR>§ 3º Na hipótese do inciso I do § 1º deste artigo, a instituição financeira recolherá à União, no prazo de até 5 (cinco) dias, contado da comunicação pelo Banco Central do Brasil, o valor da subvenção concedida, atualizado monetariamente na forma prevista no <I>caput</I> deste artigo, desde a data da concessão da subvenção ao mutuário até a data da efetiva devolução à União. <BR><BR>§ 4º Nas hipóteses dos incisos II e III do § 1º deste artigo, caberá à instituição financeira que concedeu o financiamento: <BR><BR>I - cobrar do mutuário, judicial ou extrajudicialmente, a devolução da subvenção econômica recebida, atualizada monetariamente na forma prevista no <I>caput</I> deste artigo, desde a data da concessão da subvenção ao mutuário; <BR><BR>II - repassar à União, no prazo de até 5 (cinco) dias, contado do efetivo recebimento pela instituição financeira, o valor recuperado do mutuário. <BR><BR>§ 5º Na hipótese do inciso II do § 4º deste artigo, o valor recuperado será atualizado monetariamente na forma prevista no <I>caput</I> deste artigo, desde a data da concessão da subvenção ao mutuário até a data da efetiva devolução à União. <BR><BR>§ 6º Os custos pela cobrança de que trata o inciso I do § 4º deste artigo serão imputados ao mutuário e devidos à instituição financeira. <BR><BR>§ 7º A instituição financeira poderá inscrever o nome do mutuário infrator em cadastros de proteção ao crédito, na hipótese de descumprimento de prazos extrajudicial ou judicial para devolução da subvenção aplicada irregularmente." (NR)</DIR>
+<DIR>"Art. 7º&nbsp;O Banco Central do Brasil acompanhará e fiscalizará, nos termos do regulamento a ser editado pelo Conselho Monetário Nacional, os atos das instituições financeiras praticados com vistas a conceder a subvenção de que trata o inciso II do <I>caput</I> do art. 1º desta Lei. <BR><BR>§ 1º Quando, no exercício de suas atribuições, entidades e órgãos da Administração Pública federal verificarem a ocorrência de qualquer das hipóteses previstas nos incisos II e III do § 1º do art. 6º desta Lei, comunicarão a irregularidade ao Banco Central do Brasil. <BR><BR>§ 2º Na hipótese do § 1º deste artigo, o Banco Central do Brasil informará a ocorrência à instituição financeira que concedeu o financiamento, para cumprimento do disposto no § 4º do art. 6º desta Lei." (NR)</DIR>
+<DIR>"Art. 7º-A.&nbsp;A instituição financeira fiscalizará, nos termos de regulamento a ser expedido pelo Conselho Monetário Nacional, a aplicação pelo mutuário, na finalidade prevista nesta Lei, dos recursos do crédito rural subvencionado. <BR><BR><I>Parágrafo único. </I>A fiscalização de que trata o <I>caput</I> deste artigo poderá ser terceirizada pela instituição financeira nos termos de regulamento a ser editado pelo Conselho Monetário Nacional."</DIR>
+<DIR>"Art. 7º-B.&nbsp;A concessão de crédito rural envolvendo recursos subvencionados sob a forma de equalização de taxas está condicionada à assinatura pelo tomador de crédito, admitida a forma eletrônica, de termo de consentimento para o compartilhamento das informações com os órgãos gestores dos programas de crédito e com a Controladoria-Geral da União e o Tribunal de Contas da União."</DIR><BR><BR>
+<CENTER>CAPÍTULO VI <BR>DA CÉDULA DE PRODUTO RURAL </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;A Lei nº 8.929, de 22 de agosto de 1994, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 1º&nbsp;Fica instituída a Cédula de Produto Rural (CPR), representativa de promessa de entrega de produtos rurais, com ou sem garantias cedularmente constituídas. <BR><BR>§ 1º Fica permitida a liquidação financeira da CPR, desde que observadas as condições estipuladas nesta Lei. <BR><BR>§ 2º Para os efeitos desta Lei, produtos rurais são aqueles obtidos nas atividades: <BR><BR>I - agrícola, pecuária, de floresta plantada e de pesca e aquicultura, seus derivados, subprodutos e resíduos de valor econômico, inclusive quando submetidos a beneficiamento ou a primeira industrialização; <BR><BR>II - relacionadas à conservação de florestas nativas e dos respectivos biomas e ao manejo de florestas nativas no âmbito do programa de concessão de florestas públicas, ou obtidos em outras atividades florestais que vierem a ser definidas pelo Poder Executivo como ambientalmente sustentáveis. <BR><BR>§ 3º O Poder Executivo poderá regulamentar o disposto neste artigo, inclusive relacionar os produtos passíveis de emissão de CPR." (NR)</DIR>
+<DIR>"Art. 2º&nbsp;Têm legitimação para emitir CPR o produtor rural, pessoa natural ou jurídica, inclusive aquela com objeto social que compreenda em caráter não exclusivo a produção rural, a cooperativa agropecuária e a associação de produtores rurais que tenha por objeto a produção, a comercialização e a industrialização dos produtos rurais de que trata o art. 1º desta Lei. <BR><BR>§ 1º É facultada a emissão de CPR pelas pessoas naturais ou jurídicas não elencadas no <I>caput</I> deste artigo que explorem floresta nativa ou plantada ou que beneficiem ou promovam a primeira industrialização dos produtos rurais referidos no art. 1º desta Lei. <BR><BR>§ 2º Sobre a CPR emitida pelas pessoas elencadas no § 1º deste artigo incidirá o imposto sobre operações de crédito, câmbio e seguro, ou relativas a títulos ou valores mobiliários, e não será aplicado o disposto no inciso V do <I>caput</I> do art. 3º da Lei nº 11.033, de 21 de dezembro 2004, nem quaisquer outras isenções. <BR><BR>§ 3º O Poder Executivo poderá regulamentar o disposto neste artigo, inclusive alterando o rol dos emissores de CPR para efeito desta Lei." (NR)</DIR>
+<DIR>"Art. 3º&nbsp;.................................................................................................................. <BR><BR>I - denominação "Cédula de Produto Rural" ou "Cédula de Produto Rural com Liquidação Financeira", conforme o caso; <BR><BR>II - data da entrega ou vencimento e, se for o caso, cronograma de liquidação; <BR><BR>III - nome e qualificação do credor e cláusula à ordem; <BR><BR>IV - promessa pura e simples de entrega do produto, sua indicação e as especificações de qualidade, de quantidade e do local onde será desenvolvido o produto rural;<BR>................................................................................................................................... <BR><BR>VI - descrição dos bens cedularmente vinculados em garantia, com nome e qualificação dos seus proprietários e nome e qualificação dos garantidores fidejussórios; <BR>...................................................................................................................................... <BR><BR>VIII - nome, qualificação e assinatura do emitente e dos garantidores, que poderá ser feita de forma eletrônica; <BR><BR>IX - forma e condição de liquidação; e <BR><BR>X - critérios adotados para obtenção do valor de liquidação da cédula. <BR><BR>§ 1º Sem caráter de requisito essencial, a CPR, emitida sob a forma cartular ou escritural, poderá conter outras cláusulas lançadas em seu contexto.<BR>........................................................................................................................................ <BR><BR>§ 3º Os bens vinculados em garantia serão descritos de modo simplificado e, quando for o caso, serão identificados pela sua numeração própria e pelo número de registro ou matrícula no registro oficial competente, dispensada, no caso de imóveis, a indicação das respectivas confrontações. <BR><BR>§ 4º No caso de emissão escritural, admite-se a utilização das formas previstas na legislação específica quanto à assinatura em documentos eletrônicos, como senha eletrônica, biometria e código de autenticação emitido por dispositivo pessoal e intransferível, inclusive para fins de validade, eficácia e executividade. <BR><BR>§ 5º A CPR poderá ser aditada, ratificada e retificada por termo aditivo que a integre, datado e assinado pelo emitente, pelo garantidor e pelo credor, com a formalização e o registro na forma do título original, conforme o art. 3º-A desta Lei, fazendo-se, na cédula, menção a essa circunstância. <BR><BR>§ 6º No caso da CPR com liquidação física, os procedimentos para definição da qualidade do produto obedecerão ao disposto em regulamento do Poder Executivo, quando houver. <BR><BR>§ 7º O Poder Executivo poderá regulamentar o disposto neste artigo." (NR)</DIR>
+<DIR>"Art. 3º-A.&nbsp;A CPR poderá ser emitida sob a forma cartular ou escritural. <BR><BR>§ 1º A emissão na forma escritural, que poderá valer-se de processos eletrônicos ou digitais, será objeto de lançamento em sistema eletrônico de escrituração gerido por entidade autorizada pelo Banco Central do Brasil a exercer a atividade de escrituração. <BR><BR>§ 2º A CPR emitida sob a forma cartular assumirá a forma escritural enquanto permanecer depositada em entidade autorizada pelo Banco Central do Brasil a exercer a atividade de depósito centralizado de ativos financeiros ou de valores mobiliários. <BR><BR>§ 3º Os negócios ocorridos durante o período em que a CPR emitida sob a forma cartular estiver depositada não serão transcritos no verso do título, cabendo ao sistema referido no § 1º deste artigo o controle da titularidade. <BR><BR>§ 4º A CPR será considerada ativo financeiro, para os fins de registro e de depósito em entidades autorizadas pelo Banco Central do Brasil a exercer tais atividades."</DIR>
+<DIR>"Art. 3º-B.&nbsp;Compete ao Banco Central do Brasil: <BR><BR>I - estabelecer as condições para o exercício da atividade de escrituração de que trata o § 1º do art. 3º-A desta Lei; e <BR><BR>II - autorizar e supervisionar o exercício da atividade prevista no inciso I do <I>caput</I> deste artigo. <BR><BR>§ 1º A autorização de que trata o inciso II do <I>caput</I> deste artigo poderá, a critério do Banco Central do Brasil, ser concedida por segmento, por espécie ou por grupos de entidades que atendam a critérios específicos, dispensada a autorização individualizada. <BR><BR>§ 2º A entidade de que trata o § 1º do art. 3º-A desta Lei deverá expedir, mediante solicitação: <BR><BR>I - certidão de inteiro teor do título, inclusive para fins de protesto, de procedimento extrajudicial ou de medida judicial, mesmo contra garantidores; <BR><BR>II - certidão de registro de cédulas escrituradas em nome do emitente e garantidor, quando aplicável. <BR><BR>§ 3º As certidões previstas no § 2º deste artigo podem ser emitidas de forma eletrônica, observados requisitos de segurança que garantam a autenticidade e a integridade do documento, que lhe conferem liquidez, certeza e exigibilidade."</DIR>
+<DIR>"Art. 3º-C.&nbsp;O sistema eletrônico de escrituração de que trata o § 1º do art. 3º-A desta Lei fará constar: <BR><BR>I - os requisitos essenciais do título; <BR><BR>II - as transferências de titularidade realizadas; <BR><BR>III - os aditamentos, as ratificações e as retificações; <BR><BR>IV - a inclusão de notificações, de cláusulas contratuais e de outras informações; <BR><BR>V - a forma de liquidação de entrega ajustada no título; <BR><BR>VI - a entrega ou pagamento em até 30 (trinta) dias após suas ocorrências; e <BR><BR>VII - as garantias do título. <BR><BR><I>Parágrafo único. </I>As garantias dadas na CPR, ou, ainda, a constituição de ônus e gravames sobre o título, deverão ser informadas no sistema ao qual se refere o § 1º do art. 3º-A desta Lei."</DIR>
+<DIR>"Art. 3º-D.&nbsp;A CPR poderá ser negociada, desde que registrada ou depositada em entidade autorizada pelo Banco Central do Brasil a exercer a atividade de registro ou depósito centralizado de ativos financeiros. <BR><BR><I>Parágrafo único. </I>A CPR será considerada ativo financeiro e a operação ficará isenta do imposto sobre operações de crédito, câmbio e seguro, ou relativas a títulos ou valores mobiliários, na hipótese de ocorrência da negociação de que trata o <I>caput</I> deste artigo."</DIR>
+<DIR>"Art. 3º-E. As infrações às normas legais regulamentares que regem a atividade de escrituração eletrônica sujeitam a entidade responsável pelo sistema eletrônico de escrituração, os seus administradores e os membros de seus órgãos estatutários ou contratuais ao disposto na Lei nº 13.506, de 13 de novembro de 2017."</DIR>
+<DIR>"Art. 4º&nbsp;A CPR é título líquido e certo, exigível pela quantidade e qualidade de produto ou pelo valor nela previsto, no caso de liquidação financeira. </DIR>
+<DIR><EM>Parágrafo único. </EM>A CPR admite prestação única ou parcelada, hipótese em que as condições e o cronograma de cumprimento das obrigações deverão estar previstos no título." (NR) <BR></DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<DIR>"Art. 4º-A.&nbsp;A emissão de CPR com liquidação financeira deverá observar as seguintes condições: <BR><BR>I - que sejam explicitados, em seu corpo, os referenciais necessários à clara identificação do preço ou do índice de preços, da taxa de juros, fixa ou flutuante, da atualização monetária ou da variação cambial a serem utilizados no resgate do título, bem como a instituição responsável por sua apuração ou divulgação, a praça ou o mercado de formação do preço e o nome do índice; <BR>........................................................................................................................................ <BR><BR>§ 1º A CPR com liquidação financeira é título líquido e certo, exigível, na data de seu vencimento, pelo resultado da multiplicação do preço praticado para o produto, aplicados eventuais índices de preços ou de conversão de moedas apurados segundo os critérios previstos neste artigo, pela quantidade do produto especificado. <BR>........................................................................................................................................ <BR><BR>§ 3º A CPR com liquidação financeira poderá ser emitida com cláusula de correção pela variação cambial, podendo o Conselho Monetário Nacional regulamentar o assunto." (NR)</DIR>
+<DIR>"Art. 4º-B.&nbsp;A liquidação do pagamento em favor do legítimo credor, por qualquer meio de pagamento existente no âmbito do Sistema de Pagamentos Brasileiro, constituirá prova de pagamento total ou parcial da CPR emitida sob a forma escritural. <BR><BR><I>Parágrafo único. </I>A prova de pagamento de que trata o <I>caput</I> deste artigo será informada no sistema eletrônico de escrituração de que trata o § 1º do art. 3º-A desta Lei, com referência expressa à CPR amortizada ou liquidada."</DIR>
+<DIR>"Art. 5º&nbsp;A CPR admite a constituição de quaisquer dos tipos de garantia previstos na legislação, devendo ser observado o disposto nas normas que as disciplinam, salvo na hipótese de conflito, quando prevalecerá esta Lei. <BR><BR>I - (revogado); <BR><BR>II - (revogado); <BR><BR>III - (revogado). <BR><BR><I>Parágrafo único. </I>A informação eventualmente prestada pelo emitente sobre a essencialidade dos bens móveis e imóveis dados em garantia fiduciária a sua atividade empresarial deverá constar na cédula a partir do momento de sua emissão." (NR)</DIR>
+<DIR>"Art. 8º&nbsp;.................................................................................................................. <BR><BR>§ 1º A alienação fiduciária de produtos agropecuários e de seus subprodutos poderá recair sobre bens presentes ou futuros, fungíveis ou infungíveis, consumíveis ou não, cuja titularidade pertença ao fiduciante, devedor ou terceiro garantidor, e sujeitase às disposições previstas na Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil), e na legislação especial a respeito do penhor, do penhor rural e do penhor agrícola e mercantil e às disposições sobre a alienação fiduciária de bens infungíveis, em tudo o que não for contrário ao disposto nesta Lei. <BR><BR>§ 2º O beneficiamento ou a transformação dos gêneros agrícolas dados em alienação fiduciária não extinguem o vínculo real que se transfere, automaticamente, para os produtos e subprodutos resultantes de beneficiamento ou transformação. <BR><BR>§ 3º Em caso de necessidade de busca e apreensão dos bens alienados fiduciariamente aplicar-se-á o disposto nos arts. 3º e seguintes do Decreto-Lei nº 911, de 1º de outubro de 1969." (NR)</DIR>
+<DIR>"Art. 10.&nbsp;................................................................................................................ <BR><BR><I>Parágrafo único. </I>No caso de CPR emitida sob forma escritural, a transferência de titularidade da cédula produzirá os mesmos efeitos jurídicos do endosso." (NR)</DIR>
+<DIR>"Art. 12.&nbsp;A CPR emitida a partir de 1º de janeiro de 2021, bem como seus aditamentos, para ter validade e eficácia, deverá ser registrada ou depositada, em até 10 (dez) dias úteis da data de emissão ou aditamento, em entidade autorizada pelo Banco Central do Brasil a exercer a atividade de registro ou de depósito centralizado de ativos financeiros ou de valores mobiliários. <BR><BR>§ 1º Sem prejuízo do disposto no <I>caput</I> deste artigo, a hipoteca, o penhor rural e a alienação fiduciária sobre bem imóvel garantidores da CPR serão levados a registro no cartório de registro de imóveis em que estiverem localizados os bens dados em garantia. <BR><BR>§ 2º A validade e eficácia da CPR não dependem de registro em cartório, que fica dispensado, mas as garantias reais a ela vinculadas ficam sujeitas, para valer contra terceiros, à averbação no cartório de registro de imóveis em que estiverem localizados os bens dados em garantia, devendo ser efetuada no prazo de 3 (três) dias úteis, contado da apresentação do título ou certidão de inteiro teor, sob pena de responsabilidade funcional do oficial encarregado de promover os atos necessários. <BR><BR>§ 3º A cobrança de emolumentos e custas cartorárias relacionada ao registro de garantias vinculadas à CPR será regida pelas normas aplicáveis ao registro de garantias vinculadas à Cédula de Crédito Rural, de que trata o Decreto-Lei nº 167, de 14 de fevereiro de 1967. <BR><BR>§ 4º A CPR, na hipótese de ser garantida por alienação fiduciária sobre bem móvel, será averbada no cartório de registro de títulos e documentos do domicílio do emitente. <BR><BR>§ 5º Fica o Conselho Monetário Nacional autorizado a: <BR><BR>I - estabelecer normas complementares para o cumprimento do disposto no <I>caput</I> deste artigo, inclusive acerca das informações requeridas para o registro ou o depósito; <BR><BR>II - dispensar o registro ou o depósito de que trata o <I>caput</I> deste artigo, com base em critérios de: </DIR>
+<DIR><EM>a) </EM>valor; <BR><EM>b) </EM>forma de liquidação; e <BR><EM>c) </EM>características do emissor. <BR><BR>§ 6º A dispensa de que trata o inciso II do § 5º deste artigo não se aplica à CPR emitida após 31 de dezembro de 2023." (NR)</DIR>
+<DIR>"Art. 16.&nbsp;A busca e apreensão ou o leilão do bem alienado fiduciariamente, promovidos pelo credor, não elidem posterior execução, inclusive da hipoteca e do penhor constituído na mesma cédula, para satisfação do crédito remanescente. <BR>..............................................................................................................................." (NR)</DIR>
+<DIR>"Art. 17.&nbsp;Pratica crime de estelionato aquele que fizer declarações falsas ou inexatas acerca de sua natureza jurídica ou qualificação, bem como dos bens oferecidos em garantia da CPR, inclusive omitir declaração de já estarem eles sujeitos a outros ônus ou responsabilidade de qualquer espécie, até mesmo de natureza fiscal." (NR)</DIR><BR><BR>
+<CENTER>CAPÍTULO VII <BR>DOS TÍTULOS DO AGRONEGÓCIO </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;A Lei nº 11.076, de 30 de dezembro de 2004, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 3º&nbsp;O CDA e o WA poderão ser emitidos sob a forma cartular ou escritural. <BR><BR>I - (revogado); <BR><BR>II - (revogado). <BR><BR>§ 1º A emissão na forma escritural ocorrerá por meio do lançamento em sistema eletrônico de escrituração gerido por entidade autorizada pelo Banco Central do Brasil a exercer atividade de escrituração. <BR><BR>§ 2º O CDA e o WA emitidos sob a forma cartular assumirão a forma escritural enquanto permanecerem depositados em depositário central." (NR)</DIR>
+<DIR>"Art. 3º-A.&nbsp;Compete ao Banco Central do Brasil: <BR><BR>I - estabelecer as condições para o exercício da atividade de escrituração de que trata o § 1º do art. 3º desta Lei; e <BR><BR>II - autorizar e supervisionar o exercício da atividade prevista no inciso I do <I>caput</I> deste artigo. <BR><BR>§ 1º A autorização de que trata o inciso II do <I>caput</I> deste artigo poderá, a critério do Banco Central do Brasil, ser concedida por segmento, por espécie ou por grupos de entidades que atendam a critérios específicos, dispensada a autorização individualizada.<BR><BR>§ 2º A entidade responsável pela escrituração de que trata o inciso I do <I>caput</I> deste artigo expedirá, mediante solicitação, certidão de inteiro teor do título, inclusive para fins de protesto e de execução. <BR><BR>§ 3º A certidão de que trata o § 2º deste artigo poderá ser emitida na forma eletrônica, observados os requisitos de segurança que garantam a autenticidade e a integridade do documento." (NR)</DIR>
+<DIR>"Art. 3º-B.&nbsp;A liquidação do pagamento em favor do legítimo credor, por qualquer meio de pagamento existente no âmbito do Sistema de Pagamentos Brasileiro, constituirá prova de pagamento total ou parcial do WA emitido sob a forma escritural. <BR><BR><I>Parágrafo único. </I>A prova de pagamento de que trata o <I>caput</I> deste artigo será informada no sistema eletrônico de escrituração de que trata o § 1º do art. 3º desta Lei, com referência expressa ao WA amortizado ou liquidado." (NR)</DIR>
+<DIR>"Art. 3º-C.&nbsp;O sistema eletrônico de escrituração a que se refere o § 1º do art. 3º desta Lei fará constar: <BR><BR>I - os requisitos essenciais do título; <BR><BR>II - o endosso e a cadeia de endossos, se houver; <BR><BR>III - os aditamentos, as ratificações e as retificações; e <BR><BR>IV - a inclusão de notificações, de cláusulas contratuais e de outras informações. <BR><BR><I>Parágrafo único. </I>Na hipótese de serem constituídos gravames e ônus, tal ocorrência será informada no sistema eletrônico de escrituração de que trata o § 1º do art. 3º desta Lei."</DIR>
+<DIR>"Art. 4º&nbsp;.................................................................................................................<BR>.................................................................................................................................. <BR><BR>III - entidade registradora autorizada: entidade autorizada pelo Banco Central do Brasil ou pela Comissão de Valores Mobiliários, no âmbito de suas competências, a exercer a atividade de registro de ativos financeiros e de valores mobiliários de que trata a Lei nº 12.810, de 15 de maio de 2013; <BR><BR>IV - depositário central: entidade autorizada pelo Banco Central do Brasil ou pela Comissão de Valores Mobiliários, no âmbito de suas competências, a exercer a atividade de depósito centralizado de ativos financeiros e de valores mobiliários de que trata a Lei nº 12.810, de 15 de maio de 2013; e <BR><BR>V - produtos agropecuários: produtos agropecuários, seus derivados, subprodutos e resíduos de valor econômico de que trata a Lei nº 9.973, de 29 de maio de 2000." (NR) </DIR><BR><BR>
+<DIR>
+<CENTER><B>"Seção II </CENTER></B>
+<CENTER><B>Da Emissão, do Depósito Centralizado e da Circulação dos Títulos" </CENTER></B></DIR><BR><BR>
+<DIR>"Art. 6º&nbsp;.................................................................................................................<BR>................................................................................................................................ <BR><BR>§ 2º Os documentos mencionados no § 1º deste artigo serão arquivados pelo depositário junto com as suas respectivas vias do CDA e do WA. <BR>.............................................................................................................................." (NR)</DIR>
+<DIR>"Art. 8º&nbsp;O CDA e o WA, quando emitidos sob a forma cartular, o serão em, no mínimo, 2 (duas) vias, com as seguintes destinações:<BR>............................................................................................................................" (NR)</DIR>
+<DIR>"Art. 9º&nbsp;................................................................................................................. <BR><BR>§ 1º O emitente é responsável pela existência, liquidez, certeza e exigibilidade dos direitos indicados no CDA e no WA. <BR><BR>§ 2º Fica vedado ao emitente opor ao terceiro titular do CDA ou do WA as exceções pessoais oponíveis ao depositante." (NR)</DIR>
+<DIR>"Art. 12.&nbsp;................................................................................................................. <BR><BR><I>Parágrafo único. </I>Na hipótese de o titular do CDA e do correspondente WA diferir do depositante, o produto objeto desses títulos não poderá ser confundido com bem de propriedade do depositante ou sujeitar-se aos efeitos de sua recuperação judicial ou falência, prevalecendo os direitos de propriedade sobre a coisa ao endossatário final que se apresentar ao depositário, nos termos do inciso II do § 1º do art. 6º e do § 5º do art. 21 desta Lei." (NR)</DIR><BR>
+<DIR>"Art. 13.&nbsp;...............................................................................................................</DIR>
+<DIR><EM>Parágrafo único</EM>. As prorrogações serão anotadas nas segundas vias em poder do depositário do produto agropecuário e eletronicamente nos registros do depositário central." (NR)</DIR><BR><BR>
+<DIR>
+<CENTER><B>"Subseção II </CENTER></B>
+<CENTER><B>Do Depósito Centralizado" </B><BR><BR></CENTER></DIR>
+<DIR>"Art. 15.&nbsp;É obrigatório o depósito do CDA e do WA em depositário central autorizado pelo Banco Central do Brasil, no prazo de 30 (trinta) dias, contado da data de emissão dos títulos, do qual constará o número de controle do título de que trata o inciso II do <I>caput</I> do art. 5º desta Lei. <BR><BR>§ 1º O depósito de CDA e de WA emitidos sob a forma cartular em depositário central será precedido da entrega dos títulos à custódia de instituição legalmente autorizada para esse fim, por meio de endosso-mandato. <BR><BR>§ 2º A instituição custodiante é responsável por efetuar o endosso do CDA e do WA ao credor por ocasião da baixa do depósito no depositário central. <BR>....................................................................................................................................... <BR><BR>§ 4º O Conselho Monetário Nacional poderá estabelecer outras condições para o depósito do CDA e do WA de que trata este artigo." (NR)</DIR><BR>
+<DIR>"Art. 17.&nbsp;Por ocasião da primeira negociação do WA separado do CDA, o depositário central consignará em seus registros o valor da negociação do WA, a taxa de juros e a data de vencimento ou, ainda, o valor a ser pago no vencimento ou o indicador que será utilizado para o cálculo do valor da dívida. <BR><BR>§ 1º Os lançamentos dos negócios realizados com o CDA e com o WA unidos ou separados serão atualizados em meio eletrônico pelo depositário central.<BR>.............................................................................................................................." (NR)</DIR>
+<DIR>"Art. 19.&nbsp;Os negócios ocorridos durante período em que o CDA e o WA emitidos sob a forma cartular estiverem depositados em depositário central não serão transcritos no verso dos títulos." (NR)</DIR>
+<DIR>"Art. 22.&nbsp;Para emissão de CDA e WA, o seguro obrigatório de que trata o § 6º do art. 6º da Lei nº 9.973, de 29 de maio de 2000, deverá ter cobertura contra incêndio, raio, explosão de qualquer natureza, danos elétricos, vendaval, alagamento, inundação, furacão, ciclone, tornado, granizo, quedas de aeronaves, impacto de veículos terrestres e fumaça. <BR>................................................................................................................................" (NR)</DIR>
+<DIR>"Art. 23.&nbsp;................................................................................................................. <BR>................................................................................................................................... <BR><BR>§ 3º Os títulos de crédito de que trata este artigo poderão ser emitidos com cláusula de correção pela variação cambial desde que integralmente vinculados a direitos creditórios com cláusula de correção na mesma moeda. <BR><BR>§ 4º O Conselho Monetário Nacional poderá dispor acerca da emissão dos títulos de crédito de que trata este artigo com cláusula de correção pela variação cambial." (NR) </DIR><BR>
+<DIR>"Art. 24.&nbsp;................................................................................................................ <BR><BR>§ 1º O CDCA é de emissão exclusiva de cooperativas agropecuárias e de outras pessoas jurídicas que exerçam a atividade de comercialização, beneficiamento ou industrialização de produtos, insumos, máquinas e implementos agrícolas, pecuários, florestais, aquícolas e extrativos. <BR><BR>§ 2º (Revogado). <BR><BR>§ 3º (Revogado)." (NR)</DIR>
+<DIR>"Art. 25.&nbsp;................................................................................................................ <BR><BR>§ 1º Os direitos creditórios vinculados ao CDCA: <BR><BR>I - serão registrados ou depositados em entidade autorizada pelo Banco Central do Brasil ou pela Comissão de Valores Mobiliários a exercer a atividade de registro ou de depósito centralizado de ativos financeiros e de valores mobiliários; <BR><BR>II - serão custodiados em instituições financeiras ou outras instituições autorizadas pela Comissão de Valores Mobiliários a prestar serviço de custódia de valores mobiliários; e <BR><BR>III - poderão ser formalizados em meio físico ou eletrônico e, quando correspondentes a títulos de crédito, sob a forma cartular ou escritural. <BR>..................................................................................................................................... <BR><BR>§ 4º .................................................................................................................. <BR><BR>I - integralmente vinculado a direitos creditórios com cláusula de correção na mesma moeda; e <BR><BR>II - emitido em favor de: </DIR>
+<DIR><EM>a) </EM>investidor não residente, observado o disposto no § 5º deste artigo; ou <BR><EM>b) </EM>companhia securitizadora de direitos creditórios do agronegócio, para o fim exclusivo de vinculação a CRA com cláusula equivalente; <BR><BR>III - (revogado). <BR><BR>§ 5º O Conselho Monetário Nacional poderá estabelecer outras condições para a emissão de CDCA com cláusula de correção pela variação cambial, inclusive sobre a emissão em favor de investidor residente e o rol de produtos admitidos nos direitos creditórios objeto de CDCA." (NR)</DIR>
+<DIR>"Art. 27.&nbsp;................................................................................................................. <BR><BR>§ 1º Os direitos creditórios vinculados à LCA: <BR><BR>I - deverão ser registrados ou depositados em entidade autorizada pelo Banco Central do Brasil ou pela Comissão de Valores Mobiliários a exercer a atividade de registro ou de depósito centralizado de ativos financeiros e de valores mobiliários; e <BR><BR>II - poderão ser mantidos em custódia, hipótese em que se aplica o disposto no inciso II do § 1º e no § 2º do art. 25 desta Lei. <BR><BR>§ 2º Observadas as condições estabelecidas pelo Conselho Monetário Nacional, poderão ser utilizados para o cumprimento do direcionamento de recursos da LCA para o crédito rural, de que trata o art. 21 da Lei nº 4.829, de 5 de novembro de 1965: <BR><BR>I - Cédula de Produto Rural (CPR) emitida por produtor rural, inclusive as adquiridas por instituições financeiras de terceiros; <BR><BR>II - quotas de fundos garantidores de operações de crédito com produtores rurais, pelo valor da integralização, desde que as operações de crédito garantidas sejam crédito rural; <BR><BR>III - CDCA e CRA, desde que os direitos creditórios vinculados sejam integralmente originados de negócios em que o produtor rural seja parte direta; e <BR><BR>IV - CDA e WA, desde que tenham sido emitidos em favor de produtor rural." (NR) </DIR>
+<DIR>"Art. 33.&nbsp;Além do penhor constituído na forma do art. 32 desta Lei, o CDCA e a LCA poderão contar com quaisquer garantias adicionais previstas na legislação e livremente pactuadas entre as partes, podendo ser constituídas no próprio título ou em documento à parte. <BR><BR><I>Parágrafo único. </I>Se a garantia for constituída no próprio título, a descrição dos bens poderá ser feita em documento à parte, assinado pelos representantes legais do emitente, com menção a essa circunstância no contexto dos títulos." (NR)</DIR>
+<DIR>"Art. 35.&nbsp;O CDCA e a LCA poderão ser emitidos sob a forma escritural, hipótese em que tais títulos deverão ser registrados ou depositados em entidade autorizada a exercer a atividade de registro ou de depósito centralizado de ativos financeiros e de valores mobiliários. <BR><BR>I - (revogado); <BR><BR>II - (revogado). <BR><BR><I>Parágrafo único. </I>(Revogado)." (NR)</DIR>
+<DIR>"Art. 35-A.&nbsp;A emissão escritural do CDCA poderá, alternativamente, ocorrer por meio do lançamento em sistema eletrônico de escrituração gerido por entidade autorizada pelo Banco Central do Brasil a exercer a atividade de escrituração."</DIR>
+<DIR>"Art. 35-B.&nbsp;Compete ao Banco Central do Brasil: <BR><BR>I - estabelecer as condições para o exercício da atividade de escrituração de que trata o art. 35-A desta Lei; e <BR><BR>II - autorizar e supervisionar o exercício da atividade prevista no inciso I do <I>caput</I> deste artigo. <BR><BR>§ 1º A autorização de que trata o inciso II do <I>caput</I> deste artigo poderá, a critério do Banco Central do Brasil, ser concedida por segmento, por espécie ou por grupos de entidades que atendam a critérios específicos, sendo dispensável a autorização individualizada. <BR><BR>§ 2º A entidade responsável pela escrituração de que trata o art. 35-A desta Lei expedirá, mediante solicitação, certidão de inteiro teor do título, inclusive para fins de protesto e de execução. <BR><BR>§ 3º A certidão de que trata o § 2º deste artigo poderá ser emitida na forma eletrônica, observados os requisitos de segurança que garantam a autenticidade e a integridade do documento."</DIR>
+<DIR>"Art. 35-C.&nbsp;A liquidação do pagamento em favor do legítimo credor, por qualquer meio de pagamento existente no âmbito do Sistema de Pagamentos Brasileiro, constituirá prova de pagamento, total ou parcial, do CDCA emitido sob a forma escritural. <BR><BR><I>Parágrafo único. </I>A prova de pagamento de que trata o <I>caput</I> deste artigo será informada no sistema eletrônico de escrituração de que trata o art. 35-A desta Lei, com referência expressa ao CDCA amortizado ou liquidado."</DIR>
+<DIR>"Art. 35-D.&nbsp;O sistema eletrônico de escrituração de que trata o art. 35-A desta Lei fará constar: <BR><BR>I - os requisitos essenciais do título; <BR><BR>II - o endosso e a cadeia de endossos, se houver; <BR><BR>III - os aditamentos, as ratificações e as retificações; e <BR><BR>IV - a inclusão de notificações, de cláusulas contratuais e de outras informações. <BR><BR><I>Parágrafo único. </I>Na hipótese de serem constituídos gravames e ônus, tal ocorrência será informada no sistema de que trata o art. 35-A desta Lei."</DIR>
+<DIR>"Art. 36.&nbsp;................................................................................................................ <BR><BR><I>Parágrafo único. </I>O CRA é de emissão exclusiva das companhias securitizadoras de direitos creditórios do agronegócio, nos termos do § 1º do art. 23 desta Lei." (NR)</DIR>
+<DIR>"Art. 37. ................................................................................................................. <BR><BR>§ 1º O CRA adotará a forma escritural, observado o disposto nos arts. 35, 35-A, 35- B, 35-C e 35-D desta Lei. <BR>.......................................................................................................................................... <BR><BR>§ 3º .................................................................................................................... <BR><BR>I - integralmente vinculado a direitos creditórios com cláusula de correção na mesma moeda; e <BR><BR>II - emitido em favor de investidor não residente, observado o disposto no § 4º deste artigo; <BR><BR>III - (revogado). <BR><BR>§ 4º O Conselho Monetário Nacional poderá estabelecer outras condições para a emissão de CRA com cláusula de correção pela variação cambial, inclusive sobre a emissão em favor de investidor residente. <BR><BR>§ 5º Nas distribuições realizadas no exterior, o CRA poderá ser registrado em entidade de registro e de liquidação financeira situada no país de distribuição, desde que a entidade seja: <BR><BR>I - autorizada em seu país de origem; e <BR><BR>II - supervisionada por autoridade estrangeira com a qual a Comissão de Valores Mobiliários tenha firmado acordo de cooperação mútua que permita intercâmbio de informações sobre operações realizadas nos mercados por ela supervisionados, ou que seja signatária de memorando multilateral de entendimentos da Organização Internacional das Comissões de Valores." (NR)</DIR>
+<DIR>"Art. 52-A.&nbsp;As infrações às normas legais e regulamentares que regem a atividade de escrituração eletrônica sujeitam a entidade responsável pelo sistema eletrônico de escrituração, os seus administradores e os membros de seus órgãos estatutários ou contratuais ao disposto na Lei nº 13.506, de 13 de novembro de 2017."</DIR><BR><BR>
+<CENTER>CAPÍTULO VIII</CENTER>
+<CENTER>&nbsp;DA ESCRITURAÇÃO DE TÍTULOS DE CRÉDITO </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;A Lei nº 10.931, de 2 de agosto de 2004, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 12.&nbsp;................................................................................................................ <BR>.................................................................................................................................. <BR><BR>§ 2º A LCI poderá ser emitida sob a forma escritural, por meio do lançamento em sistema eletrônico do emissor, e deverá ser registrada ou depositada em entidade autorizada pelo Banco Central do Brasil a exercer a atividade de registro ou de depósito centralizado de ativos financeiros." (NR)</DIR>
+<DIR>"Art. 18.&nbsp;................................................................................................................<BR>.................................................................................................................................... <BR><BR>§ 4º A emissão da CCI sob a forma escritural ocorrerá por meio de escritura pública ou instrumento particular, que permanecerá custodiado em instituição financeira. <BR><BR>§ 4º-A. A negociação da CCI emitida sob forma escritural ou a substituição da instituição custodiante de que trata o § 4º deste artigo será precedida de registro ou depósito em entidade autorizada pelo Banco Central do Brasil a exercer a atividade de registro ou de depósito centralizado de ativos financeiros. <BR><BR>§ 4º-B. O Conselho Monetário Nacional poderá estabelecer as condições para o registro e o depósito centralizado de CCI e a obrigatoriedade de depósito da CCI em entidade autorizada pelo Banco Central do Brasil a exercer a atividade de depósito centralizado de ativos financeiros. <BR><BR>§ 4º-C. Na hipótese de a CCI ser liquidada antes de ser negociada, a instituição custodiante declarará a inexistência do registro ou do depósito de que trata o § 4º-A deste artigo, para fins do disposto no art. 24 desta Lei. <BR>.............................................................................................................................." (NR)</DIR>
+<DIR>"Art. 22.&nbsp;A cessão do crédito representado por CCI poderá ocorrer por meio de sistema de entidade autorizada pelo Banco Central do Brasil a exercer a atividade de depósito centralizado de ativos financeiros na qual a CCI tenha sido depositada. <BR>..............................................................................................................................." (NR)</DIR>
+<DIR>"Art. 23.&nbsp;A CCI, objeto de securitização nos termos da Lei nº 9.514, de 20 de novembro de 1997, será identificada no respectivo Termo de Securitização de Créditos, mediante indicação do seu valor, número, série e instituição custodiante, dispensada a enunciação das informações já constantes da Cédula, ou nos controles das entidades mencionadas no § 4º-A do art. 18 desta Lei. <BR>..............................................................................................................................." (NR)</DIR>
+<DIR>"Art. 27-A.&nbsp;A Cédula de Crédito Bancário poderá ser emitida sob a forma escritural, por meio do lançamento em sistema eletrônico de escrituração. <BR><BR><I>Parágrafo único. </I>O sistema eletrônico de escrituração de que trata o <I>caput</I> deste artigo será mantido em instituição financeira ou em outra entidade autorizada pelo Banco Central do Brasil a exercer a atividade de escrituração eletrônica."</DIR>
+<DIR>"Art. 27-B.&nbsp;Compete ao Banco Central do Brasil: <BR><BR>I - estabelecer as condições para o exercício da atividade de escrituração eletrônica de que trata o parágrafo único do art. 27-A desta Lei; e <BR><BR>II - autorizar e supervisionar o exercício da atividade prevista no inciso I do <I>caput</I> deste artigo. <BR><BR>§ 1º A autorização de que trata o parágrafo único do art. 27-A desta Lei poderá, a critério do Banco Central do Brasil, ser concedida por segmento, por espécie ou por grupos de entidades que atendam a critérios específicos, dispensada a concessão de autorização individualizada. <BR><BR>§ 2º As infrações às normas legais e regulamentares que regem a atividade de escrituração eletrônica sujeitam a entidade responsável pelo sistema eletrônico de escrituração, os seus administradores e os membros de seus órgãos estatutários ou contratuais ao disposto na Lei nº 13.506, de 13 de novembro de 2017."</DIR>
+<DIR>"Art. 27-C.&nbsp;A entidade responsável pelo sistema eletrônico de escrituração de que trata o art. 27-A desta Lei expedirá, mediante solicitação de seu titular, certidão de inteiro teor do título, a qual corresponderá a título executivo extrajudicial. <BR><BR><I>Parágrafo único. </I>A certidão de que trata o <I>caput</I> deste artigo poderá ser emitida na forma eletrônica, observados os requisitos de segurança que garantam a autenticidade e a integridade do documento."</DIR>
+<DIR>"Art. 27-D.&nbsp;O Banco Central do Brasil poderá regulamentar a emissão, a assinatura, a negociação e a liquidação da Cédula de Crédito Bancário emitida sob a forma escritural."</DIR>
+<DIR>"Art. 29.&nbsp;................................................................................................................. <BR>............................................................................................................................... <BR><BR>§ 2º Na hipótese de emissão sob a forma cartular, a Cédula de Crédito Bancário será emitida em tantas vias quantas forem as partes que nela intervierem, assinadas pelo emitente e pelo terceiro garantidor, se houver, ou por seus respectivos mandatários, e cada parte receberá uma via.<BR>.......................................................................................................................................... <BR><BR>§ 5º A assinatura de que trata o inciso VI do <I>caput</I> deste artigo poderá ocorrer sob a forma eletrônica, desde que garantida a identificação inequívoca de seu signatário." (NR) </DIR>
+<DIR>"Art. 42-A.&nbsp;Na hipótese de Cédula de Crédito Bancário emitida sob a forma escritural, o sistema eletrônico de escrituração de que trata o art. 27-A desta Lei fará constar: <BR><BR>I - a emissão do título, com seus requisitos essenciais; <BR><BR>II - a forma de pagamento ajustada no título; <BR><BR>III - o endosso em preto de que trata o § 1º do art. 29 desta Lei e a cadeia de endossos, se houver; <BR><BR>IV - os aditamentos, as retificações e as ratificações de que trata o § 4º do art. 29 desta Lei; <BR><BR>V - a inclusão de notificações, de cláusulas contratuais, de informações, inclusive sobre o fracionamento, quando houver, ou de outras declarações referentes à Cédula de Crédito Bancário ou ao certificado de que trata o art. 43 desta Lei; e <BR><BR>VI - as ocorrências de pagamento, se houver. <BR><BR>§ 1º Na hipótese de serem constituídos garantias e quaisquer outros gravames e ônus, tais ocorrências serão informadas no sistema eletrônico de escrituração de que trata o art. 27-A desta Lei. <BR><BR>§ 2º As garantias dadas na Cédula de Crédito Bancário ou, ainda, a constituição de gravames e ônus sobre o título deverão ser informadas no sistema ao qual se refere o art. 27-A desta Lei."</DIR>
+<DIR>"Art. 42-B.&nbsp;Para fins da cobrança de emolumentos e custas cartorárias relacionadas ao registro da garantia, fica a Cédula de Crédito Bancário, quando utilizada para a formalização de operações de crédito rural, equiparada à Cédula de Crédito Rural de que trata o Decreto-Lei nº 167, de 14 de fevereiro de 1967."</DIR>
+<DIR>"Art. 43.&nbsp;As instituições financeiras, nas condições estabelecidas pelo Conselho Monetário Nacional, poderão emitir título representativo das Cédulas de Crédito Bancário por elas mantidas em custódia, do qual constarão: <BR>...................................................................................................................................... <BR><BR>II - o nome e a qualificação do custodiante das Cédulas de Crédito Bancário; <BR>........................................................................................................................................ <BR><BR>IV - a especificação das cédulas custodiadas, o nome dos seus emitentes e o valor, o lugar e a data do pagamento do crédito por elas incorporado; <BR>......................................................................................................................................... <BR><BR>VI - a declaração de que a instituição financeira, na qualidade e com as responsabilidades de custodiante e mandatária do titular do certificado, promoverá a cobrança das Cédulas de Crédito Bancário, e a declaração de que as cédulas custodiadas, o produto da cobrança do seu principal e os seus encargos serão entregues ao titular do certificado somente com a apresentação deste; <BR><BR>VII - o lugar da entrega do objeto da custódia; e <BR><BR>VIII - a remuneração devida à instituição financeira pela custódia das cédulas objeto da emissão do certificado, se convencionada. <BR><BR>§ 1º A instituição financeira responderá pela origem e pela autenticidade das Cédulas de Crédito Bancário nela custodiadas. <BR>........................................................................................................................................ <BR><BR>§ 3º O certificado poderá ser emitido sob forma escritural, por meio do lançamento no sistema eletrônico de escrituração, hipótese em que se aplica, no que couber, com as devidas adaptações, o disposto nos arts. 27-A, 27-B, 27-C, 27-D e 42-A desta Lei. <BR><BR>§ 4º O certificado será transferido somente por meio de endosso, ainda que por intermédio de sistema eletrônico de escrituração, hipótese em que a transferência deverá ser datada e assinada por seu titular ou mandatário com poderes especiais e, na hipótese de certificado cartular, averbada na instituição financeira emitente, no prazo de 2 (dois) dias, contado da data do endosso.<BR>........................................................................................................................................ <BR><BR>§ 6º O endossatário do certificado, ainda que não seja instituição financeira ou entidade a ela equiparada, fará jus a todos os direitos nele previstos, incluídos a cobrança de juros e os demais encargos. <BR><BR>§ 7º O certificado poderá representar: <BR><BR>I - uma única cédula; <BR><BR>II - um agrupamento de cédulas; ou <BR><BR>III - frações de cédulas. <BR><BR>§ 8º Na hipótese de que trata o inciso III do § 7º deste artigo, o certificado somente poderá representar frações de Cédulas de Crédito Bancário emitidas sob forma escritural, e essa informação deverá constar do sistema de que trata o § 3º deste artigo." (NR)</DIR>
+<DIR>"Art. 45-A.&nbsp;Para fins do disposto no § 1º do art. 2º da Lei nº 6.385, de 7 de dezembro de 1976, a Cédula de Crédito Bancário, o Certificado de Cédulas de Crédito Bancário e a Cédula de Crédito Imobiliário são títulos cambiais de responsabilidade de instituição financeira ou de entidade autorizada a funcionar pelo Banco Central do Brasil, desde que a instituição financeira ou a entidade: <BR><BR>I - seja titular dos direitos de crédito por eles representados; <BR><BR>II - preste garantia às obrigações por eles representadas; ou <BR><BR>III - realize, até a liquidação final dos títulos, o serviço de monitoramento dos fluxos de recursos entre credores e devedores e de eventuais inadimplementos."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;O Decreto-Lei nº 167, de 14 de fevereiro de 1967, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 10.&nbsp;A cédula de crédito rural é título civil, líquido e certo, transferível e de livre negociação, exigível pelo seu valor ou pelo valor de seu endosso, além dos juros, da comissão de fiscalização, se houver, e das demais despesas feitas pelo credor para a segurança, a regularidade e a realização de seu direito creditório.<BR>................................................................................................................................" (NR)</DIR>
+<DIR>"Art. 10-A.&nbsp;A cédula de crédito rural poderá ser emitida sob a forma escritural em sistema eletrônico de escrituração. <BR><BR>§ 1º O sistema eletrônico de escrituração de que trata o <I>caput</I> deste artigo será mantido em entidade autorizada pelo Banco Central do Brasil a exercer a atividade de escrituração. <BR><BR>§ 2º Compete ao Banco Central do Brasil: <BR><BR>I - estabelecer as condições para o exercício da atividade de escrituração de que trata o § 1º deste artigo; e <BR><BR>II - autorizar e supervisionar o exercício da atividade prevista no inciso I deste parágrafo. <BR><BR>§ 3º A autorização de que trata o inciso II do § 2º deste artigo poderá, a critério do Banco Central do Brasil, ser concedida por segmento, por espécie ou por grupos de entidades que atendam a critérios específicos, dispensada a autorização individualizada. <BR><BR>§ 4º As infrações às normas legais e regulamentares que regem a atividade de escrituração eletrônica sujeitam a entidade responsável pelo sistema eletrônico de escrituração, os seus administradores e os membros de seus órgãos estatutários ou contratuais ao disposto na Lei nº 13.506, de 13 de novembro de 2017."</DIR>
+<DIR>"Art. 10-B.&nbsp;A entidade responsável pelo sistema eletrônico de escrituração de que trata o art. 10-A deste Decreto-Lei expedirá, mediante solicitação, certidão de inteiro teor do título, inclusive para fins de protesto e de execução judicial. <BR><BR><I>Parágrafo único. </I>A certidão de que trata o <I>caput</I> deste artigo poderá ser emitida na forma eletrônica, observados os requisitos de segurança que garantam a autenticidade e a integridade do documento."</DIR>
+<DIR>"Art. 10-C.&nbsp;O Banco Central do Brasil poderá regulamentar aspectos relativos à emissão, à negociação e à liquidação da cédula de crédito rural emitida sob a forma escritural."</DIR>
+<DIR>"Art. 10-D.&nbsp;O sistema eletrônico de escrituração de que trata o <I>caput</I> do art. 10-A deste Decreto-Lei fará constar: <BR><BR>I - os requisitos essenciais do título; <BR><BR>II - o endosso e a respectiva cadeia de endossos, se houver; <BR><BR>III - a forma de pagamento ajustada no título; <BR><BR>IV - os aditamentos, as ratificações e as retificações de que trata o art. 12 deste Decreto-Lei; <BR><BR>V - a inclusão de notificações, de cláusulas contratuais, de informações ou de outras declarações referentes à cédula de crédito rural; e <BR><BR>VI - as ocorrências de pagamento, se houver. <BR><BR><I>Parágrafo único. </I>Na hipótese de serem constituídos garantias e quaisquer outros gravames e ônus, tais ocorrências serão informadas no sistema de que trata o art. 10-A deste Decreto-Lei."</DIR>
+<DIR>"Art. 14.&nbsp;.................................................................................................................<BR>................................................................................................................................... <BR><BR>IX - assinatura do emitente ou de representante com poderes especiais, admitida a assinatura sob a forma eletrônica, desde que garantida a identificação inequívoca de seu signatário. <BR>.......................................................................................................................................... <BR><BR>§ 3º Além dos requisitos previstos neste artigo, é vedado ao registrador exigir qualquer outro documento complementar, como avaliação do bem ofertado em garantia, anotação de responsabilidade técnica, reconhecimento de firma ou sinal público. <BR><BR>§ 4º É inexigível, para o registro de operações financeiras, a apresentação de Certidão Negativa de Débito (CND) para comprovação da quitação de créditos tributários, de contribuições federais e de outras imposições pecuniárias compulsórias. <BR><BR>§ 5º É vedado negar o registro do título na hipótese em que o valor da garantia seja inferior ao crédito liberado. <BR><BR>§ 6º As disposições dos §§ 3º, 4º e 5º deste artigo aplicam-se às demais cédulas e instrumentos vinculados a financiamentos rurais." (NR)</DIR>
+<DIR>"Art. 19.&nbsp;Aplicam-se ao penhor constituído pela cédula rural pignoratícia as disposições das Leis nos 10.406, de 10 de janeiro de 2002 (Código Civil), 492, de 30 de agosto de 1937, e 2.666, de 6 de dezembro de 1955, bem como os preceitos legais vigentes relativos a penhor rural e mercantil que não colidirem com este Decreto-Lei." (NR) </DIR>
+<DIR>"Art. 20.&nbsp;................................................................................................................. <BR>................................................................................................................................. <BR><BR>IX - assinatura do emitente ou de representante com poderes especiais, admitida a assinatura sob a forma eletrônica, desde que garantida a identificação inequívoca de seu signatário. <BR>................................................................................................................................" (NR)</DIR>
+<DIR>"Art. 25.&nbsp;.................................................................................................................<BR>.................................................................................................................................. <BR><BR>X - assinatura do emitente ou de representante com poderes especiais, admitida a assinatura sob a forma eletrônica, desde que garantida a identificação inequívoca de seu signatário." (NR)</DIR>
+<DIR>"Art. 27.&nbsp;................................................................................................................. <BR>.................................................................................................................................... <BR><BR>VIII - assinatura do emitente ou de representante com poderes especiais, admitida a assinatura sob a forma eletrônica, desde que garantida a identificação inequívoca de seu signatário." (NR)</DIR>
+<DIR>"Art. 42.&nbsp;.................................................................................................................... <BR><BR>§ 1º A nota promissória rural emitida pelas cooperativas de produção agropecuária em favor de seus cooperados, ao receberem produtos entregues por eles, constitui promessa de pagamento representativa de adiantamento por conta do preço dos produtos recebidos para venda. <BR><BR>§ 2º A nota promissória rural poderá ser emitida sob a forma escritural, mediante lançamento em sistema eletrônico de escrituração, observado, no que couber, o disposto nos arts. 10-A, 10-B, 10-C e 10-D deste Decreto-Lei." (NR)</DIR>
+<DIR>"Art. 43.&nbsp;................................................................................................................. <BR>................................................................................................................................... <BR><BR>VIII - assinatura do emitente ou de representante com poderes especiais, admitida a assinatura sob a forma eletrônica, desde que garantida a identificação inequívoca do signatário." (NR)</DIR>
+<DIR>"Art. 46.&nbsp;................................................................................................................. <BR><BR><I>Parágrafo único. </I>A duplicata rural poderá ser emitida sob a forma escritural, mediante lançamento em sistema eletrônico de escrituração, observado, no que couber, o disposto nos arts. 10-A, 10-B, 10-C e 10-D deste Decreto-Lei." (NR)</DIR>
+<DIR>"Art. 48.&nbsp;.................................................................................................................<BR>................................................................................................................................... <BR><BR>XI - assinatura do emitente ou de representante com poderes especiais, admitida a assinatura sob a forma eletrônica, desde que garantida a identificação inequívoca de seu signatário." (NR)</DIR>
+<DIR>"Art. 51.&nbsp;Na hipótese de a duplicata rural não ser paga à vista, o comprador deverá devolvê-la ao apresentante, no prazo de 10 (dez) dias, contado da data de apresentação, devidamente assinada ou acompanhada de declaração, que conterá as razões da falta de aceite.<BR>..............................................................................................................................." (NR)</DIR>
+<DIR>"Art. 65.&nbsp;Na hipótese de redução do valor dos bens oferecidos em garantia, o emitente reforçará a garantia por meio de suporte cartular ou escritural, no prazo de 15 (quinze) dias, contado da data de recebimento da notificação por escrito que o credor lhe fizer. <BR>.............................................................................................................................." (NR)</DIR>
+<DIR>"Art. 71.&nbsp;Em caso de cobrança em processo contencioso ou não, judicial ou administrativo, o emitente da cédula de crédito rural ou da nota promissória rural ou o aceitante da duplicata rural responderá ainda pela multa de até 2% (dois por cento) sobre o principal e acessórios em débito, devida a partir do primeiro despacho da autoridade competente na petição de cobrança ou de habilitação de crédito." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Os §§ 1º e 2º do art. 23 da Lei nº 12.865, de 9 de outubro de 2013, passam a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 23.&nbsp;................................................................................................................. <BR><BR>§ 1º As normas de que trata o <I>caput</I> deste artigo disporão sobre o conjunto de procedimentos e operações técnicas referentes à produção, à classificação, à tramitação, ao uso, à avaliação, ao arquivamento e à reprodução do documento digitalizado, bem como ao seu acesso, observado o disposto nos arts. 7º, 8º, 9º e 10 da Lei nº 8.159, de 8 de janeiro de 1991, quando se tratar de documentos públicos. <BR><BR>§ 2º O documento que, observadas as normas do Conselho Monetário Nacional, tenha originado o documento digitalizado e armazenado eletronicamente poderá ser descartado, ressalvados os documentos para os quais lei específica exija a guarda do documento original para o exercício de direito." (NR)</DIR><BR><BR>
+<CENTER>CAPÍTULO IX <BR>DA SUBVENÇÃO ECONÔMICA PARA EMPRESAS CEREALISTAS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;Fica a União autorizada a conceder subvenção econômica em benefício das empresas cerealistas, sob a modalidade de equalização de taxas de juros, nas operações de financiamento a serem contratadas com o Banco Nacional de Desenvolvimento Econômico e Social (BNDES) até 30 de junho de 2021. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As operações de financiamento serão destinadas a investimentos em obras civis e na aquisição de máquinas e equipamentos necessários à construção de armazéns e à expansão da capacidade de armazenagem de grãos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O valor total dos financiamentos a serem subvencionados pela União fica limitado ao montante de R$ 200.000.000,00 (duzentos milhões de reais). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A subvenção fica limitada a R$ 20.000.000,00 (vinte milhões de reais) por ano, respeitada a dotação orçamentária reservada para essa finalidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A equalização de juros corresponderá ao diferencial de taxas entre o custo da fonte dos recursos, acrescido da remuneração do BNDES, e o encargo cobrado do mutuário final. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º O pagamento da subvenção econômica de que trata o <I>caput</I> deste artigo fica condicionado à apresentação, pelo BNDES, de declaração de responsabilidade pela exatidão das informações necessárias ao cálculo da subvenção e pela regularidade da aplicação dos recursos, para fins do disposto no inciso II do § 1º do art. 63 da Lei nº 4.320, de 17 de março de 1964. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Na hipótese de os encargos cobrados do mutuário final do crédito excederem o custo de captação dos recursos, acrescido dos custos administrativos e tributários, o BNDES recolherá ao Tesouro Nacional o valor apurado, atualizado pelo índice que remunerar a captação dos recursos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;A aplicação irregular ou o desvio dos recursos provenientes das operações subvencionadas de que trata este Capítulo sujeitará o BNDES a devolver à União o valor da subvenção econômica, atualizado monetariamente pela taxa média referencial do Sistema Especial de Liquidação e de Custódia (Selic) ou por outro índice que venha a substituí-la. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Quando o BNDES der causa ou concorrer, ainda que culposamente, à aplicação irregular, ao desvio dos recursos ou, ainda, à irregularidade no cálculo da subvenção, o valor da subvenção econômica, atualizado monetariamente na forma prevista no <I>caput</I> deste artigo, será por ele devolvido em dobro, sem prejuízo das penalidades previstas na Lei nº 13.506, de 13 de novembro de 2017. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Quando o mutuário final do crédito der causa à aplicação irregular ou ao desvio dos recursos, o BNDES devolverá o valor da subvenção econômica, atualizado monetariamente na forma prevista no <I>caput</I> deste artigo, e o mutuário final do crédito ficará impedido de receber crédito subvencionado pelo prazo de 5 (cinco) anos, contado da data em que ocorrer a devolução do valor da subvenção econômica pelo BNDES. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;O Conselho Monetário Nacional estabelecerá as condições necessárias à contratação dos financiamentos de que trata este Capítulo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;Ato do Ministro de Estado da Economia definirá a metodologia para o pagamento do valor a ser apurado em decorrência da equalização das taxas de juros e as demais condições para a concessão da subvenção econômica de que trata este Capítulo. <BR><BR>
+<CENTER>CAPÍTULO X <BR>DISPOSIÇÕES FINAIS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;O § 2º do art. 1º da Lei nº 5.709, de 7 de outubro de 1971, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 1º&nbsp;..................................................................................................................<BR>................................................................................................................................. <BR><BR>§ 2º As restrições estabelecidas nesta Lei não se aplicam: <BR><BR>I - aos casos de sucessão legítima, ressalvado o disposto no art. 7º desta Lei; <BR><BR>II - às hipóteses de constituição de garantia real, inclusive a transmissão da propriedade fiduciária em favor de pessoa jurídica, nacional ou estrangeira; <BR><BR>III - aos casos de recebimento de imóvel em liquidação de transação com pessoa jurídica, nacional ou estrangeira, ou pessoa jurídica nacional da qual participem, a qualquer título, pessoas estrangeiras físicas ou jurídicas que tenham a maioria do seu capital social e que residam ou tenham sede no exterior, por meio de realização de garantia real, de dação em pagamento ou de qualquer outra forma." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;O § 4º do art. 2º da Lei nº 6.634, de 2 de maio de 1979, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 2º&nbsp;..................................................................................................................<BR>.................................................................................................................................. <BR><BR>§ 4º Excetuam-se do disposto nos incisos V e VI do <I>caput</I> deste artigo a hipótese de constituição de garantia real, inclusive a transmissão da propriedade fiduciária, em favor de pessoa jurídica nacional ou estrangeira, ou de pessoa jurídica nacional da qual participem, a qualquer título, pessoas estrangeiras físicas ou jurídicas que tenham a maioria do seu capital social e que residam ou tenham sede no exterior, bem como o recebimento de imóvel rural em liquidação de transação com pessoa jurídica nacional ou estrangeira por meio de realização de garantia real, de dação em pagamento ou de outra forma." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;O inciso II do <I>caput</I> do art. 178 da Lei nº 6.015, de 31 de dezembro de 1973, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 178.&nbsp;................................................................................................................ <BR>................................................................................................................................... <BR><BR>II - as cédulas de crédito industrial, sem prejuízo do registro da hipoteca cedular; <BR>.............................................................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;O § 2º do art. 9º da Lei nº 7.827, de 27 de setembro de 1989, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 9º&nbsp;..................................................................................................................<BR>.................................................................................................................................. <BR><BR>§ 2º As instituições financeiras beneficiárias dos repasses devolverão aos bancos administradores os valores devidos, de acordo com o cronograma de reembolso das operações formalizadas nos contratos, independentemente do pagamento pelo tomador final. <BR>................................................................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp; Art. 55.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;O parágrafo único do art. 28 da Lei nº 12.810, de 15 de maio de 2013, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 28.&nbsp;.................................................................................................................... <BR><BR><I>Parágrafo único. </I>O registro de ativos financeiros e de valores mobiliários compreende o armazenamento e a publicidade de informações referentes a transações financeiras, ressalvados os sigilos legais." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;Ficam revogados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o art. 30 da Lei nº 4.728, de 14 de julho de 1965; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o Decreto-Lei nº 13, de 18 de julho de 1966; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - o Decreto-Lei nº 14, de 29 de julho de 1966; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - a alínea "<EM>d</EM>" do <I>caput</I> do art. 20 do Decreto-Lei nº 73, de 21 de novembro de 1966; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - os seguintes dispositivos do Decreto-Lei nº 167, de 14 de fevereiro de 1967: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>arts. 30 a 40; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>parágrafo único do art. 42; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - o item 13 do inciso I do <I>caput</I> do art. 167 da Lei nº 6.015, de 31 de dezembro de 1973; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - o art. 4º-A da Lei nº 8.427, de 27 de maio de 1992; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - o art. 19 da Lei nº 8.929, de 22 de agosto de 1994; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - os seguintes dispositivos da Lei nº 11.076, de 30 de dezembro de 2004: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>art. 20; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>§§ 2º e 3º do art. 24; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>inciso III do § 4º do art. 25; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>parágrafo único do art. 27; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>incisos I e II do <I>caput</I> e parágrafo único do art. 35; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>inciso III do § 3º do art. 37; e </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - o art. 10 da Lei nº 13.476, de 28 de agosto de 2017. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;Esta Lei entra em vigor na data de sua publicação. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 7 de abril de 2020; 199º da Independência e 132º da República. </P>
+<P>JAIR MESSIAS BOLSONARO <BR>Paulo Guedes<BR>Tereza Cristina Corrêa da Costa Dias <BR>Roberto de Oliveira Campos Neto <BR>André Luiz de Almeida Mendonça </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 - Edição Extra - B de 07/04/2020
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1 - Edição Extra - B
+                                                         - 7/4/2020, Página 1 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

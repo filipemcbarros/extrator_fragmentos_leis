@@ -1,0 +1,984 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 14.301, DE 7 DE JANEIRO DE 2022 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Institui o Programa de Estímulo ao Transporte por Cabotagem (BR do Mar); altera as Leis nºs 5.474, de 18 de julho de 1968, 9.432, de 8 de janeiro de 1997, 10.233, de 5 de junho de 2001, 10.893, de 13 de julho de 2004, e 11.033, de 21 de dezembro de 2004; e revoga o Decreto do Poder Legislativo nº 123, de 11 de novembro de 1892, e o Decreto-Lei nº 2.784, de 20 de novembro de 1940, e dispositivos da Medida Provisória nº 2.217-3, de 4 de setembro de 2001, e das Leis nºs&nbsp;6.458, de 1º de novembro de 1977, 11.434, de 28 de dezembro de 2006, 11.483, de 31 de maio de 2007, 11.518, de 5 de setembro de 2007, 12.599, de 23 de março de 2012, 12.815, de 5 de junho de 2013, e 13.848, de 25 de junho de 2019. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 14.301, DE 7 DE JANEIRO DE 2022 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-14301-7-janeiro-2022-792221-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-14301-7-janeiro-2022-792221-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-14301-7-janeiro-2022-792221-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-14301-7-janeiro-2022-792221-veto-164352-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-14301-7-janeiro-2022-792221-promulgacaodevetos-164813-pl.html">Promulgação de Vetos</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=2260433">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-14301-7-janeiro-2022-792221-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 14.301, DE 7 DE JANEIRO DE 2022</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Institui o Programa de Estímulo ao Transporte por Cabotagem (BR do Mar); altera as Leis nºs 5.474, de 18 de julho de 1968, 9.432, de 8 de janeiro de 1997, 10.233, de 5 de junho de 2001, 10.893, de 13 de julho de 2004, e 11.033, de 21 de dezembro de 2004; e revoga o Decreto do Poder Legislativo nº 123, de 11 de novembro de 1892, e o Decreto-Lei nº 2.784, de 20 de novembro de 1940, e dispositivos da Medida Provisória nº 2.217-3, de 4 de setembro de 2001, e das Leis nºs&nbsp;6.458, de 1º de novembro de 1977, 11.434, de 28 de dezembro de 2006, 11.483, de 31 de maio de 2007, 11.518, de 5 de setembro de 2007, 12.599, de 23 de março de 2012, 12.815, de 5 de junho de 2013, e 13.848, de 25 de junho de 2019. <BR>
+						</p>
+				
+						<div class="texto">
+							<STRONG>&nbsp;&nbsp;&nbsp;&nbsp; O PRESIDENTE DA REPÚBLICA</STRONG><BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER>CAPÍTULO I <BR>DISPOSIÇÕES PRELIMINARES </CENTER>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Fica instituído o Programa de Estímulo ao Transporte por Cabotagem (BR do Mar), com os seguintes objetivos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ampliar a oferta e melhorar a qualidade do transporte por cabotagem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - incentivar a concorrência e a competitividade na prestação do serviço de transporte por cabotagem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - ampliar a disponibilidade de frota para a navegação de cabotagem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - incentivar a formação, a capacitação e a qualificação de marítimos nacionais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - estimular o desenvolvimento da indústria naval de cabotagem brasileira; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - revisar a vinculação das políticas de navegação de cabotagem com as políticas de construção naval; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - incentivar as operações especiais de cabotagem e os investimentos delas decorrentes em instalações portuárias, para atendimento de cargas em tipo, rota ou mercado ainda não existentes ou consolidados na cabotagem brasileira; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - otimizar o emprego dos recursos oriundos da arrecadação do Adicional ao Frete para a Renovação da Marinha Mercante (AFRMM). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Caberá ao Ministério da Infraestrutura monitorar e avaliar o BR do Mar, além de estabelecer os critérios a serem observados em seu monitoramento e em sua avaliação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;São diretrizes do BR do Mar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - segurança nacional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - estabilidade regulatória; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - regularidade da prestação das operações de transporte; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - otimização do uso de embarcações afretadas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - equilíbrio da matriz logística brasileira; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - incentivo ao investimento privado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - promoção da livre concorrência; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - otimização do emprego de recursos públicos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - contratação e qualificação profissional de marítimos nacionais;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - inovação e desenvolvimento científico e tecnológico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - desenvolvimento sustentável; e </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XII - transparência e integridade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Para fins de habilitação no BR do Mar, a empresa interessada deverá cumprir os seguintes requisitos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - estar autorizada a operar como empresa brasileira de navegação no transporte de cargas por cabotagem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - comprovar situação regular em relação aos tributos federais; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - apresentar, na forma e na periodicidade a serem estabelecidas em regulamentação própria, informações relativas à sua operação no Brasil, com relação aos seguintes parâmetros de monitoramento da política pública criada por esta Lei: </P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>expansão, modernização e otimização das suas atividades e da sua frota operante no País; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>melhoria na qualidade e na eficiência do transporte por cabotagem em relação à experiência do usuário; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>aumento na oferta para o usuário do transporte por cabotagem; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>criação e manutenção de operação de transporte de cargas regular; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>valorização do emprego e qualificação da tripulação brasileira contratada; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>desenvolvimento das atividades da cadeia de valor da navegação de cabotagem nas operações realizadas no País; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>inovação e desenvolvimento científico e tecnológico que promovam o desenvolvimento econômico do transporte por cabotagem; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>segurança no transporte dos bens transportados; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>i)</I></TD>
+<TD>desenvolvimento sustentável; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>j)</I></TD>
+<TD>transparência quanto aos valores do frete; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>k)</I></TD>
+<TD>práticas concorrenciais saudáveis, que garantam a competitividade e a condução dos negócios de forma eticamente responsável; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>l)</I></TD>
+<TD>promoção da integridade. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A autorização de que trata o inciso I do <I>caput</I> deste artigo poderá ser outorgada a empresa brasileira que esteja amparada em quaisquer das hipóteses de afretamento previstas nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A forma de outorga da autorização de que trata o § 1º deste artigo será disciplinada em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A regulação não criará nenhuma obrigação às empresas interessadas que não exclusivamente a de prestação das informações previstas no inciso III do <I>caput</I> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Ato do Ministro de Estado da Infraestrutura concederá à empresa interessada a habilitação no BR do Mar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O descumprimento das condições estabelecidas no art. 3º desta Lei acarretará a perda de habilitação da empresa no BR do Mar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A empresa que perder a sua habilitação nos termos do § 1º deste artigo não terá direito à obtenção de nova habilitação pelo prazo de 2 (dois) anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A forma de concessão da habilitação de que trata este artigo será disciplinada em regulamento. <BR><BR>
+<CENTER>CAPÍTULO II <BR>DO AFRETAMENTO DE EMBARCAÇÕES </CENTER><BR><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Das Hipóteses de Afretamento </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;A empresa habilitada no BR do Mar poderá afretar por tempo embarcações de sua subsidiária integral estrangeira ou de subsidiária integral estrangeira de outra empresa brasileira de navegação para operar a navegação de cabotagem, desde que essas embarcações estejam: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - em sua propriedade; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - em sua posse, uso e controle, sob contrato de afretamento a casco nu. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O afretamento de que trata o <I>caput</I> deste artigo poderá ser realizado nas seguintes hipóteses: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ampliação da tonelagem de porte bruto das embarcações próprias efetivamente operantes, registradas em nome do grupo econômico a que pertença a empresa afretadora, de acordo com a proporção a ser definida em ato do Poder Executivo federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - substituição de embarcação de tipo semelhante em construção no País, na proporção de até 200% (duzentos por cento) da tonelagem de porte bruto da embarcação em construção, pelo prazo de 6 (seis) meses, prorrogável por igual período, até o limite de 36 (trinta e seis) meses; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - substituição de embarcação de tipo semelhante em construção no exterior, na proporção de até 100% (cem por cento) da tonelagem de porte bruto da embarcação em construção, pelo prazo de 6 (seis) meses, prorrogável por igual período, até o limite de 36 (trinta e seis) meses; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - atendimento exclusivo de contratos de transporte de longo prazo, nos termos dispostos em ato do Poder Executivo federal; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - prestação exclusiva de operações especiais de cabotagem, pelo prazo de 36 (trinta e seis) meses, prorrogável por até 12 (doze) meses, nos termos dispostos em ato do Poder Executivo federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Para fins do disposto nesta Lei, considera-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - embarcação em construção: aquela cujo pagamento inicial já tenha sido efetuado pelo proprietário da embarcação ao estaleiro construtor até a assinatura do termo de entrega e aceitação pelas partes; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - operações especiais de cabotagem: aquelas consideradas regulares para o transporte de cargas em tipo, rota ou mercado ainda não existentes ou consolidados na cabotagem brasileira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º As embarcações afretadas de acordo com o <I>caput</I> deste artigo deverão atender aos requisitos estabelecidos nos tratados e nos códigos internacionais em vigor no Brasil, bem como, no que couber, nas Normas da Autoridade Marítima. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;As embarcações afretadas na forma prevista no inciso II do § 1º do art. 5º desta Lei poderão permanecer no País pelo período de 36 (trinta e seis) meses, ainda que a sua construção no País tenha sido concluída anteriormente ao término do prazo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O disposto no <I>caput</I> deste artigo é complementar às disposições de afretamento em substituição à construção de que tratam o inciso III do <I>caput</I> do art. 9º e o inciso III do <I>caput</I> do art. 10 da Lei nº 9.432, de 8 de janeiro de 1997. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Na hipótese prevista no inciso IV do § 1º do art. 5º desta Lei, o Ministério da Infraestrutura estabelecerá as cláusulas essenciais dos contratos de transporte de longo prazo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Ato do Poder Executivo federal poderá estabelecer a quantidade máxima de embarcações afretadas, como proporção em relação à tonelagem de porte bruto das embarcações efetivamente operantes que arvorem bandeira brasileira, sobre as quais empresa brasileira de navegação tenha domínio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º As embarcações afretadas na forma prevista no <I>caput</I> deste artigo não poderão ser utilizadas para comprovar existência ou disponibilidade de embarcação de bandeira brasileira para fins do disposto no inciso I do <I>caput</I> do art. 9º da Lei nº 9.432, de 8 de janeiro de 1997. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O ato do Poder Executivo federal previsto no § 1º deste artigo terá efeito <I>ex nunc</I>, não afetando as outorgas ou os pedidos de outorga da autorização de que trata o inciso I do <I>caput</I> do art. 3º nem os afretamentos já realizados na hipótese prevista no inciso V do § 1º do art. 5º, desde que outorgados ou realizados até a data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;A capacidade e o porte das embarcações afretadas na forma prevista no inciso V do § 1º do art. 5º desta Lei observarão a proporcionalidade em relação à demanda da operação especial de cabotagem proposta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O afretamento de embarcações de que trata o <I>caput</I> deste artigo será permitido apenas enquanto a operação especial de cabotagem estiver em funcionamento. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Dos Direitos e Deveres Aplicáveis às Embarcações Afretadas </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;As embarcações afretadas na forma prevista nesta Lei ficam obrigadas a: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - submeter-se a inspeções periódicas pelas autoridades brasileiras; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - (VETADO); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - ter, obrigatoriamente, comandante, mestre de cabotagem, chefe de máquinas e condutor de máquinas brasileiros; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - ter as operações de cabotagem amparadas em cobertura de seguro e resseguro de cascos, máquinas e responsabilidade civil por meio da qual o segurador ficará obrigado a indenizar as perdas e os danos previstos no contrato de seguro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A inspeção relativa à Autoridade Marítima, abrangida pelo inciso I do <I>caput</I> deste artigo, será disciplinada em Norma da Autoridade Marítima e poderá ser realizada antes de a embarcação entrar as águas jurisdicionais brasileiras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Regulamento poderá dispor sobre as coberturas exigidas e as condições de contratação do seguro e do resseguro previstos no inciso IV do <I>caput</I> deste artigo, de modo a assegurar sua livre contratação no mercado internacional ou doméstico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Os tripulantes embarcados em navios habilitados no BR do Mar serão considerados, para efeitos da Lei nº 13.445, de 24 de maio de 2017, em viagem de longo curso, abrangidos pelo disposto no § 7º do art. 14 da referida Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;O descumprimento das obrigações estabelecidas no art. 9º desta Lei ou a perda da habilitação da empresa no BR do Mar implicará a perda do direito de permanência da embarcação estrangeira no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;São direitos das embarcações estrangeiras afretadas na forma prevista nesta Lei a destinação do produto da arrecadação do AFRMM e o ressarcimento de que trata o art. 52-A da Lei nº 10.893, de 13 de julho de 2004. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Aos contratos de trabalho dos tripulantes que operem em embarcação estrangeira afretada na forma prevista nesta Lei serão aplicáveis as regras internacionais estabelecidas por organismos internacionais devidamente reconhecidos, referentes à proteção das condições de trabalho, à segurança e ao meio ambiente a bordo de embarcações, e a Constituição Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O disposto em instrumento de acordo ou convenção coletiva de trabalho precederá outras normas de regência sobre as relações de trabalho a bordo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;As embarcações afretadas autorizadas a operar no transporte por cabotagem serão automaticamente submetidas ao regime de admissão temporária, sem registro de declaração de importação, com suspensão total do pagamento dos seguintes tributos federais: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - Imposto de Importação, conforme disposto no art. 75 do Decreto-Lei nº 37, de 18 de novembro de 1966; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - Imposto sobre Produtos Industrializados incidente sobre a importação, conforme disposto no art. 75 do Decreto-Lei nº 37, de 18 de novembro de 1966; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - Contribuições para os Programas de Integração Social e de Formação do Patrimônio do Servidor Público incidentes na Importação de Produtos Estrangeiros ou Serviços (PIS/Pasep-Importação), ou contribuições sociais ou imposto incidente sobre a importação que venha a sucedê-las; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - Contribuição Social para o Financiamento da Seguridade Social devida pelo Importador de Bens Estrangeiros ou Serviços do Exterior (Cofins-Importação), conforme disposto no art. 14 da Lei nº 10.865, de 30 de abril de 2004; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - Contribuição de Intervenção no Domínio Econômico incidente sobre a importação e a comercialização de petróleo e seus derivados, gás natural e seus derivados, e álcool etílico combustível (Cide-Combustíveis), conforme disposto no art. 298 do Decreto nº 6.759, de 5 de fevereiro de 2009; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - AFRMM, conforme disposto na alínea c do inciso V do <I>caput</I> do art. 14 e no art. 15 da Lei nº 10.893, de 13 de julho de 2004. <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Das Regras Gerais Aplicáveis ao Afretamento </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Para fins do disposto nesta Lei, a Antaq definirá, no prazo de 90 (noventa) dias, contado da data de entrada em vigor desta Lei, os critérios para o enquadramento da embarcação como: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - efetivamente operante; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - pertencente a um mesmo grupo econômico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Ato do Poder Executivo federal disporá sobre: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - as normas e os critérios para contratação e apresentação de garantias de execução da construção da embarcação no exterior e para fiscalização, acompanhamento e comprovação de sua evolução; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - as normas, os critérios e as competências para estabelecimento dos limites máximos de tolerância para identificação da equivalência de tonelagem de porte das embarcações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>As normas de que trata o inciso II do <I>caput</I> deste artigo observarão o direito ao afretamento de, no mínimo, 1 (uma) embarcação de porte equivalente. <BR><BR>
+<CENTER>CAPÍTULO III <BR>DISPOSIÇÕES FINAIS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Com vistas a reduzir a complexidade e o custo das operações em relação àquelas praticadas no comércio exterior, os órgãos e as entidades que atuam em portos e em instalações portuárias adotarão procedimentos e rotinas de trabalho que considerem as especificidades do transporte por cabotagem, inclusive quanto à fiscalização e à liberação de bens e produtos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Ficam isentas de apresentar Certificado de Livre Prática (CLP), em todos os portos e instalações portuárias nacionais, as embarcações que operam nas navegações de cabotagem, de apoio portuário e de apoio marítimo e na navegação interior, fluvial e lacustre de percurso nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;O Ministério da Infraestrutura e a Antaq ficam autorizados a obter acesso a dados e a informações para possibilitar a formulação de políticas públicas, a fiscalização e a regulação do setor de transporte aquaviário, ressalvados os dados protegidos por sigilo fiscal e observado o disposto nas Leis nºs 12.527, de 18 de novembro de 2011, e 13.709, de 14 de agosto de 2018, conforme disposto em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;O art. 15 da Lei nº 5.474, de 18 de julho de 1968, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 15.&nbsp;........................................................................................................... <BR>......................................................................................................................... <BR><BR>II - .....................................................................................................................<BR>.......................................................................................................................... </DIR>
+<DIR><EM>b) </EM>esteja acompanhada de documento hábil comprobatório da entrega e do recebimento da mercadoria, permitida a sua comprovação por meio eletrônico; <BR>........................................................................................................................... <BR><BR>§ 3º A comprovação por meio eletrônico de que trata a alínea b do inciso II do <I>caput</I> deste artigo poderá ser disciplinada em ato do Poder Executivo federal." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;A Lei nº 9.432, de 8 de janeiro de 1997, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 2º&nbsp;.............................................................................................................. <BR>.......................................................................................................................... <BR><BR>V - empresa brasileira de navegação: pessoa jurídica constituída de acordo com o disposto nas leis brasileiras, com sede no País, que tem por objeto o transporte aquaviário, autorizada a operar pelo órgão competente com embarcações próprias ou afretadas; <BR><BR>VI - embarcação brasileira: aquela que tem o direito de arvorar a bandeira brasileira, independentemente do local onde tenha sido construída ou da forma como tenha sido incorporada à frota do operador; <BR>........................................................................................................................... <BR><BR>XV - empresa brasileira de investimento na navegação: aquela que tem por objeto fretamento de embarcações para empresas brasileiras ou estrangeiras de navegação."(NR) </DIR>
+<DIR>"Art. 4º-A É obrigatória a disponibilização de vagas para estágio embarcado a alunos egressos de cursos do sistema de ensino profissional marítimo nas embarcações brasileiras e estrangeiras afretadas a casco nu, com ou sem suspensão de bandeira, e nas afretadas por tempo. <BR><BR><I>Parágrafo único. </I>Ato do Poder Executivo federal poderá dispor sobre quantitativos mínimos de vagas destinadas a praticantes para cada tipo de embarcação e operação, de modo a considerar as peculiaridades técnicas e os impactos econômicos desses quantitativos."</DIR>
+<DIR>"Art. 9º&nbsp;............................................................................................................. <BR><BR>§ 1º ................................................................................................................... <BR><BR>§ 2º Nos casos previstos no inciso I do <I>caput</I> deste artigo, a regulamentação do afretamento por tempo não poderá limitar o número de viagens a serem realizadas. <BR><BR>§ 3º No momento da solicitação da autorização de afretamento por tempo, a empresa brasileira de navegação indicará a embarcação a ser utilizada no transporte pretendido. <BR><BR>§ 4º A autorização para afretamento por tempo estará vinculada à embarcação indicada durante todo o período informado, podendo ser substituída tão somente em razão de situações que inviabilizem a sua operação, de forma devidamente fundamentada e aprovada pela agência reguladora." (NR)</DIR>
+<DIR>"Art. 10.&nbsp;............................................................................................................<BR>........................................................................................................................... <BR><BR>IV - estrangeira por viagem ou tempo, para operar na navegação de cabotagem, em substituição a embarcação de tipo semelhante, própria ou afretada, em jumborização, conversão, modernização, docagem ou reparação, no País ou no exterior, na proporção de até 100% (cem por cento) da sua tonelagem de porte bruto. <BR><BR>§ 1º Sem prejuízo do disposto no inciso III do <I>caput</I> deste artigo, fica autorizado o afretamento de 1 (uma) embarcação estrangeira a casco nu, com suspensão de bandeira, para navegação de cabotagem, independentemente de contrato de construção em eficácia ou de propriedade de embarcação brasileira. <BR><BR>§ 2º O limite de afretamento de que trata o § 1º deste artigo será ampliado: <BR><BR>I - após 12 (doze) meses de vigência deste inciso, para 2 (duas) embarcações; <BR><BR>II - após 24 (vinte e quatro) meses de vigência deste inciso, para 3 (três) embarcações; e <BR><BR>III - após 36 (trinta e seis) meses de vigência deste inciso, para 4 (quatro) embarcações. <BR><BR>§ 3º O afretamento a casco nu de embarcação estrangeira, com suspensão de bandeira, para a navegação de cabotagem, será livre a partir de 48 (quarenta e oito) meses de vigência deste parágrafo, observadas as condições de segurança definidas em regulamento. <BR><BR>§ 4º As empresas brasileiras de navegação poderão operar na navegação de cabotagem com embarcações afretadas de acordo com o disposto nos §§ 1º, 2º e 3º deste artigo, hipótese em que não será necessário ter frota própria ou ter contratado a construção de embarcações. <BR><BR>§ 5º As embarcações afretadas a casco nu de acordo com o disposto nos §§ 1º, 2º e 3º deste artigo não poderão ser utilizadas para verificação e comprovação de existência ou disponibilidade, nos termos do inciso I do <I>caput</I> do art. 9º desta Lei. <BR><BR>§ 6º As embarcações afretadas na forma prevista no <I>caput</I> deste artigo deverão observar as condições de segurança definidas em Norma da Autoridade Marítima. <BR><BR>§ 7º A verificação da quantidade de embarcações estabelecida nos §§ 1º e 2º deste artigo considerará a quantidade de embarcações afretadas pelo grupo econômico da empresa afretadora." (NR)</DIR>
+<DIR>"Art. 10-A.&nbsp;A empresa brasileira de investimento na navegação terá o direito de afretar embarcação estrangeira a tempo, na proporção de até 200% (duzentos por cento) da tonelagem de porte bruto da embarcação em construção em estaleiro brasileiro, durante o período de construção da embarcação. <BR><BR><I>Parágrafo único. </I>Os direitos de tonelagem oriundos das embarcações em construção contratadas por empresa brasileira de investimento na navegação poderão ser transferidos onerosamente para empresas brasileiras de navegação."</DIR>
+<DIR>"Art. 11.&nbsp;............................................................................................................ <BR><BR>§ 1º (Revogado). <BR><BR>§ 2º É assegurada às empresas brasileiras de navegação a contratação, no mercado internacional, da cobertura de seguro e resseguro de cascos, máquinas e responsabilidade civil para suas embarcações próprias ou afretadas. <BR>......................................................................................................................... <BR><BR>§ 13. Poderão ser pré-registradas e registradas no REB e usufruir de todas as garantias legais e fiscais decorrentes desses registros as embarcações que: <BR><BR>I - componham a frota de empresa brasileira de investimento na navegação; e <BR><BR>II - tenham sido produzidas por estaleiros brasileiros, ainda que não possuam contrato prévio assinado com empresa brasileira de navegação. <BR><BR>§ 14. Os direitos de tonelagem oriundos das embarcações fretadas por empresa brasileira de investimento na navegação serão transferidos para a empresa brasileira de navegação afretadora da embarcação." (NR)</DIR>
+<DIR>"Art. 14-A.&nbsp;Serão consideradas novas as embarcações importadas para uso na navegação de cabotagem ou de longo curso, ainda que sejam utilizadas para transporte remunerado em sua viagem de vinda ao País. <BR><BR>§ 1º O enquadramento da embarcação como nova somente será permitido se o transporte remunerado a que se refere o <I>caput</I> deste artigo tiver sido o único que a embarcação tenha executado até a sua chegada ao País. <BR><BR>§ 2º Na hipótese prevista no <I>caput</I> deste artigo, será recolhido o AFRMM correspondente e destinados 50% (cinquenta por cento) do produto da arrecadação à empresa brasileira de navegação, que serão depositados em sua conta vinculada."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;A Lei nº 10.233, de 5 de junho de 2001, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 12.&nbsp;.............................................................................................................<BR>............................................................................................................................ <BR><BR>VIII - promover o tratamento isonômico nos procedimentos de alfandegamento e das exportações; </DIR>
+<DIR><BR>IX - promover a adoção de ações que facilitem a multimodalidade e a implantação do documento único no desembaraço das mercadorias; <BR><BR>X - promover a implantação de sistema eletrônico para entrega e recebimento de mercadorias, contemplando a multimodalidade." (NR)</DIR>
+<DIR>"Art. 20.&nbsp;..........................................................................................................<BR>........................................................................................................................ <BR><BR>II - ...................................................................................................................<BR>........................................................................................................................ </DIR>
+<DIR><EM>b) </EM>harmonizar, preservado o interesse público, os objetivos dos usuários, das empresas concessionárias, permissionárias, autorizadas e arrendatárias, e de entidades delegadas, arbitrando conflitos de interesses e impedindo situações que configurem competição imperfeita, práticas anticompetitivas ou formação de estruturas cartelizadas que constituam infração da ordem econômica. " (NR)<BR><BR>"Art. 27.&nbsp;............................................................................................................<BR>........................................................................................................................... <BR><BR>XXX - fomentar a competição e tomar as medidas necessárias para evitar práticas anticoncorrenciais, especialmente no tocante à má-fé na oferta de embarcações que não atendam adequadamente às necessidades dos afretadores na hipótese prevista no inciso I do <I>caput</I> do art. 9º da Lei nº 9.432, de 8 de janeiro de 1997.<BR>.................................................................................................................." (NR)</DIR>
+<DIR>"Art. 81.&nbsp;A esfera de atuação do DNIT corresponde à infraestrutura do Sistema Federal de Viação, sob a jurisdição do Ministério da Infraestrutura, constituída de: <BR>............................................................................................................................ <BR><BR>III - instalações e vias de transbordo e de interface intermodal; e <BR>............................................................................................................................ <BR><BR>V - instalações portuárias." (NR)</DIR>
+<DIR>"Art. 82.&nbsp;.............................................................................................................. <BR>............................................................................................................................. <BR><BR>XVIII - implementar medidas necessárias à destinação dos ativos operacionais devolvidos pelas concessionárias, na forma prevista nos contratos de arrendamento; <BR><BR>XIX - propor ao Ministério da Infraestrutura, em conjunto com a ANTT, a destinação dos ativos operacionais ao término dos contratos de arrendamento; e <BR><BR>XX - projetar, acompanhar e executar, direta ou indiretamente, obras ou serviços de engenharia em portos organizados, decorrentes de investimentos programados pelo Ministério da Infraestrutura e autorizados no orçamento geral da União. <BR>..................................................................................................................." (NR)</DIR>
+<DIR>"Art. 85-A.&nbsp;Integrarão a estrutura organizacional do DNIT: <BR><BR>I - 1 (uma) Procuradoria Federal; <BR><BR>II - 1 (uma) Ouvidoria; <BR><BR>III - 1 (uma) Corregedoria; <BR><BR>IV - 1 (uma) Auditoria; e <BR><BR>V - o Instituto Nacional de Pesquisas Hidroviárias." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;A Lei nº 10.893, de 13 de julho de 2004, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 4º&nbsp;................................................................................................................ <BR><BR><I>Parágrafo único. </I>(Revogado). <BR><BR>I - (revogado); <BR><BR>II - (revogado). <BR><BR>§ 1º O AFRMM não incide sobre o frete relativo ao transporte de mercadoria submetida à pena de perdimento. <BR><BR>§ 2º No caso da navegação fluvial e lacustre, o AFRMM incidirá somente sobre as cargas transportadas no âmbito das Regiões Norte e Nordeste, observado o disposto no art. 11 da Lei nº 11.482, de 31 de maio de 2007, para os seguintes tipos de carga: <BR><BR>I - granéis líquidos; e <BR><BR>II - (VETADO)." (NR)</DIR>
+<DIR>"Art. 6º&nbsp;(VETADO): <BR><BR>I - (VETADO); <BR><BR>II - (VETADO); <BR><BR>III - (VETADO); <BR><BR>IV - (VETADO). <BR>............................................................................................................................... <BR><BR>§ 4º O Poder Executivo poderá estabelecer descontos nas alíquotas de que trata o <I>caput</I> deste artigo, desde que não diferenciados de acordo com o tipo de carga e com os tipos de navegação, levando em consideração apenas o fluxo de caixa do FMM." (NR)</DIR>
+<DIR>"Art. 17.&nbsp;................................................................................................................ <BR><BR>I - ..........................................................................................................................<BR>........................................................................................................................... </DIR>
+<DIR><EM>b) </EM>100% (cem por cento) do AFRMM gerado por empresa brasileira de navegação, operando embarcação afretada de registro estrangeiro, na navegação de longo curso;<BR>............................................................................................................................... <BR><BR>II - a empresa brasileira de navegação, operando embarcação própria, afretada com registro brasileiro, ou afretada por tempo, de subsidiária integral da empresa brasileira de navegação: .............................................................................................................................. <BR><BR>§ 3º Da parcela do produto da arrecadação do AFRMM que cabe ao FMM, serão destinados ao Fundo Naval, anualmente, os seguintes percentuais: <BR><BR>I - 0,40% (quarenta centésimos por cento) para contribuir com o pagamento das despesas de representação e de estudos técnicos em apoio às posições brasileiras nos diversos elementos componentes da Organização Marítima Internacional (IMO), cujos recursos serão alocados em categoria de programação específica; e <BR><BR>II - (VETADO).<BR>.............................................................................................................................. <BR><BR>§ 8º Os Fundos de que tratam os §§ 2º e 3º deste artigo divulgarão, trimestralmente, na internet, os valores recebidos do FMM e destinados aos seus programas e projetos de pesquisa científica e desenvolvimento tecnológico e ao ensino profissional marítimo, na forma prevista em lei." (NR)</DIR>
+<DIR>"Art. 19.&nbsp;............................................................................................................... <BR><BR>I - .......................................................................................................................... </DIR>
+<DIR><EM>a) </EM>para construção ou aquisição de embarcações novas, produzidas em estaleiros brasileiros; <BR><EM>b) </EM>para jumborização, conversão, modernização, docagem, manutenção, revisão e reparação de embarcação própria ou afretada, inclusive para aquisição e/ou instalação de equipamentos, nacionais ou importados, quando realizada por estaleiro ou empresa especializada brasileira, sendo responsabilidade da empresa proprietária ou afretadora adquirir e contratar os serviços; <BR>............................................................................................................................ <BR><EM>g) </EM>para manutenção, em todas as suas categorias, realizada por estaleiro brasileiro, por empresa especializada ou pela empresa proprietária ou afretadora, em embarcação própria ou afretada; <BR><EM>h) </EM>para garantia à construção de embarcação em estaleiro brasileiro; <BR><EM>i)&nbsp; </EM>para reembolso anual dos valores pagos a título de prêmio e encargos de seguro e resseguro contratados para cobertura de cascos e máquinas de embarcações próprias ou afretadas; e <BR><EM>j) </EM>para pagamento do valor total do afretamento de embarcações utilizadas no mesmo tipo de navegação de cabotagem, de longo curso e interior e geradoras dos recursos do AFRMM para a conta vinculada correspondente, desde que tal embarcação seja de propriedade de uma empresa brasileira de investimento na navegação e tenha sido construída no País; <BR>.......................................................................................................................... <BR><BR>§ 4º (Revogado). <BR><BR>§ 5º A liberação dos recursos financeiros da conta vinculada de empresa brasileira de navegação nas hipóteses previstas nos incisos I e II do <I>caput</I> deste artigo somente poderá ocorrer para aplicação, pela empresa beneficiária dos recursos, exclusivamente, em embarcação a ser utilizada no mesmo tipo de navegação de cabotagem, de longo curso e interior geradoras dos recursos do AFRMM para a conta vinculada correspondente. <BR><BR>§ 6º Além da instituição financeira referida no <I>caput</I> deste artigo, o Conselho Diretor do Fundo da Marinha Mercante (CDFMM), de que trata o art. 23 desta Lei, poderá habilitar outras instituições financeiras para receber os depósitos em contas vinculadas, na forma prevista em ato do CDFMM. <BR><BR>§ 7º Ato do CDFMM disporá sobre: <BR><BR>I - as diretrizes e os critérios a serem observados pelo agente financeiro do FMM para análise e movimentação dos recursos financeiros das contas vinculadas; e <BR><BR>II - os procedimentos para acompanhamento da destinação dos recursos a que se refere o inciso I deste parágrafo. <BR><BR>§ 8º Os recursos depositados na conta vinculada são impenhoráveis, na forma do art. 832 da Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), ressalvada a penhora para pagamento de dívida relativa ao próprio bem, se contraída durante a sua construção, jumborização, conversão, modernização, docagem ou reparação em estaleiro brasileiro." (NR)</DIR>
+<DIR>"Art. 20.&nbsp;Os valores depositados nas contas de que tratam o art. 19 e o inciso III do <I>caput</I> do art. 17 desta Lei serão aplicados pelas instituições financeiras de que tratam o <I>caput</I> e o § 6º do art. 19 desta Lei em operações de mercado aberto, em títulos públicos federais de curto, médio ou longo prazo, em nome do titular e a critério deste, na forma que dispuser o Conselho Monetário Nacional." (NR)</DIR><BR><BR>
+<DIR>"Art. 26.&nbsp;............................................................................................................... <BR><BR>I - .......................................................................................................................... </DIR>
+<DIR><EM>a) </EM>..........................................................................................................................<BR>.............................................................................................................................. </DIR>
+<DIR>2. para jumborização, conversão, modernização, docagem, manutenção, inclusive preventiva, ou reparação de embarcação própria ou afretada, inclusive para aquisição e instalação de equipamentos necessários, quando realizadas por estaleiro brasileiro ou por empresa brasileira especializada, podendo a empresa brasileira de navegação adquirir diretamente materiais e equipamentos, bem como contratar os serviços do estaleiro ou das empresas especializadas; <BR>............................................................................................................................. <BR><EM>d) </EM>às empresas públicas não dependentes vinculadas ao Ministério da Defesa, até 100% (cem por cento) do valor do projeto aprovado, para construção e reparos, em estaleiros brasileiros, de embarcações auxiliares, hidrográficas e oceanográficas, bem como de embarcações a serem empregadas na proteção do tráfego marítimo; <BR>............................................................................................................................ <BR><EM>f) </EM>às empresas brasileiras, até 90% (noventa por cento) do valor do projeto aprovado, para construção, jumborização, conversão, modernização, docagem, manutenção, inclusive preventiva, ou reparação, quando realizadas por estaleiro brasileiro ou por empresa especializada, de qualquer tipo de embarcação própria ou afretada, de aplicação comercial, industrial ou extrativista, no interesse do desenvolvimento da Marinha Mercante e da indústria de construção e reparação naval brasileiras; <BR>............................................................................................................................ <BR><EM>k) </EM>para a realização de obras de infraestrutura portuária e aquaviária, até 90% (noventa por cento) do valor do projeto aprovado; <BR><EM>l) </EM>para outras aplicações em investimentos, no interesse do desenvolvimento da Marinha Mercante e da indústria de construção e reparação naval brasileiras, cujos projetos obedecerão aos critérios de enquadramento na política nacional da Marinha Mercante e na indústria de construção e reparação naval brasileiras definidos em regulamento; e <BR><EM>m) </EM>às empresas estrangeiras, até 80% (oitenta por cento) do valor do projeto aprovado, para construção, jumborização, conversão, modernização, docagem, manutenção, inclusive preventiva, ou reparação, quando realizadas por estaleiro brasileiro ou por empresa brasileira especializada, de qualquer tipo de embarcação própria ou afretada, de aplicação comercial, industrial ou extrativista, no interesse do desenvolvimento da Marinha Mercante e da indústria de construção e reparação naval brasileiras; <BR>............................................................................................................................. <BR><BR>VII - na realização de obras de infraestrutura portuária e aquaviária exclusivamente em empreendimentos prioritários que estejam de acordo com o planejamento de longo prazo no âmbito do Poder Executivo federal, na forma definida em regulamento. <BR>..................................................................................................................." (NR)</DIR>
+<DIR>"Art. 29.&nbsp;.............................................................................................................. <BR>............................................................................................................................. <BR><BR>§ 3º Os agentes financeiros do FMM ficam autorizados a reescalonar contratos vigentes de financiamentos com recursos do FMM, desde que não ultrapassem os prazos máximos de 72 (setenta e dois) meses de carência e de até 24 (vinte e quatro) anos de amortização, quando necessário, para viabilizar a recuperação do crédito em razão dos efeitos da pandemia da Covid-19." (NR)</DIR>
+<DIR>"Art. 37.&nbsp;..............................................................................................................<BR>............................................................................................................................. <BR><BR>§ 3º ......................................................................................................................<BR>.............................................................................................................................. <BR><BR>II - as cargas isentas do pagamento do AFRMM, conforme previsto no art. 14 desta Lei, ou aquelas transportadas nas navegações de cabotagem, interior fluvial e lacustre, cuja origem ou cujo destino final seja porto localizado na Região Norte ou Nordeste, nos termos do art. 17 da Lei nº 9.432, de 8 de janeiro de 1997; e<BR>......................................................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;Até a edição do ato do Conselho Diretor do Fundo da Marinha Mercante de que trata o § 6º do art. 19 da Lei nº 10.893, de 13 de julho de 2004, no prazo de 180 (cento e oitenta) dias, contado da data de publicação desta Lei, as liberações de recursos da conta vinculada de empresa brasileira de navegação serão efetuadas na forma prevista na legislação em vigor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;O prazo previsto no art. 17 da Lei nº 9.432, de 8 de janeiro de 1997, fica prorrogado até 8 de janeiro de 2027, nas navegações de cabotagem, interior fluvial e lacustre, desde que a origem ou destino seja porto localizado na Região Norte ou Nordeste do País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Ficam revogados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o Decreto do Poder Legislativo nº 123, de 11 de novembro de 1892; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o Decreto-Lei nº 2.784, de 20 de novembro de 1940; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - o art. 1º da Lei nº 6.458, de 1º de novembro de 1977, na parte em que altera a alínea b do inciso II do <I>caput</I> do art. 15 da Lei nº 5.474, de 18 de julho de 1968; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - o § 1º do art. 11 da Lei nº 9.432, de 8 de janeiro de 1997; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - o art. 58 da Lei nº 10.233, de 5 de junho de 2001; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - o art. 1º da Medida Provisória nº 2.217-3, de 4 de setembro de 2001, na parte em que altera os seguintes dispositivos da Lei nº 10.233, de 5 de junho de 2001: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>inciso I do <I>caput</I> do art. 5º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>parágrafo único do art. 7º-A; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>alínea <EM>c </EM>do inciso III do <I>caput</I> do art. 14; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>inciso IX do <I>caput</I> do art. 24; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>incisos VII, XXII e XXV do <I>caput</I> do art. 27; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD><I>caput</I> do art. 34-A; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>§§ 1º e 2º do art. 51-A; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>art. 74; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>i)</I></TD>
+<TD>parágrafo único do art. 78-A; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>j)</I></TD>
+<TD>§ 2º do art. 82; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>k)</I></TD>
+<TD>art. 85-A; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>l)</I></TD>
+<TD>parágrafo único do art. 88; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>m)</I></TD>
+<TD>§ 1º do art. 118; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - o § 4º do art. 19 da Lei nº 10.893, de 13 de julho de 2004; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - o art. 3º da Lei nº 11.434, de 28 de dezembro de 2006, na parte em que altera os seguintes dispositivos da Lei nº 10.893, de 13 de julho de 2004: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>§§ 1º e 2º do art. 7º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>art. 12; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>inciso I do <I>caput</I> do art. 35; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - o art. 26 da Lei nº 11.483, de 31 de maio de 2007, na parte em que altera os incisos XVIII e XIX do <I>caput</I> do art. 82 da Lei nº 10.233, de 5 de junho de 2001; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - os seguintes dispositivos da Lei nº 11.518, de 5 de setembro de 2007: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>arts. 1º, 2 e 3º; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>art. 4º, exceto na parte em que altera o inciso XVII do <I>caput</I> do art. 27 da Lei nº 10.233, de 5 de junho de 2001; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - o art. 1º da Lei nº 12.599, de 23 de março de 2012, na parte em que altera o § 1º do art. 3º da Lei nº 10.893, de 13 de julho de 2004; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XII - os seguintes dispositivos da Lei nº 12.815, de 5 de junho de 2013: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>
+<P>art. 71, na parte em que altera os seguintes dispositivos da Lei nº 10.233, de 5 de junho de 2001: </P>
+<P>1. art. 67; </P>
+<P>2. art. 78; e&nbsp;</P>
+<P>3. inciso III do <I>caput</I> do art. 81; </P></TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>art. 72; e </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIII - (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Esta Lei entra em vigor na data de sua publicação. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 7 de janeiro de 2022; 201º da Independência e 134º da República. </P>
+<P>JAIR MESSIAS BOLSONARO<BR>Marcelo Pacheco dos Guaranys <BR>Marcelo Sampaio Cunha Filho <BR>Luiz Eduardo Ramos Baptista Pereira <BR>Bruno Bianco Leal </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 - Edição Extra - A de 07/01/2022
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1 - Edição Extra - A
+                                                         - 7/1/2022, Página 1 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

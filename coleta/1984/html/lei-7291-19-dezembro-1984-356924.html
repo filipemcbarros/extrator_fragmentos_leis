@@ -1,0 +1,915 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 7.291, DE 19 DE DEZEMBRO DE 1984 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre as atividades da equideocultura no País e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 7.291, DE 19 DE DEZEMBRO DE 1984 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-7291-19-dezembro-1984-356924-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-7291-19-dezembro-1984-356924-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-7291-19-dezembro-1984-356924-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                    <li>
+                                        <a href="lei-7291-19-dezembro-1984-356924-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 7.291, DE 19 DE DEZEMBRO DE 1984</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre as atividades da equideocultura no País e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							<P>O PRESIDENTE DA REPÚBLICA <BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei: <BR><BR></P>
+<CENTER><B>TÍTULO I </CENTER></B>
+<CENTER><B>Natureza e Finalidade </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp; A Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN, colegiado diretamente subordinado ao Ministro de Estado da Agricultura, é o órgão responsável pela coordenação, fiscalização e orientação das atividades da eqüideocultura no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Compreende-se como atividades relacionadas com eqüideocultura: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>criação nacional; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>fomento, pesquisas, preservação das raças e defesa sanitária; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>emprego dos eqüídeos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>atividades turfísticas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>combate ao " doping "; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>abate de eqüídeos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>exportação e importação. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para consecução dos seus objetivos, a Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN buscará a colaboração dos órgãos da administração federal, estadual e municipal, bem como das entidades privadas empenhadas, direta ou indiretamente, no aprimoramento das raças de eqüídeos, em sua utilização nas mais diversas formas e na preservação das raças ameaçadas de extinção. <BR><BR>
+<CENTER><B>TÍTULO II </CENTER></B>
+<CENTER><B>Criação Nacional </CENTER></B><BR><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>DA CONCEITUAÇÃO </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp; A criação de eqüídeo no Território Nacional compreende as medidas consideradas necessárias ao desenvolvimento das atividades agropecuárias, militares e desportivas, bem como de interesse para a economia nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As medidas de incentivo às atividades agropecuárias, inclusive financiamentos e isenções fiscais, abrangerão os eqüídeos de qualquer natureza. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp; Para os efeitos desta Lei considera-se:&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; 
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>eqüídeo de serviço, aquele que se destina às lides rurais e militares, ao transporte e à tração; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>cavalo de esporte, todo aquele utilizado em competições desportivas ou demonstrações práticas de hipismo, não classificadas como corridas de cavalos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>cavalo de corrida, o eqüino inscrito no registro genealógico da respectiva raça e utilizado no turfe ou em outra modalidade de corrida.<BR></TD></TR></TBODY></TABLE>
+<CENTER><B></B></CENTER>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>DO REGISTRO GENEALÓGICO </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp; O registro genealógico e as provas zootécnicas dos eqüídeos serão realizadas em todo Território Nacional, de acordo com a orientação estabelecida pela Secretaria de Produção Animal do Ministério da Agricultura, conforme a Lei nº 4.716, de 20 de junho de 1965, respeitadas as recomendações internacionais que o Brasil tenha assinado ou venha a assinar. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>DA DEFESA SANITÁRIA </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp; A Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN colaborará, tecnicamente, com a Secretaria Nacional de Defesa Agropecuária do Ministério da Agricultura e proporcionará recursos financeiros dentro de suas disponibilidades, para o diagnóstico, erradicação e controle das doenças que afetam os eqüídeos. <BR><BR>
+<CENTER><B>TÍTULO III </CENTER></B>
+<CENTER><B>Atividade turfística </CENTER></B><BR><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>DO FUNCIONAMENTO </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp; A realização de corridas de cavalo, com exploração de apostas, é permitida no País com a finalidade de suprir os recursos necessários à coordenação e fiscalização da eqüideocultura nacional, através da Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp; A autorização a entidades turfísticas, para exploração de apostas, atestada sua viabilidade técnica e econômica, será concedida através de Carta Patente expedida pela Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN, juntamente com a homologação do Plano Geral de Apostas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN poderá conceder, a título experimental, por prazo não superior a 180 (cento e oitenta) dias, autorização para: <BR>. <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>exploração de apostas a novas entidades; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>exploração de modalidades de apostas, não constantes do Plano Geral de Apostas homologado. </TD></TR></TBODY></TABLE><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>DAS APOSTAS </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp; As apostas em competições turfísticas só poderão ser efetuadas nos recintos ou dependências dos hipódromos, nas sedes ou subsedes sociais das entidades turfísticas, em agências e através de agentes por elas devidamente credenciados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp; As entidades turfísticas autorizadas poderão manter agências e agentes, credenciados através de convênios com entidades congêneres sediadas em outros Estados ou Municípios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os convênios referidos neste artigo vigorarão após homologados pela Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º É inafiançável a contravenção decorrente de apostas sobre corridas de cavalos, prevista no art. 50, § 3º, alínea " b ", do Decreto-lei nº 3.688, de 03 de outubro de 1941, e no art. 6º do Decreto-lei nº 6.259, de 10 de fevereiro de 1944. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>DA ARRECADAÇÃO DAS ENTIDADES E SUA DESTINAÇÃO </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp; No mínimo 97% (noventa e sete por cento) dos recursos auferidos com apostas e outras receitas turfísticas de qualquer natureza, deduzidos os encargos trabalhistas, previdenciários e as contribuições devidas à Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN, serão empregados para atender às despesas de interesse turístico, assim consideradas as que, por qualquer forma, digam respeito ao turfe ou ao cavalo de corrida em geral, e no máximo 3% (três por cento) será utilizado para as despesas gerais das entidades turfísticas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As despesas e receitas referidas neste artigo serão detalhadas em plano de contabilidade aprovado peIa Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As entidades turfísticas apresentarão, anualmente, à Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN, relatório de firma de auditoria, legalmente estabelecida, certificando o cumprimento do disposto neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp; As entidades turfísticas ficam sujeitas ao pagamento mensal de uma contribuição à Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN, destinada à sua administração, ao desenvolvimento das atividades ligadas à eqüideocultura no País e ao auxílio às sociedades e às entidades turfísticas, calculada sobre o valor total do movimento geral de apostas do mês anterior, de acordo com a seguinte tabela percentual:<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MOVIMENTO MÉDIO DE APOSTAS, POR REUNIÃO, DO MÊS ANTERIOR </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PERCENTAGEM <BR>- de 1 (uma) a 2.500 (duas mil e quinhentas) vezes o maior valor de referência.................. Isento <BR>- de 2.501 (duas mil, quinhentas e uma) a 3.500 (três mil e quinhentas) vezes o maior valor de referência........................................................................................................................ 0,5% (meio por cento) <BR>- de 3.501 (três mil, quinhentas e uma) a 4.000 (quatro mil) vezes o maior valor de referência....................................................................................................................... 1,0% (um por cento) <BR>- acima de 4.000 (quatro mil) vezes o maior valor de referência....................................&nbsp; &nbsp;1,5% (um e meio por cento) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No cálculo para apuração da contribuição devida à Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN, com base na tabela percentual de que trata este artigo, será desprezada a fração inferior ao maior valor de referência, de modo que o enquadramento se faça precisamente dentro dos percentuais fixados para cada alíquota. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A contribuição será recolhida, mensalmente, ao Banco do Brasil S/A, em conta do Fundo Federal Agropecuário do Ministério da Agricultura, até o dia 10 (dez) de cada mês seguinte ao vencido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A contribuição à Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN, referida neste artigo, e a contribuição, como empregador, ao Instituto Nacional da Previdência Social, são os únicos encargos fiscais, parafiscais, e previdenciários que incidem sobre as entidades turfísticas. <BR><BR></P>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>DOS PRÊMIOS E SUA DISTRIBUIÇÃO </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp; As entidades turfísticas, organizadas de acordo com esta Lei, distribuirão, semestralmente, para pagamento de prêmios devidos aos proprietários, criadores e profissionais do turfe, relacionados com os animais classificados em cada páreo, importância nunca inferior a: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>10% (dez por cento) do movimento geral de apostas do penúltimo semestre, se esse tiver sido, em média, por reunião, igual ou superior a 4.000 (quatro mil) vezes o maior valor de referência; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>5% (cinco por cento) do movimento geral de apostas do penúltimo semestre, se esse tiver sido, em média, por reunião, inferior a 4.000 (quatro mil) e superior a 2.500 (duas mil e quinhentas) vezes o maior valor de referência; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>3% (três por cento) do movimento geral de apostas do penúltimo semestre, se esse tiver sido, em média, por reunião, igual ou inferior a 2.500 (duas mil e quinhentas) e superior a 600 (seiscentas) vezes o maior valor de referência. </TD></TR></TBODY></TABLE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>DOS RECURSOS DA CCCCN </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp; A aplicação dos recursos recebidos pela Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN, far-se-á mediante plano anual, aprovado pele Ministro de Estado da Agricultura nas seguintes proporções: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>60% (sessenta por cento) aos órgãos da Administração Federal com responsabilidade na criação do cavalo nacional, bem como, em forma de subvenção, às entidades não integrantes dos quadros daquela administração, empenhadas, no emprego, no fomento à criação e ao aprimoramento do eqüídeo nacional, aí incluídas as entidades incumbidas da execução de serviços de registro genealógico das diversas raças existentes no País; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>35% (trinta e cinco por cento) em forma de auxílio concedido às entidades turfísticas com movimento de apostas, por reunião, inferior a 2.500 (duas mil e quinhentas) vezes o maior valor de referência vigente no País; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>5% (cinco por cento) em forma de auxílio destinado, exclusivamente, à assistência social aos profissionais do turfe e empregados dos hipódromos, das agências de apostas e dos postos de fomento, bem como aos seus dependentes, através das respectivas entidades turfísticas e mediante solicitação destas à Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os recursos mencionados na alínea " a " deste artigo, poderão, também ser aplicados pela Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN na organização ou no apoio de projetos específicos, congressos e outros eventos, bem como na concessão de bolsas de estudos para especialização de Médicos Veterinários, Zootecnistas e Engenheiros Agrônomos no interesse da eqüideocultura nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O auxílio mencionado na alínea " b " deste artigo será destinado a obras em hipódromo e concessão de prêmios, bem assim outras modalidades de incentivo à criação do cavalo de corrida, através de ajustes com outras entidades privadas, mediante solicitação à Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN e deliberação do seu Plenário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As entidades turfísticas não enquadradas na alínea " b " deste artigo poderão beneficiar-se do auxílio concedido, nas condições estabelecidas no Regulamento desta Lei. <BR><BR>
+<CENTER><B>CAPÍTULO VI </CENTER></B>
+<CENTER><B>DOS "SWEEPSTAKES" E OUTRAS MODALIDADES DE LOTERIAS </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp; As entidades promotoras de corridas de cavalos com exploração de apostas poderão ser autorizadas pelo Ministério da Fazenda a extrair " sweepstakes " e outras modalidades de loteria, satisfeitas as exigências estipuladas pela Secretaria da Receita Federal, quanto aos Planos de Sorteios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os Regulamentos dos Planos de Sorteios de modalidades de jogos lotéricos, abrangendo corridas de cavalos não incluídas no movimento geral de apostas dos hipódromos, deverão dispor sobre o percentual devido à Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN. <BR><BR>
+<CENTER><B>CAPÍTULO VII </CENTER></B>
+<CENTER><B>DA ENTURMAÇÃO </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp; A enturmação dos cavalos nas corridas se fará de acordo com os critérios estabelecidos no regulamento desta Lei. <BR><BR>
+<CENTER><B>CAPÍTULO VIII </CENTER></B>
+<CENTER><B>DO CÓDIGO NACIONAL DE CORRIDAS </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp; A organização e o julgamento das corridas de cavalos serão regidos por um Código Nacional de Corridas, elaborado pela Comissão Coordenadora da criação do Cavalo Nacional - CCCCN. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As entidades turfísticas poderão elaborar um apêndice ao Código Nacional de Corridas, dispondo sobre peculiaridades aconselháveis no seu caso particular, que será encaminhado à Comissão Coordenadora de Criação do Cavalo Nacional - CCCCN, para homologação. <BR><BR>
+<CENTER><B>TÍTULO IV </CENTER></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DO "DOPING" <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp; Caberá à Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN fixar normas sobre o combate ao " doping ", visando impedir a administração de agentes físicos ou químicos, estimulantes ou depressores, que possam alterar o rendimento normal do cavalo, em qualquer tipo de competição. <BR><BR>
+<CENTER><B>TÍTULO V </CENTER></B>
+<CENTER><B>DO ABATE </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp; O abate de eqüídeos para fins industriais e comerciais somente pode ser realizado em estabelecimentos sob Inspeção Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>No caso de perigo de extinção da espécie, a Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN, mediante instrumento legal, contingenciará o abate dos eqüídeos, visando a proteger os rebanhos eqüinos e asininos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp; Compete aos Governos dos Estados e Territórios a fiscalização do cumprimento do disposto no artigo anterior, fora dos estabelecimentos sob Inspeção Federal. <BR><BR>
+<CENTER><B>TÍTULO VI </CENTER></B>
+<CENTER><B>Exportação e Importação </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp; A importação de eqüídeos será permitida com o objetivo de melhorar qualitativamente os plantéis existentes no País, assegurada a proteção dos rebanhos contra zoonoses. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º É proibida a exportação de cavalos importados para fins de reprodução, salvo quando tiverem permanecido no País, como reprodutores, durante o prazo mínimo de 3 (três) anos consecutivos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os eqüídeos importados, em caráter temporário, para participação de competições turfísticas, de hipismo e pólo, exposições e feiras, e espetáculos circenses, deixarão o País, no prazo máximo de 60 (sessenta) dias, contados do término do respectivo evento, sendo facultada sua permanência definitiva, no País, mediante processo regular de importação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp; A Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN baixará instruções técnico-normativas regulando a exportação e importação de eqüídeos das diferentes raças e espécies, considerado, em qualquer caso, o interesse nacional e respeitadas as disposições aplicáveis ao comércio exterior. <BR><BR>
+<CENTER><B>TÍTULO VII </CENTER></B>
+<CENTER><B>Das Penalidades </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp; As infrações às disposições desta Lei, bem como de seu Regulamento, apuradas em processo administrativo, serão punidas com as seguintes penalidades, aplicadas pela Comissão Coordenadora da Criação do Cavalo Nacional - CCCCN: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>advertência; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>multa de 10 (dez) a 1.000 (mil) vezes o maior valor de referência, aplicada em dobro no caso de reincidência; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>.cassação da autorização para funcionamento. </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A multa poderá ser aplicada isolada ou cumulativamente com outras penalidades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As penalidades serão aplicadas em conformidade com a natureza da infração, as suas circunstâncias agravantes e os antecedentes do infrator, cabendo recurso ao Ministro de Estado da Agricultura. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp; A multa a que se refere a alínea " b " do artigo anterior será recolhida de acordo com o estabelecido no art. 11, § 2º, desta Lei. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TÍULO VIII </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Disposições Finais e Transitórias </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art 24. O Poder Executivo expedirá, no prazo de 90 (noventa) dias, o Regulamento desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Esta Lei entra em vigor na data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Revogam-se a lei nº 5.971, de 11 de dezembro de 1973, e demais disposições em contrário. </P>
+<P>Brasília, em 19 de dezembro de 1984; 163º da Independência e 96º da República. </P>
+<P>JOÃO FIGUEIREDO <BR>Nestor Jost <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 20/12/1984
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 20/12/1984, Página 19129 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1984, Página 252 
+                                                        Vol. 7          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

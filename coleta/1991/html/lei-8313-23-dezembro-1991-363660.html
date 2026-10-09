@@ -1,0 +1,904 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 8.313, DE 23 DE DEZEMBRO DE 1991 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Restabelece princípios da Lei nº 7.505, de 2 de julho de 1986, institui o Programa Nacional de Apoio à Cultura - PRONAC e dá outras Providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 8.313, DE 23 DE DEZEMBRO DE 1991 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-8313-23-dezembro-1991-363660-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-8313-23-dezembro-1991-363660-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-8313-23-dezembro-1991-363660-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-8313-23-dezembro-1991-363660-veto-26429-pl.html">Veto</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=192259">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-8313-23-dezembro-1991-363660-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 8.313, DE 23 DE DEZEMBRO DE 1991</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Restabelece princípios da Lei nº 7.505, de 2 de julho de 1986, institui o Programa Nacional de Apoio à Cultura - PRONAC e dá outras Providências. 
+						</p>
+				
+						<div class="texto">
+							&nbsp;&nbsp;&nbsp;&nbsp; <STRONG>O PRESIDENTE DA REPÚBLICA</STRONG> <BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER>CAPÍTULO I <BR>DISPOSIÇÕES PRELIMINARES</CENTER>
+<CENTER><B>&nbsp;</CENTER></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Fica instituído o Programa Nacional de Apoio à Cultura - PRONAC, com a finalidade de captar e canalizar recursos para o setor de modo a: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - contribuir para facilitar, a todos, os meios para o livre acesso às fontes da cultura e o pleno exercício dos direitos culturais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - promover e estimular a regionalização da produção cultural e artística brasileira, com valorização de recursos humanos e conteúdos locais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - apoiar, valorizar e difundir o conjunto das manifestações culturais e seus respectivos criadores;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - proteger as expressões culturais dos grupos formadores da sociedade brasileira e responsáveis pelo pluralismo da cultura nacional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - salvaguardar a sobrevivência e florescimento dos modos de criar, fazer e viver da sociedade brasileira; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - preservar os bens materiais e imateriais do patrimônio cultural e histórico brasileiro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - desenvolver a consciência internacional e o respeito aos valores culturais de outros povos ou nações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - estimular a produção e difusão de bens culturais de valor universal, formadores e informadores de conhecimento, cultura e memória; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - priorizar o produto cultural originário do País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;O PRONAC será implementado através dos seguintes mecanismos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Fundo Nacional da Cultura - FNC; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Fundos de Investimento Cultural e Artístico - FICART; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Incentivo a projetos culturais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os incentivos criados pela presente Lei somente serão concedidos a projetos culturais que visem a exibição, utilização e circulação públicas dos bens culturais deles resultantes, vedada a concessão de incentivo a obras, produtos, eventos ou outros decorrentes, destinados ou circunscritos a circuitos privados ou a coleções particulares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Para cumprimento das finalidades expressas no artigo 1º desta Lei, os projetos culturais em cujo favor serão captados e canalizados os recursos do PRONAC atenderão, pelo menos, a um dos seguintes objetivos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - incentivo à formação artística e cultural, mediante: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>concessão de bolsas de estudo, pesquisa e trabalho, no Brasil ou no exterior, a autores, artistas e técnicos brasileiros ou estrangeiros residentes no Brasil; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>concessão de prêmios a criadores, autores, artistas, técnicos e suas obras, filmes, espetáculos musicais e de artes cênicas em concursos e festivais realizados no Brasil; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>instalação e manutenção de cursos de caráter cultural ou artístico, destinados a formação, especialização e aperfeiçoamento de pessoal da área da cultura, em estabelecimentos de ensino sem fins lucrativos. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - fomento à produção cultural e artística, mediante: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>produção de discos, vídeos, filmes e outras formas de reprodução fonovideográfica de caráter cultural; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>edição de obras relativas às ciências humanas, às letras e às artes; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>realização de exposições, festivas de arte, espetáculos de artes cênicas, de música e de folclore; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>cobertura de despesas com transporte e seguro de objetos de valor cultural destinados a exposições públicas no País e no exterior; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>realização de exposições, festivais de arte e espetáculos de artes cênicas ou congêneres. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - preservação e difusão do patrimônio artístico, cultural e histórico, mediante: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>construção, formação, organização, manutenção, ampliação e equipamento de museus, bibliotecas, arquivos e outras organizações culturais, bem como de suas coleções e acervos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>conservação e restauração de prédios, monumentos, logradouros, sítios e demais espaços, inclusive naturais, tombados pelos Poderes Públicos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>restauração de obras de arte e bens móveis e imóveis de reconhecido valor cultural; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>proteção do folclore, do artesanato e das tradições populares nacionais. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - estímulo ao conhecimento dos bens e valores culturais, mediante: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>distribuição gratuita e pública de ingressos para espetáculos culturais e artísticos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>levantamentos, estudos e pesquisas na área da cultura e da arte e de seus vários segmentos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>fornecimento de recursos para o FNC e para fundações culturais com fins específicos ou para museus, bibliotecas, arquivos ou outras entidades de caráter cultural. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - apoio a outras atividades culturais e artísticas, mediante: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>realização de missões culturais no país e no exterior, inclusive através do fornecimento de passagens; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>contratação de serviços para elaboração de projetos culturais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>ações não previstas nos incisos anteriores e consideradas relevantes pela Secretaria da Cultura da Presidência da República - SEC/PR, ouvida a Comissão Nacional de Incentivo à Cultura - CNIC. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>
+<CENTER>CAPÍTULO II <BR>DO FUNDO NACIONAL DA CULTURA - FNC </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Fica ratificado o Fundo de Promoção Cultural, criado pela Lei nº 7.505, de 2 de julho de 1986, que passará a denominar-se Fundo Nacional da Cultura - FNC, com o objetivo de captar e destinar recursos para projetos culturais compatíveis com as finalidades do PRONAC e de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - estimular a distribuição regional eqüitativa dos recursos a serem aplicados na execução de projetos culturais e artísticos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - favorecer a visão interestadual, estimulando projetos que explorem propostas culturais conjuntas, de enfoque regional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - apoiar projetos dotados de conteúdo cultural que enfatizem o aperfeiçoamento profissional e artístico dos recursos humanos na área da cultura, a criatividade e a diversidade cultural brasileira; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - contribuir para a preservação e proteção do patrimônio cultural e histórico brasileiro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - favorecer projetos que atendam às necessidades da produção cultural e aos interesses da coletividade, aí considerados os níveis qualitativos e quantitativos de atendimentos às demandas culturais existentes, o caráter multiplicador dos projetos através de seus aspectos sócio-culturais e a priorização de projetos em áreas artísticas e culturais com menos possibilidade de desenvolvimento com recursos próprios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O FNC será administrado pela Secretaria da Cultura da Presidência da República - SEC/PR e gerido por seu titular, assessorado por um comitê constituído dos diretores da SEC/PR e dos presidentes das entidades supervisionadas, para cumprimento do Programa de Trabalho Anual aprovado pela Comissão Nacional de Incentivo à Cultura - CNIC de que trata o artigo 32 desta Lei, segundo os princípios estabelecidos nos artigos 1º e 3º da mesma. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os recursos do FNC serão aplicados em projetos culturais submetidos com parecer da entidade supervisionada competente na área do projeto, ao Comitê Assessor, na forma que dispuser o regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os projetos aprovados serão acompanhados e avaliados tecnicamente pelas entidades supervisionadas, cabendo a execução financeira à SEC/PR. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Sempre que necessário, as entidades supervisionadas utilizarão peritos para análise e parecer sobre os projetos, permitida a indenização de despesas com o deslocamento, quando houver, e respectivos&nbsp;pró-labore&nbsp;e ajuda de custos, conforme ficar definido no regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º O Secretário da Cultura da Presidência da República designará a unidade da estrutura básica da SEC/PR que funcionará como secretaria executiva do FNC. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Os recursos do FNC não poderão ser utilizados para despesas de manutenção administrativa da SEC/PR. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º Ao término do projeto, a SEC/PR efetuará uma avaliação final de forma a verificar a fiel aplicação dos recursos, observando as normas e procedimentos a serem definidos no regulamento desta Lei, bem como a legislação em vigor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º As instituição públicas ou privadas recebedoras de recursos do FNC e executoras de projetos culturais, cuja avaliação final não for aprovada pela SEC/PR, nos termos do parágrafo anterior, ficarão inabilitadas pelo prazo de três anos ao recebimento de novos recursos, ou enquanto a SEC/PR não proceder a reavaliação do parecer inicial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;O FNC é um fundo de natureza contábil, com prazo indeterminado de duração, que funcionará sob as formas de apoio a fundo perdido ou de empréstimos reembolsáveis, conforme estabelecer o regulamento, e constituído dos seguintes recursos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - recursos do Tesouro Nacional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - doações, nos termos da legislação vigente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - legados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - subvenções e auxílios de entidades de qualquer natureza, inclusive de organismos internacionais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - saldos não utilizados na execução dos projetos a que se referem o Capítulo IV e o presente Capítulo desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - devolução de recursos de projetos previstos no Capítulo IV e no presente Capítulo desta Lei, e não iniciados ou interrompidos, com ou sem justa causa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - um por cento da arrecadação dos Fundos de Investimentos Regionais, a que se refere a Lei nº 8.167, de 16 de janeiro de 1991, obedecida na aplicação a respectiva origem geográfica regional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - um por cento da arrecadação bruta das loterias federais, deduzindo-se este valor do montante destinado aos prêmios; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - reembolso das operações de empréstimo realizadas através do Fundo, a título de financiamento reembolsável, observados critérios de remuneração que, no mínimo, lhes preserve o valor real; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - resultado das aplicações em títulos públicos federais, obedecida a legislação vigente sobre a matéria; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - conversão da dívida externa com entidades e órgãos estrangeiros, unicamente mediante doações, no limite a ser fixado pelo Ministério da Economia, Fazenda e Planejamento, observadas as normas e procedimentos do Banco Central do Brasil; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XII - saldos de exercícios anteriores; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIII - recursos de outras fontes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;O FNC financiará até oitenta por cento do custo total de cada projeto, mediante comprovação, por parte do proponente, ainda que pessoa jurídica de direito público, da circunstância de dispor do montante remanescente ou estar habilitado à obtenção do respectivo financiamento, através de outra fonte devidamente identificada, exceto quanto aos recursos com destinação especificada na origem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Poderão ser considerados, para efeito de totalizarão do valor restante, bens e serviços oferecidos pelo proponente para implementação do projeto, a serem devidamente avaliados pela SEC/PR. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;A SEC/PR estimulará, através do FNC, a composição, por parte de instituições financeiras, de carteiras para financiamento de projetos culturais, que levem em conta o caráter social da iniciativa, mediante critérios, normas, garantias e taxas de juros especiais a serem aprovados pelo Banco Central do Brasil. <BR><BR>
+<CENTER>CAPÍTULO III <BR>DOS FUNDOS DE INVESTIMENTO CULTURAL E ARTÍSTICO - FICART </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Fica autorizada a constituição de Fundos de Investimento Cultural e Artístico - FICART, sob a forma de condomínio, sem personalidade jurídica, caracterizando comunhão de recursos destinados à aplicação em projetos culturais e artísticos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;São considerados projetos culturais e artísticos, para fins de aplicação de recursos dos FICART, além de outros que assim venham a ser declarados pela CNIC: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a produção comercial de instrumentos musicais, bem como de discos, fitas, vídeos, filmes e outras formas de reprodução fonovideográficas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a produção comercial de espetáculos teatrais, de dança, música, canto, circo e demais atividades congêneres; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a edição comercial de obras relativas às ciências, às letras e às artes, bem como de obras de referência e outras de cunho cultural; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - construção, restauração, reparação ou equipamento de salas e outros ambientes destinados a atividades com objetivos culturais, de propriedade de entidades com fins lucrativos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - outras atividades comerciais ou industriais, de interesse cultural, assim considerados pela SEC/PR, ouvida a CNIC. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Compete à Comissão de Valores Mobiliários, ouvida a SEC/PR, disciplinar a constituição, o funcionamento e a administração dos FICART, observadas as disposições desta Lei e as normas gerais aplicáveis aos fundos de investimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;As quotas dos FICART, emitidas sempre sob a forma nominativa ou escritural, constituem valores mobiliários sujeitos ao regime da Lei nº 6.385, de 7 de dezembro de 1976. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;O titular das quotas de FICART: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - não poderá exercer qualquer direito real sobre os bens e direitos integrantes do Patrimônio do Fundo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - não responde pessoalmente por qualquer obrigação legal ou contatual, relativamente aos empreendimentos do Fundo ou da instituição administradora, salvo quanto à obrigação de pagamento do valor integral das quotas subscritas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;À instituição administradora de FICART compete: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - representa-lo ativa e passivamente, judicial e extrajudicialmente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - responder&nbsp;pessoalmente pela evicção de direito, na eventualidade da liquidação deste. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Os rendimentos e ganhos de capital auferidos pelos FICART ficam isentos do Imposto sobre Operações de Crédito, Câmbio e Seguro, assim como do Imposto sobre Renda e Proventos de Qualquer Natureza. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Os rendimentos e ganhos de capital distribuídos pelos FICART, sob qualquer forma, sujeitam-se à incidência do Imposto sobre a Renda na fonte&nbsp;à alíquota de vinte e cinco por cento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Paragrafo único. </I>Ficam excluídos da incidência na fonte&nbsp;de que trata este artigo, os rendimentos distribuídos a beneficiário pessoa jurídica tributada com base no lucro real, os quais deverão ser computados na declaração anual de rendimentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Os ganhos de capital auferidos por pessoas físicas ou jurídicas não tributadas com base no lucro real, inclusive isentas, decorrentes da alienação ou resgate de quotas dos FICART, sujeitam-se à incidência do Imposto sobre a Renda, à mesma alíquota prevista para tributação de rendimentos obtidos na alienação ou resgate de quotas de Fundos Mútuos de Ações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Considera-se ganho de capital a diferença positiva entre o valor de cessão ou resgate da quota e o custo médio atualizado da aplicação, observadas as datas de aplicação, resgates ou cessão, nos termos da legislação pertinente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O ganho de capital será apurado em relação a cada resgate ou cessão, sendo permitida a compensação do prejuízo havido em uma operação com o lucro obtido em outra, da mesma ou diferente espécie, desde que de renda variável, dentro do mesmo exercício fiscal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O imposto será pago até o último dia útil da primeira quinzena do mês subseqüente àquele em que o ganho de capital foi auferido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Os rendimentos e ganhos de capital a que se referem o&nbsp; "<EM><I>caput</I></EM>&nbsp;" deste artigo e o artigo anterior, quando auferidos por investidores residentes ou domiciliados no exterior, sujeitam-se à tributação pelo Imposto sobre a Renda, nos termos da legislação aplicável a esta classe de contribuintes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;O tratamento fiscal previsto nos artigos precedentes somente incide sobre os rendimentos decorrentes de aplicações em FICART que atendam a todos os requisitos previstos na presente Lei e na respectiva regulamentação a ser baixada pela Comissão de Valores Mobiliários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Paragrafo único. </I>Os rendimentos e ganhos de capital auferidos por FICART, que deixem de atender os requisitos específicos desse tipo de Fundo, sujeitar-se-ão à tributação prevista no artigo 43 da Lei nº 7.713, de 22 de dezembro de 1988. <BR><BR>
+<CENTER>CAPÍTULO IV <BR>DO INCENTIVO A&nbsp;PROJETOS CULTURAIS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Com o objetivo de incentivar as atividades culturais, a União facultará às pessoas físicas ou jurídicas a opção pela aplicação de parcelas do Imposto sobre a Renda a título de doações ou patrocínios, tanto no apoio a projetos culturais apresentados por pessoas físicas ou por pessoas jurídicas de natureza cultural, de caráter privado, como através de contribuições ao FNC, nos termos do artigo 5º desta Lei, desde que os projetos atendam aos critérios estabelecidos no artigo 1º desta Lei, em torno dos quais será dada prioridade de execução pela CNIC. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;Os projetos culturais previstos nesta Lei serão apresentados à SEC/PR, ou a quem esta delegar a atribuição, acompanhados de planilha de custos, para aprovação de seu enquadramento nos objetivos do PRONAC e posterior encaminhamento a CNIC para decisão final. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No prazo máximo de noventa dias do seu recebimento poderá a SEC/PR notificar o proponente do projeto de não fazer jus aos benefícios pretendidos informando os motivos da decisão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Da notificação que se refere o paragrafo anterior, caberá recurso á CNIC, que deverá decidir no prazo de sessenta dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º A provação somente terá eficácia após publicação de ato oficial contendo o título do projeto aprovado e a instituição por ele responsável, o valor autorizado para obtenção de doação ou patrocínio e o prazo de validade da autorização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º A SEC/PR publicará anualmente ate 28 de fevereiro, montante de recursos autorizados no exercício anterior pela CNIC, nos temos do disposto nesta Lei, devidamente discriminados por beneficiário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;Os projetos aprovados do artigo anterior serão, durante sua execução, acompanhados e avaliados pela SEC/PR ou quem receber a delegação destas atribuições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A SEC/PR, após o término da execução dos projetos previstos neste artigo, deverá, no prazo de seis meses, fazer uma avaliação final da aplicação correta dos recursos recebidos, podendo inabilitar seus responsáveis pelo prazo de até três anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Da Decisão da SEC/PR caberá recursos à CNIC, que decidirá no prazo de sessenta dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O Tribunal de Contas da União incluirá em seu parecer prévio sobre as contas do Presidente da República análise relativa á avaliação de que trata este artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;As entidades incentivadoras e captadoras de que trata este Capítulo deverão comunicar, na forma que venha a ser estipulada pelo Ministério da Economia, Fazenda e Planejamento, e SEC/PR, os aportes financeiros realizados e recebidos, bem como as entidades captadoras efetuar a comprovação de sua aplicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;Os projetos enquadrados nos objetivos de desta Lei não poderão ser objeto de apreciação subjetiva quanto ao seu valor artístico ou cultural. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;Para os fins desta Lei, considera-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - patrocínio: a transferência de numerário, com finalidade promocional ou a cobertura pelo contribuinte do Imposto sobre a Renda e Proventos e Qualquer Natureza, de gastos, ou a utilização de bem móvel ou imóvel do seu patrimônio, sem a transferência de domínio, para a realização, por outra pessoa física ou jurídica de atividade cultural com ou sem finalidade lucrativa prevista no artigo 3º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Constitui infração a esta Lei o recebimento pelo patrocinador, de qualquer vantagem financeira ou material em decorrência do patrocínio que efetuar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As transferências definidas neste artigo não estão sujeitas ao recolhimento do Imposto sobre a Renda na fonte. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Para os fins deste Capítulo, equiparam-se a doações, nos termos do regulamento: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - distribuições gratuitas de ingressos para eventos de caráter artístico-cultural por pessoa jurídicas a seus empregados e dependentes legais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - despesas efetuadas por pessoas físicas ou jurídicas com o objetivo de conservar, preservar ou restaurar bens de sua propriedade ou sob sua posse legítima, tombados pelo Governo Federal, desde que atendidas as seguintes disposições: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>preliminar definição, pelo Instituto Brasileiro do Patrimônio Cultural - IBPC, das normas e critérios técnicos que deverão reger os projetos e orçamentos de que trata este inciso; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>aprovação prévia, pelo IBPC, dos projetos e respectivos orçamentos de execução das obras; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>posterior certificação, pelo referido órgão, das despesas efetivamente realizadas e das circunstâncias de terem sido obras executadas de acordo com os projetos aprovados. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Os projetos a serem apresentados por pessoas físicas ou pessoas jurídicas, de natureza cultural para fins de incentivo, objetivarão desenvolver as formas de expressão, os modos de criar e fazer, os processos de preservação e proteção do patrimônio cultural brasileiro, e os estudos e métodos de interpretação da realidade cultural, bem como contribuir para propiciar meios, à população em geral, que permitam o conhecimento dos bens e valores artísticos e culturais, compreendendo, entre outros, os seguintes segmentos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - teatro, dança, circo, ópera, mímica e congêneres; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - produção cinematográfica, videográfica, fotográfica, discográfica e congêneres; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - literatura, inclusive obras de referência; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - música; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - artes plásticas, artes gráficas, gravuras, cartazes, filatelia e outras congêneres; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - folclore e artesanato; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - patrimônio cultural, inclusive histórico, arquitetônico, arqueológico, bibliotecas, museus, arquivos e demais acervos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - humanidades; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - rádio e televisão, educativas e culturais, de caráter não-comercial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;O doador ou patrocinador poderá deduzir do imposto devido na declaração do Imposto sobre a Renda os valores efetivamente contribuídos em favor de projetos culturais aprovados de acordo com os dispositivos desta Lei, tendo como base os seguintes percentuais: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - no caso das pessoas físicas, oitenta por cento das doações e sessenta por cento dos patrocínios; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - no caso das pessoas jurídicas tributadas com base no lucro real, quarenta por cento das doações e trinta por cento dos patrocínios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A pessoa jurídica tributada com base no lucro real poderá abater as doações e patrocínios como despesa operacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O valor máximo das deduções de que trata o " <EM><I>caput</I></EM> " deste artigo será fixado anualmente pelo Presidente da República, com base em um percentual da renda tributável das pessoas físicas e do imposto devido por pessoas jurídicas tributadas com base no lucro real. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os benefícios de que trata este artigo não excluem ou reduzem outros benefícios, abatimentos e deduções em vigor, em especial as doações a entidades de utilidade pública efetuadas por pessoas físicas ou jurídicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º O Poder Executivo estabelecerá mecanismo de prevenção do valor real das contribuições em favor de projetos culturais, relativamente a este Capítulo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;A doação ou o patrocínio não poderá ser efetuada a pessoa ou instituição vinculada ao agente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Consideram-se vinculados ao doador ou patrocinador:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a pessoa jurídica da qual o doador ou patrocinador seja titular, administrador, gerente, acionista ou sócio, na data da operação, ou nos doze meses anteriores; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o cônjuge, os parentes até o terceiro grau, inclusive os afins, e os dependentes do doador ou patrocinador ou dos titulares, administradores, acionistas ou sócios de pessoa jurídica vinculada ao doador ou patrocinador, nos termos da alínea anterior; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>outra pessoa jurídica da qual o doador ou patrocinador seja sócio. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Não se consideram vinculadas as instituições culturais sem fins lucrativos, criadas pelo doador ou patrocinador, desde que, devidamente construídas e em funcionamento, na forma da legislação em vigor e aprovadas pela CNIC. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Nenhuma aplicação dos recursos previstos nesta Lei poderá ser feita de qualquer tipo de intermediação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Paragrafo único. </I>A contratação de serviços necessários à elaboração de projetos para obtenção de doação, patrocínio ou investimentos não configura a intermediação referida neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Os recursos provenientes de doações ou patrocínios deverão ser depositados e movimentados, em conta bancária específica, em nome do beneficiário, e a respectiva prestação de contas deverá ser feita nos termos do regulamento da presente Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Paragrafo único. </I>Não serão consideradas, para fins de comprovação do incentivo, as contribuições, em relação às quais não se observe esta determinação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;As infrações aos dispositivos deste Capítulo, sem prejuízo das sanções penais cabíveis, sujeitarão o doador ou patrocinador ao pagamento do valor atualizado do Imposto sobre a Renda devido em relação a cada exercício financeiro, além das penalidades e demais acréscimos previstos na legislação que rege a espécie. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Paragrafo único. </I>Para os efeitos deste artigo, considera-se solidariamente responsável por inadimplência ou irregularidade verificada a pessoa física ou jurídica propositora do projeto. <BR><BR>
+<CENTER>CAPÍTULO V <BR>DAS DISPOSIÇÕES GERAIS E TRANSITÓRIAS</CENTER>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;Com finalidade de garantir a participação comunitária, a representação de artistas e criadores no trato oficial dos assuntos da cultura e a organização nacional sistêmica da área, o Governo Federal estimulará a institucionalização de Conselhos de Cultura no Distrito Federal, nos Estados, e nos Municípios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Fica instituída a Comissão Nacional de incentivo à Cultura - CNIC, com a seguinte composição: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I -&nbsp;O Secretário da Cultura da Presidência da República; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Os Presidentes das entidades supervisionadas pela SEC/PR; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - O Presidente da entidade nacional que congregar os Secretários de Cultura das Unidades Federadas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Um representante do empresário brasileiro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - Seis representantes de entidades associativas dos setores culturais e artísticos de âmbito nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A CNIC será presidida pela autoridade referida no inciso I deste artigo que, para fins de desempate terá voto de qualidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os mandatos, a indicação e a escolha dos representantes a que se referem os incisos IV e V deste artigo, assim como a competência da CNIC, serão estipulados e definidos pelo regulamento desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;A SEC/PR, com a finalidade de estimular e valorizar a arte e a cultura, estabelecerá um sistema de premiação anual que reconheça as contribuições mais significativas para a área: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - de artistas ou grupos de artistas brasileiros ou residentes no Brasil, pelo conjunto de sua obra por obras individuais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - de profissionais da área do patrimônio cultural; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - de estudiosos e autores na interpretação crítica da cultura nacional, através de ensaios, estudos e pesquisas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;Fica instituída a Ordem do Mérito Cultural, cujo estatuto será aprovado por Decreto do Poder Executivo, sendo que as distinções serão concedidas pelo Presidente da República, ato solene, a pessoas que, por sua atuação profissional ou como incentivadoras das artes e da cultura, mereçam reconhecimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Os recursos destinados ao então Fundo de Promoção Cultural, nos termos do artigo 1º, § 6º, da Lei nº 7.505, de 02 de julho de 1986, serão recolhidos ao Tesouro Nacional para aplicação pelo FNC, observada a sua finalidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;O Departamento da Receita Federal, do Ministério da Economia, Fazenda e Planejamento, no exercício de suas atribuições específicas, fiscalizará a efetiva execução desta Lei, no que se refere à aplicação de incentivos fiscais nela previstos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;O Poder Executivo a fim de atender o disposto no artigo 26, § 2º desta Lei, adequando-o às disposições da Lei de Diretrizes Orçamentárias, enviará, no prazo de 30 dias, Mensagem ao Congresso Nacional, estabelecendo o total da renúncia fiscal e correspondente cancelamento de despesas orçamentárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Na hipótese de dolo, fraude ou simulação, inclusive no caso de desvio de objeto, será aplicada, ao doador e ao beneficiário, a multa correspondente a duas vezes o valor da vantagem recebida indevidamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Constitui crime, punível com a reclusão de dois a seis meses e multa de vinte por cento do valor do projeto, qualquer discriminação da natureza política que atente contra a liberdade de expressão, de atividade intelectual e artística, de consciência ou crença, no andamento dos projetos a que se referem esta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Constitui crime, punível, com reclusão de dois a seis meses e multa de vinte por cento do valor do projeto, obter redução do imposto de renda utilizando-se fraudulentamente de qualquer benefício desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No caso de pessoa jurídica respondem pelo crime o acionista controlador e os administradores que para ele tenham concorrido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na mesma pena incorre aquele que, recebendo recursos, bens ou valores em função desta Lei, deixe de promover, sem justa causa, atividade cultural objeto do incentivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;O Poder Executivo, no prazo de sessenta dias, regulamentará a presente Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Esta Lei entra em vigor na data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Revogam-se as disposições em contrário. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 23 de dezembro de 1991; 170º da Independência e 103º da República. </P>
+<P>FERNANDO COLLOR <BR>Jarbas Passarinho <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 24/12/1991
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 24/12/1991, Página 30261      
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1991, Página 2942 
+                                                        Vol. 6          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

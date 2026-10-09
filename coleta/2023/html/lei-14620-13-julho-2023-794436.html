@@ -1,0 +1,986 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 14.620, DE 13 DE JULHO DE 2023 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre o Programa Minha Casa, Minha Vida, altera o Decreto-Lei nº 3.365, de 21 de junho de 1941 (Lei da Desapropriação), a Lei nº 4.591, de 16 de dezembro de 1964, a Lei nº 6.015, de 31 de dezembro de 1973 (Lei dos Registros Públicos), a Lei nº 6.766, de 19 de dezembro de 1979, a Lei nº 8.036, de 11 de maio de 1990 (Lei do FGTS), a Lei nº 8.677, de 13 de julho de 1993, a Lei nº 9.472, de 16 de julho de 1997, a Lei nº 9.514, de 20 de novembro de 1997, a Lei nº 10.188, de 12 de fevereiro de 2001, a Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil), a Lei nº 10.931, de 2 de agosto de 2004, a Lei nº 11.977, de 7 de julho de 2009, a Lei nº 12.462, de 4 de agosto de 2011, a Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), a Lei nº 13.465, de 11 de julho de 2017, a Lei nº 14.063, de 23 de setembro de 2020, a Lei nº 14.133, de 1º de abril de 2021 (Lei de Licitações e Contratos Administrativos), a Lei nº 14.300, de 6 de janeiro de 2022, e a Lei nº 14.382, de 27 de junho de 2022, e revoga dispositivos da Lei nº 14.118, de 12 de janeiro de 2021." />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- CSS do portal-tema: necessário para o botão de compartilhamento -->
+<link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 14.620, DE 13 DE JULHO DE 2023 - Publicação Original</h2>
+
+			<div class="g-contexto-compartilhamento g-contexto-compartilhamento--extendido g-impressao">
+				<!-- Elemento propositalmente vazio, preenchido pelo JS de compartilhamento do portal -->
+			</div>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-14620-13-julho-2023-794436-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-14620-13-julho-2023-794436-normaatualizada-pl.docx">formato docx</a>)
+                                                &nbsp;
+                                                    (<a href="lei-14620-13-julho-2023-794436-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-14620-13-julho-2023-794436-veto-168462-pl.html">Veto</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=2348811">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-14620-13-julho-2023-794436-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 14.620, DE 13 DE JULHO DE 2023</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre o Programa Minha Casa, Minha Vida, altera o Decreto-Lei nº 3.365, de 21 de junho de 1941 (Lei da Desapropriação), a Lei nº 4.591, de 16 de dezembro de 1964, a Lei nº 6.015, de 31 de dezembro de 1973 (Lei dos Registros Públicos), a Lei nº 6.766, de 19 de dezembro de 1979, a Lei nº 8.036, de 11 de maio de 1990 (Lei do FGTS), a Lei nº 8.677, de 13 de julho de 1993, a Lei nº 9.472, de 16 de julho de 1997, a Lei nº 9.514, de 20 de novembro de 1997, a Lei nº 10.188, de 12 de fevereiro de 2001, a Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil), a Lei nº 10.931, de 2 de agosto de 2004, a Lei nº 11.977, de 7 de julho de 2009, a Lei nº 12.462, de 4 de agosto de 2011, a Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), a Lei nº 13.465, de 11 de julho de 2017, a Lei nº 14.063, de 23 de setembro de 2020, a Lei nº 14.133, de 1º de abril de 2021 (Lei de Licitações e Contratos Administrativos), a Lei nº 14.300, de 6 de janeiro de 2022, e a Lei nº 14.382, de 27 de junho de 2022, e revoga dispositivos da Lei nº 14.118, de 12 de janeiro de 2021.
+						</p>
+				
+						<div class="texto">
+							&nbsp;&nbsp;&nbsp;&nbsp; <STRONG>O PRESIDENTE DA REPÚBLICA</STRONG> <BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;O Programa Minha Casa, Minha Vida tem por finalidade promover o direito à cidade e à moradia de famílias residentes em áreas urbanas e rurais, associado ao desenvolvimento urbano, econômico, social e cultural, à sustentabilidade, à redução de vulnerabilidades e à prevenção de riscos de desastres, à geração de trabalho e de renda e à elevação dos padrões de habitabilidade, de segurança socioambiental e de qualidade de vida da população, conforme determinam os arts. 3º e 6º da Constituição Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;São objetivos do Programa: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - reduzir as desigualdades sociais e regionais do País; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - ampliar a oferta de moradias para atender às necessidades habitacionais, sobretudo da população de baixa renda e nas regiões de maiores déficits habitacionais, nas suas diversas formas de atendimento;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - promover a melhoria de moradias existentes, inclusive com promoção de acessibilidade, para reparar as inadequações habitacionais;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - estimular a modernização do setor habitacional e a inovação tecnológica com vistas à redução dos custos e prazos de produção e entregas, à sustentabilidade ambiental, climática e energética e à melhoria da qualidade da produção habitacional, com a finalidade de ampliar o atendimento habitacional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - apoiar o desenvolvimento, o fortalecimento e a ampliação da atuação dos agentes públicos e privados responsáveis pela promoção do Programa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - fortalecer o planejamento urbano e a implementação de ações e métodos de prevenção, mitigação, preparação e resposta contra desastres naturais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - ampliar o acesso à terra urbanizada pela população de baixa renda; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - fortalecer o acesso à infraestrutura e a equipamentos públicos urbanos, inclusive os educacionais e os culturais, nas proximidades das novas unidades habitacionais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - gerar emprego e renda em uma economia estruturada em bases sustentáveis;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X- estimular e facilitar a implantação de infraestrutura de conectividade e dos serviços de telecomunicações e internet para reduzir as lacunas digitais, culturais e informacionais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;São diretrizes do Programa: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - atendimento habitacional prioritário às famílias de baixa renda compreendidas nas alíneas "<EM>a</EM>" dos incisos I e II do art. 5º desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - concepção da habitação em seu sentido amplo de moradia, com a integração das dimensões física, urbanística, fundiária, econômica, social, cultural, energética e ambiental do espaço em que a vida do cidadão acontece;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - estímulo ao cumprimento da função social da propriedade e do direito à moradia, nos termos do disposto na Constituição; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - promoção do planejamento integrado com as políticas de desenvolvimento urbano, de habitação, de infraestrutura, de saneamento, de mobilidade, de acessibilidade e de gestão do território e de forma transversal com as políticas ambiental e climática, de desenvolvimento econômico e social e de segurança pública, entre outras, com vistas ao desenvolvimento urbano sustentável; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - estímulo a políticas fundiárias que garantam a oferta de áreas urbanizadas para habitação, com localização, preço e quantidade compatíveis com as diversas faixas de renda do mercado habitacional, de forma a priorizar a faixa de interesse social da localidade e com localização que privilegie a integração com centros urbanos, de forma a não prejudicar o nível do custo de vida e a segurança pública dos beneficiários; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - cooperação federativa e fortalecimento do Sistema Nacional de Habitação de Interesse Social (SNHIS), de que trata a Lei nº 11.124, de 16 de junho de 2005;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - estímulo à inovação e ao aperfeiçoamento da qualidade, da durabilidade, da segurança, da acessibilidade e da habitabilidade das unidades habitacionais e da instalação de infraestrutura em empreendimentos de interesse social; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - sustentabilidade econômica, social, energética e ambiental dos benefícios habitacionais, inclusive com estímulo aos estudos de exploração comercial dos ativos ambientais gerados pelo Programa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - transparência e monitoramento com relação à execução física e orçamentária dos benefícios habitacionais e à participação dos atores envolvidos, incluída a divulgação dos valores de subvenção concedidos e dos benefícios gerados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - conclusão de investimentos iniciados e cumprimento de compromissos pregressos, exceto se comprovada a inviabilidade;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - utilização de sistemas operacionais, soluções de projeto, padrões construtivos e aportes tecnológicos que objetivem a redução de impactos ambientais, a economia de recursos naturais e a conservação e o uso racional de energia; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XII - promoção de adensamento urbano adequado à integração eficiente das unidades habitacionais com a infraestrutura de transporte e serviços necessários ao atendimento da população;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIII - promoção de assistência técnica nas áreas de arquitetura, urbanismo e engenharia para todos os empreendimentos do Programa executados por autoconstrução, autogestão, mutirão ou administração direta; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIV - incentivo à gestão, à construção e à reforma de unidades habitacionais pelas próprias famílias beneficiárias, quando organizadas por meio de associações e cooperativas habitacionais, garantida a assistência técnica gratuita; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XV - redução das desigualdades sociais, regionais, culturais e informacionais do País, inclusive por meio da instalação de infraestrutura de acesso a serviços de telecomunicações que permita o provimento de conexão à internet e a distribuição de conteúdo audiovisual; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVI - garantia da pluralidade de agentes promotores e financeiros, especialmente os públicos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVII - incentivo à requalificação e <EM>retrofit</EM> de prédios degradados, não utilizados e subutilizados, localizados nas áreas centrais das grandes cidades brasileiras, priorizando os de pequeno porte, assim compreendidos aqueles com até 200 (duzentas) unidades habitacionais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVIII - promover iniciativas cooperativas de geração de renda e fortalecimento da organização comunitária, por meio de investimentos no Projeto de Trabalho Técnico Social (PTTS), com duração de até 2 (dois) anos no pós-obra, nos termos de regulamento do Ministério das Cidades; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIX - nos termos do inciso III do <I>caput</I> deste artigo, a União deverá priorizar projetos em Municípios que apliquem os mecanismos de garantia da função social da propriedade, conforme previsão da Lei nº 10.257, de 10 de julho de 2001 (Estatuto da Cidade). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Os objetivos do Programa serão alcançados por meio de linhas de atendimento que considerem as necessidades habitacionais, tais como: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - provisão subsidiada de unidades habitacionais novas, requalificadas ou retrofitadas, em áreas urbanas ou rurais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - provisão subsidiada de unidades habitacionais derivadas da requalificação ou <EM>retrofit </EM>de prédios degradados, não utilizados e subutilizados, priorizando-se os localizados em áreas centrais e históricas e os de pequeno porte, assim compreendidos aqueles que resultem em até 200 (duzentas) unidades;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - provisão financiada de unidades habitacionais novas, usadas, requalificadas ou retrofitadas, que serão consideradas novas, em áreas urbanas ou rurais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - fomento à criação de mercados de locação social de imóveis em áreas urbanas;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - provisão de lotes urbanizados, dotados da adequada infraestrutura; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - melhoria habitacional em áreas urbanas e rurais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - apoio financeiro a programas e ações habitacionais de interesse social desenvolvidos por Estados e Munícipios;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - projeto Moradia Primeiro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - regularização fundiária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As linhas de atendimento deverão ser implementadas com vistas ao alcance dos objetivos e das diretrizes do Programa, na forma dos dispositivos autoaplicáveis desta Lei e das regulamentações do Ministério das Cidades, observada a legislação aplicável. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º As unidades imobiliárias produzidas no âmbito do Programa poderão ser disponibilizadas às famílias beneficiárias ou aos entes federativos sob a forma de cessão, de doação, de locação, de comodato, de arrendamento ou de venda, mediante financiamento ou não, em contrato subsidiado ou não, total ou parcialmente, conforme previsto em regulamento, sem prejuízo de outros negócios jurídicos compatíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Serão admitidas aquisições pelo Fundo de Arrendamento Residencial (FAR), de que trata a Lei nº 10.188, de 12 de fevereiro de 2001, e pelo Fundo de Desenvolvimento Social (FDS), de que trata a Lei nº 8.677, de 13 de julho de 1993, de unidades habitacionais providas com base nos incisos I, II e III do <I>caput</I> por meio de programas e ações desenvolvidos por órgãos e entidades da administração descentralizada de quaisquer entes federativos, incluídas as parcerias público-privadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Exclusivamente para os fins desta Lei, consideram-se unidades habitacionais requalificadas ou retrofitadas aquelas oriundas da recuperação total ou parcial de imóveis ou edifícios tombados, degradados, não utilizados ou subutilizados, não se considerando como tais as unidades isoladas meramente reformadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º A implementação das linhas de atendimento deverá priorizar a pluralidade de agentes promotores e financeiros, em articulação com todos os entes federativos, por meio de seus órgãos e entidades descentralizadas responsáveis pela execução das políticas de desenvolvimento urbano e habitação, e com a sociedade civil organizada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º As unidades imobiliárias consideradas aptas, nos termos do inciso XVII do art. 3º e do inciso II do art. 4º, devem ter sido concluídas e entregues no prazo mínimo de 5 (cinco) anos da entrada em vigor desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º No âmbito do programa, a linha de atendimento da provisão de lotes urbanizados contará com os seguintes instrumentos e diretrizes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - aplicação dos recursos previstos no art. 6º; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - redução ou desconto de emolumentos de atos, nos termos do arts. 42 e 43 da Lei nº 11.977, de 7 de julho de 2009;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - possibilidade de que os investimentos e o custeio das obras não incidentes do empreendimento de parcelamento de solo, de implantação de redes de energia, de saneamento, de pavimentação, de terraplenagem e de drenagem componham o investimento do programa na modalidade de financiamento ou subsídio; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - implementação da infraestrutura de saneamento básico externa, que será de responsabilidade do prestador de serviço público de saneamento básico, nos termos do <I>caput</I> do art. 18-A da Lei nº 11.445, de 5 de janeiro de 2007; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - assistência técnica para o projeto e a construção de edificação em lote urbanizado para o adequado padrão construtivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º O Programa poderá oferecer ao beneficiário a provisão de lote urbanizado e a construção da unidade imobiliária, compreendendo a aquisição financiada ou subsidiada de material de construção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º Para os lotes urbanizados produzidos no âmbito do Programa Minha Casa, Minha Vida, o investimento realizado pelo empreendedor na rede de distribuição de energia elétrica será revertido em subsídio ou desconto em tarifa aos proprietários de lote, nos termos do regulamento, na proporção do impacto do investimento na sua tarifa, conforme regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 10. Para os fins do inciso I do <I>caput</I> deste artigo, o Ministério das Cidades, por ato regulamentador próprio, poderá estabelecer valores diferenciados para as unidades habitacionais, consideradas as desigualdades regionais do País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;O Programa atenderá famílias residentes em áreas urbanas com renda bruta familiar mensal de até R$ 8.000,00 (oito mil reais) e famílias residentes em áreas rurais com renda bruta familiar anual de até R$ 96.000,00 (noventa e seis mil reais), consideradas as seguintes faixas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - famílias residentes em áreas urbanas:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>Faixa Urbano 1 - renda bruta familiar mensal até R$ 2.640,00 (dois mil, seiscentos e quarenta reais); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>Faixa Urbano 2 - renda bruta familiar mensal de R$ 2.640,01 (dois mil, seiscentos e quarenta reais e um centavo) até R$ 4.400,00 (quatro mil e quatrocentos reais); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>Faixa Urbano 3 - renda bruta familiar mensal de R$ 4.400,01 (quatro mil e quatrocentos reais e um centavo) até R$ 8.000,00 (oito mil reais); </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - famílias residentes em áreas rurais: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>Faixa Rural 1 - renda bruta familiar anual até R$ 31.680,00 (trinta e um mil, seiscentos e oitenta reais); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>Faixa Rural 2 - renda bruta familiar anual de R$ 31.680,01 (trinta e um mil, seiscentos e oitenta reais e um centavo) até R$ 52.800,00 (cinquenta e dois mil e oitocentos reais); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>Faixa Rural 3 - renda bruta familiar anual de R$ 52.800,01 (cinquenta e dois mil e oitocentos reais e um centavo) até R$ 96.000,00 (noventa e seis mil reais). </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para fins de enquadramento nas faixas de renda, o cálculo do valor de renda bruta familiar não considerará os benefícios temporários de natureza indenizatória, assistencial ou previdenciária, como auxílio-doença, auxílio-acidente, seguro-desemprego, benefício de prestação continuada (BPC) e benefício do Programa Bolsa Família, ou outros que vierem a substituí-los. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A atualização dos valores de renda bruta familiar deverá ser realizada anualmente, mediante ato do Ministro de Estado das Cidades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;O Programa será constituído pelos seguintes recursos, a serem aplicados com observância à legislação específica de cada fonte e em conformidade com as dotações e disponibilidades orçamentárias e financeiras consignadas nas leis e nos planos de aplicação anuais: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - dotações orçamentárias da União; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - Fundo Nacional de Habitação de Interesse Social (FNHIS), de que trata a Lei nº 11.124, de 16 de junho de 2005; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - Fundo de Arrendamento Residencial (FAR), de que trata a Lei nº 10.188, de 12 de fevereiro de 2001; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - Fundo de Desenvolvimento Social (FDS), de que trata a Lei nº 8.677, de 13 de julho de 1993; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - Fundo de Garantia do Tempo de Serviço (FGTS), de que trata a Lei nº 8.036, de 11 de maio de 1990 (Lei do FGTS);<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - Fundo Garantidor da Habitação Popular (FGHab), de que trata a Lei nº 11.977, de 7 de julho de 2009; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - emendas parlamentares;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - operações de crédito de iniciativa da União firmadas com organismos multilaterais de crédito e destinadas à implementação do Programa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - contrapartidas financeiras, físicas ou de serviços de origem pública ou privada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - doações públicas ou privadas destinadas aos fundos de que tratam os incisos II, III, IV e V; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - outros recursos destinados à implementação do Programa oriundos de fontes nacionais e internacionais;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XII - doações ou alienação gratuita ou onerosa de bens imóveis da União, observada legislação pertinente;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIII - recursos do Fundo Nacional para Calamidades Públicas, Proteção e Defesa Civil (Funcap), quando os recursos orçamentários e financeiros constantes dos incisos I a IX não estiverem disponíveis e o beneficiário tenha tido o único imóvel perdido em razão de situação de emergência ou calamidade formalmente reconhecida pelos órgãos competentes ou esteja em estado de vulnerabilidade a desastres ambientais iminentes, reconhecidos pelos órgãos competentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As operações contratadas nos termos do inciso VI deste artigo poderão abranger as parcerias público-privadas promovidas pela União, pelos Estados, pelo Distrito Federal e pelos Municípios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A União fica obrigada, por meio do Ministério das Cidades e da Caixa Econômica Federal, em conformidade com as dotações e disponibilidades orçamentárias e financeiras, a repassar aos entes estaduais, distrital e municipais, a título de transferência obrigatória, fundo a fundo ou por meio da celebração de convênio, contrato de repasse ou instrumentos congêneres, no mínimo 5% (cinco por cento) da soma dos recursos definidos nos incisos I a IV do <I>caput</I> deste artigo, além dos recursos previstos no inciso VII do <I>caput</I> deste artigo, podendo ser utilizados para: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - retomada de obras paradas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - obras de <EM>retrofit</EM> ou requalificação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - obras em Municípios de até 50 (cinquenta) mil habitantes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Os repasses referidos no § 2º ficarão condicionados à existência e funcionamento em âmbito estadual, distrital ou municipal de fundo, órgão ou entidade da administração descentralizada responsáveis pela execução das políticas públicas de desenvolvimento urbano ou habitação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A gestão e a movimentação financeira dos recursos de que trata o § 3º deste artigo ocorrerão por meio de conta bancária específica aberta em instituição financeira pública indicada pelo ente estadual, distrital ou municipal, em nome do fundo, órgão ou entidade destinatária dos recursos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Os fundos, órgãos ou entidades destinatárias dos recursos ficam obrigados a fornecer e atualizar dados e informações habitacionais integradas aos sistemas nacionais, nos termos estabelecidos em ato do Ministro de Estado das Cidades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º A instituição financeira de que trata o § 4º disponibilizará as informações relacionadas com as movimentações financeiras ao Ministério das Cidades por meio de aplicativo que identifique o destinatário do recurso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º Ainda com vistas a viabilizar as linhas de atendimento habitacionais de que trata esta Lei, observada a legislação aplicável e o regulamento do Ministério das Cidades, ficam os beneficiários finais ou os agentes promotores e financeiros autorizados a oferecer ou receber contrapartidas pecuniárias, em bens imóveis ou em execução de obras e serviços para complementação dos valores de investimento das operações ou retorno total ou parcial dos recursos aportados pelo Programa, dispensada a participação financeira da família de que faça parte beneficiário do BPC ou da família participante do Programa Bolsa Família. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º A União, os Estados, o Distrito Federal e os Municípios poderão complementar o valor das operações do Programa com incentivos e benefícios de natureza financeira, tributária ou creditícia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º Em áreas urbanas, os critérios de prioridade para atendimento devem contemplar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a doação pelos Estados, pelo Distrito Federal e pelos Municípios de terrenos localizados em área urbana consolidada para implantação de empreendimentos vinculados ao Programa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a implementação pelos Estados, pelo Distrito Federal e pelos Municípios de medidas de desoneração tributária, para as construções destinadas à habitação de interesse social. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 10. Os Estados, o Distrito Federal e os Municípios, quando da produção de novas habitações de interesse social no Programa, priorizarão famílias da Faixa Urbano 1, desde que exista lei do ente federativo, no âmbito de sua competência, que assegure condições especiais para a viabilização de Habitação de Interesse Social (HIS). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 11. A lei do ente federativo, que deverá produzir efeitos previamente à contratação dos investimentos, deverá estabelecer isenções dos seguintes tributos, nas operações que decorram da aplicação dos recursos provenientes das fontes de recursos a que se referem os incisos I a IV do <I>caput</I>: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - imposto sobre a transmissão de bens imóveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - imposto de transmissão causa mortis e doação;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - imposto sobre a propriedade predial e territorial urbana. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 12. Serão priorizados nas seleções os entes federativos que, no âmbito de suas competências, concederem isenções tributárias para fins dos programas de que trata esta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 13. Os Estados, o Distrito Federal e os Municípios, na produção de novas habitações de interesse social no Programa, terão prioridade no recebimento de novas moradias quando da existência de lei do ente federativo, no âmbito de sua competência, que assegure condições especiais para a viabilização de Habitação de Interesse Social (HIS) para famílias da Faixa Urbano 1, devendo incentivar no mínimo 2 (duas) das seguintes condições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o aumento do direito de construir sobre o terreno em que se produzirá a HIS, por meio do Coeficiente de Aproveitamento (CA) específico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o aumento do direito de construir sobre o terreno em que se produzirá a HIS, por meio do gabarito (andares máximos permitidos para a construção sobre o terreno) específico;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - a diminuição da exigência de vagas de estacionamento, dentro dos condomínios, sobre a quantidade de HIS que será produzida; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - a isenção de taxa de outorga onerosa do direito de construir; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - a flexibilização da legislação urbanística municipal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 14. (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 15. Os órgãos de aprovação dos Estados, do Distrito Federal e dos Municípios e todas as concessionárias de serviços públicos priorizarão as análises e as aprovações de projetos de novas habitações de interesse social no Programa, no âmbito de sua competência, para famílias da Faixa Urbano 1. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 16. O Ministério das Cidades atenderá famílias enquadradas na Faixa 1 residentes em Municípios com população igual ou inferior a 80 (oitenta) mil habitantes, preferencialmente, com recursos de que tratam os incisos I e III do <I>caput</I>, na modalidade de oferta pública, para habilitação de instituições financeiras autorizadas pelo Banco Central do Brasil, inclusive bancos digitais, sociedades de crédito direto, cooperativas de crédito e os agentes financeiros referidos nos incisos I a XII do art. 8º da Lei nº 4.380, de 21 de agosto de 1964. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 17. Para participar da oferta pública, as instituições e agentes financeiros previstos no § 16 deverão comprovar que possuem pessoal técnico especializado, próprio ou terceirizado, nas áreas de engenharia civil, arquitetura, economia, administração, ciências sociais, serviço social e direito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 18. Comprovada a viabilidade do empreendimento para a construção de unidades habitacionais urbanas ou requalificação de imóveis urbanos, as entidades públicas e privadas sem fins lucrativos poderão receber valores adiantados referentes aos custos técnicos dos projetos que necessariamente devem ser submetidos aos órgãos competentes para aprovação, nos termos de regulamentação própria do Ministério das Cidades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 19. Com vistas a viabilizar as linhas de atendimento habitacionais de que trata esta Lei, sem prejuízo de outros meios operacionais, a União, por meio da alocação de recursos destinados a ações integrantes das leis orçamentárias anuais, observada a disponibilidade orçamentária e financeira, fica autorizada a: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - integralizar cotas no FAR, transferir recursos ao FDS, complementar os descontos concedidos pelo FGTS e subvencionar a produção, a aquisição, a requalificação, a recuperação e a melhoria de moradias ou conceder subvenção econômica ao beneficiário pessoa física; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - alocar subvenção econômica com a finalidade de complementar o valor necessário a assegurar o equilíbrio econômico-financeiro das operações realizadas pelas instituições ou pelos agentes financeiros, incluídos os custos de alocação, de remuneração e de perda de capital e as despesas de contratação, de administração, de cobrança e de execução judicial e extrajudicial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - alocar recursos em fundo garantidor de operações que envolvam benefícios de natureza habitacional;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - alocar recursos por meio de repasses e de financiamentos, inclusive em parcerias público-privadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 20. A gestão operacional dos recursos do Orçamento-Geral da União será efetuada pela Caixa Econômica Federal, quando destinados a: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - complementar os descontos concedidos pelo FGTS; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - atender as famílias residentes em áreas rurais, na hipótese de concessão direta a pessoa física; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - alocar subvenção econômica com a finalidade de complementar o valor necessário a assegurar o equilíbrio econômico-financeiro das operações realizadas pelas instituições ou pelos agentes financeiros, incluídos os custos de alocação, de remuneração e de perda de capital e as despesas de contratação, de administração, de cobrança e de execução judicial e extrajudicial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;O disposto nos arts. 20 a 32 da Lei nº 11.977, de 7 de julho de 2009, que tratam do FGHab, e nos arts. 42 a 44-A da Lei nº 11.977, de 7 de julho de 2009, que tratam de custas e emolumentos cartorários, aplica-se, no que couber, às operações de que trata esta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Serão priorizadas, para fins de atendimento a provisão subsidiada de unidades habitacionais com o emprego de dotação orçamentária da União e com recursos do FNHIS, do FAR ou do FDS, as famílias: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - que tenham a mulher como responsável pela unidade familiar; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - de que façam parte: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>pessoas com deficiência, conforme o disposto na Lei nº 13.146, de 6 de julho de 2015 (Estatuto da Pessoa com Deficiência), inclusive aquelas com transtorno do espectro autista, conforme a Lei nº 12.764, de 27 de dezembro de 2012, devendo os imóveis destinados a essas pessoas ser adaptados à deficiência apresentada; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>pessoas idosas, conforme o disposto na Lei nº 10.741, de 1º de outubro de 2003 (Estatuto da Pessoa Idosa), devendo os imóveis destinados a essas pessoas ser adaptados às suas condições físicas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>crianças ou adolescentes, conforme o disposto na Lei nº 8.069, de 13 de julho de 1990 (Estatuto da Criança e do Adolescente); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>pessoas com câncer ou doença rara crônica e degenerativa; </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - em situação de vulnerabilidade ou risco social, conforme a Lei nº 8.742, de 7 de dezembro de 1993 (Lei Orgânica da Assistência Social); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - que tenham perdido a moradia em razão de desastres naturais em localidade em que tenha sido decretada situação de emergência ou estado de calamidade pública;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - em deslocamento involuntário em razão de obras públicas federais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - em situação de rua; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - que tenham mulheres vítimas de violência doméstica e familiar, conforme o disposto na Lei nº 11.340, de 7 de agosto de 2006 (Lei Maria da Penha); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - residentes em área de risco; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - integrantes de povos tradicionais e quilombolas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º De forma complementar, deverão ser também observadas outras prioridades sociais estabelecidas em leis específicas ou compatíveis com as linhas de atendimento do Programa, como a Lei nº 12.288, de 20 de julho de 2010 (Estatuto da Igualdade Racial), entre outras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Observado o disposto no <I>caput</I>, o Ministério das Cidades poderá estabelecer critérios complementares, conforme a linha de atendimento do Programa, e facultar aos Estados, ao Distrito Federal, aos Municípios e às entidades privadas sem fins lucrativos, quando promotoras de benefícios habitacionais, a inclusão de outros requisitos e critérios que busquem refletir situações de vulnerabilidade econômica e social locais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;A subvenção econômica destinada à pessoa física no ato da contratação que tenha por objetivo proporcionar a aquisição ou a produção da moradia por meio do Programa será concedida apenas uma vez para cada beneficiário e poderá ser cumulativa com os descontos habitacionais concedidos nas operações de financiamento efetuadas nos termos do disposto no art. 9º da Lei nº 8.036, de 11 de maio de 1990 (Lei do FGTS), com recursos do FGTS, vedada a sua concessão à pessoa física que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - seja titular de contrato de financiamento obtido com recursos do FGTS ou em condições equivalentes às do Sistema Financeiro da Habitação, em qualquer parte do País; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - seja proprietária, promitente compradora ou titular de direito de aquisição, de arrendamento, de usufruto ou de uso de imóvel residencial, regular, com padrão mínimo de edificação e de habitabilidade estabelecido pelas regras da administração municipal, e dotado de abastecimento de água, de solução de esgotamento sanitário e de atendimento regular de energia elétrica, em qualquer parte do País; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - tenha recebido, nos últimos 10 (dez) anos, benefícios similares oriundos de subvenções econômicas concedidas com recursos do Orçamento-Geral da União, do FAR, do FDS ou provenientes de descontos habitacionais concedidos com recursos do FGTS, excetuados as subvenções e os descontos destinados à aquisição de material de construção e o Crédito Instalação, disponibilizados pelo Instituto Nacional de Colonização e Reforma Agrária (Incra), na forma prevista em regulamentação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Observada a legislação específica relativa a fontes de recursos, o disposto no <I>caput</I> não se aplica a quem se enquadre em uma ou mais das seguintes hipóteses: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - tenha tido propriedade de imóvel residencial de que se tenha desfeito por força de decisão judicial há, no mínimo, 5 (cinco) anos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - tenha tido propriedade em comum de imóvel residencial, desde que dele se tenha desfeito em favor do coadquirente há, no mínimo, 5 (cinco) anos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - tenha propriedade de imóvel residencial havida por herança ou doação, em fração ideal de até 40% (quarenta por cento), observada a regulamentação específica da fonte de recurso que tenha financiado o imóvel; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - tenha propriedade de parte de imóvel residencial, em fração não superior a 40% (quarenta por cento); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - tenha tido propriedade anterior, em nome do cônjuge ou do companheiro do titular da inscrição, de imóvel residencial do qual se tenha desfeito antes da união do casal, por meio de instrumento de alienação registrado no cartório competente;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - tenha nua-propriedade de imóvel residencial gravado com cláusula de usufruto vitalício e tenha renunciado ao usufruto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - tenha tido o seu único imóvel perdido em razão de situação de emergência ou calamidade formalmente reconhecida pelos órgãos competentes;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - sofra operação de reassentamento, de remanejamento ou de substituição de moradia, decorrentes de obras públicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O disposto no <I>caput</I> não se aplica às subvenções econômicas destinadas à realização de obras e serviços de melhoria habitacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A subvenção econômica de que trata o <I>caput</I> poderá ser cumulativa com aquelas concedidas por programas habitacionais de âmbito federal, estadual, distrital ou municipal e, ainda, com financiamento habitacional com recursos do FGTS, observada regulamentação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Os contratos e os registros efetivados no âmbito do Programa serão formalizados, prioritariamente, no nome da mulher e, na hipótese de ela ser chefe de família, poderão ser firmados independentemente da outorga do cônjuge, afastada a aplicação do disposto nos arts. 1.647, 1.648 e 1.649 da Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O contrato firmado na forma prevista no <I>caput</I> será registrado no cartório de registro de imóveis competente, com a exigência de simples declaração da mulher acerca dos dados relativos ao cônjuge ou ao companheiro e ao regime de bens. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Na hipótese de dissolução de união estável, separação ou divórcio, o título de propriedade do imóvel adquirido, construído ou regularizado no âmbito do Programa na constância do casamento ou da união estável será registrado em nome da mulher ou a ela transferido, independentemente do regime de bens aplicável.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 3º Na hipótese de haver filhos do casal e a guarda ser atribuída exclusivamente ao homem, o título da propriedade do imóvel construído ou adquirido será registrado em seu nome ou a ele transferido, revertida a titularidade em favor da mulher caso a guarda dos filhos seja a ela posteriormente atribuída. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 4º O disposto neste artigo não se aplica aos contratos de financiamento firmados com recursos do FGTS.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 5º A mulher vítima de violência doméstica e familiar que esteja sob medida protetiva de urgência está autorizada a realizar o distrato dos contratos de compra e venda antes do prazo final contratual, sendo-lhe permitido ser beneficiada em outra unidade habitacional, independentemente do registro no Cadastro Nacional de Mutuários (Cadmut).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Observadas as atribuições contidas em legislação específica, compete: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ao Ministério das Cidades: </P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>gerir e estabelecer a forma de implementação das ações e das linhas de atendimento do Programa; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>monitorar, avaliar, inclusive por meio de pesquisa de satisfação dos beneficiários, e divulgar periodicamente os resultados obtidos pelo Programa, de forma a assegurar a transparência e a publicidade de informações; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>garantir as condições adequadas para execução do Programa e recepção das moradias, com infraestrutura, pavimentação, saneamento básico, iluminação e demais necessidades estruturais necessárias ao cumprimento integral do Programa; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - aos demais órgãos e entidades da Administração Pública federal: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>fornecer ao Ministério das Cidades os dados e as informações necessárias para o monitoramento e a avaliação do Programa; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>fomentar a avaliação do Programa, inclusive entre órgãos e entidades de pesquisa, garantindo a proteção dos dados pessoais e o sigilo bancário das operações, na forma da Lei nº 13.709, de 14 de agosto de 2018 (Lei Geral de Proteção de Dados Pessoais - LGPD); </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - aos órgãos colegiados gestores de fundos financiadores do Programa, exercer as atribuições estabelecidas nas leis que os instituírem;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - aos operadores de fundos financiadores do Programa, estabelecer mecanismos e procedimentos operacionais necessários à realização de ações do Programa, em conformidade com as diretrizes aprovadas pelos órgãos colegiados gestores de fundos financiadores do Programa e pelo Ministério das Cidades, quando for o caso;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - às instituições financeiras, aos agentes financeiros ou à mandatária da União, adotar mecanismos e procedimentos necessários à realização de ações do Programa e delas participar de acordo com a sua capacidade técnica e operacional, na forma regulamentada pelos operadores dos fundos financiadores do Programa, pelo Ministério das Cidades e pelos órgãos colegiados gestores dos fundos financiadores do Programa;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - aos governos estaduais, distrital e municipais, na qualidade de executores, promotores ou apoiadores, implementar e executar seus programas habitacionais em articulação com o Programa Minha Casa, Minha Vida, garantir as condições adequadas para a sua execução e recepcionar, operar e manter os bens públicos gerados pelos investimentos do Programa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - às entidades privadas com ou sem fins lucrativos destinadas à provisão habitacional, executar as ações e as atividades do Programa, respeitada a legislação específica relativa aos recursos financiadores;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - aos empreendedores habitacionais, executar as ações e exercer as atividades do Programa, na qualidade de incorporadores, de prestadores de serviço, de executores ou de proponentes, conforme o caso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - às famílias beneficiárias do Programa: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>fornecer dados e documentos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>assumir o financiamento, quando for o caso; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>honrar o pagamento de aluguéis, arrendamentos, despesas com taxas decorrentes da posse ou da propriedade do imóvel e outras contrapartidas, como despesas com Imposto sobre a Propriedade Predial e Territorial Urbana (IPTU), serviços urbanos e taxa condominial, quando for o caso; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>apropriar-se corretamente dos bens e serviços colocados à sua disposição, com observância da finalidade a que se destinam; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>participar das ações de trabalho social previstas nas operações contratadas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>manter a propriedade e a posse para uso do imóvel objeto do benefício pela própria família, sendo vedados o empréstimo, a locação, a venda ou qualquer outra negociação que descaracterize o objeto social da concessão. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;A participação dos agentes do Programa será regulamentada pelo Ministério das Cidades, conforme a linha de atendimento, que poderá estabelecer instrumento contratual no qual sejam estabelecidos direitos e obrigações entre os partícipes e sanções aplicáveis após o devido processo administrativo, respeitados os princípios do contraditório e da ampla defesa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O descumprimento contratual pela família beneficiária de produção subsidiada de unidade habitacional em área urbana poderá ensejar a retomada do imóvel pelo fundo financiador correspondente, dispensada a realização de leilão, observada a regulamentação do Programa para a destinação da unidade habitacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º É facultado ao fundo financiador promover a recuperação de unidades habitacionais sem condições de habitabilidade, para promover a sua reinserção no Programa ou a sua desmobilização, observada a regulamentação específica do Ministério das Cidades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A malversação dos recursos do Programa pelos agentes, por culpa ou dolo, ensejará a devolução do valor originalmente disponibilizado, acrescido de juros e de atualização monetária a serem estabelecidos em regulamento do Ministério das Cidades, sem prejuízo das penalidades previstas na legislação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Os participantes privados que descumprirem normas ou, por meio de ato omissivo ou comissivo, contribuírem para a aplicação indevida dos recursos poderão perder a possibilidade de atuar no Programa, sem prejuízo do dever de ressarcimento dos danos causados e da incidência das demais sanções civis, administrativas e penais aplicáveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º O disposto no art. 7º-D da Lei nº 11.977, de 7 de julho de 2009, aplica-se, no que couber, às operações de que trata esta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;Respeitados os regulamentos específicos de cada fonte de recursos e a vinculação necessária às linhas de atendimento do Programa, são passíveis de compor o valor de investimento e o custeio da operação, entre outros: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - elaboração de estudos, planos e projetos técnicos sociais de infraestrutura, de equipamentos públicos, de mobilidade, de saneamento, urbanísticos e habitacionais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - aquisição de imóveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - regularização fundiária urbana, nos termos da Lei nº 13.465, de 11 de julho de 2017; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - aquisição ou produção de unidades ou de empreendimentos habitacionais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - melhoria, ampliação e recuperação de unidades habitacionais, inclusive daquelas destinadas à adequação ambiental e climática; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - requalificação de imóveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - execução de obras de implantação de equipamentos públicos, inclusive educacionais e culturais, de mobilidade, de saneamento e de infraestrutura, incluídas as de instalação de equipamentos de energia solar fotovoltaica, as de geração de energia elétrica a partir das modalidades de geração alcançadas pela Lei nº 14.300, de 6 de janeiro de 2022, ou as que contribuam para a redução do consumo de água em unidades imobiliárias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - prestação de assistência técnica ou de serviços técnicos profissionais, observada a Lei nº 11.888, de 24 de dezembro de 2008, no que couber; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - ações destinadas ao trabalho social e à gestão condominial ou associativa com famílias beneficiárias das intervenções habitacionais;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - elaboração e implementação de estudos, planos, treinamentos e capacitações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - aquisição de bens destinados a apoiar os agentes públicos ou privados envolvidos na implementação do Programa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XII - produção de unidades destinadas à atividade comercial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIII - elaboração e execução de plano de arborização e paisagismo;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIV - aquisição e instalação de infraestrutura de tecnologia da informação e comunicação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XV - administração de obras sob gestão de entidade privada sem fins lucrativos;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVI - custeio de despesas com taxas, impostos diretos e emolumentos cartorários, remuneração de agentes operadores e financeiros, entre outras, imprescindíveis para a regularização do contrato com o beneficiário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVII - implementação de infraestrutura e demais ações para prevenção, mitigação, preparação e resposta contra desastres naturais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVIII - obras para provisão de lotes urbanizados, incluídos os serviços de pavimentação, terraplenagem e drenagem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIX - aquisição e instalação de infraestrutura de tecnologia da informação e comunicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Na produção subsidiada de unidades imobiliárias novas em áreas urbanas, compete ao prestador dos serviços públicos de distribuição de energia elétrica disponibilizar infraestrutura de rede e instalações elétricas até os pontos de conexão necessários à implantação dos serviços nas edificações e nas unidades habitacionais atendidas pelo Programa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A agência reguladora instituirá regras para que o empreendedor imobiliário invista em redes de distribuição de energia elétrica, com a identificação das situações nas quais os investimentos representem antecipação de atendimento obrigatório da concessionária, hipótese em que fará jus ao ressarcimento por parte da concessionária, por critérios de avaliação regulatórios, e daquelas nas quais os investimentos configuram-se como de interesse restrito do empreendedor imobiliário, hipótese em que não fará jus ao ressarcimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A União poderá destinar bens imóveis a entes públicos e privados, dispensada alteração legislativa específica, mediante atendimento prioritário a famílias da Faixa Urbano 1, observado o disposto na Lei nº 9.636, de 15 de maio de 1998, e na regulamentação correlata, entre os quais: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o FAR e o FDS; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - entidades públicas ou privadas sem fins lucrativos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O investimento e o custeio da operação para execução de obras de infraestrutura vinculadas aos empreendimentos habitacionais poderão ser subsidiados ou financiados pelos recursos do Programa previstos no art. 6º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Os contratos de execução de unidades habitacionais deverão prever cláusula de reajuste pela variação do Índice Nacional da Construção Civil (INCC), nos termos da Lei nº 10.192, de 14 de fevereiro de 2001, tendo como termo inicial a apresentação da proposta e termo final a efetiva assinatura dos contratos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Para as operações firmadas no âmbito do FAR com data de contratação posterior a 2018, será instituído pelo Ministério das Cidades e por agentes financeiros, com o objetivo de formatar propostas para obras não concluídas e não entregues, relatório consolidado com verificação quantitativa e qualitativa das operações inconclusas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º Nas operações previstas no § 6º, a subvenção econômica concedida a cada família beneficiária, aplicável às operações de que trata esta Lei, observará o limite de avaliação do agente financeiro considerando as regras do Programa, limitado ao valor atual por unidade habitacional, nos termos do regulamento do Ministério das Cidades, podendo ser complementado por convênio com outros entes da Federação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º Os prestadores de serviços públicos e as concessionárias de saneamento são obrigados a receber e assumir a gestão das infraestruturas externas aos condomínios que forem implantadas, em consequência de unidades habitacionais produzidas pelo Programa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º A geração distribuída solar fotovoltaica na modalidade remota ocorrerá por meio de consórcio, cooperativa, condomínio civil voluntário ou edilício ou qualquer outra forma de associação civil constituída pelas lideranças locais, observada a Lei nº 14.300, de 6 de janeiro de 2022. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 10. O Programa Minha Casa, Minha Vida subsidiará a capacitação das lideranças locais para operação e manutenção dos sistemas fotovoltaicos, locais ou remotos, ou de outras fontes renováveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 11. A União poderá instituir os seguintes subsídios para compor o valor de investimento e o custeio de operação complementar, mediante ato regulamentar próprio: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - Subsídio Verde: aporte complementar para projetos com uso de tecnologias sustentáveis e ambientais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - Subsídio Localização: aporte complementar para empreendimentos com proximidade de equipamentos públicos e privados urbanos e de polos de oferta de emprego e integrados plenamente à malha de transporte público; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - Subsídio Qualificação: aporte complementar para empreendimentos que incluam construção de áreas comerciais e equipamentos públicos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Na hipótese de que trata o § 3º do art. 13, o destinatário do imóvel poderá fazer a locação ou o arrendamento de parcela do imóvel não prevista para uso habitacional, bem como a alienação de unidades imobiliárias, desde que o resultado auferido com a exploração da atividade econômica reverta-se em benefício do empreendimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Na produção de unidades imobiliárias novas em áreas urbanas, sem prejuízo das demais garantias obrigatórias exigidas na legislação, nos termos de regulamentação do Ministério das Cidades, poderá ser exigida do empreendedor responsável pela construção a contratação de apólices, tais como: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - seguro garantia executante construtor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - seguro garantia para término de obras, incluída infraestrutura não incidente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - seguro de responsabilidade civil e material; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - seguro riscos de engenharia; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - seguro habitacional de morte e invalidez permanente e de danos físicos ao imóvel; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Os requisitos técnicos aplicáveis ao desenvolvimento dos projetos, das obras e dos serviços serão objeto de regulamentação do Ministério das Cidades, respeitados os regulamentos específicos de cada fonte de recursos e a necessária vinculação às linhas de atendimento, observados os seguintes aspectos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - acessibilidade e disponibilidade de unidades adaptáveis e acessíveis ao uso por pessoas com deficiência, com mobilidade reduzida ou idosas, nos termos do disposto na Lei nº 13.146, de 6 de julho de 2015 (Estatuto da Pessoa com Deficiência), e na Lei nº 10.741, de 1º de outubro de 2003 (Estatuto da Pessoa Idosa); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - sustentabilidade social, econômica, ambiental e climática da solução implantada, dando preferência a soluções para acesso a fontes de energias renováveis, como as solares e eólicas, equipamentos de maior eficiência energética, reuso de água, aproveitamento de águas pluviais, acesso a banda larga de internet e materiais de construção de baixo carbono, incluídos aqueles oriundos de reciclagem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - conforto ambiental da unidade habitacional, de forma a promover qualidade de vida às famílias beneficiadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A regulamentação referida no <I>caput</I> deste artigo deverá prever alternativas que possibilitem a diferenciação dos projetos de acordo com as particularidades climáticas, culturais e sociais locais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Para as operações firmadas no âmbito do FAR, será instituído pelo Ministério das Cidades e por agentes financeiros, com o objetivo de formatar propostas para obras não concluídas e não entregues, relatório consolidado com análise quantitativa e qualitativa das operações em conclusão de obras contratadas a partir de 1º de dezembro de 2018. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A subvenção econômica concedida a cada família beneficiária, aplicável às operações de que trata esta Lei, observará o limite de avaliação do agente financeiro considerando as regras do Programa, limitado ao valor atual por unidade habitacional, podendo ser complementado por convênio com outros entes da Federação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Nas obras realizadas no âmbito do Programa, as medições pagas pela contratante com atraso superior a 60 (sessenta) dias deverão ser reajustadas com base na variação do INCC do período, excetuadas aquelas financiadas com o recurso referido no inciso V do art. 6º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;O Poder Executivo federal estabelecerá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - critérios e periodicidade para a atualização das subvenções econômicas e dos demais limites contratuais financeiros aplicáveis a cada linha de atendimento e faixa de renda do Programa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - metas e benefícios destinados às famílias, em consonância com as prioridades estabelecidas no art. 8º, conforme localização e população do Município ou do Distrito Federal e as faixas de renda, respeitadas as atribuições legais sobre cada fonte de recursos, os limites estabelecidos nesta Lei e a disponibilidade orçamentária e financeira; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - remuneração devida aos agentes operadores e financeiros para atuação no âmbito do Programa, bem como periodicidade de reajuste, quando couber; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - metas e formas de aferição de redução da emissão de gases de efeito estufa associada aos projetos financiados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - instrumentos e medidas específicas para prevenção e mitigação da inadimplência e do abandono das unidades habitacionais pelas famílias beneficiárias, especialmente as de baixa renda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A atualização dos limites de renda familiar estabelecidos nesta Lei deverá ocorrer anualmente, conforme disposto no § 2º do art. 5º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;O Ministério das Cidades estabelecerá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - forma de divulgação das informações, a serem publicadas periodicamente, relativas a dispêndio de recursos, projetos financiados, unidades produzidas e reformadas, famílias atendidas, índices de inadimplência verificados e indicadores de desempenho; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - critérios de habilitação de entidades privadas sem fins lucrativos, incluídas as cooperativas e associações habitacionais, para atuação nas linhas de atendimento do Programa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - valor e número de prestações e hipóteses de dispensa de participação pecuniária pelas famílias beneficiárias das subvenções habitacionais, para complementação do valor de investimento da operação ou para retorno total ou parcial dos recursos aportados pelo Programa; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - procedimentos para seleção de beneficiários e regras para execução do trabalho social; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - valores e limites de renda e de subvenções destinadas à conclusão das operações contratadas nos termos do disposto na Lei nº 11.977, de 7 de julho de 2009. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;O Decreto-Lei nº 3.365, de 21 de junho de 1941 (Lei da Desapropriação), passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 2º&nbsp;...............................................................................................................<BR>............................................................................................................................. <BR><BR>§ 2º Será exigida autorização legislativa para a desapropriação dos bens de domínio dos Estados, dos Municípios e do Distrito Federal pela União e dos bens de domínio dos Municípios pelos Estados. <BR><BR>§ 2º-A. Será dispensada a autorização legislativa a que se refere o § 2º quando a desapropriação for realizada mediante acordo entre os entes federativos, no qual serão fixadas as respectivas responsabilidades financeiras quanto ao pagamento das indenizações correspondentes.<BR>..........................................................................................................................." (NR)</DIR>
+<DIR>"Art. 3º&nbsp;Poderão promover a desapropriação mediante autorização expressa constante de lei ou contrato: <BR><BR>I - os concessionários, inclusive aqueles contratados nos termos da Lei nº 11.079, de 30 de dezembro de 2004 (Lei de Parceria Público-Privada), permissionários, autorizatários e arrendatários; .............................................................................................................................<BR><BR>IV - o contratado pelo poder público para fins de execução de obras e serviços de engenharia sob os regimes de empreitada por preço global, empreitada integral e contratação integrada. <BR><BR><I>Parágrafo único. </I>Na hipótese prevista no inciso IV do <I>caput</I>, o edital deverá prever expressamente: <BR><BR>I - o responsável por cada fase do procedimento expropriatório; <BR><BR>II - o orçamento estimado para sua realização; <BR><BR>III - a distribuição objetiva de riscos entre as partes, incluído o risco pela variação do custo das desapropriações em relação ao orçamento estimado." (NR)</DIR>
+<DIR>"Art. 4º&nbsp;................................................................................................................. <BR><BR><I>Parágrafo único. </I>Quando a desapropriação executada pelos autorizados a que se refere o art. 3º destinar-se a planos de urbanização, de renovação urbana ou de parcelamento ou reparcelamento do solo previstos no plano diretor, o edital de licitação poderá prever que a receita decorrente da revenda ou da utilização imobiliária integre projeto associado por conta e risco do contratado, garantido ao poder público responsável pela contratação, no mínimo, o ressarcimento dos desembolsos com indenizações, quando essas ficarem sob sua responsabilidade." (NR)</DIR>
+<DIR>"Art. 4º-A&nbsp;Quando o imóvel a ser desapropriado caracterizar-se como núcleo urbano informal ocupado predominantemente por população de baixa renda, nos termos do § 2º do art. 9º da Lei nº 13.465, de 11 de julho de 2017, e seu regulamento, o ente expropriante deverá prever, no planejamento da ação de desapropriação, medidas compensatórias. <BR><BR>§ 1º As medidas compensatórias a que se refere o <I>caput</I> incluem a realocação de famílias em outra unidade habitacional, a indenização de benfeitorias ou a compensação financeira suficiente para assegurar o restabelecimento da família em outro local, exigindo-se, para este fim, o prévio cadastramento dos ocupantes. <BR><BR>§ 2º Poderá ser equiparada à família ou à pessoa de baixa renda aquela ocupante da área que, por sua situação fática específica, apresente condição de vulnerabilidade, conforme definido pelo expropriante."</DIR>
+<DIR>"Art. 5º&nbsp;................................................................................................................ <BR>............................................................................................................................. <BR><BR>§ 5º Aplica-se o disposto no § 4º nos casos de desapropriação para fins de execução de planos de urbanização, de renovação urbana ou de parcelamento ou reparcelamento do solo, desde que seja assegurada a destinação prevista no referido plano de urbanização ou de parcelamento do solo. <BR><BR>§ 6º Comprovada a inviabilidade ou a perda objetiva de interesse público em manter a destinação do bem prevista no decreto expropriatório, o expropriante deverá adotar uma das seguintes medidas, nesta ordem de preferência: <BR><BR>I - destinar a área não utilizada para outra finalidade pública; ou <BR><BR>II - alienar o bem a qualquer interessado, na forma prevista em lei, assegurado o direito de preferência à pessoa física ou jurídica desapropriada. <BR><BR>§ 7º No caso de desapropriação para fins de execução de planos de urbanização, de renovação urbana ou de parcelamento ou reparcelamento do solo, as diretrizes do plano de urbanização ou de parcelamento do solo deverão estar previstas no plano diretor, na legislação de uso e ocupação do solo ou em lei municipal específica." (NR)<BR><BR>"Art. 7º&nbsp;Declarada a utilidade pública, ficam as autoridades administrativas do expropriante ou seus representantes autorizados a ingressar nas áreas compreendidas na declaração, inclusive para realizar inspeções e levantamentos de campo, podendo recorrer, em caso de resistência, ao auxílio de força policial. <BR><BR><I>Parágrafo único. </I>Em caso de dano por excesso ou abuso de poder ou originário das inspeções e levantamentos de campo realizados, cabe indenização por perdas e danos, sem prejuízo da ação penal." (NR)</DIR><BR>
+<DIR>"Art. 15-A.&nbsp;No caso de imissão prévia na posse, na desapropriação por necessidade ou utilidade pública ou na desapropriação por interesse social prevista na Lei nº 4.132, de 10 de setembro de 1962, na hipótese de haver divergência entre o preço ofertado em juízo e o valor do bem fixado na sentença, expressos em termos reais, poderão incidir juros compensatórios de até 6% a.a. (seis por cento ao ano) sobre o valor da diferença eventualmente apurada, contado da data de imissão na posse, vedada a aplicação de juros compostos. <BR><BR>§ 1º Os juros compensatórios destinam-se apenas a compensar danos correspondentes a lucros cessantes comprovadamente sofridos pelo proprietário, não incidindo nas indenizações relativas às desapropriações que tiverem como pressuposto o descumprimento da função social da propriedade, previstas no art. 182, § 4º, inciso III, e no art. 184 da Constituição. <BR><BR>§ 2º O disposto no <I>caput</I> aplica-se também às ações ordinárias de indenização por apossamento administrativo ou por desapropriação indireta e às ações que visem à indenização por restrições decorrentes de atos do poder público. <BR><BR>§ 3º Nas ações referidas no § 2º, o poder público não será onerado por juros compensatórios relativos a período anterior à aquisição da propriedade ou da posse titulada pelo autor da ação. .............................................................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;O § 3º do art. 31-A da Lei nº 4.591, de 16 de dezembro de 1964, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 31-A.&nbsp;...........................................................................................................<BR>.............................................................................................................................. <BR><BR>§ 3º Os bens e direitos integrantes do patrimônio de afetação somente poderão ser objeto de garantia real em operação de crédito cujo produto seja integralmente destinado à consecução da edificação correspondente e à entrega das unidades imobiliárias e de suas pertenças aos respectivos adquirentes.<BR>............................................................................................................................" (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;A Lei nº 6.015, de 31 de dezembro de 1973 (Lei dos Registros Públicos), passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 176-A.&nbsp;O registro de aquisição originária ensejará a abertura de matrícula relativa ao imóvel adquirido, se não houver, ou quando: <BR><BR>I - atingir parte de imóvel objeto de registro anterior; ou <BR><BR>II - atingir, total ou parcialmente, mais de um imóvel objeto de registro anterior. <BR><BR>§ 1º A matrícula será aberta com base em planta e memorial descritivo do imóvel utilizados na instrução do procedimento administrativo ou judicial que ensejou a aquisição. <BR><BR>§ 2º As matrículas atingidas deverão, conforme o caso, ser encerradas ou receber averbação dos respectivos desfalques, dispensada, para esse fim, a retificação do memorial descritivo da área remanescente. ....................................................................................................................................... <BR><BR>§ 4º Se a área adquirida em caráter originário for maior do que a constante do registro existente, a informação sobre a diferença apurada será averbada na matrícula aberta. <BR><BR>§ 4º-A. Eventuais divergências entre a descrição do imóvel constante do registro e aquela apresentada pelo requerente não obstarão o registro. <BR><BR>§ 5º O disposto neste artigo aplica-se, sem prejuízo de outros, ao registro de: <BR>....................................................................................................................................... <BR><BR>IV - aquisição de área por usucapião ou por concessão de uso especial para fins de moradia; <BR><BR>V - sentença judicial de aquisição de imóvel, em procedimento expropriatório de que tratam os §§ 4º e 5º do art. 1.228 da Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil)." (NR)<BR><BR>"Art. 195-B.&nbsp;A União, os Estados, o Distrito Federal e os Municípios poderão solicitar ao registro de imóveis competente a abertura de matrícula de parte ou da totalidade de imóveis urbanos sem registro anterior, cujo domínio lhe tenha sido assegurado pela legislação, por meio de requerimento acompanhado dos documentos previstos nos incisos I, II e III do <I>caput</I> do art. 195-A. <BR>............................................................................................................................ <BR><BR>§ 2º Sem prejuízo da possibilidade de requerer a abertura de matrícula para seus bens, nos termos do <I>caput</I>, o Município poderá, em acordo com o Estado, requerer, em nome deste, a abertura de matrícula de imóveis urbanos estaduais situados nos limites do respectivo território municipal no registro de imóveis competente.<BR>............................................................................................................................." (NR)<BR><BR>"Art. 213.&nbsp;............................................................................................................<BR>.............................................................................................................................. <BR><BR>§ 17 Se, realizadas buscas, não for possível identificar os titulares do domínio dos imóveis confrontantes do imóvel retificando, definidos no § 10, deverá ser colhida a anuência de eventual ocupante, devendo os interessados não identificados ser notificados por meio de edital eletrônico, publicado 1 (uma) vez na internet, para se manifestarem no prazo de 15 (quinze) dias úteis, com as implicações previstas no § 4º deste artigo." (NR)<BR><BR>"Art. 221.&nbsp;............................................................................................................. <BR>.............................................................................................................................. <BR><BR>II - escritos particulares autorizados em lei, assinados pelas partes e pelas testemunhas, com as firmas reconhecidas; <BR>.............................................................................................................................. <BR>VI - contratos ou termos administrativos, assinados com os legitimados a que se refere o art. 3º do Decreto-Lei nº 3.365, de 21 de junho de 1941 (Lei da Desapropriação), no âmbito das desapropriações extrajudiciais. ............................................................................................................................. <BR><BR>§ 5º Os escritos particulares a que se refere o inciso II do <I>caput</I> deste artigo, quando relativos a atos praticados por instituições financeiras que atuem com crédito imobiliário autorizadas a celebrar instrumentos particulares com caráter de escritura pública, dispensam as testemunhas e o reconhecimento de firma. <BR><BR>§ 6º Os contratos e termos administrativos mencionados no inciso VI deverão ser submetidos à qualificação registral pelo oficial do registro de imóveis, previamente ao pagamento do valor devido ao expropriado." (NR)<BR><BR>"Art. 235.&nbsp;............................................................................................................. <BR>.............................................................................................................................. <BR><BR>III - 2 (dois) ou mais imóveis contíguos objeto de imissão provisória registrada em nome da União, dos Estados, do Distrito Federal, dos Municípios ou de suas entidades delegadas ou contratadas e sua respectiva cessão e promessa de cessão. ............................................................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;A Lei nº 6.766, de 19 de dezembro de 1979, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 18-A.&nbsp;A critério do loteador, o loteamento poderá ser submetido ao regime da afetação, pelo qual o terreno e a infraestrutura, bem como os demais bens e direitos a ele vinculados, manter-se-ão apartados do patrimônio do loteador e constituirão patrimônio de afetação, destinado à consecução do loteamento correspondente e à entrega dos lotes urbanizados aos respectivos adquirentes. <BR><BR>§ 1º O patrimônio de afetação não se comunica com os demais bens, direitos e obrigações do patrimônio geral do loteador ou de outros patrimônios de afetação por ele constituídos e só responde por dívidas e obrigações vinculadas ao loteamento respectivo e à entrega dos lotes urbanizados aos respectivos adquirentes. <BR><BR>§ 2º O loteador responde pelos prejuízos que causar ao patrimônio de afetação. <BR><BR>§ 3º Os bens e direitos integrantes do loteamento somente poderão ser objeto de garantia real em operação de crédito cujo produto seja integralmente destinado à implementação da infraestrutura correspondente e à entrega dos lotes urbanizados aos respectivos adquirentes. <BR><BR>§ 4º No caso de cessão, plena ou fiduciária, de direitos creditórios oriundos da comercialização dos lotes componentes do loteamento, o produto da cessão também passará a integrar o patrimônio de afetação. <BR><BR>§ 5º Os recursos financeiros integrantes do patrimônio de afetação serão administrados pelo loteador. <BR><BR>§ 6º Nos loteamentos objeto de financiamento, a comercialização dos lotes deverá contar com a anuência ou a ciência da instituição financiadora, conforme vier a ser estabelecido no contrato de financiamento. <BR><BR>§ 7º A contratação de financiamento e a constituição de garantias, inclusive mediante transmissão, para o credor, da propriedade fiduciária sobre os lotes integrantes do loteamento, bem como a cessão, plena ou fiduciária, de direitos creditórios decorrentes da comercialização desses lotes, não implicam a transferência para o credor de nenhuma das obrigações ou responsabilidades do cedente loteador, permanecendo este como único responsável pelas obrigações e pelos deveres que lhe são imputáveis."<BR><BR>"Art. 18-B.&nbsp;Considera-se constituído o patrimônio de afetação mediante averbação, a qualquer tempo, no Registro de Imóveis, de termo firmado pelo loteador e, quando for o caso, também pelos titulares de direitos reais de aquisição de lotes objeto de loteamento. <BR><BR><I>Parágrafo único. </I>A averbação não será obstada pela existência de ônus reais que tenham sido constituídos sobre o imóvel objeto do loteamento para garantia do pagamento do preço de sua aquisição ou do cumprimento de obrigação de implantar o empreendimento."<BR><BR>"Art. 18-C.&nbsp;A Comissão de Representantes, a Prefeitura e a instituição financiadora da infraestrutura poderão nomear, às suas expensas, pessoa física ou jurídica para fiscalizar e acompanhar o patrimônio de afetação. <BR><BR>§ 1º A nomeação a que se refere o <I>caput</I> não transfere para o nomeante qualquer responsabilidade pela qualidade da implementação da infraestrutura, pelo prazo do termo de verificação da sua realização ou por qualquer outra obrigação decorrente da responsabilidade do loteador, seja legal ou oriunda dos contratos de alienação dos lotes, de obra e de outros contratos eventualmente vinculados ao loteamento. <BR><BR>§ 2º A pessoa que, em decorrência do exercício da fiscalização de que trata o <I>caput</I> deste artigo, obtiver acesso às informações comerciais, tributárias ou de qualquer outra natureza referentes ao patrimônio afetado responderá pela falta de zelo, de dedicação e de sigilo dessas informações. <BR><BR>§ 3º A pessoa nomeada pela instituição financiadora deverá fornecer cópia de seu relatório ou parecer à Comissão de Representantes, a requerimento desta, não constituindo esse fornecimento quebra do sigilo a que se refere o § 2º deste artigo."<BR><BR>"Art. 18-D.&nbsp;Incumbe ao loteador: <BR><BR>I - promover todos os atos necessários à boa administração e à preservação do patrimônio de afetação, inclusive mediante adoção de medidas judiciais; <BR><BR>II - manter apartados os bens e direitos objeto de cada loteamento; <BR><BR>III - diligenciar a captação dos recursos necessários ao loteamento, cuidando de preservar os recursos necessários à conclusão da infraestrutura; <BR><BR>IV - entregar à Comissão de Representantes, no mínimo a cada 3 (três) meses, demonstrativo do estado da obra e de sua correspondência com o prazo pactuado ou com os recursos financeiros que integrem o patrimônio de afetação recebidos no período, firmado por profissionais habilitados, ressalvadas eventuais modificações sugeridas pelo loteador e aprovadas pela Comissão de Representantes; <BR><BR>V - manter e movimentar os recursos financeiros do patrimônio de afetação em pelo menos 1 (uma) conta de depósito aberta especificamente para tal fim;<BR><BR>VI - entregar à Comissão de Representantes balancetes coincidentes com o trimestre civil, relativos a cada patrimônio de afetação; <BR><BR>VII - assegurar à pessoa nomeada nos termos do art. 18-C o livre acesso à obra, bem como aos livros, aos contratos, à movimentação da conta de depósito exclusiva referida no inciso V deste artigo e a quaisquer outros documentos relativos ao patrimônio de afetação; <BR><BR>VIII - manter escrituração contábil completa, ainda que esteja desobrigado pela legislação tributária."<BR><BR>"Art. 18-E.&nbsp;O patrimônio de afetação extinguir-se-á pela averbação do termo de verificação emitido pelo órgão público competente, pelo registro dos títulos de domínio ou de direito de aquisição em nome dos respectivos adquirentes e, quando for o caso, pela extinção das obrigações do loteador perante eventual instituição financiadora da obra."</DIR>
+<DIR>"Art. 18-F.&nbsp;Os efeitos da decretação da falência ou da insolvência civil do loteador não atingem os patrimônios de afetação constituídos, não integrando a massa concursal o terreno, a obra até então realizada e os demais bens, direitos creditórios, obrigações e encargos objeto do loteamento."</DIR>
+<DIR>"Art. 22.&nbsp;.............................................................................................................. <BR><BR>§ 1º ..................................................................................................................... <BR><BR>§ 2º A partir da data de registro do loteamento, o Município providenciará a atualização do cadastro imobiliário da gleba que serviu de base para a aprovação do loteamento e das áreas que passaram a integrar o seu domínio. <BR><BR>§ 3º Somente a partir da emissão do Termo de Verificação e Execução de Obras (TVEO), o Município promoverá a individualização dos lotes no cadastro imobiliário municipal em nome do adquirente ou compromissário comprador no caso dos lotes comercializados e, em nome do proprietário da gleba, no caso dos lotes não comercializados." (NR)</DIR>
+<DIR>"Art. 22-A.&nbsp;(VETADO)."</DIR>
+<DIR>"Art. 26.&nbsp;................................................................................................................. <BR>................................................................................................................................<BR><BR>§ 3º Admite-se a cessão da posse em que estiverem provisoriamente imitidas a União, os Estados, o Distrito Federal, os Municípios e suas entidades delegadas, o que poderá ocorrer por instrumento particular, ao qual se atribui, no caso dos parcelamentos populares, para todos os fins de direito, caráter de escritura pública, não se aplicando a disposição do art. 108 da Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil).<BR>............................................................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;A Lei nº 8.036, de 11 de maio de 1990 (Lei do FGTS), passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 20.&nbsp;.................................................................................................................<BR>.................................................................................................................................<BR><BR>§ 27. A critério do titular da conta vinculada do FGTS, em ato formalizado no momento da contratação do financiamento habitacional, os direitos aos saques de que trata o <I>caput</I> deste artigo poderão ser objeto de alienação ou cessão fiduciária para liquidação, amortização ou pagamento de parte das prestações decorrentes de financiamento habitacional concedido no âmbito do SFH, dispensados os prazos mencionados na alínea "<EM>b</EM>" do inciso V e o interstício mínimo de 2 (dois) anos do inciso VI, ambos deste artigo, observadas as condições estabelecidas pelo Conselho Curador, mediante caucionamento dos depósitos a serem realizados na conta vinculada do trabalhador, exceto os previstos nos § 1º e § 2º do art. 18 desta Lei. <BR><BR>§ 28 A vedação prevista no § 2º do art. 2º desta Lei não se aplica ao que dispõe o § 27." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;A Lei nº 8.677, de 13 de julho de 1993, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 2º&nbsp;O FDS destina-se ao financiamento de projetos de investimento de interesse social nas áreas de habitação popular, inclusive regularização fundiária e melhoria habitacional, sendo permitido o financiamento nas áreas de saneamento e infraestrutura, desde que vinculadas aos programas de habitação, bem como de equipamentos comunitários. <BR><BR>§ 1º .................................................................................................................... <BR><BR>§ 2º O financiamento da infraestrutura referida no <I>caput</I> poderá contemplar os gastos necessários para viabilizar a provisão de energia de fontes renováveis aos beneficiários diretos dos investimentos habitacionais." (NR)<BR><BR>"Art. 5º&nbsp;................................................................................................................<BR>............................................................................................................................. <BR><BR>§ 4º O Conselho Curador reunir-se-á, em caráter ordinário, no mínimo semestralmente, mediante convocação de seu presidente, e, em caráter extraordinário, mediante convocação de qualquer um de seus membros, na forma estabelecida pelo Conselho Curador. <BR><BR>§ 4º-A. Na falta da convocação pelo presidente para a reunião ordinária de que trata o § 4º, qualquer um dos membros do Conselho Curador poderá fazê-lo, com antecedência mínima de 15 (quinze) dias. ............................................................................................................................." (NR)<BR><BR>"Art. 12-B.&nbsp;A União, por meio da alocação de recursos destinados a ações integrantes das leis orçamentárias anuais, observada a disponibilidade orçamentária e financeira, fica autorizada a transferir recursos ao FDS para subvencionar a regularização fundiária e a melhoria de moradias ou conceder subvenção econômica ao beneficiário pessoa física."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;A Lei nº 9.514, de 20 de novembro de 1997, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 22.&nbsp;.............................................................................................................. <BR><BR>§ 1º ......................................................................................................................<BR>.............................................................................................................................. <BR><BR>V - os direitos oriundos da imissão provisória na posse, quando concedida à União, aos Estados, ao Distrito Federal, aos Municípios ou às suas entidades delegadas, e a respectiva cessão e promessa de cessão;<BR><BR>VI - os bens que, não constituindo partes integrantes do imóvel, destinam-se, de modo duradouro, ao uso ou ao serviço deste. <BR>............................................................................................................................." (NR)<BR><BR>"Art. 23.&nbsp;.............................................................................................................. <BR><BR>§ 1º ..................................................................................................................... <BR><BR>§ 2º Caberá ao fiduciante a obrigação de arcar com o custo do pagamento do Imposto sobre a Propriedade Predial e Territorial Urbana (IPTU) incidente sobre o bem e das taxas condominiais existentes." (NR)<BR><BR>"Art. 27.&nbsp;................................................................................................................<BR>............................................................................................................................... <BR><BR>§ 10 Os leilões e a publicação dos respectivos editais poderão ser realizados por meio eletrônico." (NR)<BR><BR>"Art. 37-C.&nbsp;Os editais previstos nesta Lei poderão ser publicados de forma eletrônica."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;A Lei nº 10.188, de 12 de fevereiro de 2001, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 1º&nbsp;.................................................................................................................<BR>............................................................................................................................... <BR><BR>§ 4º Os imóveis produzidos com recursos do Fundo de Arrendamento Residencial (FAR) poderão ser destinados por cessão, doação, locação, comodato, arrendamento ou venda, em contrato subsidiado ou não, total ou parcialmente, para pessoa física ou jurídica, conforme regulamentação do Ministério das Cidades, sem prejuízo de outros negócios jurídicos compatíveis, com prioridade para: <BR>............................................................................................................................... <BR><BR>II - pessoas físicas que constituam o público-alvo dos programas habitacionais federais, as quais não poderão ser impedidas de habitar com seus animais domésticos nessas residências, respeitando as normas vigentes e garantindo o bem-estar animal. <BR><BR>§ 5º O FAR poderá financiar os gastos necessários para viabilizar a provisão de energia de fontes renováveis aos beneficiários diretos dos investimentos habitacionais realizados no âmbito do Programa Minha Casa, Minha Vida." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;A Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil), passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 1.225&nbsp;.............................................................................................................<BR>................................................................................................................................. <BR><BR>XII - a concessão de direito real de uso; <BR><BR>XIII - a laje; <BR><BR>XIV - os direitos oriundos da imissão provisória na posse, quando concedida à União, aos Estados, ao Distrito Federal, aos Municípios ou às suas entidades delegadas e a respectiva cessão e promessa de cessão." (NR)<BR><BR>"Art. 1.473&nbsp;.............................................................................................................. <BR>.................................................................................................................................. <BR><BR>X - a propriedade superficiária; <BR><BR>XI - os direitos oriundos da imissão provisória na posse, quando concedida à União, aos Estados, ao Distrito Federal, aos Municípios ou às suas entidades delegadas e a respectiva cessão e promessa de cessão. ............................................................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;A Lei nº 10.931, de 2 de agosto de 2004, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 4º&nbsp;.................................................................................................................<BR>.............................................................................................................................. <BR><BR>§ 8º Para os projetos de construção e incorporação de imóveis residenciais de interesse social, o percentual correspondente ao pagamento unificado dos tributos de que trata o <I>caput</I> deste artigo será equivalente a 1% (um por cento) da receita mensal recebida, conforme regulamentação da Secretaria Especial da Receita Federal do Brasil. <BR><BR>§ 9º Para efeito do disposto no § 8º, consideram-se projetos de incorporação de imóveis residenciais de interesse social aqueles destinados a famílias cuja renda se enquadre na Faixa Urbano 1, independentemente do valor da unidade, no âmbito do Programa Minha Casa, Minha Vida, sendo que a existência de unidades destinadas às outras faixas de renda no empreendimento não obstará a fruição do regime especial de tributação de que trata o § 8º. <BR><BR>§ 10. As condições para utilização dos benefícios de que tratam os §§ 6º e 8º serão definidas em regulamento. <BR><BR>§ 11. (VETADO)." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;A Lei nº 11.977, de 7 de julho de 2009, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 6º-A&nbsp;.............................................................................................................. <BR>...............................................................................................................................<BR><BR>§ 1º Nos empreendimentos habitacionais em edificações multifamiliares produzidos com os recursos de que trata o <I>caput</I>, inclusive no caso de requalificação de imóveis urbanos, será admitida a produção de unidades destinadas à atividade comercial a eles vinculada. <BR><BR>§ 2º (Revogado). <BR>................................................................................................................................ <BR><BR>§ 5º .........................................................................................................................<BR><BR>I - a subvenção econômica será concedida nas prestações do financiamento, ao longo de 120 (cento e vinte) meses, ressalvada a hipótese de quitação antecipada de que trata o inciso II; <BR><BR>II - poderá haver quitação antecipada do financiamento, conforme regulamentação do Ministério das Cidades; <BR>.................................................................................................................................<BR><BR>§ 7º Nas operações previstas no § 3º, a subvenção econômica será concedida no ato da contratação da unidade habitacional, conforme regulamentação do Ministério das Cidades. <BR>................................................................................................................................. <BR><BR>§ 9º O descumprimento contratual pela família beneficiária de operações financiadas pelo FAR e pelo FDS poderá ensejar a retomada do bem pelo fundo financiador correspondente, dispensada a realização de leilão, observada a regulamentação do Ministério das Cidades para a destinação da unidade habitacional.<BR>.................................................................................................................................. <BR><BR>§ 16. Os imóveis cuja viabilidade ou permanência no Programa restar prejudicada poderão ser objeto de desimobilização, pelo FAR ou pelo FDS, por meio de cessão, doação, locação, comodato, arrendamento, venda, ou outros negócios jurídicos compatíveis, em contrato subsidiado ou não, aos Estados, ao Distrito Federal, aos Municípios, aos órgãos de suas administrações diretas e indiretas, às pessoas físicas e às entidades com ou sem fins lucrativos, conforme ato do Ministério das Cidades. <BR><BR>§ 17. (Revogado). <BR><BR>§ 18. Compete ao Ministério das Cidades regulamentar a exigência de participação financeira dos beneficiários de que trata o inciso I do <I>caput</I>, inclusive por meio da ampliação do rol de dispensas de que trata o § 3º e da eventual renegociação de dívidas. <BR><BR>§ 19. A União fica autorizada a utilizar imóveis ociosos de sua propriedade, nas regiões urbanas centrais, objetivando a sua requalificação para a oferta de benefícios habitacionais, desde que o atendimento contemple exclusivamente famílias da Faixa Urbano 1, de forma a: <BR><BR>I - contribuir para a redução da ociosidade de edificações existentes e para o cumprimento da função social da propriedade, visando ao aumento da densidade demográfica e à qualificação do espaço público; <BR><BR>II - estimular a reabilitação do patrimônio arquitetônico, a partir de regras que facilitem a requalificação das edificações para novos usos; <BR><BR>III - favorecer a adequação de edificações existentes aos padrões de segurança, salubridade e acessibilidade, ampliando a oferta de áreas disponíveis ao adensamento populacional; <BR><BR>IV - adequar os procedimentos de análise de pedidos de licenciamento de intervenções de requalificação, quando associadas a pedido de reforma com aumento de área construída; <BR><BR>V - estimular a sustentabilidade ambiental em região urbana, com a maximização da utilização de materiais e infraestrutura existentes." (NR)<BR><BR>"Art. 7º-A&nbsp;Os beneficiários de operações do PMCMV realizadas com recursos advindos da integralização de cotas do FAR obrigam-se a ocupar os imóveis adquiridos, em até 30 (trinta) dias, a contar da assinatura do contrato de compra e venda com cláusula de alienação fiduciária em garantia, firmado com o FAR, e não poderão ser impedidos de habitar com seus animais domésticos nessas residências, respeitando as normas vigentes e garantindo o bem-estar animal. .............................................................................................................................." (NR)<BR><BR>"Art. 8º-A&nbsp;O Ministério das Cidades, nas situações enquadradas nos incisos VI e VII do parágrafo único do art. 7º, deverá notificar, no prazo de 60 (sessenta) dias, as instituições ou agentes financeiros para: ............................................................................................................................... <BR><BR>§ 4º A manifestação de interesse a que se refere o § 2º possibilitará a prorrogação dos compromissos assumidos pelas instituições ou pelos agentes financeiros pelo prazo de até 60 (sessenta) meses, contado a partir de 26 de agosto de 2020, para conclusão e entrega das unidades habitacionais. <BR>.............................................................................................................................." (NR)<BR><BR>"Art. 13.&nbsp;................................................................................................................<BR>................................................................................................................................<BR><BR>§ 3º Para definição dos beneficiários do PNHR, deverão ser respeitados o limite de renda definido para o PMCMV, as faixas de renda definidas pelo Poder Executivo federal e as demais regras estabelecidas na regulamentação do Programa." (NR)<BR><BR>"Art. 20.&nbsp;Fica a União autorizada a participar, observadas suas disponibilidades orçamentárias e financeiras consignadas nas dotações anuais, do Fundo Garantidor da Habitação Popular (FGHab), que terá por finalidades: ................................................................................................................................ <BR><BR>§ 1º-B. (Revogado).<BR>............................................................................................................................." (NR)<BR><BR>"Art. 42.&nbsp;................................................................................................................<BR>...............................................................................................................................<BR><BR>§ 4º A redução prevista no inciso II do <I>caput</I> aplica-se às operações com recursos do FGTS firmadas a partir de 26 de agosto de 2020." (NR)<BR><BR>"Art. 43-B.&nbsp;A redução prevista no inciso II do <I>caput</I> do art. 43 aplica-se também às operações com imóveis residenciais de empreendimentos fora do PMCMV contratados com recursos do FGTS firmadas a partir de 26 de agosto de 2020."<BR><BR>"Art. 73.&nbsp;................................................................................................................. <BR><BR>I - condições de acessibilidade a todas as áreas públicas e de uso comum, com obrigatoriedade de construção de rampas de acesso nas calçadas e nos espaços públicos no âmbito do PMCMV; ................................................................................................................................<BR><BR>III - condições de sustentabilidade das construções e dos espaços adequados e/ou destinados para animais domésticos (pets) em cada unidade habitacional; <BR>.............................................................................................................................<BR><BR>V - condições de habitabilidade e sustentabilidade das construções. <BR>............................................................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;O art. 1º da Lei nº 12.462, de 4 de agosto de 2011, passa a vigorar acrescido do seguinte inciso XI: <BR><BR>
+<DIR>"Art. 1º&nbsp;.................................................................................................................<BR>.............................................................................................................................. <BR><BR>XI - das obras e serviços de engenharia para infraestrutura, construção, requalificação, urbanização e regularização fundiária no âmbito das políticas públicas de desenvolvimento urbano e habitação. ............................................................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;O art. 784 da Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), passa a vigorar acrescido do seguinte § 4º: <BR><BR>
+<DIR>"Art. 784.&nbsp;.............................................................................................................<BR>.............................................................................................................................. <BR><BR>§ 4º Nos títulos executivos constituídos ou atestados por meio eletrônico, é admitida qualquer modalidade de assinatura eletrônica prevista em lei, dispensada a assinatura de testemunhas quando sua integridade for conferida por provedor de assinatura." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;A Lei nº 13.465, de 11 de julho de 2017, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 30.&nbsp;................................................................................................................<BR>............................................................................................................................... <BR><BR>§ 4º Para as terras de sua propriedade, os órgãos da administração direta e as entidades da administração indireta da União, dos Estados, do Distrito Federal e dos Municípios ficam autorizados a instaurar, processar e aprovar a Reurb-S ou a Reurb- E e a utilizar os demais instrumentos previstos nesta Lei." (NR)<BR><BR>"Art. 36.&nbsp;...............................................................................................................<BR>............................................................................................................................... <BR><BR>§ 6º Na hipótese de utilização, pelo poder público, de peças técnicas e projetos de regularização fundiária elaborados por empresas privadas e particulares em geral, será necessária, para a emissão da Certidão de Regularização Fundiária (CRF), a anuência dos autores ou de quem detenha os direitos autorais. <BR><BR>§ 7º As unidades desocupadas e não comercializadas do titular originário do domínio da área alcançadas pela Reurb, na forma do inciso I do <I>caput</I> deste artigo, poderão ser caucionadas ou averbadas em alienação fiduciária e colocadas em garantia para as obras de infraestrutura essenciais, consignando-se o poder público como beneficiário da garantia estabelecida." (NR)<BR><BR>"Art. 37.&nbsp;Na Reurb-S, caberá ao poder público competente, diretamente ou por meio da administração pública indireta, implementar a infraestrutura essencial, os equipamentos comunitários e as melhorias habitacionais previstas nos projetos de regularização, assim como arcar com os ônus de sua manutenção, podendo utilizarse de recursos financeiros públicos e privados. <BR><BR>§ 1º Os projetos e as obras de infraestrutura essencial na Reurb-S ou Reurb-E, incluindo vias de acesso, iluminação pública, solução de esgotamento sanitário e de drenagem de águas pluviais, ligações domiciliares de abastecimento de água e de energia elétrica e valores despendidos com indenizações aos antigos proprietários, poderão ser financiados com recursos do Sistema Brasileiro de Poupança e Empréstimo (SBPE), do Fundo de Garantia do Tempo de Serviço (FGTS), do Fundo de Arrendamento Residencial (FAR) e do Fundo de Desenvolvimento Social (FDS), bem como por outras fontes de financiamento públicas, privadas ou internacionais. <BR><BR>§ 2º Garantida a previsão de restituição integral dos valores disponibilizados, ficam autorizados a realizar as operações financeiras para as obras de infraestrutura referidas no § 1º os órgãos federais, estaduais e municipais, inclusive sociedades de economia mista, que operem na execução de política habitacional e de infraestruturas conexas. <BR><BR>§ 3º As garantias para as operações financeiras para as obras de infraestrutura e melhorias essenciais para a Reurb são as previstas no art. 17 da Lei nº 9.514, de 20 de novembro de 1997, e deverão ser incluídas na Certidão de Regularização Fundiária (CRF). <BR><BR>§ 4º O cálculo dos valores devidos pelos beneficiários da Reurb poderá ser realizado adotando-se como critério as áreas dos imóveis regularizados, individualmente considerados." (NR)<BR><BR>"Art. 37-A.&nbsp;Fica autorizada a transferência do direito de construir correspondente ao potencial construtivo passível de ser utilizado em outro local, prevista no art. 35 da Lei nº 10.257, de 10 de julho de 2001 (Estatuto da Cidade), para fins de viabilizar a elaboração de projetos, a indenização e a realização das obras de infraestrutura em projetos de Reurb-S. <BR><BR><I>Parágrafo único. </I>As prefeituras poderão receber imóveis para o atendimento das finalidades previstas neste artigo, oferecendo como contrapartida ao proprietário a possibilidade de transferência do potencial construtivo do bem doado ou desapropriado amigavelmente."<BR><BR>"Art. 44.&nbsp;.................................................................................................................<BR>................................................................................................................................ <BR><BR>§ 8º O oficial do cartório de registro de imóveis, ao abrir as matrículas individuais decorrentes do projeto de regularização fundiária, deverá, nas matrículas de unidades imobiliárias cujo ocupante não venha a ser informado na lista de beneficiários da CRF, fazer constar o titular originário da matrícula na condição de proprietário anterior, não inserindo esse mesmo proprietário como titular atual da matrícula aberta, mas apenas inserindo, no campo relativo ao proprietário atual, texto informando que o futuro proprietário será oportunamente citado na matrícula quando do envio de listas complementares de beneficiários." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;A Lei nº 14.063, de 23 de setembro de 2020, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 17-A.&nbsp;As instituições financeiras que atuem com crédito imobiliário autorizadas a celebrar instrumentos particulares com caráter de escritura pública e os partícipes dos contratos correspondentes poderão fazer uso das assinaturas eletrônicas nas modalidades avançada e qualificada de que trata esta Lei. <BR><BR><I>Parágrafo único. </I>(VETADO)." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;A Lei nº 14.300, de 6 de janeiro de 2022, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 16.&nbsp;...............................................................................................................<BR>.............................................................................................................................. <BR><BR>§ 2º O valor mínimo faturável aplicável aos participantes do SCEE inscritos no Cadastro Único para Programas Sociais do Governo Federal (CadÚnico), instituído pela Lei nº 8.742, de 7 de dezembro de 1993 (Lei Orgânica da Assistência Social), deve ter redução de no mínimo 50% (cinquenta por cento) em relação ao valor mínimo faturável aplicável aos demais consumidores equivalentes, conforme regulação da Aneel." (NR)<BR><BR>"Art. 24.&nbsp;.............................................................................................................. <BR><BR><I>Parágrafo único. </I>(VETADO)." (NR)<BR><BR>"Art. 36-A.&nbsp;A unidade consumidora participante do SCEE poderá comercializar excedente de energia elétrica com órgãos públicos desde que seja beneficiária de programa social ou habitacional das esferas federal, estadual, distrital ou municipal."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;A Lei nº 14.382, de 27 de junho de 2022, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 6º&nbsp;................................................................................................................ <BR><BR>§ 1º ......................................................................................................................<BR>.............................................................................................................................. <BR><BR>IV - os extratos eletrônicos relativos a bens imóveis produzidos pelas instituições financeiras que atuem com crédito imobiliário autorizadas a celebrar instrumentos particulares com caráter de escritura pública, bem como os relativos a garantias de crédito rural em cédulas e títulos de crédito do agronegócio, poderão ser apresentados ao registro eletrônico de imóveis, e as referidas instituições financeiras arquivarão o instrumento contratual ou título em pasta própria. ............................................................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Permanecerão submetidos à Lei nº 11.977, de 7 de julho de 2009, todos os empreendimentos habitacionais firmados e contratados até 25 de agosto de 2020, e à Lei nº 14.118, de 12 de janeiro de 2021, todos aqueles firmados e contratados após 26 de agosto de 2020. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os contratos que venham a ser firmados com pessoas físicas ou jurídicas em decorrência das operações referidas no <I>caput</I> poderão ser beneficiados pelas regras estabelecidas por esta Lei, conforme ato do Ministério das Cidades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os empreendimentos habitacionais de que tratam o <I>caput</I> e o § 1º deste artigo para os quais não existam beneficiários qualificados obedecerão às mesmas faixas de renda e aos demais critérios de seleção, hierarquização, priorização e preferência dispostos nesta Lei e nos demais regulamentos do Programa Minha Casa, Minha Vida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;A partir da data de publicação da Medida Provisória nº 1.162, de 14 de fevereiro de 2023, todas as operações com benefício de que trata o art. 4º desta Lei integrarão o Programa Minha Casa, Minha Vida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;O Ministério das Cidades fica autorizado a convalidar atos administrativos preparatórios de operações futuras praticados sob a vigência da Lei nº 11.977, de 7 de julho de 2009, e da Lei nº 14.118, de 12 de janeiro de 2021. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O disposto nesta Lei poderá ser aplicado na convalidação de que trata o <I>caput</I>, desde que em benefício da operação e que não colida com as diretrizes previstas no art. 3º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Revogam-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - os seguintes dispositivos da Lei nº 11.977, de 7 de julho de 2009: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>o § 2º do art. 4º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>os §§ 2º e 17 do art. 6º-A; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o inciso III do <I>caput</I> do art. 7º-B; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>o § 1º-B do art. 20; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - os seguintes dispositivos da Lei nº 14.118, de 12 de janeiro de 2021: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>os arts. 1º a 16; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o art. 25; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - os seguintes dispositivos da Lei nº 8.036, de 11 de maio de 1990 (Lei do FGTS): <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>o art. 6º-B; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o inciso III do § 3º do art. 9º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o § 3º-B do art. 9º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>o § 3º-C do art. 9º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>os §§ 12 e 15 a 17 do art. 9º; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>o § 3º-A do art. 20-D. </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;Esta Lei entra em vigor na data de sua publicação. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 13 de julho de 2023; 202º da Independência e 135º da República. </P>
+<P>LUIZ INÁCIO LULA DA SILVA <BR>Jader Fontenelle Barbalho Filho <BR>Antônio Waldez Góes da Silva <BR>Fernando Haddad <BR>Geraldo José Rodrigues Alckmin Filho <BR>Flávio Dino de Castro e Costa <BR>Alexandre Silveira de Oliveira <BR>Simone Nassar Tebet</P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 14/07/2023
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 14/7/2023, Página 1 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+
+<!-- JS do portal-tema: necessário para o botão de compartilhamento -->
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/vendor-bundle.js"></script>
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/camara-bundle.js"></script>
+
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

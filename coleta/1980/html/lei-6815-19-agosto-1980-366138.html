@@ -1,0 +1,939 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 6.815, DE 19 DE AGOSTO DE 1980 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Define a situação jurídica do estrangeiro no Brasil, cria o Conselho Nacional de Imigração, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 6.815, DE 19 DE AGOSTO DE 1980 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-6815-19-agosto-1980-366138-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-6815-19-agosto-1980-366138-normaatualizada-pl.docx">formato docx</a>)
+                                                &nbsp;
+                                                    (<a href="lei-6815-19-agosto-1980-366138-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-6815-19-agosto-1980-366138-veto-19847-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-6815-19-agosto-1980-366138-retificacao-19848-pl.html">Retificação</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-6815-19-agosto-1980-366138-republicacaoatualizada-34210-pl.html">Republicação Atualizada</a>
+                                            </li>
+                                    <li>
+                                        <a href="lei-6815-19-agosto-1980-366138-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 6.815, DE 19 DE AGOSTO DE 1980</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Define a situação jurídica do estrangeiro no Brasil, cria o Conselho Nacional de Imigração, e dá outras providências. <BR>
+						</p>
+				
+						<div class="texto">
+							<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; O PRESIDENTE DA REPÚBLICA</STRONG>&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º &nbsp;Em tempo de paz, qualquer estrangeiro poderá, satisfeitas as condições desta Lei, entrar e permanecer no Brasil e dele sair, resguardados os interesses nacionais. <BR><BR></P>
+<CENTER>TÍTULO I <BR>Da Aplicação </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º &nbsp;Na aplicação desta Lei atender-se-á precipuamente à segurança nacional, à organização institucional, aos interesses políticos, sócio-econômicos e culturais do Brasil, bem assim à defesa do trabalhador nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º &nbsp;A concessão do visto, a sua prorrogação ou transformação ficarão sempre condicionadas aos interesses nacionais. </P>
+<CENTER>TÍTULO II <BR>Da Admissão, Entrada e Impedimento&nbsp;<BR>&nbsp; </CENTER>
+<CENTER>CAPÍTULO I <BR>Da Admissão </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º &nbsp;Ao estrangeiro que pretenda entrar no território brasileiro poderá ser concedido visto: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - de trânsito; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - de turista; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - temporário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - permanente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - de cortesia; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - oficial; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - diplomático. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O visto é individual e sua concessão poderá estender-se a dependentes legais, observado o disposto no artigo 7º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º &nbsp;Serão fixados em regulamento os requisitos para a obtenção dos vistos de entrada previstos nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º &nbsp;A posse ou a propriedade de bens no Brasil não confere ao estrangeiro o direito de obter visto de qualquer natureza, ou autorização de permanência no território brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º &nbsp;Não se concederá visto ao estrangeiro: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - menor de dezoito anos, desacompanhado do responsável legal ou sem a sua autorização expressa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - considerado nocivo à ordem pública ou aos interesses nacionais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - anteriormente expulso do País, salvo se a expulsão tiver sido revogada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - condenado ou processado em outro país por crime doloso, passível de extradição segundo a lei brasileira; ou&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - que não satisfaça as condições de saúde estabelecidas pelo Ministério da Saúde. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º &nbsp;O visto de trânsito poderá ser concedido ao estrangeiro que, para atingir o país de destino, tenha de entrar em território brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O visto de trânsito é válido para uma estada de até dez dias improrrogáveis e uma só entrada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Não se exigirá visto de trânsito ao estrangeiro em viagem contínua, que só se interrompa para as escalas obrigatórias do meio de transporte utilizado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º &nbsp;O visto de turista poderá ser concedido ao estrangeiro que venha ao Brasil em caráter recreativo ou de visita, assim considerado aquele que não tenha finalidade imigratória, nem intuito de exercício de atividade remunerada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10. Poderá ser dispensada a exigência de visto, prevista no artigo anterior, ao turista nacional de país que dispense ao brasileiro idêntico tratamento.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A reciprocidade prevista neste artigo será, em todos os casos, estabelecida mediante acordo internacional, que observará o prazo de estada do turista fixado nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11. A empresa transportadora deverá verificar, por ocasião do embarque, no exterior, a documentação exigida, sendo responsável, no caso de irregularidade apurada no momento da entrada, pela saída do estrangeiro, sem prejuízo do disposto no artigo 124, item VI. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12. O prazo de estada do turista será de até noventa dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O prazo poderá ser reduzido, em cada caso, a critério do Ministério da Justiça. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13. O visto temporário poderá ser concedido ao estrangeiro que pretenda vir ao Brasil: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - em viagem cultural ou em missão de estudos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - em viagem de negócios; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - na condição de artista ou desportista; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - na condição de estudante; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - na condição de cientista, professor, técnico ou profissional de outra categoria, sob o regime de contrato ou a serviço do Governo brasileiro; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - na condição de correspondente de jornal, revista, rádio, televisão ou agência noticiosa estrangeira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14. O prazo de estada no Brasil, nos casos dos itens II e III do artigo 13, será de até noventa dias, e, nos demais, salvo o disposto no parágrafo único deste artigo, o correspondente à duração da missão, do contrato, ou da prestação de serviços, comprovada perante a autoridade consular, observado o disposto na legislação trabalhista. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>No caso do item IV do artigo 13 o prazo será de até um ano, prorrogável, quando for o caso, mediante prova do aproveitamento escolar e da matrícula. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15. Ao estrangeiro referido nos itens III ou V do artigo 13 só se concederá o visto se satisfizer as exigências especiais estabelecidas pelo Conselho Nacional de Imigração e for parte em contrato de trabalho visado pelo Ministério do Trabalho, salvo no caso de comprovada prestação de serviço ao Governo brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16. O visto permanente poderá ser concedido ao estrangeiro que pretenda se fixar definitivamente no Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A imigração objetivará, primordialmente, propiciar mão-de-obra especializada aos vários setores da economia nacional, visando ao aumento da produtividade, à assimilação de tecnologia e à captação de recursos para setores específicos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17. Para obter visto permanente o estrangeiro deverá satisfazer, além dos requisitos referidos no artigo 5º, as exigências de caráter especial previstas nas normas de seleção de imigrantes, estabelecidas pelo Conselho Nacional de Imigração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18. A concessão do visto permanente poderá ficar condicionada, por prazo não superior a cinco anos, ao exercício de atividade certa e à fixação em região determinada do território brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19. O Ministério das Relações Exteriores definirá os casos de concessão, prorrogação ou dispensa dos vistos diplomáticos, oficial e de cortesia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20. Pela concessão de visto cobrar-se-ão emolumentos consulares, ressalvados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - os regulados por acordos que concedam gratuidade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os vistos de cortesia, oficial ou diplomático; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - os vistos de trânsito, temporário ou de turista, se concedidos a titulares de passaporte diplomático ou de serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A validade para a utilização de qualquer dos vistos é de noventa dias, contados da data de sua concessão, podendo ser prorrogada pela autoridade consular uma só vez, por igual prazo, cobrando-se os emolumentos devidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21. Ao natural de país limítrofe, domiciliado em cidade contígua ao território brasileiro, respeitados os interesses da segurança nacional, poder-se-á permitir a entrada nos municípios fronteiriços a seu respectivo país, desde que apresente prova de identidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Ao estrangeiro, referido neste artigo, que pretenda exercer atividade remunerada ou freqüentar estabelecimento de ensino naqueles municípios, será fornecido documento especial que o identifique e caracterize a sua condição, e, ainda, carteira de trabalho e previdência social, quando for o caso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os documentos referidos no parágrafo anterior não conferem o direito de residência no Brasil, nem autorizam o afastamento dos limites territoriais daqueles municípios. </P>
+<CENTER>CAPÍTULO II <BR>Da Entrada </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22. A entrada no território brasileiro far-se-á somente pelos locais onde houver fiscalização dos órgãos competentes dos Ministérios da Saúde, da Justiça e da Fazenda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23. O transportador ou seu agente responderá, a qualquer tempo, pela manutenção e demais despesas do passageiro em viagem contínua ou do tripulante que não estiver presente por ocasião da saída do meio de transporte, bem como pela retirada dos mesmos do território brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24. Nenhum estrangeiro procedente do exterior poderá afastar-se do local de entrada e inspeção sem que o seu documento de viagem e o cartão de entrada e saída hajam sido visados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25. Não poderá ser resgatado no Brasil, sem prévia autorização do Ministério da Justiça, o bilhete de viagem do estrangeiro que tenha entrado no território brasileiro na condição de turista ou em trânsito. <BR><BR></P>
+<CENTER>CAPÍTULO III <BR>Do Impedimento </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26. O visto concedido pela autoridade consular configura mera expectativa de direito, podendo a entrada, a estada ou o registro do estrangeiro ser obstado ocorrendo qualquer dos casos do artigo 7º, ou a inconveniência de sua presença no território brasileiro, a critério do Ministério da Justiça. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O estrangeiro que se tiver retirado do País sem recolher a multa devida em virtude desta Lei, não poderá reentrar sem efetuar o seu pagamento, acrescido de correção monetária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O impedimento de qualquer dos integrantes da família poderá estender-se a todo o grupo familiar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27. A empresa transportadora responde, a qualquer tempo, pela saída do clandestino e do impedido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Na impossibilidade da saída imediata do impedido ou do clandestino, o Ministério da Justiça poderá permitir a sua entrada condicional, mediante termo de responsabilidade firmado pelo representante da empresa transportadora, que lhe assegure a manutenção, fixados o prazo de estada e o local em que deva permanecer o impedido, ficando o clandestino custodiado pelo prazo máximo de trinta dias, prorrogável por igual período. </P>
+<CENTER>TÍTULO III <BR>Da Condição de Asilado </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28. O estrangeiro admitido no território brasileiro na condição de asilado político ficará sujeito, além dos deveres que lhe forem impostos pelo Direito Internacional, a cumprir as disposições da legislação vigente e as que o Governo brasileiro lhe fixar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29. O asilado não poderá sair do País sem prévia autorização do Governo brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A inobservância do disposto neste artigo importará na renúncia ao asilo e impedirá o reingresso nessa condição. <BR></P>
+<CENTER>TÍTULO IV <BR>Do Registro e suas Alterações&nbsp;<BR><BR>&nbsp; </CENTER>
+<CENTER>CAPÍTULO I <BR>Do Registro </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30. O estrangeiro admitido na condição de permanente, de temporário (art. 13, itens I, e de IV a VI), ou de asilado, é obrigado a registrar-se no Ministério da Justiça, dentro dos trinta dias seguintes à entrada ou à concessão do asilo e a identificar-se pelo sistema datiloscópico, observadas as disposições regulamentares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31. O nome e a nacionalidade do estrangeiro, para o efeito de registro, serão os constantes do documento de viagem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32. O titular de visto diplomático, oficial ou de cortesia, acreditado junto ao Governo brasileiro, ou cujo prazo previsto de estada no País seja superior a noventa dias, deverá providenciar seu registro no Ministério das Relações Exteriores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O estrangeiro titular de passaporte de serviço, oficial ou diplomático, que haja entrado no Brasil ao amparo de acordo de dispensa de visto, deverá, igualmente, proceder ao registro mencionado neste artigo sempre que sua estada no Brasil deva ser superior a noventa dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33. Ao estrangeiro registrado será, fornecido documento de identidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A emissão de documento de identidade, salvo nos casos de asilado ou de titular de visto de cortesia, oficial ou diplomático, está sujeita ao pagamento da taxa prevista na tabela de que trata o artigo 130. </P>
+<CENTER>CAPÍTULO II <BR>Da Prorrogação do Prazo de Estada </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34. Ao estrangeiro que tenha entrado na condição de turista, temporário ou asilado, e aos titulares de visto de cortesia, oficial ou diplomático, poderá ser concedida a prorrogação do prazo de estada no Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35. A prorrogação do prazo de estada do turista não excederá a noventa dias, podendo ser cancelada a critério do Ministério da Justiça. </P>
+<CENTER>CAPÍTULO III <BR>Da Transformação dos Vistos </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36. O titular do visto de que trata o artigo 13, item V, poderá obter transformação do mesmo para permanente (art. 16), satisfeitas as condições previstas nesta Lei e no seu Regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Na transformação do visto poderá aplicar-se o disposto no artigo 18. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37. É vedada a legalização da estada de clandestino e de irregular, e a transformação em permanente, dos vistos de trânsito, de turista, temporário (art. 13, itens I a IV e VI) e de cortesia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38. O titular de visto diplomático ou oficial poderá obter transformação desses vistos para temporário (artigo 13, itens I a VI) ou para permanente (art. 16), ouvido o Ministério das Relações Exteriores, e satisfeitas as exigências previstas nesta Lei e no seu Regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A transformação do visto oficial ou diplomático em temporário ou permanente importará na cessação de todas as prerrogativas, privilégios e imunidades decorrentes daqueles vistos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39. A solicitação da transformação de visto não impede a aplicação do disposto no artigo 56, se o estrangeiro ultrapassar o prazo legal de estada no território brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Do despacho que denegar a transformação do visto, caberá pedido de reconsideração na forma definida em Regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40. A transformação de vistos de que tratam os artigos 36 e 38 ficará sem efeito, se não for efetuado o registro no prazo de noventa dias, contados da publicação, no Diário Oficial, do deferimento do pedido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41. O titular de quaisquer dos vistos definidos nos artigos 8º, 9º, 10, 13 e 16 poderá ter os mesmos transformados para oficial ou diplomático. </P>
+<CENTER>CAPÍTULO IV <BR>Da Alteração de Assentamentos </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42. O nome do estrangeiro, constante do registro (art. 30), poderá ser alterado: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - se estiver comprovadamente errado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - se tiver sentido pejorativo ou expuser o titular ao ridículo;ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - se for de pronunciação e compreensão difíceis e puder ser traduzido ou adaptado à prosódia da língua portuguesa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O pedido de alteração de nome deverá ser instruído com a documentação prevista em Regulamento e será sempre objeto de investigação sobre o comportamento do requerente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os erros materiais no registro serão corrigidos de ofício. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A alteração decorrente de desquite ou divórcio obtido em país estrangeiro dependerá de homologação, no Brasil, da sentença respectiva. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Poderá ser averbado no registro o nome abreviado usado pelo estrangeiro como firma comercial registrada ou em qualquer atividade profissional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43. Compete ao Ministro da Justiça autorizar a alteração de assentamentos constantes do registro de estrangeiro. <BR></P>
+<CENTER>CAPÍTULO V <BR>Da Atualização do Registro </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44. A Junta Comercial, ao registrar firma de que participe estrangeiro, remeterá ao Ministério da Justiça os dados de identificação do estrangeiro e os do seu documento de identidade emitido no Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Tratando-se de sociedade anônima, a providência é obrigatória em relação ao estrangeiro que figure na condição de administrador, gerente ou diretor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45. Os Cartórios de Registro Civil remeterão, mensalmente, ao Ministério da Justiça, cópia dos registros de casamento e de óbito de estrangeiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46. O estabelecimento hoteleiro, a empresa imobiliária, o proprietário, locador, sublocador ou locatário de imóvel e o síndico de edifício remeterão ao Ministério da Justiça os dados de identificação do estrangeiro admitido na condição de hóspede, locatário, sublocatário ou morador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47. Salvo o disposto no § 1º do artigo 21, a admissão de estrangeiro a serviço de entidade pública ou privada, ou a matrícula em estabelecimento de ensino de qualquer grau, só se efetivará se o mesmo estiver devidamente registrado (art. 30). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As entidades a que se refere este artigo remeterão ao Ministério da Justiça, que dará conhecimento ao Ministério do Trabalho, quando for o caso, os dados de identificação do estrangeiro admitido ou matriculado, e comunicarão, à medida que ocorrer, o término do contrato de trabalho, sua rescisão ou prorrogação, bem como a suspensão ou cancelamento da matrícula e a conclusão do curso. <BR><BR></P>
+<CENTER>CAPÍTULO VI <BR>Do Cancelamento e do Restabelecimento do Registro </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;Art. 48. O estrangeiro terá o registro cancelado: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - se obtiver naturalização brasileira; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - se tiver decretada sua expulsão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - se requerer a saída do território brasileiro em caráter definitivo, renunciando, expressamente, ao direito de retorno previsto no artigo 50; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - se permanecer ausente do Brasil por prazo superior ao previsto no artigo 50; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - se ocorrer a transformação de visto de que trata o artigo 41; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - se houver transgressão do artigo 18, artigo 36, parágrafo único, ou 98 a 100; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - se temporário ou asilado, no término do prazo de sua estada no território brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O registro poderá ser restabelecido, nos casos dos itens I ou II, se cessada a causa do cancelamento, e, nos demais casos, se o estrangeiro retornar ao território brasileiro com visto de que trata o artigo 13 ou 16, ou obtiver a transformação prevista no artigo 38. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Ocorrendo a hipótese prevista no item III deste artigo, o estrangeiro deverá proceder à entrega do documento de identidade para estrangeiro e deixar o território brasileiro dentro de trinta dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Se da solicitação de que trata o item III deste artigo resultar isenção de ônus fiscal ou financeiro, o restabelecimento do registro dependerá, sempre, da satisfação prévia dos referidos encargos. </P>
+<CENTER>TÍTULO V <BR>Da Saída e do Retorno </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49. Não se exigirá visto de saída do estrangeiro que pretender sair do território brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Ministro da Justiça poderá, a qualquer tempo, estabelecer a exigência de visto de saída, quando razões de segurança interna aconselharem a medida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na hipótese do parágrafo anterior, o ato que estabelecer a exigência disporá sobre o prazo de validade do visto e as condições para a sua concessão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O asilado deverá observar o disposto no artigo 29. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50. O estrangeiro registrado como permanente, que se ausentar do Brasil, poderá regressar independentemente de visto se o fizer dentro de dois anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A prova da data de saída, para os fins deste artigo, far-se-á pela anotação aposta, pelo órgão competente do Ministério da Justiça, no documento de viagem do estrangeiro, no momento em que o mesmo deixar o território brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51. O estrangeiro registrado como temporário, que se ausentar do Brasil, poderá regressar independentemente de novo visto, se o fizer dentro do prazo de validade de sua estada no território brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52. O estrangeiro titular de visto consular de turista, que se ausentar do Brasil, poderá regressar independentemente de novo visto, se o fizer dentro do prazo de estada, no território brasileiro, fixado no visto. </P>
+<CENTER>TÍTULO VI <BR>Do Documento de Viagem para Estrangeiro </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53. São documentos de viagem o passaporte para estrangeiro e o "laissez-passer". <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os documentos de que trata este artigo são de propriedade da União, cabendo a seus titulares a posse direta e o uso regular. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54. Poderá ser concedido passaporte para estrangeiro: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - no Brasil: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>ao apátrida e ao de nacionalidade indefinida; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>a nacional de país que não tenha representação diplomática ou consular no Brasil, nem representante de outro país encarregado de protegê-lo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>a asilado ou a refugiado, como tal admitido no Brasil. </TD></TR></TBODY></TABLE></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - no Brasil e no exterior, ao cônjuge ou à viúva de brasileiro que haja perdido a nacionalidade originária em virtude do casamento.&nbsp;</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A concessão de passaporte, no caso da letra "b", do item I deste artigo, dependerá de prévia consulta ao Ministério das Relações Exteriores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55. O "laissez-passer" poderá ser concedido, no Brasil ou no exterior, ao estrangeiro portador de documento de viagem emitido por governo não reconhecido pelo Governo brasileiro, ou não válido para o Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A concessão, no exterior, de "laissez-passer" a estrangeiro registrado no Brasil como permanente, temporário ou asilado, dependerá de audiência prévia do Ministério da Justiça. </P>
+<CENTER>TÍTULO VII <BR>Da Deportação </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56. Nos casos de entrada ou estada irregular de estrangeiro, se este não se retirar voluntariamente do território brasileiro no prazo fixado em Regulamento, será promovida sua deportação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Será igualmente deportado o estrangeiro que infringir o disposto nos artigos 21 § 2º, 24, 36, parágrafo único, 97 a 100, §§ 1º ou 2º do artigo 103 ou artigo 104. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Desde que conveniente aos interesses nacionais, a deportação far-se-á independentemente da fixação do prazo de que trata o <EM><I>caput</I></EM> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57. A deportação consistirá na saída compulsória do estrangeiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A deportação far-se-á para o país da nacionalidade ou de procedência do estrangeiro, ou para outro que consinta em recebê-lo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58. Não sendo apurada a responsabilidade do transportador pelas despesas com a retirada do estrangeiro, nem podendo este ou terceiro por ela responder, serão as mesmas custeadas pelo Tesouro Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59. O estrangeiro poderá ser dispensado de quaisquer penalidades relativas à entrada ou estada irregular no Brasil ou formalidade cujo cumprimento possa dificultar a deportação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60. O estrangeiro, enquanto não se efetivar a deportação, poderá ser recolhido à prisão por ordem do Ministro da Justiça, pelo prazo de sessenta dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Sempre que não for possível, dentro do prazo previsto neste artigo, determinar-se a identidade do deportando ou obter-se documento de viagem para promover a sua retirada, a prisão poderá ser prorrogada por igual período, findo o qual será ele posto em liberdade, aplicando-se o disposto no artigo 72. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61. Não sendo exeqüível a deportação ou quando existirem indícios sérios de periculosidade ou indesejabilidade do estrangeiro, proceder-se-á a sua expulsão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62. Não se procederá à deportação se implicar em extradição inadmitida pela lei brasileira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63. O deportado só poderá reingressar no território brasileiro se ressarcir o Tesouro Nacional, com correção monetária, das despesas com a sua deportação e efetuar, se for o caso, o pagamento da multa devida à época, também corrigida.<BR><BR></P>
+<CENTER>TÍTULO VIII <BR>Da Expulsão </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64. É passível de expulsão o estrangeiro que, de qualquer forma, atentar contra a segurança nacional, a ordem política ou social, a tranqüilidade ou moralidade pública e a economia popular, ou cujo procedimento o torne nocivo à conveniência e aos interesses nacionais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>É passível, também, de expulsão o estrangeiro que:&nbsp;<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>praticar fraude a fim de obter a sua entrada ou permanência no Brasil; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>havendo entrado no território brasileiro com infração à lei, dele não se retirar no prazo que lhe for determinado para fazê-lo, não sendo aconselhável a deportação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>entregar-se à vadiagem ou à mendicância; ou </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>desrespeitar proibição especialmente prevista em lei para estrangeiro. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65. Caberá exclusivamente ao Presidente da República resolver sobre a conveniência e a oportunidade da expulsão ou de sua revogação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A medida expulsória ou a sua revogação far-se-á por decreto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66. Desde que conveniente ao interesse nacional, a expulsão do estrangeiro poderá efetivar-se ainda que haja processo ou tenha ocorrido condenação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67. Os órgãos do Ministério Público remeterão ao Ministério da Justiça, de ofício, até trinta dias após o trânsito em julgado, cópia da sentença condenatória de estrangeiro autor de crime doloso ou de qualquer crime contra a segurança nacional, a ordem política ou social, a economia popular, a moralidade ou a saúde pública, assim como da folha de antecedentes penais constantes dos autos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Ministro da Justiça, recebidos os documentos mencionados neste artigo, determinará a instauração de inquérito para a expulsão do estrangeiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68. O Ministro da Justiça, a qualquer tempo, poderá determinar a prisão, por noventa dias, do estrangeiro submetido a processo de expulsão e, para concluir o inquérito ou assegurar a execução da medida, prorrogá-la por igual prazo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Em caso de medida interposta junto ao Poder Judiciário que suspenda, provisoriamente, a efetivação do ato expulsório, o prazo de prisão de que trata a parte final do <EM><I>caput</I></EM> deste artigo ficará interrompido, até a decisão definitiva do Tribunal a que estiver submetido o feito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69. Compete ao Ministro da Justiça, de ofício ou acolhendo solicitação fundamentada, determinar a instauração de inquérito para a expulsão do estrangeiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70. Nos casos de infração contra a segurança nacional, a ordem política ou social e a economia popular, assim como nos casos de comércio, posse ou facilitação de uso indevido de substância entorpecente ou que determine dependência física ou psíquica, ou de desrespeito a proibição especialmente prevista em lei para estrangeiro, o inquérito será sumário e não excederá o prazo de quinze dias, dentro do qual fica assegurado ao expulsando o direito de defesa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71. Salvo as hipóteses previstas no artigo anterior, caberá pedido de reconsideração no prazo de dez dias a contar da publicação do decreto de expulsão no Diário Oficial da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72. O estrangeiro, cuja prisão não se torne necessária, ou que tenha o prazo desta vencido, permanecerá em liberdade vigiada, em lugar designado pelo Ministro da Justiça, e guardará as normas de comportamento que lhe forem estabelecidas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Descumprida qualquer das normas fixadas de conformidade com o disposto neste artigo ou no seguinte, o Ministro da Justiça, a qualquer tempo, poderá determinar a prisão administrativa do estrangeiro, cujo prazo não excederá a noventa dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73. O Ministro da Justiça poderá modificar, de ofício ou a pedido, as normas de conduta impostas ao estrangeiro e designar outro lugar para a sua residência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74. Não se procederá à expulsão se implicar em extradição inadmitida pela lei brasileira. </P>
+<CENTER>TÍTULO IX <BR>Da Extradição </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75. A extradição poderá ser concedida quando o governo requerente se fundamentar em convenção, tratado ou quando prometer ao Brasil a reciprocidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76. Não se concederá a extradição quando: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - se tratar de brasileiro, salvo se a aquisição dessa nacionalidade verificar-se após o fato que motivar o pedido; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o fato que motivar o pedido não for considerado crime no Brasil ou no Estado requerente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o Brasil for competente, segundo suas leis, para julgar o crime imputado ao extraditando; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a lei brasileira impuser ao crime a pena de prisão igual ou inferior a um ano; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - o extraditando estiver a responder a processo ou já houver sido condenado ou absolvido no Brasil pelo mesmo fato em que se fundar o pedido; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - estiver extinta a punibilidade pela prescrição segundo a lei brasileira ou a do Estado requerente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - o fato constituir crime político; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - o extraditando houver de responder, no Estado requerente, perante Tribunal ou Juízo de exceção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A exceção do item VII não impedirá a extradição quando o fato constituir, principalmente, infração da lei penal comum, ou quando o crime comum, conexo ao delito político, constituir o fato principal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Caberá, exclusivamente, ao Supremo Tribunal Federal a apreciação do caráter da infração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O Supremo Tribunal Federal poderá deixar de considerar crimes políticos os atentados contra Chefes de Estado ou quaisquer autoridades, bem assim os atos de anarquismo, terrorismo, sabotagem, seqüestro de pessoa, ou que importem propaganda de guerra ou de processos violentos para subverter a ordem política ou social. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77. São condições para concessão da extradição: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - ter sido o crime cometido no território do Estado requerente ou serem aplicáveis ao extraditando as leis penais desse Estado; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - existir sentença final de privação de liberdade, ou estar a prisão do extraditando autorizada por juiz, tribunal ou autoridade competente do Estado requerente, salvo o disposto no artigo 81. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78. Quando mais de um Estado requerer a extradição da mesma pessoa, pelo mesmo fato, terá preferência o pedido daquele em cujo território a infração foi cometida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Tratando-se de crimes diversos, terão preferência sucessivamente: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o Estado requerente em cujo território haja sido cometido o crime mais grave, segundo a lei brasileira; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o que em primeiro lugar houver pedido a entrega do extraditando, se a gravidade dos crimes for idêntica; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o Estado de origem, ou, na sua falta, o domiciliar do extraditando, se os pedidos forem simultâneos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Nos casos não previstos decidirá sobre a preferência o Governo brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Havendo tratado ou convenção com algum dos Estados requerentes, prevalecerão suas normas no que disserem respeito à preferência de que trata este artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 79. A extradição será requerida por via diplomática ou, na falta de agente diplomático do Estado que a requerer, diretamente de Governo a Governo, devendo o pedido ser instruído com a cópia autêntica ou a certidão da sentença condenatória, da de pronúncia ou da que decretar a prisão preventiva, proferida por juiz ou autoridade competente. Esse documento ou qualquer outro que se juntar ao pedido conterá indicações precisas sobre o local, data, natureza e circunstâncias do fato criminoso, identidade do extraditando, e, ainda, cópia dos textos legais sobre o crime, a pena e sua prescrição.<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O encaminhamento do pedido por via diplomática confere autenticidade aos documentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Não havendo tratado ou convenção que disponha em contrário, os documentos indicados neste artigo serão acompanhados de versão oficialmente feita para o idioma português no Estado requerente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 80. O Ministério das Relações Exteriores remeterá o pedido ao Ministério da Justiça, que ordenará a prisão do extraditando colocando-o à disposição do Supremo Tribunal Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 81. Em caso de urgência, poderá ser ordenada a prisão preventiva do extraditando desde que pedida, em termos hábeis, qualquer que seja o meio de comunicação, por autoridade competente, agente diplomático ou consular do Estado requerente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O pedido, que noticiará o crime cometido, deverá fundamentar-se em sentença condenatória, auto de prisão em flagrante, mandado de prisão ou, ainda, em fuga do indiciado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Efetivada a prisão, o Estado requerente deverá formalizar o pedido em noventa dias, na conformidade do artigo 79. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A prisão com base neste artigo não será mantida além do prazo referido no parágrafo anterior, nem se admitirá novo pedido pelo mesmo fato sem que a extradição haja sido formalmente requerida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 82. Nenhuma extradição será concedida sem prévio pronunciamento do plenário do Supremo Tribunal Federal sobre sua legalidade e procedência, não cabendo recurso da decisão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 83. Efetivada a prisão do extraditando (artigo 80), o pedido será encaminhado ao Supremo Tribunal Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A prisão perdurará até o julgamento final do Supremo Tribunal Federal, não sendo admitidas a liberdade vigiada, a prisão domiciliar, nem a prisão-albergue. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 84. Ao receber o pedido, o Relator designará dia e hora para o interrogatório do extraditando e, conforme o caso, dar-lhe-á curador ou advogado, senão o tiver, correndo do interrogatório o prazo de dez dias para a defesa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A defesa versará sobre a identidade da pessoa reclamada, defeito de forma dos documentos apresentados ou ilegalidade da extradição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Não estando o processo devidamente instruído, o Tribunal, a requerimento do Procurador-Geral da República, poderá converter o julgamento em diligência para suprir a falta no prazo improrrogável, de sessenta dias, decorridos os quais o pedido será julgado independentemente da diligência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O prazo referido no parágrafo anterior correrá da data da notificação que o Ministério das Relações Exteriores fizer à Missão Diplomática do Estado requerente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 85. Concedida a extradição, será o fato comunicado através do Ministério das Relações Exteriores à Missão Diplomática do Estado requerente que, no prazo de sessenta dias da comunicação, deverá retirar o extraditando do território brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 86. Se o Estado requerente não retirar o extraditando do território brasileiro no prazo do artigo anterior, será ele posto em liberdade, sem prejuízo de responder a processo de expulsão se o motivo da extradição o recomendar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 87. Negada a extradição não se admitirá novo pedido baseado no mesmo fato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 88. Quando o extraditando estiver sendo processado, ou tiver sido condenado, no Brasil, por crime punível com pena privativa de liberdade, a extradição será executada somente depois da conclusão do processo ou do cumprimento da pena, ressalvado, entretanto, o disposto no artigo 66. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A entrega do extraditando ficará igualmente adiada se a efetivação da medida puser em risco a sua vida por causa de enfermidade grave comprovada por laudo médico oficial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 89. O Governo poderá entregar o extraditando ainda que responda a processo ou esteja condenado por contravenção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 90. Não será efetivada a entrega sem que o Estado requerente assuma o compromisso: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - de não ser o extraditando preso nem processado por fatos anteriores ao pedido; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - de computar o tempo de prisão que, no Brasil, foi imposta por força da extradição; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - de comutar em pena privativa de liberdade a pena corporal ou de morte, ressalvados, quanto à última, os casos em que a lei brasileira permitir a sua aplicação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - de não ser o extraditando entregue, sem consentimento do Brasil, a outro Estado que o reclame; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - de não considerar qualquer motivo político para agravar a pena. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 91. A entrega do extraditando, de acordo com as leis brasileiras e respeitado o direito de terceiro, será feita com os objetos e instrumentos do crime encontrados em seu poder. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os objetos e instrumentos referidos neste artigo poderão ser entregues independentemente da entrega do extraditando. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 92. O extraditando que, depois de entregue ao Estado requerente, escapar à ação da Justiça e homiziar-se no Brasil, ou por ele transitar, será detido mediante pedido feito diretamente por via diplomática, e de novo entregue sem outras formalidades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 93. Salvo motivo de ordem pública, poderá ser permitido, pelo Ministro da Justiça, o trânsito, no território brasileiro, de pessoas extraditadas por Estados estrangeiros, bem assim o da respectiva guarda, mediante apresentação de documentos comprobatórios de concessão da medida. </P>
+<CENTER>TÍTULO X <BR>Dos Direitos e Deveres do Estrangeiro </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 94. O estrangeiro residente no Brasil goza de todos os direitos reconhecidos aos brasileiros, nos termos da Constituição e das leis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 95. Sempre que lhe for exigido por qualquer autoridade ou seu agente, o estrangeiro deverá exibir documento comprobatório de sua estada legal no território brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para os fins deste artigo e dos artigos 42, 44, 46 e 47, o documento deverá ser apresentado no original. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 96. O exercício de atividade remunerada e a matrícula em estabelecimento de ensino são permitidos ao estrangeiro com as restrições estabelecidas nesta Lei e no seu Regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 97. Ao estrangeiro que se encontra no Brasil ao amparo de visto de turista, de trânsito ou temporário de que trata o artigo 13, item IV, bem como aos dependentes de titulares de quaisquer vistos temporários é vedado o exercício de atividade remunerada. Ao titular de visto temporário de que trata o artigo 13, item VI, é vedado o exercício de atividade remunerada por fonte brasileira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 98. Ao estrangeiro titular de visto temporário e ao que se encontre no Brasil na condição do artigo 21, § 1º, é vedado estabelecer-se com firma individual, ou exercer cargo ou função de administrador, gerente ou diretor de sociedade comercial ou civil, bem como inscrever-se em entidade fiscalizadora do exercício de profissão regulamentada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 99. O estrangeiro admitido na condição de temporário, sob regime de contrato, só poderá exercer atividade junto à entidade pela qual foi contratado, na oportunidade da concessão do visto, salvo autorização expressa do Ministério da Justiça, ouvido o Ministério do Trabalho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 100. O estrangeiro admitido na forma do artigo 18, ou do artigo 36, parágrafo único, para o desempenho de atividade profissional certa, e a fixação em região determinada, não poderá, dentro do prazo que lhe for fixado na oportunidade da concessão ou da transformação do visto, mudar de domicílio nem de atividade profissional, ou exercê-la fora daquela região, salvo em caso excepcional, mediante autorização prévia do Ministério da Justiça, ouvido o Ministério do Trabalho, quando necessário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 101. O estrangeiro registrado é obrigado a comunicar ao Ministério da Justiça a mudança do seu domicílio ou residência, devendo fazê-lo nos trinta dias imediatamente seguintes à sua efetivação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 102. O estrangeiro que adquirir nacionalidade diversa da constante do registro (art. 30) deverá, nos noventa dias seguintes, requerer a averbação da nova nacionalidade em seus assentamentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 103. O portador de visto de cortesia, oficial ou diplomático, só poderá exercer atividade remunerada em favor do Estado estrangeiro, organização ou agência internacional de caráter intergovernamental a cujo serviço se encontre no País, ou do Governo ou de entidade brasileiros, mediante instrumento internacional firmado com outro Governo que encerre cláusula específica sobre o assunto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O serviçal com visto de cortesia só poderá exercer atividade remunerada a serviço particular de titular de visto de cortesia, oficial ou diplomático. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A missão, organização ou pessoa, a cujo serviço se encontra o serviçal, fica responsável pela sua saída do território brasileiro, no prazo de trinta dias, a contar da data em que cessar o vínculo empregatícío, sob pena de deportação do mesmo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Ao titular de quaisquer dos vistos referidos neste artigo não se aplica o disposto na legislação trabalhista brasileira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 104. Ao estrangeiro que tenha entrado no Brasil na condição de turista ou em trânsito é proibido o engajamento como tripulante em porto brasileiro, salvo em navio de bandeira de seu País, por viagem não redonda, a requerimento do transportador ou do seu agente, mediante autorização do Ministério da Justiça. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 105. É vedado ao estrangeiro: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - ser proprietário, armador ou comandante de navio nacional, inclusive nos serviços de navegação fluvial e lacustre; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ser proprietário de empresa jornalística de qualquer espécie, e de empresas de televisão e de radiodifusão, sócio ou acionista de sociedade proprietária dessas empresas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - ser responsável, orientador intelectual ou administrativo das empresas mencionadas no item anterior; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - obter concessão ou autorização para a pesquisa, prospecção, exploração e aproveitamento das jazidas, minas e demais recursos minerais e dos potenciais de energia hidráulica; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - ser proprietário ou explorador de aeronave brasileira, ressalvado o disposto na legislação específica; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - ser corretor de navios, de fundos públicos, leiloeiro e despachante aduaneiro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - participar da administração ou representação de sindicato ou associação profissional, bem como de entidade fiscalizadora do exercício de profissão regulamentada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - ser prático de barras, portos, rios, lagos e canais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - possuir, manter ou operar, mesmo como amador, aparelho de radiodifusão, de radiotelegrafia e similar, salvo reciprocidade de tratamento; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - prestar assistência religiosa às Forças Armadas e auxiliares, e também aos estabelecimentos de internação coletiva. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O disposto no item I deste artigo não se aplica aos navios nacionais de pesca. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Ao português, no gozo dos direitos e obrigações previstos no Estatuto da Igualdade, apenas lhe é defeso:&nbsp;<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>assumir a responsabilidade e a orientação intelectual e administrativa das empresas mencionadas no item II deste artigo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>ser proprietário, armador ou comandante de navio nacional, inclusive de navegação fluvial e lucustre, ressalvado o disposto no parágrafo anterior; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>prestar assistência religiosa às Forças Armadas e auxiliares. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 106. O estrangeiro admitido no território brasileiro não pode exercer atividade de natureza política, nem se imiscuir, direta ou indiretamente, nos negócios públicos do Brasil, sendo-lhe especialmente vedado: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - organizar, criar ou manter sociedade ou quaisquer entidades de caráter político, ainda que tenham por fim apenas a propaganda ou a difusão, exclusivamente entre compatriotas, de idéias, programas ou normas de ação de partidos políticos do país de origem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - exercer ação individual, junto a compatriotas ou não, no sentido de obter, mediante coação ou constrangimento de qualquer natureza, adesão a idéias, programas ou normas de ação de partidos ou facções políticas de qualquer país; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - organizar desfiles, passeatas, comícios e reuniões de qualquer natureza, ou deles participar, com os fins a que se referem os itens I e II deste artigo.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O disposto no <EM><I>caput</I></EM> deste artigo não se aplica ao português beneficiário do Estatuto da Igualdade ao qual tiver sido reconhecido o gozo de direitos políticos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 107. É lícito aos estrangeiros associarem-se para fins culturais, religiosos, recreativos, beneficentes ou de assistência, filiarem-se a clubes sociais e desportivos, e a quaisquer outras entidades com iguais fins, bem como participarem de reunião comemorativa de datas nacionais ou acontecimentos de significação patriótica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As entidades mencionadas neste artigo, se constituídas de mais de metade de associados estrangeiros, somente poderão funcionar mediante autorização do Ministro da Justiça. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 108. A entidade que houver obtido registro mediante falsa declaração de seus fins, ou que passar, depois de registrada, a exercer atividades proibidas, terá sumariamente cancelado o seu registro pelo Ministro da Justiça, e seu funcionamento será suspenso até que seja judicialmente dissolvida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 109. O Ministro da Justiça poderá, sempre que considerar conveniente aos interesses nacionais, impedir a realização, por estrangeiros, de conferências, congressos e exibições artísticas ou folclóricas. </P>
+<CENTER>TÍTULO XI <BR>Da Naturalização&nbsp;<BR>&nbsp;</CENTER>
+<CENTER>CAPÍTULO I <BR>Das Condições </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 110. A concessão da naturalização nos casos previstos no artigo 145, item II, alínea "<EM>b</EM>", da Constituição, é faculdade exclusiva do Poder Executivo e far-se-á mediante Portaria do Ministro da Justiça. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 111. São condições para a concessão da naturalização: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - capacidade civil, segundo a lei brasileira; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ser registrado como permanente no Brasil; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - residência contínua no território brasileiro, pelo prazo mínimo de quatro anos, imediatamente anteriores ao pedido de naturalização; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - ler e escrever a língua portuguesa, consideradas as condições do naturalizando; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - exercício de profissão ou posse de bens suficientes à manutenção própria e da família; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - bom procedimento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - inexistência de denúncia, pronúncia ou condenação no Brasil ou no exterior por crime doloso a que seja cominada pena mínima de prisão, abstratamente considerada, superior a um ano; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - boa saúde. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Verificada, a qualquer tempo, a falsidade ideológica ou material de quaisquer dos requisitos exigidos neste artigo ou nos artigos 112 e 113 desta Lei, será declarado nulo o ato de naturalização sem prejuízo da ação penal cabível pela infração cometida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A declaração de nulidade a que se refere o parágrafo anterior processar-se-á administrativamente, no Ministério da Justiça, de ofício ou mediante representação fundamentada, concedido ao naturalizado, para defesa, o prazo de quinze dias, contados da notificação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 112. O prazo de residência fixado no artigo 111, item III, poderá ser reduzido se o naturalizando preencher quaisquer das seguintes condições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - ter filho ou cônjuge brasileiro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ser filho de brasileiro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - haver prestado ou poder prestar serviços relevantes ao Brasil, a juízo do Ministro da Justiça; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - recomendar-se por sua capacidade profissional, científica ou artística; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - ser proprietário, no Brasil, de bem imóvel, cujo valor seja igual, pelo menos, a mil vezes o maior valor de referência; ou ser industrial que disponha de fundos de igual valor; ou possuir cota ou ações integralizadas de montante, no mínimo, idêntico, em sociedade comercial ou civil, destinada, principal e permanentemente, à exploração de atividade industrial ou agrícola. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A residência será, no mínimo, de um ano, nos casos dos itens I a III; de dois anos, no do item IV; e de três anos, no do item V. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 113. Dispensar-se-á o requisito da residência, exigindo-se apenas a estada no Brasil por trinta dias, quando se tratar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - de cônjuge estrangeiro casado há mais de cinco anos com diplomata brasileiro em atividade; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - de estrangeiro que, empregado em Missão Diplomática ou em Repartição Consular do Brasil, contar mais de dez anos de serviços ininterruptos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 114. O estrangeiro que pretender a naturalização deverá requerê-la ao Ministro da Justiça, declarando: nome por extenso, naturalidade, nacionalidade, filiação, sexo, estado civil, dia, mês e ano de nascimento, profissão, lugares onde haja residido anteriormente no Brasil e no exterior, se satisfaz o requisito a que alude o artigo 111, item VII e se deseja ou não traduzir ou adaptar o seu nome à língua portuguesa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Qualquer mudança de nome ou do prenome, posteriormente à naturalização, só por exceção e motivadamente será permitida, mediante autorização do Ministro da Justiça. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 115. O estrangeiro admitido no Brasil durante os primeiros cinco anos de vida, estabelecido definitivamente no território brasileiro, poderá, enquanto menor, requerer ao Ministro da Justiça, por intermédio de seu representante legal, a emissão de certificado provisório de naturalização, que valerá como prova de nacionalidade brasileira até dois anos depois de atingida a maioridade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A naturalização se tornará definitiva se o titular do certificado provisório, até dois anos após atingir a maioridade, confirmar expressamente a intenção de continuar brasileiro, em requerimento dirigido ao Ministro da Justiça. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 116. O requerimento de que trata o artigo 114, dirigido ao Ministro da Justiça, será apresentado, no Distrito Federal, Estados e Territórios, ao órgão competente do Ministério da Justiça, que procederá à sindicância sobre a vida pregressa do naturalizando e opinará quanto à conveniência da naturalização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 117. Recebido o processo pelo dirigente do órgão competente do Ministério da Justiça, poderá ele determinar, se necessário, outras diligências. Em qualquer hipótese, o processo deverá ser submetido, com parecer, ao Ministro da Justiça. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O dirigente do órgão competente do Ministério da Justiça determinará o arquivamento do pedido, se o naturalizando não satisfizer, conforme o caso, a qualquer das condições previstas no artigo 111 ou 115, cabendo reconsideração desse despacho; se o arquivamento for mantido, poderá o naturalizando recorrer ao Ministro da Justiça; em ambos os casos, o prazo é de trinta dias contados da publicação do ato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 118. Publicada no Diário Oficial a Portaria de naturalização, será ela arquivada no órgão competente do Ministério da Justiça, o qual emitirá certificado relativo a cada naturalizando, que será entregue na forma fixada em Regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A naturalização ficará sem efeito se o certificado não for solicitado pelo naturalizando, no prazo de doze meses, contados da data da publicação do ato, salvo motivo de força maior devidamente comprovado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 119. No curso do processo de naturalização, poderá qualquer do povo impugná-la, desde que o faça fundamentadamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 120. A satisfação das condições previstas nesta Lei não assegura ao estrangeiro direito à naturalização. </P>
+<CENTER>CAPÍTULO II <BR>Dos Efeitos da Naturalização </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 121. A naturalização, salvo a hipótese do artigo 115, só produzirá efeitos após a entrega do certificado e confere ao naturalizado o gozo de todos os direitos civis e políticos, excetuados os que a Constituição Federal atribui exclusivamente ao brasileiro nato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 122. A naturalização não importa aquisição da nacionalidade brasileira pelo cônjuge e filhos do naturalizado, nem autoriza que estes entrem ou se radiquem no Brasil sem que satisfaçam as exigências desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 123. A naturalização não extingue a responsabilidade civil ou penal a que o naturalizando estava anteriormente sujeito em qualquer outro país. </P>
+<CENTER>TÍTULO XII <BR>Das Infrações, Penalidades e seu Procedimento&nbsp;<BR>&nbsp;</CENTER>
+<CENTER>CAPÍTULO I <BR>Das Infrações e Penalidades </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 124. Constitui infração, sujeitando o infrator às penas aqui cominadas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - entrar no território brasileiro sem estar autorizado (clandestino); </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: deportação. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - demorar-se no território brasileiro após esgotado o prazo legal de estada; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: multa de um décimo do maior valor de referência, por dia de excesso, até o máximo de dez vezes o maior valor de referência, e deportação, caso não saia no prazo fixado. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - deixar de registrar-se no órgão competente, dentro do prazo estabelecido nesta Lei (artigo 30); </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: multa de um décimo do maior valor de referência, por dia de excesso, até o máximo de dez vezes o maior valor de referência. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - deixar de cumprir o disposto nos artigos 95, 101 e 102; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: multa de duas a dez vezes o maior valor de referência. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - deixar a empresa transportadora de atender à manutencão ou promover a saída do território brasileiro do clandestino ou do impedido (artigo 27); </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: multa de trinta vezes o maior valor de referência, por estrangeiro. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - transportar para o Brasil estrangeiro que esteja sem a documentação em ordem; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: multa de dez vezes o maior valor de referência, por estrangeiro, e sua retirada do território brasileiro. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - empregar ou manter a seu serviço estrangeiro em situação irregular ou impedido de exercer atividade remunerada; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: multa de trinta vezes o maior valor de referência, por estrangeiro. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - infringir o disposto nos artigos 21, § 2º, 24, 97, 103, §§ 1º ou 2º e 104; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: deportação. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - infringir o disposto no artigo 25; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: multa de cinco vezes o maior valor de referência para o resgatador e deportação para o estrangeiro. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - infringir o disposto nos artigos 18, 36, parágrafo único, ou 98 a 100; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: cancelamento do registro e deportação. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - infringir o disposto nos artigos 105 ou 106; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: detenção de um a três anos e expulsão. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XII - introduzir estrangeiro clandestinamente ou ocultar clandestino ou irregular; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: detenção de um a três anos e, se o infrator for estrangeiro, expulsão. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIII - fazer declaração falsa em processo de transformação de visto, de registro, de alteração de assentamentos, de naturalização, ou para a obtenção de passaporte para estrangeiro, "laissez-passer", ou, quando exigido, visto de saída; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: reclusão de um a cinco anos e, se o infrator for estrangeiro, expulsão. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIV - infringir o disposto nos artigos 44 a 47; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: multa de cinco a dez vezes o maior valor de referência. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XV - infringir o disposto nos artigos 26, § 1º, ou 63; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: deportação e, na reincidência, expulsão. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XVI - infringir ou deixar de observar qualquer disposição desta Lei ou de seu Regulamento para a qual não seja cominada sanção especial; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pena: multa de duas a cinco vezes o maior valor de referência. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As penalidades previstas no item XI aplicam-se também aos diretores de entidades referidas no item I do artigo 106. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 125. As multas previstas neste Capítulo, nos casos de reincidência, poderão ter os respectivos valores aumentados do dobro ao quíntuplo. </P>
+<CENTER>CAPÍTULO II <BR>Do Procedimento para Apuração das Infrações </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 126. A infração punida com multa será apurada em processo administrativo, que terá por base o respectivo auto, conforme se dispuser em Regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 127. No caso do artigo 124, itens XI a XIII, observar-se-á o Código de Processo Penal e, nos casos de deportação e expulsão, o disposto nos Títulos VII e VIII desta Lei, respectivamente. </P>
+<CENTER>TÍTULO XIII <BR>Disposições Gerais e Transitórias </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 128. Fica criado o Conselho Nacional de Imigração, vinculado ao Ministério do Trabalho, a quem caberá, além das atribuições constantes desta Lei, orientar, coordenar e fiscalizar as atividades de imigração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Conselho Nacional de Imigração será integrado por um representante do Ministério do Trabalho, que o presidirá, um do Ministério da Justiça, um do Ministério das Relações Exteriores, um do Ministério da Agricultura e um do Ministério da Saúde, nomeado pelo Presidente da República, por indicação dos respectivos Ministros de Estado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A Secretaria Geral do Conselho de Segurança Nacional manterá um observador junto ao Conselho Nacional de Imigração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O Poder Executivo disporá sobre a estrutura e o funcionamento do Conselho Nacional de Imigração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 129. O Poder Executivo fica autorizado a firmar acordos internacionais pelos quais, observado o princípio da reciprocidade de tratamento a brasileiros e respeitados a conveniência e os interesses nacionais, estabeleçam-se as condições para a concessão, gratuidade, isenção ou dispensa dos vistos estatuídos nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 130. Fica aprovada a tabela de emolumentos consulares e taxas que integra esta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os valores das taxas incluídas na tabela terão reajustamento anual na mesma proporção do coeficiente do valor de referência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O Ministro das Relações Exteriores fica autorizado a aprovar, mediante Portaria, a revisão dos valores dos emolumentos consulares, tendo em conta a taxa de câmbio do cruzeiro outro com as principais moedas de livre convertibilidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 131. Fica o Ministro da Justiça autorizado a instituir modelo único de cédula de identidade para estrangeiro, portador de visão temporário ou permanente, a qual terá validade em todo o território brasileiro e substituirá as carteiras de identidade em vigor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Enquanto não for criada a cédula de que trata este artigo, continuarão válidas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - as carteiras de identidade emitidas com base no artigo 135 do Decreto nº 3.010, de 20 de agosto de 1938, bem como as certidões de que trata o § 2º do artigo 149 do mesmo Decreto; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - as emitidas e as que o sejam, com base no Decreto-lei nº 670, de 3 de julho ele 1969, e nos artigos 57, § 1º, e 60, § 2º, do Decreto nº 66.689, de 11 de junho de 1970. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 132. Fica o Poder Executivo autorizado a firmar, com os Estados de que sejam nacionais, os estrangeiros que estejam em situação ilegal no Brasil, acordos bilaterais por força dos quais tal situação seja regularizada, desde que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a regularização se ajuste às condições enumeradas no artigo 18; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os estrangeiros beneficiados: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>hajam entrado no Brasil antes de 31 de dezembro de 1978; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>satisfaçam as condições enumeradas no artigo 7º; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>requeiram a regularização de sua situação no prazo improrrogável de noventa dias a contar da entrada em vigor do acordo. </TD></TR></TBODY></TABLE></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Nos acordos a que se refere este artigo deverá constar necessariamente contrapartida pela qual o Estado de que sejam nacionais os estrangeiros beneficiados se comprometa a: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - controlar estritamente a emigração para o Brasil; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - arcar, em condições a serem ajustadas, com os custos de transporte oriundos da deportação de seus nacionais; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - prestar cooperação financeira e técnica ao assentamento, na forma do artigo 18, dos seus nacionais que, em virtude do acordo, tenham regularizada sua permanência no Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 133. O estrangeiro que se encontre residindo no Brasil na condição prevista no artigo 26 do Decreto-lei nº 941, de 13 de outubro de 1969, deverá, para continuar a residir no território brasileiro, requerer permanência ao órgão competente do Ministério da Justiça dentro do prazo de noventa dias improrrogáveis, a contar da data da entrada em vigor desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Independerá da satisfação das exigências de caráter especial referidas no artigo 17 desta Lei a autorização a que alude este artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 134. Se o estrangeiro tiver ingressado no Brasil até 20 de agosto de 1938, data da entrada em vigor do Decreto nº 3.010, desde que tenha mantido residência contínua no território brasileiro, a partir daquela data, e prove a qualificação, inclusive a nacionalidade, poderá requerer permanência ao órgão competente do Ministério da Justiça, observado o disposto no parágrafo único do anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 135. Aplica-se o disposto nesta Lei aos requerimentos de naturalização em curso no Ministério da Justiça. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os certificados de naturalização emitidos até a data da publicação desta Lei serão entregues na forma prevista no Decreto-Lei nº 941, de 13 de outubro de 1969, e no seu Regulamento, no Decreto nº 66.689, de 11 de junho de 1970, com as alterações introduzidas pela Lei nº 6.262, de 18 de novembro de 1975. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 136. Esta Lei entrará em vigor na data de sua publicação, revogadas as disposições em contrário, especialmente o Decreto-Lei nº 406, de 4 de maio de 1938; artigo 69 do Decreto-Lei nº 3.688, de 3 de outubro de 1941; Decreto-Lei nº 5.101, de 17 de dezembro de 1942; Decreto-Lei nº 7.967, de 18 de setembro de 1945; Decreto-Lei nº 417, de 10 de janeiro de 1969; Decreto-Lei nº 941, de 13 de outubro de 1969; artigo 2º da Lei nº 5.709, de 7 de outubro de 1971, e Lei nº 6.262, de 16 de novembro de 1975. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 19 de agosto de 1980; 159º da Independência e 92º da República. </P>
+<P>JOÃO FIGUEIREDO <BR>Ibrahim Abi-Ackel <BR>R. S. Guerreiro <BR>Angelo Amaury Stábile <BR>Murilo Macêdo <BR>Waldyr Mendes Arcoverde <BR>Danilo Venturini <BR></P><FONT size=4>
+<P align=center>ANEXO</P>
+<P align=center></P><U>
+<P align=center>TABELA DE EMOLUMENTOS E TAXAS</P></U>
+<P align=center>(Art. 131 da Lei n º 6.815, de 19 de agosto de 1980)</P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - <U>EMOLUMENTOS CONSULARES</P></U></FONT>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Concessão de passaporte e "lassez-passer" para estrangeiro: Cr$ 15,00 (quinze cruzeiros) ouro.</FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Visto em passaporte estrangeiro: </FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a) visto de trânsito: Cr$ 5,00 (cinco cruzeiros) ouro.&nbsp;<BR></FONT><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b) visto de turista: Cr$ 5,00 (cinco cruzeiros) ouro.&nbsp;<BR></FONT><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c) visto temporário: Cr$ 10,00 (dez cruzeiros) ouro.&nbsp;<BR></FONT><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d) visto permanente: Cr$ 10,00 (dez cruzeiros) ouro. </FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - <U>TAXAS</P></U></FONT>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Pedido de visto de saída: Cr$ 300,00 (trezentos cruzeiros).</FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Pedido de transformação de visto: Cr$ 4.000,00 (quatro mil cruzeiros).</FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Pedido de prorrogação de prazo de estada do titular de visto de turista ou temporário: Cr$ 2.000, 00 (dois mil cruzeiros).</FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Pedido de passaporte para estrangeiro ou "lassez-passer" Cr$ 500,00 (quinhentos cruzeiros).</FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Pedido de retificação de assentamentos no registro de estrangeiro: Cr$ 600,00 (seiscentos cruzeiros).</FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Pedido de registro temporário ou permanente: Cr 600,00 (seiscentos cruzeiros).</FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Pedido de restabelecimento de registro temporário ou permanente: Cr$ 1.000,00 (hum mil cruzeiros).</FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Pedido de&nbsp;registro de sociedade, Cr$2.000,00 (dois mil cruzeiros). </FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Pedido de naturalização: Cr$ 1.000,00 (hum mil cruzeiros).</FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Pedido de certidão: Cr$ 600,00 (seiscentos cruzeiros) por ato a certificar.</FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Pedido de visto em contrato de trabalho: Cr$ 2.000,00 (dois mil cruzeiros).</FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Emissão de documento de identidade (art. 33): primeira via Cr$ 600,00 (seiscentos cruzeiros); outras vias Cr$ 900,00 (novecentos cruzeiros).</FONT></P>
+<P><FONT size=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Pedido de reconsideração de despacho e recurso: o dobro da taxa devida no pedido inicial.</FONT></P></FONT>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 21/08/1980
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 21/8/1980, Página 16533 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1981, Página 145 
+                                                        Vol. 7          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

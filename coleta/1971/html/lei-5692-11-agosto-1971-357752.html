@@ -1,0 +1,949 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 5.692, DE 11 DE AGOSTO DE 1971 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Fixa Diretrizes e Bases para o ensino de 1° e 2º graus, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- CSS do portal-tema: necessário para o botão de compartilhamento -->
+<link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 5.692, DE 11 DE AGOSTO DE 1971 - Publicação Original</h2>
+
+			<div class="g-contexto-compartilhamento g-contexto-compartilhamento--extendido g-impressao">
+				<!-- Elemento propositalmente vazio, preenchido pelo JS de compartilhamento do portal -->
+			</div>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                            <li>  	
+                                                <a href="lei-5692-11-agosto-1971-357752-retificacao-26711-pl.html">Retificação</a>
+                                            </li>
+                                    <li>
+                                        <a href="lei-5692-11-agosto-1971-357752-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 5.692, DE 11 DE AGOSTO DE 1971</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							<META name=GENERATOR content="MSHTML 5.50.4807.2300">Fixa Diretrizes e Bases para o ensino de 1° e 2º graus, e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA, <BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Do Ensino de 1º e 2º graus </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;O ensino de 1º e 2º graus tem por objetivo geral proporcionar ao educando a formação necessária ao desenvolvimento de suas potencialidades como elemento de auto-realização, qualificação para o trabalho e preparo para o exercício consciente da cidadania. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para efeito do que dispõe os artigos 176 e 178 da Constituição, entende-se por ensino primário a educação correspondente ao ensino de primeiro grau e por ensino médio, o de segundo grau. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O ensino de 1° e 2º graus será ministrado obrigatòriamente na língua nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;O ensino de 1º e 2º graus será ministrado em estabelecimentos criados ou reorganizados sob critérios que assegurem a plena utilização dos seus recursos materiais e humanos, sem duplicação de meios para fins idênticos ou equivalentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A organização administrativa, didática e disciplinar de cada estabelecimento do ensino será regulada no respectivo regimento, a ser aprovado pelo órgão próprio do sistema, com observância de normas fixadas pelo respectivo Conselho de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Sem prejuízo de outras soluções que venham a ser adotadas, os sistemas de ensino estimularão, no mesmo estabelecimento, a oferta de modalidades diferentes de estudos integrados, por uma base comum e, na mesma localidade:&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; 
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a reunião de pequenos estabelecimentos em unidades mais amplas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>a entrosagem e a intercomplementariedade dos estabelecimentos de ensino entre si ou com outras instituições sociais, a fim de aproveitar a capacidade ociosa de uns para suprir deficiências de outros; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>a organização de centros interescolares que reunam serviços e disciplinas ou áreas de estudo comuns a vários estabelecimentos. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Os currículos do ensino de 1º e 2º graus terão um núcleo comum, obrigatório em âmbito nacional, e uma parte diversificada para atender, conforme as necessidades e possibilidades concretas, às peculiaridades locais, aos planos dos estabelecimentos e às diferenças individuais dos alunos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Observar-se-ão as seguintes prescrições na definição dos conteúdos curriculares: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - O Conselho Federal de Educação fixará para cada grau as matérias relativas ao núcleo comum, definindo-lhes os objetivos e a amplitude. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Os Conselhos de Educação relacionarão, para os respectivos sistemas de ensino, as matérias dentre as quais poderá cada estabelecimento escolher as que devam constituir a parte diversificada. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Com aprovação do competente Conselho de Educação, o estabelecimento poderá incluir estudos não decorrentes de materiais relacionadas de acôrdo com o inciso anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No ensino de 1º e 2º graus dar-se-á especial relêvo ao estudo da língua nacional, como instrumento de comunicação e como expressão da cultura brasileira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Para o ensino de 2º grau, o Conselho Federal de Educação fixará, além do núcleo comum, o mínimo a ser exigido em cada habilitação profissional ou conjunto de habilitações afins. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Mediante aprovação do Conselho Federal de Educação, os estabelecimentos de ensino poderão oferecer outras habilitações profissionais para as quais não haja mínimos de currículo prèviamente estabelecidos por aquêle órgão, assegurada a validade nacional dos respectivos estudos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;As disciplinas, áreas de estudo e atividades que resultem das matérias fixadas na forma do artigo anterior, com as disposições necessárias ao seu relacionamento, ordenação e seqüência, constituirão para cada grau o currículo pleno do estabelecimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Observadas as normas de cada sistema de ensino, o currículo pleno terá uma parte de educação geral e outra de formação especial, sendo organizado de modo que:&nbsp;&nbsp;<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>no ensino de primeiro grau, a parte de educação geral seja exclusiva nas séries iniciais e predominantes nas finais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>no ensino de segundo grau, predomine a parte de formação especial. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A parte de formação especial de currículo:&nbsp;&nbsp;<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>terá o objetivo de sondagem de aptidões e iniciação para o trabalho, no ensino de 1º grau, e de habilitação profissional, no ensino de 2º grau; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>será fixada, quando se destina a iniciação e habilitação profissional, em consonância com as necessidades do mercado de trabalho local ou regional, à vista de levantamentos periòdicamente renovados. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Excepcionalmente, a parte especial do currículo poderá assumir, no ensino de 2º grau, o caráter de aprofundamento em determinada ordem de estudos gerais, para atender a aptidão específica do estudante, por indicação de professôres e orientadores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;As habilitações profissionais poderão ser realizadas em regime de cooperação com as emprêsas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O estágio não acarretará para as emprêsas nenhum vínculo de emprêgo, mesmo que se remunere o aluno estagiário, e suas obrigações serão apenas as especificadas no convênio feito com o estabelecimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Será obrigatória a inclusão de Educação Moral e Cívica, Educação Física, Educação Artística e Programas de Saúde nos currículos plenos dos estabelecimentos de lº e 2º graus, observado quanto à primeira o disposto no Decreto-Lei n. 369, de 12 de setembro de 1969. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O ensino religioso, de matrícula facultativa, constituirá disciplina dos horários normais dos estabelecimentos oficiais de 1º e 2º graus. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;A ordenação do currículo será feita por séries anuais de disciplinas ou áreas de estudo organizadas de forma a permitir, conforme o plano e as possibilidades do estabelecimento, a inclusão de opções que atendam às diferenças individuais dos alunos e, no ensino de 2º grau, ensejem variedade de habilitações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Admitir-se-á a organização semestral no ensino de 1º e 2º graus e, no de 2º grau, a matrícula por disciplina sob condições que assegurem o relacionamento, a ordenação e a seqüência dos estudos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Em qualquer grau, poderão organizar-se classes que reunam alunos de diferentes séries e de equivalentes níveis de adiantamento, para o ensino de línguas estrangeiras e outras disciplinas, áreas de estudo e atividades em que tal solução se aconselhe. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Os alunos que apresentem deficiências físicas ou mentais, os que se encontrem em atraso considerável quanto à idade regular de matrícula e os superdotados deverão receber tratamento especial, de acôrdo com as normas fixadas pelos competentes Conselhos de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Será instituída obrigatòriamente a Orientação Educacional, incluindo aconselhamento vocacional, em cooperação com os professôres, a família e a comunidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;O ano e o semestre letivos, independentemente do ano civil, terão, no mínimo, 180 e 90 dias de trabalho escolar efetivo, respectivamente, excluído o tempo reservado às provas finais, caso estas sejam adotadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os estabelecimentos de ensino de 1º e 2º graus funcionarão entre os períodos letivos regulares para, além de outras atividades, proporcionar estudos de recuperação aos alunos de aproveitamento insuficiente e ministrar, em caráter intensivo, disciplinas, áreas de estudo e atividades planejadas com duração semestral, bem como desenvolver programas de aperfeiçoamento de professôres e realizar cursos especiais de natureza supletiva. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na zona rural, o estabelecimento poderá organizar os períodos letivos, com prescrição de férias nas épocas do plantio e colheita de safras, conforme plano aprovado pela competente autoridade de ensino. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;O regimento escolar regulará a substituição de uma disciplina, área de estudo ou atividade por outra a que se atribua idêntico ou equivalente valor formativo, excluídas as que resultem do núcleo comum e dos mínimos fixados para as habilitações profissionais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Caberá aos Conselhos de Educação fixar, para os estabelecimentos situados nas respectivas jurisdições, os critérios gerais que deverão presidir ao aproveitamento de estudos definido neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;A transferência do aluno de um para outro estabelecimento far-se-á pelo núcleo comum fixado em âmbito nacional e, quando fôr o caso, pelos mínimos estabelecidos para as habilitações profissionais, conforme normas baixadas pelos competentes Conselhos de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;A verificação do rendimento escolar ficará, na forma regimental, a cargo dos estabelecimentos, compreendendo a avaliação do aproveitamento e a apuração da assiduidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Na avaliação do aproveitamento, a ser expressa em notas ou menções, preponderarão os aspectos qualitativos sôbre os quantitativos e os resultados obtidos durante o período letivo sôbre os da prova final, caso esta seja exigida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O aluno de aproveitamento insuficiente poderá obter aprovação mediante estudos de recuperação proporcionados obrigatòriamente pelo estabelecimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Ter-se-á como aprovado quanto à assiduidade:&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>o aluno de freqüência igual ou superior a 75% na respectiva disciplina, área de estudo ou atividade; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o aluno de freqüência inferior a 75% que tenha tido aproveitamento superior a 80% da escala de notas ou menções adotadas pelo estabelecimento; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o aluno que não se encontre na hipótese da alínea anterior, mas com freqüência igual ou superior, ao mínimo estabelecido em cada sistema de ensino pelo respectivo Conselho de Educação, e que demonstre melhoria de aproveitamento após estudos a título de recuperação. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Verificadas as necessárias condições, os sistemas de ensino poderão admitir a adoção de critérios que permitam avanços progressivos dos alunos pela conjugação dos elementos de idade e aproveitamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;O regimento escolar poderá admitir que no regime seriado, a partir da 7ª série, o aluno seja matriculado com dependência de uma ou duas disciplinas, áreas de estudo ou atividade de série anterior, desde que preservada a seqüência do currículo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Caberá aos estabelecimentos expedir os certificados de conclusão de série, conjunto de disciplinas ou grau escolar e os diplomas ou certificados correspondentes às habilitações profissionais de todo o ensino de 2º grau, ou de parte dêste. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para que tenham validade nacional, os diplomas e certificados relativos às habilitações profissionais deverão ser registrados em órgão local do Ministério da Educação e Cultura. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Do Ensino de 1º Grau </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;O ensino de 1º grau destina-se à formação da criança e do pré-adolescente, variando em conteúdo e métodos segundo as fases de desenvolvimento dos alunos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;O ensino de 1º grau terá a duração de oito anos letivos e compreenderá, anualmente, pelo menos 720 horas de atividades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;Para o ingresso no ensino de 1º grau, deverá o aluno ter a idade mínima de sete anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As normas de cada sistema disporão sôbre a possibilidade de ingresso no ensino de primeiro grau de alunos com menos de sete anos de idade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os sistemas de ensino velarão para que as crianças de idade inferior a sete anos recebam conveniente educação em escolas maternais, jardins de infância e instituições equivalentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;O ensino de 1º grau será obrigatório dos 7 aos 14 anos, cabendo aos Municípios promover, anualmente, o levantamento da população que alcance a idade escolar e proceder à sua chamada para matrícula. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Nos Estados, no Distrito Federal, nos Territórios e nos Municípios, deverá a administração do ensino fiscalizar o cumprimento da obrigatoriedade escolar e incentivar a freqüência dos alunos. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Do Ensino de 2º Grau </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;O ensino de 2º grau destina-se à formação integral do adolescente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para ingresso no ensino de 2º grau, exigir-se-á a conclusão do ensino de 1º grau ou de estudos equivalentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;O ensino de 2º grau terá três ou quatro séries anuais, conforme previsto para cada habilitação, compreendendo, pelo menos, 2.200 ou 2.900 horas de trabalho escolar efetivo, respectivamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Mediante aprovação dos respectivos Conselhos de Educação, os sistemas de ensino poderão admitir que, no regime de matrícula por disciplina, o aluno possa concluir em dois anos no mínimo, e cinco no máximo, os estudos correspondentes a três séries da escola de 2º grau. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;Observado o que sôbre o assunto conste da legislação própria:&nbsp;&nbsp;<BR>&nbsp; <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a conclusão da 3ª série do ensino de 2º grau, ou do correspondente no regime de matrícula por disciplinas, habilitará ao prosseguimento de estudos em grau superior; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>os estudos correspondentes à 4ª série do ensino de 2° grau poderão, quando equivalentes, ser aproveitados em curso superior da mesma área ou de áreas afins. </TD></TR></TBODY></TABLE><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Do Ensino Supletivo </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;O ensino supletivo terá por finalidade:&nbsp;&nbsp;<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>suprir a escolarização regular para os adolescentes e adultos que não a tenham seguido ou concluído na idade própria; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>proporcionar, mediante repetida volta à escola, estudos de aperfeiçoamento ou atualização para os que tenham seguido o ensino regular no todo ou em parte. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O ensino supletivo abrangerá cursos e exames a serem organizados nos vários sistemas de acôrdo com as normas baixadas pelos respectivos Conselhos de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;O ensino supletivo abrangerá, conforme as necessidades a atender, desde a iniciação no ensino de ler, escrever e contar e a formação profissional definida em lei específica até o estudo intensivo de disciplinas do ensino regular e a atualização de conhecimentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os cursos supletivos terão estrutura, duração e regime escolar que se ajustem às suas finalidades próprias e ao tipo especial de aluno a que se destinam. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os cursos supletivos serão ministrados em classes ou mediante a utilização de rádios, televisão, correspondência e outros meios de comunicação que permitam alcançar o maior número de alunos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Os exames supletivos compreenderão a parte do currículo resultante do núcleo comum, fixado pelo Conselho Federal de Educação, habilitando ao prosseguimento de estudos em caráter regular, e poderão, quando realizadas para o exclusivo efeito de habilitação profissional de 2º grau, abranger sòmente o mínimo estabelecido pelo mesmo Conselho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os exames a que se refere êste artigo deverão realizar-se:&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>ao nível de conclusão do ensino de 1º grau, para os maiores de 18 anos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>ao nível de conclusão do ensino de 2º grau, para os maiores de 21 anos. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os exames supletivos ficarão a cargo de estabelecimentos oficiais ou reconhecidos indicados nos vários sistemas, anualmente, pelos respectivos Conselhos de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os exames supletivos poderão ser unificados na jurisdição de todo um sistema de ensino, ou parte dêste, de acôrdo com normas especiais baixadas pelo respectivo Conselho de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Desenvolver-se-ão, ao nível de uma ou mais das quatro últimas séries do ensino de 1º grau, cursos de aprendizagem, ministrados a alunos de 14 a 18 anos, em complementação da escolarização regular, e, a êsse nível ou ao de 2º grau, cursos intensivos de qualificação profissional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os cursos de aprendizagem e os de qualificação darão direito a prosseguimento de estudos quando incluírem disciplinas, áreas de estudo e atividades que os tornem equivalentes ao ensino regular conforme estabeleçam as normas dos vários sistemas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Os certificados de aprovação em exames supletivos e os relativos à conclusão de cursos de aprendizagem e qualificação serão expedidos pelas instituições que os mantenham. <BR><BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Dos Professôres e Especialistas </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;A formação de professôres e especialistas para o ensino de 1º e 2º graus será feita em níveis que se elevem progressivamente, ajustando-se às diferenças culturais de cada região do País, e com orientação que atenda aos objetivos específicos de cada grau, às características das disciplinas, áreas de estudo ou atividades e às fases de desenvolvimento dos educandos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Exigir-se-á como formação mínima para o exercício do magistério:&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>no ensino de 1º grau, da 1ª à 4ª séries, habilitação específica de 2º grau; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>no ensino de 1º grau, da 1ª à 8ª séries, habilitação específica de grau superior, ao nível de graduação, representada por licenciatura de 1º grau obtida em curso de curta duração; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>em todo o ensino de 1º e 2º graus, habilitação específica obtida em curso superior de graduação correspondente a licenciatura plena. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os professôres a que se refere a letra a poderão lecionar na 5ª e 6ª séries do ensino de 1º grau se a sua habilitação houver sido obtida em quatro séries ou, quando em três mediante estudos adicionais correspondentes a um ano letivo que incluirão, quando fôr o caso, formação pedagógica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os professôres a que se refere a letra b poderão alcançar, no exercício do magistério, a 2ª série do ensino de 2º grau mediante estudos adicionais correspondentes no mínimo a um ano letivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os estudos adicionais referidos nos parágrafos anteriores poderão ser objeto de aproveitamento em cursos ulteriores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;As licenciaturas de 1º grau e os estudos adicionais referidos no § 2º do artigo anterior serão ministrados nas universidades e demais instituições que mantenham cursos de duração plena. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As licenciaturas de 1º grau e os estudos adicionais, de preferência nas comunidades menores, poderão também ser ministradas em faculdades, centros, escolas, institutos e outros tipos de estabelecimentos criados ou adaptados para êsse fim, com autorização e reconhecimento na forma da Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;O pessoal docente do ensino supletivo terá preparo adequado às características especiais dêsse tipo de ensino, de acôrdo com as normas estabelecidas pelos Conselhos de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;A formação de administradores, planejadores, orientadores, inspetores, supervisores e demais especialistas de educação será feita em curso superior de graduação, com duração plena ou curta, ou de pós-graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;A admissão de professôres e especialistas no ensino oficial de 1º e 2º graus far-se-á por concurso público de provas e títulos, obedecidas para inscrição as exigências de formação constantes desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Não haverá qualquer distinção, para efeitos didáticos e técnicos, entre os professôres e especialistas subordinados ao regime das leis do trabalho e os admitidos no regime do serviço público. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;Em cada sistema de ensino, haverá um estatuto que estruture a carreira de magistério de 1º e 2º graus, com acessos graduais e sucessivos, regulamentando as disposições específicas da presente Lei e complementando-as no quatro da organização própria do sistema. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;A admissão e a carreira de professôres e especialistas, nos estabelecimentos particulares de ensino de 1º e 2º graus, obedecerão às disposições específicas desta Lei, às normas constantes obrigatòriamente dos respectivos regimentos e ao regime das Leis do Trabalho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Os sistemas de ensino estimularão, mediante planejamento apropriado, o aperfeiçoamento e atualização constantes dos seus professôres e especialistas de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Os sistemas de ensino devem fixar a remuneração dos professôres e especialistas de ensino de 1º e 2º graus, tendo em vista a maior qualificação em cursos e estágios de formação, aperfeiçoamento ou especialização, sem distinção de graus escolares em que atuem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Será condição para exercício de magistério ou especialidade pedagógica o registro profissional, em órgão do Ministério da Educação e Cultura, dos titulares sujeitos à formação de grau superior. <BR><BR>
+<CENTER><B>CAPÍTULO VI </CENTER></B>
+<CENTER><B>Do Financiamento </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;A educação constitui dever da União, dos Estados, do Distrito Federal, dos Territórios, dos Municípios, das emprêsas, da família e da comunidade em geral, que entrosarão recursos e esforços para promovê-la e incentivá-la. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Respondem, na forma da lei, solidàriamente com o Poder Público, pelo cumprimento do preceito constitucional da obrigatoriedade escolar, os pais ou responsáveis e os empregadores de tôda natureza de que os mesmos sejam dependentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;O ensino nos diferentes graus será ministrado pelos podêres públicos e, respeitadas as leis que o regulam, é livre à iniciativa particular. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Os recursos públicos destinados à educação serão aplicados preferencialmente na manutenção e desenvolvimento do ensino oficial, de modo que se assegurem: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>maior número possível de oportunidades educacionais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>a melhoria progressiva do ensino, o aperfeiçoamento e a assistência ao magistério e aos serviços de educação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o desenvolvimento científico e tecnológico. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;Nos estabelecimentos oficiais, o ensino de 1º grau é gratuito dos 7 aos 14 anos, e o de níveis ulteriores sê-lo-á para quantos provarem falta ou insuficiência de recursos e não tenham repetido mais de um ano letivo ou estudos correspondentes no regime de matrícula por disciplinas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;As instituições de ensino mantidas pela iniciativa particular merecerão amparo técnico e financeiro do Poder Público, quando suas condições de funcionamento forem julgadas satisfatórias pelos órgãos de fiscalização, e a suplementação de seus recursos se revelar mais econômica para o atendimento do objetivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O valor dos auxílios concedidos nos têrmos dêste artigo será calculado com base no número de matrículas gratuitas e na modalidade dos respectivos cursos, obedecidos padrões mínimos de eficiência escolar prèviamente estabelecidos e tendo em vista o seu aprimoramento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;O amparo do Poder Público a quantos demonstrarem aproveitamento e provarem falta ou insuficiência de recursos far-se-á sob forma de concessão de bôlsas de estudo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Sòmente serão concedidas bôlsas de estudo gratuitas no ensino de 1º grau quando não houver vaga em estabelecimento oficial que o aluno possa freqüentar com assiduidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;As emprêsas comerciais, industriais e agrícolas são obrigadas a manter o ensino de 1º grau gratuito para seus empregados e o ensino dos filhos dêstes entre os sete e os quatorze anos ou a concorrer para êsse fim mediante a contribuição do salário-educação, na forma estabelecida por Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;O salário-educação instituído pela Lei n. 4.440, de 27 de outubro de 1964, será devido por tôdas as emprêsas e demais entidades públicas ou privadas, vinculadas à Previdência Social, ressalvadas as exceções previstas na legislação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;As emprêsas e os proprietários rurais, que não puderem manter em suas glebas ensino para os seus empregados e os filhos dêstes, são obrigados, sem prejuízo do disposto no artigo 47, a facilitar-lhes a freqüência à escola mais próxima ou a propiciar a instalação e o funcionamento de escolas gratuitas em suas propriedades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;As emprêsas comerciais e industriais são ainda obrigadas a assegurar, em cooperação, condições de aprendizagem aos seus trabalhadores menores e a promover o preparo de seu pessoal qualificado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;Os sistemas de ensino atuarão junto às emprêsas de qualquer natureza, urbanas ou agrícolas, que tenham empregados residentes em suas dependências, no sentido de que instalem e mantenham, conforme dispuser o respectivo sistema e dentro das peculiaridades locais, receptores de rádio e televisão educativos para o seu pessoal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As entidades particulares que recebam subvenções ou auxílios do Poder Público deverão colaborar, mediante solicitação dêste, no ensino supletivo de adolescentes e adultos, ou na promoção de cursos e outras atividades com finalidade educativo-cultural, instalando postos de rádio ou televisão educativos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;A União prestará assistência financeira aos Estados e ao Distrito Federal para o desenvolvimento de seus sistemas de ensino e organizará o sistema federal, que terá caráter supletivo e se estenderá por todo o País, nos estritos limites das deficiências locais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;O Governo Federal estabelecerá e executará planos nacionais de educação que, nos têrmos do artigo 52, abrangerão os programas de iniciativa própria e os de concessão de auxílios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O planejamento setorial da educação deverá atender às diretrizes e normas do Plano-Geral do Govêrno, de modo que a programação a cargo dos órgãos da direção superior do Ministério da Educação e Cultura se integre harmônicamente nesse Plano-Geral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;Para efeito de concessão de auxílios, os planos dos sistemas de ensino deverão ter a duração de quatro anos, ser aprovados pelo respectivo Conselho de Educação e estar em consonância com as normas e critérios do planejamento nacional da educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A concessão de auxílio federal aos sistemas estaduais de ensino e ao sistema do Distrito Federal visará a corrigir as diferenças regionais de desenvolvimento sócio-econômico, tendo em vista renda "per capita " e população a ser escolarizada, o respectivo estatuto do magistério, bem como a remuneração condigna e pontual dos professôres e o progresso quantitativo e qualitativo dos serviços de ensino verificado no biênio anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A concessão do auxílio financeiro aos sistemas estaduais e ao sistema do Distrito Federal far-se-á mediante convênio, com base em planos e projetos apresentados pelas respectivas administrações e aprovados pelos Conselhos de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A concessão de auxílio financeiro aos programas de educação dos Municípios, integrados nos planos estaduais, far-se-á mediante convênio, com base em planos e projetos apresentados pelas respectivas administrações e aprovados pelos Conselhos de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;Cabe à União organizar e financiar os sistemas de ensino dos Territórios, segundo o planejamento setorial da educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;Cabe à União destinar recursos para a concessão de bôlsas de estudo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Aos recursos federais, os Estados, o Distrito Federal e os Municípios acrescerão recursos próprios para o mesmo fim. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As normas que disciplinam a concessão de bôlsas de estudo decorrentes dos recursos federais, seguirão as diretrizes estabelecidas pelo Ministério da Educação e Cultura, que poderá delegar a entidades municipais de assistência educacional, de que trata o § 2º do artigo 62, a adjudicação dos auxílios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O Programa Especial de Bôlsas de Estudo (PEBE) reger-se-á por normas estabelecidas pelo Ministério do Trabalho e Previdência Social. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;A assistência técnica da União aos sistemas estaduais de ensino e do Distrito Federal será prestada pelos órgãos da administração do Ministério da Educação e Cultura e pelo Conselho Federal de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A assistência técnica incluirá colaboração e suprimento de recursos financeiros para preparação, acompanhamento e avaliação dos planos e projetos educacionais que objetivam o atendimento das prescrições do plano setorial de educação da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;A legislação estadual supletiva, observado o disposto no artigo 15 da Constituição Federal, estabelecerá as responsabilidades do próprio Estado e dos seus Municípios no desenvolvimento dos diferentes graus de ensino e disporá sôbre medidas que visem a tornar mais eficiente a aplicação dos recursos públicos destinados à educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As providências de que trata êste artigo visarão à progressiva passagem para a responsabilidade municipal de encargo e serviços de educação, especialmente de 1º grau, que pela sua natureza possam ser realizados mais satisfatòriamente pelas administrações locais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;Aos municípios que não aplicarem, em cada ano, pelo menos 20% da receita tributária municipal no ensino de 1º grau aplicar-se-á o disposto no artigo 15, 3º, alínea f , da Constituição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os municípios destinarão ao ensino de 1º grau pelo menos 20% das transferências que lhes couberem no Fundo de Participação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;É vedado ao Poder Público e aos respectivos órgãos da administração indireta criar ou auxiliar financeiramente estabelecimentos ou serviços de ensino que constituam duplicação desnecessária ou dispersão prejudicial de recursos humanos, a juízo do competente Conselho de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;Os sistemas de ensino estimularão as emprêsas que tenham em seus serviços mães de menores de sete anos a organizar e manter, diretamente ou em cooperação, inclusive com o Poder Público, educação que preceda o ensino de 1º grau. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;Cada sistema de ensino compreenderá obrigatòriamente, além de serviços de assistência educacional que assegurem aos alunos necessitados condições de eficiência escolar entidades que congreguem professôres e pais de alunos, com o objetivo de colaborar para o eficiente funcionamento dos estabelecimentos de ensino. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os serviços de assistência educacional de que trata êste artigo destinar-se-ão, de preferência, a garantir o cumprimento da obrigatoriedade escolar e incluirão auxílios para a aquisição de material escolar, transporte, vestuário, alimentação, tratamento médico e dentário e outras formas de assistência familiar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O Poder Público estimulará a organização de entidades locais de assistência educacional, constituídas de pessoas de comprovada idoneidade, devotadas aos problemas sócio-educacionais que, em colaboração com a comunidade, possam incumbir-se da execução total ou parcial dos serviços de que trata êste artigo, assim como da adjudicação de bôlsas de estudo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;A gratuidade da escola oficial e as bôlsas de estudo oferecidas pelo Poder Público serão progressivamente substituídas, no ensino de 2º grau, pela concessão de bôlsas sujeitas à restituição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A restituição de que trata êste artigo poderá fazer-se em espécie ou em serviços profissionais, na forma de que a lei determinar. <BR><BR>
+<CENTER><B>CAPÍTULO VII </CENTER></B>
+<CENTER><B>Das Disposições Gerais </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;Os Conselhos de Educação poderão autorizar experiências pedagógicas, com regimes diversos dos prescritos na presente Lei, assegurando a validade dos estudos assim realizados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;Para efeito de registro e exercício profissional, o Conselho Federal de Educação fixará as normas de revalidação dos diplomas e certificados das habilitações, correspondentes ao ensino de 2º grau, expedidos por instituições estrangeiras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;Ficam automàticamente reajustadas, quanto à nomenclatura, as disposições da legislação anterior que permaneçam em vigor após a vigência da presente Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;Fica mantido o regime especial para os alunos de que trata o Decreto-Lei n. 1.044, de 21 de outubro de 1969. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;O ensino ministrado nos estabelecimentos militares é regulado por legislação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;O Colégio Pedro II, integrará o sistema federal de ensino. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;As administrações dos sistemas de ensino e as pessoas jurídicas de direito privado poderão instituir para alguns ou todos os estabelecimentos de 1º e 2º graus por elas mantidos, um regimento comum que, assegurando a unidade básica estrutural e funcional da rêde, preserve a necessária flexibilidade didática de cada escola. <BR><BR>
+<CENTER><B>CAPÍTULO VIII </CENTER></B>
+<CENTER><B>Das Disposições Transitórias </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;Os Conselhos Estaduais de Educação poderão delegar parte de suas atribuições a Conselhos de Educação que se organizem nos Municípios onde haja condições para tanto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;A implantação do regime instituído na presente Lei far-se-á progressivamente, segundo as peculiaridades, possibilidades e legislação de cada sistema de ensino, com observância do Plano Estadual de Implantação que deverá seguir-se a um planejamento prévio elaborado para fixar as linhas gerais daquele, e disciplinar o que deva ter execução imediata. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O planejamento prévio e o Plano Estadual de Implantação, referidos neste artigo, deverão ser elaborados pelos órgãos próprios do respectivo sistema de ensino, dentro de 60 dias o primeiro e 210 o segundo, a partir da vigência desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;O Ministro da Educação e Cultura, ouvido o Conselho Federal de Educação, decidirá das questões suscitadas pela transição do regime anterior, para o que se institui na presente Lei, baixando os atos que a tanto se façam necessários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;Ficam integrados nos respectivos sistemas estaduais os estabelecimentos particulares de ensino médio até agora vinculados ao sistema federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;Na implantação do regime instituído pela presente Lei, observar-se-ão as seguintes prescrições em relação a estabelecimentos oficiais e particulares de 1º grau: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - as atuais escolas primárias deverão instituir, progressivamente, as séries que lhes faltam para alcançar o ensino completo de 1º grau; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os atuais estabelecimentos que mantenham ensino ginasial poderão continuar a ministrar apenas as séries que lhes correspondem, redefinidas quanto à ordenação e à composição curricular, até que alcancem as oito da escola completa de 1º grau; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - os novos estabelecimentos deverão, para fins de autorização, indicar nos planos respectivos a forma pela qual pretendem desenvolver, imediata ou progressivamente, o ensino completo de 1º grau. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76.&nbsp;A iniciação para o trabalho e a habilitação profissional poderão ser antecipadas:&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp; <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>ao nível da série realmente alcançada pela gratuidade escolar em cada sistema, quando inferior à oitava; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>para a adequação às condições individuais, inclinações e idade dos alunos. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77.&nbsp;Quando a oferta de professôres, legalmente habilitados, não bastar para atender às necessidades do ensino, permitir-se-á que lecionem, em caráter suplementar e a título precário:&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; 
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>no ensino de 1º grau, até a 8ª série, os diplomados com habilitação para o magistério ao nível da 4ª série de 2º grau; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>no ensino de 1º grau, até a 6ª série, os diplomados com habilitação para o magistério ao nível da 3ª série de 2º grau; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>no ensino de 2º grau, até a série final, os portadores de diploma relativo à licenciatura de 1º grau. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Onde e quando persistir a falta real de professôres, após a aplicação dos critérios estabelecidos neste artigo, poderão ainda lecionar:&nbsp;&nbsp;<BR>&nbsp;&nbsp; <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>no ensino de 1º grau, até a 6ª série, candidatos que hajam concluído a 8ª série e venham a ser preparados em cursos intensivos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>no ensino de 1º grau, até a 5ª série, candidatos habilitados em exames de capacitação regulados, nos vários sistemas, pelos respectivos Conselhos de Educação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>nas demais séries do ensino de 1º grau e no de 2º grau, candidatos habilitados em exames de suficiência regulados pelo Conselho Federal de Educação e realizados em instituições oficiais de ensino superior indicados pelo mesmo Conselho. </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78.&nbsp;Quando a oferta de professôres licenciados não bastar para atender às necessidades do ensino, os profissionais diplomados em outros cursos de nível superior poderão ser registrados no Ministério da Educação e Cultura, mediante complementação de seus estudos, na mesma área ou em áreas afins, onde se inclua a formação pedagógica, observados os critérios estabelecidos pelo Conselho Federal de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 79.&nbsp;Quando a oferta de profissionais legalmente habilitados para o exercício das funções de direção dos estabelecimentos de um sistema, ou parte dêste, não bastar para atender as suas necessidades, permitir-se-á que as respectivas funções sejam exercidas por professôres habilitados para o mesmo grau escolar, com experiência de magistério. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 80.&nbsp;Os sistemas de ensino deverão desenvolver programas especiais de recuperação para os professôres sem a formação prescrita no artigo 29 desta Lei, a fim de que possam atingir gradualmente a qualificação exigida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 81.&nbsp;Os sistemas de ensino estabelecerão prazos, a contar da aprovação do Plano Estadual referido no artigo 72, dentro dos quais deverão os estabelecimentos de sua jurisdição apresentar os respectivos regimentos adaptados à presente Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Nos três primeiros anos de vigência desta Lei, os estabelecimentos oficiais de 1º grau, que não tenham regimento próprio, regularmente aprovado, deverão reger-se por normas expedidas pela administração dos sistemas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 82.&nbsp;Os atuais inspetores federais de ensino poderão ser postos à disposição dos sistemas que necessitem de sua colaboração, preferencialmente daquele em cuja jurisdição estejam lotados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 83.&nbsp;Os concursos para cargos do magistério, em estabelecimentos oficiais, cujas inscrições foram encerradas até a data da publicação desta Lei, serão regidos pela legislação citada nos respectivos editais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 84.&nbsp;Ficam ressalvados os direitos dos atuais diretores, inspetores, orientadores e administradores de estabelecimentos de ensino, estáveis no serviço público, antes da vigência da presente Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 85.&nbsp;Permanecem, para todo o corrente ano, as exigências de idade e os critérios de exame supletivo constantes da legislação vigente, na data da promulgação desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 86.&nbsp;Ficam assegurados os direitos dos atuais professôres, com registro definitivo no Ministério da Educação, antes da vigência desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 87.&nbsp;Ficam revogados os artigos de números 18, 21, 23 a 29, 31 a 65, 92 a 95, 97 a 99, 101 a 103, 105, 109, 110, 113 e 116 da Lei n. 4.024, de 20 de dezembro de 1961, bem como as disposições de leis gerais e especiais que regulem em contrário ou de forma diversa a matéria contida na presente Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 88.&nbsp;Esta Lei entrará em vigor na data de sua publicação. </P>
+<P>Brasíllia, 11 de agosto de 1971; 150º da Independência e 83º da República. </P>
+<P>EMÍLIO G. MÉDICI <BR>Jarbas G. Passarinho <BR>Júlio Barata <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 12/08/1971
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 12/8/1971, Página 6377       
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1971, Página 59 
+                                                        Vol. 5          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+
+<!-- JS do portal-tema: necessário para o botão de compartilhamento -->
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/vendor-bundle.js"></script>
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/camara-bundle.js"></script>
+
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

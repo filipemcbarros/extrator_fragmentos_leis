@@ -1,0 +1,911 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 3.208, DE 27 DE DEZEMBRO DE 1916 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Regula o processo eleitoral e dá outras providencias " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 3.208, DE 27 DE DEZEMBRO DE 1916 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                            <li>  	
+                                                <a href="lei-3208-27-dezembro-1916-572611-republicacao-95842-pl.html">Republicação</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-3208-27-dezembro-1916-572611-republicacao-95843-pl.html">Republicação</a>
+                                            </li>
+                                    <li>
+                                        <a href="lei-3208-27-dezembro-1916-572611-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 3.208, DE 27 DE DEZEMBRO DE 1916</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Regula o processo eleitoral e dá outras providencias <BR>
+						</p>
+				
+						<div class="texto">
+							<META name=GENERATOR content="Microsoft DHTML Editing Control">
+<P>O Presidente da Republica dos Estados Unidos do Brazil: Faço saber que o Congresso Nacional decretou e eu sancciono a Lei seguinte: </P>
+<P align=center>DAS ELEIÇÕES</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 1º A eleição para Deputados e Senadores ao Congresso Nacional se realizará no primeiro domingo de fevereiro, finda a legislatura anterior, por suffragio directo dos eleitores. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º A eleição para Presidente e Vice-Presidente da Republica será feita no dia 1 de março do ultimo anno do periodo presidencial, por suffragio directo da Nação e maioria absoluta do votos, votando o eleitor em um nome para Presidente e em outra para Vice-Presidente, escriptos em cedulas diversas. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. No caso de vaga da presidencia ou vice-presidencia, não havendo decorrido dous annos do periodo presidencial, a eleição para o preenchimento da vaga se effectuará dentro de tres mezes depois de aberta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;A eleição começará ás 9 horas da manhã e proseguirá sem nenhuma interrupção até a conclusão dos trabalhos;</P>
+<P>&nbsp;&nbsp;&nbsp; Art. 4º A eleição será por escrutinio secreto, sendo permittido ao eleitor votar a descoberto somente no caso previsto no art. 18. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;Para a eleição de Deputados, os Estados da União e o Districto Federal serão divididos em districtos eleitoraes de cinco Deputados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os Estados que derem sete Deputados, ou menos, constituirão um só districto eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Quando o numero de Deputados não fòr divisivel por cinco, juntar-se-ha a fracção, quando de um, ao districto da capital do Estado, e, quando de dous, ao primeiro e segundo districtos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Cada eleitor votará em tres nomes nos districtos cuja representação constar apenas de quatro Deputados; em quatro nos districtos de cinco; em cinco nos de seis, e em seis nos de sete. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Na eleição geral da Camara, ou quando o numero de vagas a preencher no districto fôr de dous ou mais deputados, o eleitor poderá accumular todos os seus votos ou parte delles em um só candidato, escrevendo o nome do mesmo tantas vezes quantos os votos que lhe quizer dar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No caso do eleitor escrever um só nome, só um voto será contado ao nome escripto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Si a cedula contiver maior numero de votos do que os de que póde dispor o eleitor, serão apurados somente, ma ordem da collocação, os nomes precedentemente escriptos, até se completar o numero legal, desprezando-se os excedentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;A eleição de Senadores será feita, por Estado, votando o eleitor em um só nome para substituir o Senador cujo mandato houver terminado.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. Si houver mais de uma vaga a preencher na mesma occasião, votará o eleitor em cedula separada para o preenchimento de cada uma dellas. DO </P>
+<P align=center>PROCESSO ELEITORAL </P>
+<P>&nbsp;&nbsp;&nbsp; Art. 8º A eleição se realizará na séde dos municipios e dos districtos de paz ou sub-divisões judiciarias creadas pelas Constituições ou leis estadoaes, qualquer que seja a sua denominação, perante as mesas organizadas de accôrdo com esta lei , havendo na séde de cada municipio tantas mesas eleitoraes quantos forem os tabelliães e officiaes do Registro Civil, e na de cada districto de paz ou sub-divisão judiciaria apenas uma, devendo todas ellas funccionar nos edificios que forem designados pelos juizes de direito, preferidos os edificios publicos, onde houver. <BR>&nbsp;&nbsp;&nbsp;&nbsp; A designação dos edificios, que servirão durante a legislatura, será feita 40 dias antes da primeira eleição que tiver de ser realizada de accôrdo com esta lei, e publicada por edital affixado no edificio da camara municipal de cada um dos municipios da comarca e reproduzido na imprensa, si houver. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Nas capitaes dos Estados funccionarão tantas mesas quantos forem os serventuarios de justiça nellas existentes. <BR>&nbsp;&nbsp;&nbsp;&nbsp; No Districto Federal haverá tantas mesas eleitoraes, distribuidas pelos districtos municipaes, quantos forem os grupos de tresentos eleitores. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Estas mesas funccionarão em edificios publicos federaes ou municipaes, que serão designados pelo juiz federal da 2ª vara.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. Uma vez designados, servirão esses locaes para todas as eleições feitas durante a legislatura, não podendo ser mudados sinão no caso de ruina do edificio, alteração da sua natureza, ou de força maior, só podendo a mudança ser feita até 15 dias antes da eleição e após verificação do facto feita pelo juiz, o qual publicará o seu acto por edital affixado no edificio novamente designado e pela imprensa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;As mesas serão constituidas. Na séde de comarca - pelo juiz de direito, como presidente, pelo 1º supplente do substituto do juiz federal e pelo presidente do conselho, Camara ou Intendencia Municipal; nas sédes de termos judiciarios - pelo juiz municipal, preparador ou substituto, conforme a denominação que tiver, como presidente, pelo 1º supplente do substituto do juiz federal e pelo presidente do conselho municipal; nas sédes dos outros municipios que não forem termos judiciarios - pelo 1º supplente do substituto do juiz federal, como presidente, pelo presidente do Conselho Municipal e por um eleitor apresentado em officio ao juiz de direito por eleitores da secção. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Nas demais secções das sédes dos municipios e nas outras dos districtos de paz, por tres eleitores indicados, em officios differentes, ao juiz de direito, pelos eleitores da secção, cujas firmas deverão ser reconhecidas, até 30 dias antes da realização da eleição, cabendo a presidencia ao eleitor tiver sido apresentado por maior numero de eleitores ou ao mais velho, si tiver havido empate. <BR>&nbsp;&nbsp;&nbsp; Recebidos os officios, serão os mesmos abertos pelo juiz de direito em audiencia publica, na qual novos officios poderão ser apresentados, e assignado aos interessados, eleitores de cada secção, o prazo de 48 horas para offerecerem as reclamações que, porventura, tiverem; findo este prazo, o juiz de direito deliberará sobre taes reclamações, e sendo improcedentes, considerará mesarios de cada secção os tres que forem apresentados por maior numero de eleitores.<BR>&nbsp;&nbsp;&nbsp; Si forem procedentes as reclamações mandará o juiz de direito que os eleitores apresentantes de officios suppram as faltas encontradas dentro do prazo de 48 horas, findo o qual, em nova audiencia receberá os officios rectificados.&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;No caso de falta ou insufficiencia da rectificação e do outros officios convenientemente formulados, o juiz de direito considerará não organizada a mesa, salvo si tiverem sido regularmente apresentados dous mesarios, caso em que a mesa funccionará com estes. Em caso de empate entre os apresentados por officio dos eleitores, o juiz escolherá á sorte os mesarios, si o numero de officios exceder ao numero de mesarios a eleger. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Nenhum eleitor poderá assignar mais que um officio para a indicação de mesarios; caso o faça, será considerada de nenhum effeito a sua assignatura nos referidos officios.<BR>&nbsp;&nbsp;&nbsp; As indicações de mesarios feitas por eleitores deverão constar do protocollo de audiencias do referido juiz. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Nas comarcas onde houver mais de um juiz de direito exercerá todas as funcções, que lhe cabem por esta lei, o juiz de direito mais antigo. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Achando-se vago o logar de 1º supplente do substituto do juiz federal, as funcções que por esta lei lhe são conferidas serão desempenhadas pelo 2º supplente, e, na sua falta, por estar tambem vago o logar, pelo terceiro. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Os eleitores escolhidos para mesarios da respectiva secção servirão em todas as eleições que se offectuarem no periodo de cada legislatura, e só no caso de absolutamente impossibilitados de funccionar serão substitudos mediante nova escolha pela fórma acima indicada. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Si as sédes dos municipios contiverem mais de uma secção eleitoral, as mesmas presididas pelas autoridades de que trata este artigo servirão na primeira secção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Nos Estados em que o juiz de direito fôr substituido nas suas funcções, em parte pelo juiz de direito da comarca visinha e em parte pelo juiz municipal, preparador, ou districtal, será este o presidente da mesa eleitoral, cabendo ao seu substituto presidir a mesa eleitoral no municipio onde exercer elle as suas funcções judiciarias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Quando um municipio pertencente a um districto eleitoral fizer parte, de comarca pertencente a outro districto, caberá ao juiz de direito da comarca a que estiver annexo o referido municipio, e que fizer parte do mesmo districto eleitoral, exercer todas as attribuições conferidas aos juizes de direito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º No Districto Federal 44 mesas serão constituidas pelos juizes de direito das varas civeis, criminaes, da provedoria, de orphãos dos Feitos da Fazenda Municipal, pretores do civel e crime, promotores publicos, adjunctos de promotores e por dous eleitores da respectiva secção, servindo de secretario o escrivão do juiz que a presidir e um serventuario de justiça, ou na sua falta um cidadão designado pelo promotor e pelo adjuncto, e funccionarão sob a presidencia dos juizes, pretores, promotores e adjunctos; na falta destes, servirá de presidente o mesario que tiver sido apresentado por maior numero de eleitores da secção, ou o mais velho, si tiver empate entre os dous. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Os eleitores que deverem servir de mesarios com as autoridades acima indicadas serão apresentados em officio por eleitores da respectiva secção, cujas firmas serão reconhecidas, ao presidente da mesa eleitoral até 30 dias antes da eleição, observando-se em tudo o disposto no primeira parte deste artigo. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Os promotores e adjunctos designarão, por edital publicado pela imprensa, o dia em que serão abertos os officios em que lhes forem indicados os nomes dos mesarios e farão constar, de um livro especial por elles aberto, rubricado e encerrado, as indicações feitas.<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; As demais mesas do Districto Federal serão constituidas por tres eleitores apresentados por eleitores da respectiva secção em officios ao juiz da 2ª vara federal até 30 dias antes da eleição e funccionarão sob a presidencia do mesario apresentado por maior numero de eleitores, ou do mais velho em caso de empate, servindo de secretarios destas mesas os serventuarios de justiça e na sua falta os cidadãos designados pelo referido juiz.<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Ao juiz de direito da 2ª vara federal compete, 40 dias antes da eleição, dividir o Districto Federal em secções de 300 eleitores cada uma, distribuil-os por essas secções de accordo com suas residencias, bem como designar as mesas eleitoraes, que deverão ser presididas pelos juizes, pretores, promotores e adjunctos, de modo que em cada districto municipal haja pelo menos uma mesa presidida por uma destas autoridades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Fará parte de cada mesa como secretario, ainda que esteja suspenso do exercicio, um tabellião, official do registro civil ou serventuario de justiça designado pelo juiz de direito da comarca a que pertencer o municipio. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Nos municipios onde não houver tabellião ou official do registro civil será designado um dos escrivães de paz e, da falta destes, será designado um escrivão ad hoc, o qual exercerá, as funcções do tabellião para os effeitos desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;No caso de falta do juiz de direito ou do juiz municipal, preparador ou districtal, será elle substituido, na presidencia da mesa, pelo 1º supplente do substituto do juiz federal na falta do 1º supplente, nos municipios que não forem séde de comarca ou de termo, será este substituido pelo presidente da Camara Municipal. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Nas demais secções eleitoraes o presidente será substituido pelo mesario que houver sido apresentado por maior numero de eleitores, ou pelo mais velho, si tiver havido empate nos officios de indicação. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; O secretario, no caso de não comparecimento por motivo de força maior, será substituido por um secretario ad hoc nomeado pelo presidente da mesa, devendo porém, as actas de installação da mesa e da eleição ser lançadas nos livros a que se refere o art. 11. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Noventa dias pelo menos antes do dia designado para a eleição, serão entregues ao juiz federal nos Estados pelas delegacias fiscaes, e ao juiz federal da 2ª vara pela Secretaria do Interior, no Districto Federal, os livros necessarios para a eleição. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Estes livros serão abertos, numerados; rubricados e encerrados pelo referido juiz federal, e enviados sob registro aos juizes de direito das comarcas nos Estados, 60 dias pelo menos antes do dia designado para a eleição e em numero sufficiente para a distribuição de dous delles a cada mesa de secção eleitoral da comarca observado o disposto no art. 9º § 3º. <BR>&nbsp;&nbsp;&nbsp;&nbsp; No Districto Federal serão remettidos dous livros a cada um dos presidentes das mesas eleitoraes, os quaes os rubricarão, devendo ser feita a remessa vinte dias antes da eleição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O juiz de direito, logo que os receba, rubricará todas as folhas dos livros destinados á eleição e remetterá pelo Correio, sob registro, a tempo de serem recebidos antes do dia da eleição, dous a cada um dos secretarios designados para servirem nas mesas eleitoraes dos diversos municipios da comarca. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O escrivão do juiz federal perceberá a gratificação do 200 réis por cada termo de abertura e de encerramento que lançar nos livros destinados ao serviço eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Quarenta e oito horas no maximo depois feita a escolha dos mesarios pelos eleitores das diversas secções, o juiz de direito fará publicar pela imprensa na séde da comarca e, na falta de imprensa, por edital affixado na Camara Municipal da referida séde e nas sub-divisões eleitoraes dos municipios, os nomes dos eleitores designados, fazendo igualmente por officio remettido sob registro, a respectiva communicação ao presidente da mesa eleitoral e aos referidos eleitores. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. Recebida pelo presidente da mesa eleitoral a communicação do juiz de direito, fará elle publicar pela imprensa, si houver, ou por edital affixado na Camara Municipal, no prazo de 24 horas, os nomes dos eleitores designados para fazerem parte da mesa eleitoral. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Com a mesma antecedencia serão designado pelo juiz de direito da comarca os tabelliães, officiaes do registro civil e serventuarios que deverão servir como secretarios das mesas eleitoraes, dando-lhes immediata communicação, sob registro, bem como ao presidente da mesa eleitoral, mandando publicar por edital reproduzindo na imprensa, onde houver, a designação feita. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;Dez dias antes do designado para a eleição, o presidente da mesa convocará os demais mesarios por edital publicado pela imprensa, si houver , ou affixado no edificio da Camara Municipal e nos outros designados para nelles se realizar a eleição, marcando o dia, logar e hora em que devem comparecer para constituir a mesa.&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;Independente de tal convocação, deverão comparecer os referidos mesarios no dia designado para a eleição, salvo o caso de força maior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Reunidos dous mesarios, pelo menos, no edificio destinado para nelle funccionar a mesa eleitoral, ás 9 horas do dia marcado para a eleição e o secretario préviamente designado, fará este apresentação dos livros remettidos pelo juiz de direito, lavrando-se nos mesmos immediatamente a acta da installação da mesa, que será assignada pelos mesmos presente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Installada a mesa e antes de iniciado o trabalho de recebimento das cedulas, officiará ella ao juiz federal, communicando a sua installação, devendo ser este officio assignado por todos os membros da mesa, reconhecida as firmas pelo secretario e remettido no mesmo dia sob registro. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Si não houver agencia de Correio na localidade, a remessa será feita dentro de tres dias após a eleição pela agencia mais proxima que existir dentro do mesmo Estado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Perante a mesa reunida, é em qualquer estado do processo da eleição, poderá cada candidato apresentar um fiscal, que deverá ser eleitor do districto eleitoral ou do Estado, conforme se tratar da eleição de Deputados ou Senadores e Presidente e Vice-Presidente da Republica, por officio dirigido ao presidente da mesa, reconhecida a firma por official de fé publica.<BR>&nbsp;&nbsp;&nbsp;&nbsp; Igual direito assiste a cada grupo de cincoenta eleitores da secção, devendo o officio ser por todos assignado, reconhecidas as firmas o instruido com documento que prove serem eleitores, não podendo neste caso recahir a nomeação de fiscal em individuo que não seja eleitor da secção. Paragrapho unico. Nenhum eleitor poderá assignar mais de um officio e si o fizer, não será o seu nome contemplado em nenhum delles. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Apurados os officios de apresentação dos fiscaes, terá começo o trabalho de recebimento das cedulas dos eleitores que comparecerem, devendo o recinto em que estiver a mesa ser separado por um grandil da sala em que se reunirem os eleitores, de modo, porém, que lhes seja possivel fiscalizar a eleição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Antes de começado o recebimento das cedulas, o presidente da mesa mostrará ao eleitorado a urna, que deverá se achar sobre a mesa, para que se verifique estar a mesma vasia. Esta urna terá duas chaves, ficando uma sob a guarda do presidente e a outra do secretario. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O secretario da mesa lavrará em seguida, nos dous livros a acta de começo da eleição, a qual será assignada em ambos os livros por cada eleitor, antes de depositar na urna a sua cedula. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Nenhum eleitor será admittido a votar sem prévia exhibição do seu titulo, o qual será datado e rubricado pelo presidente da mesa, e da carteira de identificação rubricada pelo juiz que houver ordenado o alistamento, nos logares onde houver este serviço, não lhe podendo ser recusado o voto, si o fizer. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Si a mesa tiver justos motivos para suspeitar da identidade do eleitor, tomará o seu voto em separado e reterá o titulo apresentado, enviando-o com a cedula á junta apuradora das eleições na capital. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º E' vedada a assignatura, por outrem, do nome do eleitor na acta a que se refere o § 2º, sob qualquer pretexto, devendo ser considerado ausente o eleitor que não puder assignar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º O voto do eleitor será escripto em cedula collocada em involucro fechado a sem distinctivo algum, podendo ser imprensa e devendo trazer a indicação da eleição de que se tratar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º O fiscal que fôr eleito de outro municipio, districto de paz ou secção eleitoral, votará onde estiver exercendo as funções de fiscal, exhibindo, porém o seu titulo de eleitor o qual será rubricado pelo presidente da mesa com declaração abreviada da data. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º Finda a votação, o secretario, proseguindo na escriptura da acta, nesta declaração o numero de eleitores que votaram e dos que deixaram de comparecer, procedendo-se em seguida á apuração das cedulas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º Aberta a urna em presença do eleitorado, e della retiradas as cedulas, serão as mesmas reunidas em maços de 50, depois de separadas as que se referem á eleição de Deputados e as que se referem á eleição de Senador, sendo conferido em seguida o numero total das mesmas com o numero de eleitores que compareceram. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 9º Terminada esta verificação e distribuido o trabalho entre os mesarios, terá começo a apuração das cedulas, lendo o presidente em voz alta os nomes dos candidatos votados para Deputados, depois do que submetterá a cedula ao exame dos fiscaes e demais mesarios.<BR>&nbsp;&nbsp;&nbsp;&nbsp; A apuração dos votos para Senador será feita depois de finda a apuração das cedulas para Deputados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 10. A cedula que não tiver rotulo será apurada, excepto no caso de na mesma occasião, se proceder á eleição para mais de um cargo e de cada eleitor votar com mais de uma cedula. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 11. Serão apuradas em separado as cedulas que contiverem alterações por falta, augmento ou suppressão de sobrenomes ou appellido do cidadão votado, de modo que não se possa verificar que se refere claramente a individuo determinado. Taes cedulas serão rubricadas pela mesa e remettidas á junta apuradora da capital. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 12. Não serão apuradas as cedulas:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </P>
+<P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>quando contiverem nome riscado e substituido ou não por outro; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>quando, procedendo-se a mais de uma eleição conjuntamente, contiverem declaração contraria á do rotulo ou não houver indicação no involucro; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>quando se encontrar mais de uma dentro de um mesmo involucro, quer estejam escriptas em papel separado, quer no mesmo involucro. </TD></TR></TBODY></TABLE></P>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 13. Terminada a apuração, o secretario continuará a lavrar a acta, consignando-se nella o numero de cedulas apuradas, o numero de votos obtidos pelo candidato, o numero de cedulas apuradas em separado com os nomes dos votados, o numero de cedulas não apuradas, com a designação dos motivos, tudo, emfim, quanto occorrer no processo de apuração e durante a eleição. Esta acta será assignada pelos mesarios e fiscaes, declarando-se, em seguida ás assignaturas, si algum fiscal se recusou a isto, sendo esta declaração tambem assignada pela mesa, reconhecidas as firmas dos mesarios, fiscaes e eleitores que comparecerem, pelo secretario da mesa. O resultado da apuração será immediatamente publicado em edital affixado no edificio em que se tiver realizado a eleição e pela imprensa, si houver, entregando-se aos fiscaes, mediante recibo, um boletim com o referido resultado, assignado pela mesa, reconhecidas as firmas dos mesarios pelo secretario.<BR>&nbsp;&nbsp;&nbsp;&nbsp; Concluidos os trabalhos, serão os dous livros remettidos ao presidente da junta apuradora na capital do Estado e no Districto Federal, acompanhados de um officio de mesa, sob registro, no dia immediato ao da terminação dos trabalhos, devendo o presidente da Junta Apuradora, concluida a apuração, remetter um dos livros á Secretaria do Senado e outro á da Camara dos Deputados, acompanhados de officio sob registro.<BR>&nbsp;&nbsp;&nbsp; As mesas eleitoraes, logo depois de terminada a eleição, darão seu resultado em boletins aos agentes do Correio e aos telegraphistas do Telegrapho Nacional e das estradas do de ferro devendo os agentes do Correio remettel-os em officio registrado ao Presidente do Estado e aos Presidentes da Camara e os telegraphistas em telegramma ás mesma autoridades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 14. A acta da eleição, bem como a da installação da mesa eleitoral, será transcripta no livro de notas ou no do registro civil pelo tabellião official de registro ou serventuario de justiça que servir de secretario da mesa, designando previamente o juiz de direito o livro do registro civil no qual será feita a transcripção. Si o secretario fôr escrivão judicial, a transcripção será feita no protocollo de audiencias; si for serventuario de justiça, não obrigado por lei a ter livro de registro, a transcripção será feita em livro especial, aberto, numerado, rubricado e encerrado pelo juiz de direito. <BR>&nbsp;&nbsp;&nbsp;&nbsp; A transcripção será assignada pelos mesarios e tambem pelos fiscaes que quizerem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;No caso de não haver eleição em qualquer secção eleitoral da séde dos municipios que compõem a comarca, ou do Districto Federal, por falta de comparecimento de dous mesarios, por não terem sido indicado, ou por outro qualquer motivo, poderão os eleitores da referida secção votar perante a mesa da secção mais proxima na mencionada séde sendo admittidos a votar depois que o ultimo eleitor da secção houver votado, fazendo-se de tudo menção na acta. Os votos destes eleitores serão recebidos e apurados pela mesa em separado. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Si a secção eleitoral que não funccionou fôr situada fóra da séde dos municipios, poderão os eleitores da referida secção votar na secção mais proxima, ou requerer no prazo de 48 horas, ao juiz de direito ou ao juiz municipal, si a secção pertencer a termo que tenha juiz togado, que sejam tomados os seus votos e, cartorios pelo tabellião que for designado. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Esta petição só poderá ser indeferida si os titulos dos eleitores estiverem rubricados pela mesa perante a qual tiverem elles votados segundo o disposto no art. 17,§ 3º. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Deferida a petição, será lavrado o termo no livro de notas, indicando os eleitores os seus candidatos. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Este termo será assignado por todos os eleitores e pelo juiz de direito, ou juiz municipal, em ultimo logar. Paragrapho unico. Pelo tabellião que lavrar o termo serão no mesmo dia extrahidas tres cópias do mesmo, as quaes, assignadas igualmente pelos eleitores e pelo juiz de direito ou juiz municipal, serão enviadas, no prazo de 24 horas, pelo juiz de direito, ou juiz municipal, sob registro, uma ao presidente da Junta Apuradora, uma ao senado; outra á Camara. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Quando a eleição fôr para preenchimento de vaga, bastará que seja remettida uma cópia do termo ao Senado ou a Camara, conforme se tratar de eleição de Senador ou Deputado, e outra ao presidente da Junta Apuradora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;E' garantido ao eleitor, ao fiscal e ao candidato o direito de offerecer protesto escripto quando ao processo eleitoral, devendo tal protesto ser mencionado na acta e, juntamente com o contra-protesto que á mesa qualquer fiscal ou eleitor da secção, porventura, opponha, ser enviado em original, depois de rubricado pelos mesarios, ao poder verificador, por intermedio da Junta Apuradora, juntamente com o livro de actas. Si o protesto fôr referente, tanto á eleição de Senador como á de Deputados, deverá ser apresentado em duplicata, acompanhando cada um dos exemplares o livro de actas destinado ao Senado e á Camara dos Deputados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;O juiz de direito, 40 dias antes da eleição, dividirá a comarca em tantas secções quantas forem as mesas eleitoraes, distribuindo os eleitores com a possivel igualdade, pelas diversas secções, cabendo-lhes o direito de reclamar, si outra fôr a sua residencia; e mandará publicar a distribuição por edital no prazo de 24 horas e extrahir por cópia a lista de eleitores de cada secção, em ordem alphabetica, remetendo-a ao presidente da respectiva mesa eleitoral, 20 dias pelo menos antes da eleição, depois de a ter feita a chamada dos eleitores. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Esta chamada será feita por um dos mesarios designado pelo presidente votando os eleitores pela ordem da chamada e fazendo-o depois desta terminada, porem antes do proseguimento da redacção da acta, os que tiverem chegado depois de chamado o seu nome.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Na falta da lista de chamada, os eleitores serão admittidos a votar, mediante a exhibição do titulo, que ficará retido e só será entregue depois de lavrada a acta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;Ao presidente da mesa cumpre, de accôrdo com os mesarios, resolve as questões que se suscitarem, regular a policia no recinto, prender os que commetterem crime, fazer lavrar o respectivo auto, remettendo immediatamente, com o mesmo auto, o delinquente á autoridade competente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;E' prohibida a presença de força publica dentro do edificio ou nas suas immediações, durante o processo da eleição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;Não ha incompatibilidade para os membros da mesa que preside as eleições, nem para os membros da junta apuradora da Capital. </P>
+<P align=center>DA APURAÇÃO GERAL DAS ELEIÇÕES </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 24. A apuração geral da eleição de Deputados, Senadores, Presidente e Vice-Presidente da Republica será feita na capital do Estado e no Districto Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;A junta apuradora compôr-se-ha do juiz federal, como presidente, do seu substituto, e do representante do Ministerio Publico junto ao Tribunal Superior de Justiça. No Districto Federal servirá o juiz federal da 2ª vara. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. Servirá de secretario da junta o escrivão do juiz federal, e, no caso de haver mais de um, o que pelo juiz fôr designado, sendo substituido o juiz federal na presidencia, no caso de falta, pelo seu substituto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Na falta de dous membros da junta, ou dos que, como substitutos, estiverem no exercicio de suas funcções, não se procederá á apuração da eleição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;A junta deverá reunir-se para a apuração da eleição ordinaria de Deputados e Senadores trinta dias após a realização desta, ás 11 horas, no edificio da Camara Municipal, devendo trabalhar em dias successivos até a terminação dos trabalhos, não podendo, porém, exceder de oito dias, salvo o caso previsto no art. 30, § 1º. Si no dia da reunião não comparecerem pelo menos dous membros effectivos da junta, ou os que, como substitutos, estiverem em pleno exercicio de suas funcções, ficarão os trabalhos adiados para o dia seguinte; e si ainda nesse dia, até ás 12 horas, pelo mesmo motivo não se puder installar a junta, não se procederá á apuração da eleição. Neste caso o presidente providenciará, nos termos do § 13 do art. 17, sobre a remessa dos livros da eleição aos seus respectivos destinos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;O presidente convocará, com antecedencia de cinco dias, os membros da junta, annunciando na mesma occasião por edital, reproduzido pela imprensa, o dia, logar e hora em que começarão os trabalhos de apuração da eleição.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. Independente de convocação, os membros da junta deverão comparecer no dia, logar e hora designados nesta lei, para o começo dos trabalhos, sendo relevados da pena sómente os que provarem devidamente o motivo de força maior que impediu o seu comparecimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;As sessões da junta serão publicas, sendo permittido aos candidatos, ou seus procuradores, ter assento na mesa para fiscalizar a apuração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;A apuração só poderá ser feita pelos livros respectivos, remettidos pelas mesas eleitoraes de cada municipio do Estado ou pelas do Districto Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No caso de haverem sido remettidos ao presidente da Junta Apuradora mais de dous livros referentes á mesma secção, a junta suspenderá a apuração desta eleição devendo o presidente immediatamente nomear dous tabelliães, que procederão ao exame da firma do juiz federal, lançada nos termos de abertura e encerramento dos livros, e ao exame comparativo das firmas dos mesarios constantes do officio a que se refere o art. 15. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O laudo dos peritos deverá ser dado no prazo de 24 horas, devendo a junta apurar a eleição que por elles fôr considerada verdadeira, em vista da authenticidade das firmas.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No caso de divergencia dos peritos, não será apurada a eleição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Não será apurada a eleição lançada em livro que não tenha sido aberto, encerrado, numerado e rubricado pelo juiz federal, rubricado pelo juiz de direito, ou do qual constem actas que não tenham sido assignadas pelos eleitores que votaram e pelos mesarios. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Em nenhum outro caso, e sob qualquer pretexto, deixará a junta de apurar a eleição. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Na falta de livros referentes á eleição de qualquer secção e si houver o juiz de direito da comarca ou o juiz municipal, ou preparador, enviado ao presidente da junta apuradora a cópia da eleição realizada em cartorio, por ella será feita a apuração. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Si tiverem sido remettidos á junta os livros referentes á eleição de uma secção e tambem a cópia da mesma eleição realizada em cartorio, a junta determinará que se proceda ao exame comparativo das firmas do juiz de direito, ou de quem presidiu a respectiva mesa, dos mesarios e dos eleitores, nos termos do § 1º deste artigo. Si ambas as eleições forem consideradas verdadeiras por terem nellas votado eleitores differentes, será apurada a eleição feita perante a mesa da respectiva secção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;Installada a junta no dia designado no art. 27, dará ella começo aos trabalhos, depois de lavrada a acta de installação no livro abaixo indicado, pela apuração do 1º districto eleitoral, observando-se a ordem numerica em relação aos demais. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. Terminados os trabalhos da junta no fim de cada dia ás 16 horas, será lavrada pelo secretario da mesa, em livro aberto, numerado, encerrado e rubricado pelo presidente da junta, uma acta, que por todos os mesarios será assignada e da qual constarão as eleições apuradas, as que não o foram, com indicação dos motivos, e o numero de votos obtido por cada candidato.<BR>&nbsp;&nbsp;&nbsp;&nbsp; O resultado dos trabalhos de cada dia será publicado no dia immediato em edital, pela imprensa e affixado no logar da apuração, do qual constarão todas as indicações acima mencionadas. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Aos candidatos ou seus procuradores serão dados boIetins assignados pela mesa, reconhecidas as firmas pelo escrivão que servir de secretario, após a terminação da apuração em cada dia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Concluida a apuração das eleições, lavrar-se-ha a acta geral da apuração, contendo a votação total, mencionadas as eleições apuradas, as que não o foram, as representações, reclamações ou protestos apresentados.&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;Em seguida serão publicados por edital os nomes dos cidadãos votados, na ordem numerica dos votos recebidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Da acta geral extrahir-se-hão as cópias necessarias, assignadas pela junta, reconhecidas as firmas pelo escrivão que servir de secretario, serão remettidas: uma a cada uma das Secretarias da Camara e do Senado e uma a cada um dos eleitos para lhe servir de diploma. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Quando impressas, serão as cópias concertadas e assignadas pelos membros da junta, reconhecidas as firmas pelo secretario. As cópias da acta geral destinadas ao Senado e á Camara dos Deputados serão remettidas, pelo Correio, sob registro, acompanhadas dos protestos, contra-protestos e reclamações, porventura, apresentados ás juntas apuradoras e ás mesas eleitoraes e pela mesma fórma determinada no art. 19. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Encerrado o processo eleitoral com a verificação de poderes, serão devolvidos ao juiz seccional, afim de os remetter ao juiz de direitos; quando se tiver de proceder á eleição para o preenchimento de vaga na representação, os livros das differentes secções. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Esta devolução será feita dentro de trinta dias contados da deliberação sobre o parecer da Commissão; cumprindo fazel-a ao 1º Secretario do Senado e da Camara. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;No caso de preenchimento de vaga de Deputado ou Senador; a junta se reunirá trinta dias depois daquelle em que se houver realizado a eleição. </P>
+<P align=center>DA ELEGIBILIDADE </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 34. São condições de elegibilidade: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; I. Para o Congresso Nacional: <BR>&nbsp;&nbsp;&nbsp; 1º, estar na posse dos direitos de cidadão brazileiro e ser alistavel como eleitor;<BR>&nbsp;&nbsp;&nbsp; 2º, para a Camara dos Deputados ter mais de quatro annos de cidadão brazileiro e para o Senado mais de seis annos e ser maior de 35 annnos de idade; </P>
+<P>&nbsp;&nbsp;&nbsp; &nbsp;II. Para Presidente e Vice-Presidente da Republica:&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;1º, ser brazileiro nato;<BR>&nbsp;&nbsp; &nbsp;2º, estar no exercicio dos direitos politicos; <BR>&nbsp;&nbsp;&nbsp; 3º, ser maior de 35 annos. </P>
+<P align=center>DA INELEGIBILIDADE </P>
+<P>&nbsp;&nbsp;&nbsp; Art. 35. A inelegibilidade determina a nullidade dos votos que recahirem sobre os cidadãos que nella incidam, para o effeito de considerar-se eleito o immediato em votos, salvo o disposto no artigo seguinte. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;O immediato em votos ao inelegivel só poderá ser reconhecido si obtiver mais de metade dos votos dados ao inelegivel; no caso contrario, proceder-se-ha á nova eleição, para a qual considerar-se-ha prorogada a inelegibilidade. Paragrapho unico. No calculo daquelle quociente eleitoral só serão computados os votos julgados validos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;São inelegiveis para o Congresso Nacional: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; I. Em todo o territorio da Republica:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</P>
+<P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>o Presidente e Vice-Presidente da Republica, os Governadores ou Presidentes e os Vice-Governadores ou Vice-Presidentes dos Estados; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>os Ministros de Estado, os directores das respectivas secretarias e os do Thesouro Nacional; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>os ministros, directores e representantes do ministerio publico no Tribunal de Contas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>os chefes e sub-chefes do Estado-Maior do Exercito e da Armada; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>os magistrados federaes e os membros do ministerio publico federal; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>os funccionarios administrativos federaes demissiveis independentemente de sentença judicial; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>
+<P>os presidentes e directores de banco, companhia, sociedade ou empreza que gose dos seguintes favores do Governo Federal: </P>
+<P>1º, garantia de juros por subvenção; <BR>2º, privilegio para a emissão de notas ao portador, com lastro em ouro ou não; <BR>3º, isenção ou reducção do imposto ou taxas federaes concedidas em lei ou contracto; <BR>4º, contractos de tarifas ou concessão de terrenos; 5º, privilegio de zona ou navegação; </P>
+<P>II. Nos respectivos Estados, equiparados a estes o Districto Federal: </P></TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>os parentes consanguineos ou affins, nos primeiro e segundos gráos, dos Governadores ou Presidente dos Estados, ainda que elles estejam fóra do exercicio do cargo por occasião da eleição; e até seis mezes antes della, salvo si houverem exercido o mandato legislativo na legislatura anterior á eleição dos referidos Governadores, ou o estiverem exercendo ao tempo della; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>os parentes consanguineos ou affins, nos mesmos gráos, dos Vice-Governadores ou Vice-Presidentes dos Estados que tenham exercido o governo nos seis mezes anteriores á eleição, salvo a excepção mencionada na lettra anterior; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>os magistrados estadoaes e os membros do ministerio publico dos Estados; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>os chefes de inspecção permanente militar; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>os funccionarios investidos de qualquer commando de forças de terra ou de mar, policia ou milicia, não comprehendidos os officiaes da Guarda Nacional; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>
+<P>os funccionarios administrativos estadoaes demissiveis independentemente de sentença judicial; </P>
+<P>III. Em qualquer Estado e no Districto Federal, os parentes consanguineos ou affins do Presidente e Vice-Presidente da Republica, nos primeiro e segundo gráos, até seis mezez depois da cessação das respectivas funcções, salvo a excepção constante do n. II, letra a;<BR>IV. Nas respectivas circumscripções, as autoridades policiaes. </P></TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;São inelegiveis para os cargos de Presidente e Vice-Presidente da Republica:&nbsp;<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>o Presidente para o periodo presidencial seguinte; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o Vice-Presidente que exercer a presidencia no ultimo anno do periodo presidencial, para o periodo seguinte, e o que a estiver exercendo por occasião da eleição, entendendo-se por ultimo anno do periodo presidencial aquelle em que vaga se der, contando-se até 90 dias depois da mesma vaga; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>os Ministros de Estado ou os que o tiverem sido até 180 dias antes da eleição; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>os parentes consanguineos ou affins, nos primeiros e segundo gráos, do Presidente e Vice-Presidente que se achar em exercicio no momento da eleição, ou que o tenha deixado até seis mezes antes. </TD></TR></TBODY></TABLE></P>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Salvo os casos já previstos nos artigos anteriores, as causas de inelegibilidade permanecem quando o exercicio do cargo ou funcção publica preceder á eleição - de seis mezes, na hypothese da primeira parte da alinea a, (Presidente e Vice-Presidente da Republica) e de tres mezes nas hypotheses da segunda parte da alinea a e das alineas b, c, d, e, f e g do n. I; a, b, c, d, e e f do n. II; e nas dos ns. III e IV do Art. 37. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. Considera-se cessado o exercicio do cargo ou funcção publica pela terminação do mandato electivo, exoneração, aposentadoria, inactividade, jubilação ou disponibilidade. </P>
+<P align=center>DAS NULLIDADES </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 40. Só podem ser annulladas as eleições nos casos expressamente previstos no artigo seguinte. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;São nullas as eleições: </P>
+<P>&nbsp;&nbsp;&nbsp; 1º, quando realizadas perante mesas constituidas por modo diverso do prescripto em lei; <BR>&nbsp;&nbsp;&nbsp; 2º, quando realizadas em dia e logar diversos dos legalmente designados; <BR>&nbsp;&nbsp;&nbsp; 3º, quando os livros em que forem lavradas as actas não estiverem rubricados pelo juiz federal e pelo juiz de direito e não contiverem termos de abertura e encerramento assignados pelo primeiro;&nbsp;<BR>&nbsp;&nbsp;&nbsp; 4º, quando se fizer por alistamento clandestino ou fraudulento;&nbsp;<BR>&nbsp;&nbsp;&nbsp; 5º, quando as actas não estiverem devidamente assignadas pelos eleitores e pelos mesarios; <BR>&nbsp;&nbsp;&nbsp; 6º, quando houver prova evidente de recusa de fiscaes apresentados pelos candidatos ou por um grupo de eleitores;<BR>&nbsp;&nbsp; &nbsp;7º, quando houver prova de fraude que altere o resultado da eleição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;A Camara ou o Senado mandará proceder a nova eleição, sempre que, no reconhecimento de poderes de seus membros, annullar por qualquer fundamento mais de metade dos votos do candidato diplomado, deduzidos do calculo os votos de duplicatas de actas, desprezadas por impossibilidade de se verificar qual dellas é a verdadeira. <BR>&nbsp;&nbsp;&nbsp; Da mesma fórma se procederá com relação ao candidato mais votado que deixou de ser diplomado por não ter havido apuração da eleição na capital do Estado ou no Districto Federal; e, para verificação de qual seja o candidato mais votado, a Commissão de Poderes preliminarmente fará a respectiva apuração, em face dos livros da eleição que tiverem sido enviados ao poder verificador pelo presidente da Junta Apuradora. Em todo caso não se fará nova eleição, si o candidato diplomado ficar com maioria de votos sobre os demais candidatos.</P>
+<P align=center>&nbsp;DAS VAGAS </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Art. 43. O cidadão eleito Deputado ou Senador póde, depois de reconhecido, renunciar o seu mandato. A renuncia uma vez expressa, verbalmente ou por escripto, se considerará completa e definitiva, cumprindo á Mesa da Camara ou do Senado fazer immediatamente as communicações legaes para o preenchimento da vaga. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Dar-se-ha por comprovada a renuncia quando o Governador do Estado e o Ministro do Interior della tiverem conhecimento por communicação da Mesa da respectiva Camara a que tenha o representante enviado a sua renuncia. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Aberta a vaga pela renuncia ou por fallecimento do representante, será ella preenchida no prazo maximo de tres mezes, contados do dia da renuncia ou morte, sendo designado o dia para a nova eleição pela Mesa da Camara em que se dér a vaga, si o Ministro do Interior, no Districto Federal ou o Governador do Estado não o tiver feito no prazo de 30 dias da data da renuncia ou do fallecimento.<BR>&nbsp;&nbsp;&nbsp;&nbsp; No intervallo das sessões legislativas será exercida pelo Presidente da Camara e do Senado a attribuição conferida ás respectivas Mesas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;O prazo para o preenchimento das vagas abertas no Senado e na Camara em virtude de acceitação por parte de qualquer dos seus membros do cargos cuja incompatibilidade com o mandato fôr ou estiver prescripta em lei, contar-se-ha: no caso de haver data designada para a posse do eleito ou nomeado para taes cargos, desta data; e, na hypothese contraria, do dia de sua posse ou investidura, independente sempre de qualquer communicação. </P>
+<P align=center>DA INCOMPATIBILIDADE</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 45. Durante as sessões o mandato legislativo é incompativel com o exercicio de outra qualquer funcção publica, considerando-se como renuncia do mandato semelhante exercicio depois de reconhecido o Deputado ou Senador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Não se comprehende na disposição do artigo anterior o desempenho de missões diplomaticas, commissões ou commandos militares, desde que preceda licença da Camara a que pertencer o representante da Nação, e, independente de tal licença, nos casos de guerra ou naquelles em que a honra ou integridade da Nação se achem empenhadas.</P>
+<P align=center>DOS DISTRICTOS ELEITORAES </P>
+<P>&nbsp;&nbsp;&nbsp; Art. 47. O territorio da Republica dos Estados Unidos do Brazil fica dividido em districtos eleitoraes pela seguinte fórma: </P>
+<P>&nbsp;&nbsp;&nbsp; I. Constituirão um só districto eleitoral os Estados do Amazonas, Pará, Maranhão, Piauhy, Rio Grande do Norte, Parahyba, Alagoas, Sergipe, Espirito Santo, Paraná, Santa Catharina, Coyaz e Matto Grosso.<BR>&nbsp;&nbsp;&nbsp; II. O Estado do Ceará formará dous districtos eleitoraes:&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O primeiro districto se comporá dos seguintes municipios: Fortaleza, Porangaba, Redempção, Pacatuba, Aracoyaba, Alaranguape, Cascavel, Aquiraz, Beberibe, Mecejana, Soure, S. João de Uruburetama, Pentecoste, Guarany, São Francisco, Itapipoca, Paracurú, Trahiry, Acarahú, Camocim, Granja, Sant'Anna, Palma, Massapé, Meruoca, Sobral, Santa Quiteria, Entre Rios, Tamboril, Ipú, Ipueiras, Campo Grande Ibiapina, S. Benedicto, Tianguá, Viçosa, Independencia, Cratheús, Canindé e Caridade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O segundo districto se comporá dos seguintes municipios: Iguatú, Jardim, Porteiras, Brejo dos Santos, Milagres, Barbalha, Crato, Missão, Velha, Aurora, Lavras, Icó, Assaré, Saboeiro, Sant'Anna do Cariry, Quixará, S. Matheus, Tauhá, Arneiroz, Varzea Alegre, Pereiro, Renjamin Constant, Senador Pompeu, Pedra Branca, Boa Viagem, Quixeramobim, Jaguaribe-mirim, Limoeiro, Campos Salles, Umary, Morada Nova, S. Bernardo das Russas, União, Aracaty, Cachoeira, Riacho do Sangue, Baturité, Mulungú Coité, Pacoty, Iracema, Araripe, Joazeiro e S. Pedro do Crado. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III. O Estado de Pernambuco formará tres districtos eleitoraes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O primeiro districto se comporá dos seguintes municipios: Recife, Bom Jardim, Goyanna, Iguarassú, Itambé, Jaboatão, Limoeiro, Nazareth, Olinda, Páo d'Alho, São Lourenço e Timbaúba. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O segundo districto se comporá dos seguintes municipios: Caruaru, Agua Preta, Altinho, Amaragy, Barreiros, Rezerros, Bonito, Brejo, Cabo, Escada, Gamelleira, Gloria, Gravatá, Ipojuca, Palmares, Panellas, Quipapá, Rio Formoso, Serinhaem, Taquaretinga e Victoria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O terceiro districto se comporá dos seguintes municipios: Pesqueira, Aguas Bellas, Alagoa de Baixo, Belmonte, Boa Vista, Bom Conselho, Buique, Cabrobó, Canhotinho, Correntes, Flores, Floresta, Guaranhúns, Granito, Ingazeira, Leopoldina, Ouricury, Pedra, Petrolina, Salgueiro, S. José do Egypto, S. Bento, Tacaratú, Triumpho, Villa Bella e Nóvo exú. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; IV. O Estado da Bahia formará quatro districtos eleitoraes. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Os districtos de comporão dos seguintes municipios: <BR>&nbsp;&nbsp;&nbsp;&nbsp; Primeiro districto - Capital (S. Salvador), Alagoinhas, Abrantes, Itaparica, Matta de S. João, Pojuca e Sant'Anna do Catú. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Segundo districto - Cachoeira, Aratuhype, Amargosa, Areia, Alcobaça, Affonso Penna (Conceição do Almeida), Barra do Rio de Contas, Belmonte, Barcellos, Cruz das Almas, Castro Alves (Curralinho), Cannavieiras, Caravellas, Cayrú, Camumú, Ilhéos, Igrapiuna, Itabuna, Jaguaribe, Jequiriçá, Jequié, Maragogipe, Marahú, Monte Cruzeiro, Nazareth, Nova Boipeba, Porto Seguro, Prado, S. Felix, Santo Amaro, S. Gonçalo dos Campos, S. Felippe, Santo Antonio de Jesus, S. Miguel, S. José de Porto Alegre, Santarem, Santa Cruz, Taperoá, Trancoso, Una, Villa de S. Francisco, Valença, Villa Verde, Viçosa e Villa de Nova Lage. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Terceiro distrito - Bomfim (Villa Nova), Abbadia (Cepa Forte), Amparo, Aracy (Raso), Barracão, Baixa Grande, Cicero Dantas (Bom Conselho), Conceição do Coité, Coração de Maria, Cumbe, Campo Formoso, Curaçá (Capim Grosso), Camisão, Conde, Capivary, Entre Rios, Feira de Sant'Anna, Geremoabo, Inhambupe, Irará (Purificação), Itapicurú, Itaperaba, Juazeiro, Jacobina, Monte Alegre, Monte Santo, Mundo Novo, Morro do Chapéo, Orobó, Pombal, Patrocinio do Coité, Riachão do Jacuhype, Santo Antonio dos Queimados, Saude, Serrinha, Santo Antonio da Gloria, Sento Sé, Soure, Tucano, Villa Rica e Wagner.<BR>&nbsp;&nbsp;&nbsp;&nbsp; Quarto districto - Barra do Rio Grande, Andarahy, Angical, Bom Jesus do Rio de Contas, Bom Jesus dos Meiras, Bom Jesus da Lapa, Brotas de Macahubas, Barreiras, Boa Nova (Poções), Conquista (Victoria), Caitité, Condeúba, Chique-Chique, Carinhanha, Correntina, Campos Largo, Guarany, Gamelleira do Assuruá, Ituassú, Jacaracy, Jussiape, Lençóes, Monte Alto, Maracás, Minas do Rio de Contas, Macahúbas, Oliveiva dos Brejinhos, Pilão Arcado, Paramirim (Agua Quente), Remanso, Rio Branco (Urubú), Riacho da Casa Nova, Riacho de Sant'Anna, Remedios, S. João do Paraguassá, Santa Maria da Victoria, Sant'Anna dos Brejos, Santa Rita do Rio Preto, Dr. Seabra (Campestre), Umburanas e Villa Bella das Palmeiras. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V. O Estado do Rio de Janeiro formará tres districtos eleitores: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O primeiro districto comprehenderá os municipios seguintes: Nitheroy, S. Gonçalo, Maricá, Itaborahy, Saquarema, Rio Bonito, Araruama, S. Pedro da Aldeia, Cabo Frio, Barra de S. João, Capivary. Sat'Anna de Sapuhyba, Magé, Igussú, Petropolis, Therezopolis, Nova Friburgo e Bom-jardim. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O segundo districto comprehenderá os municipios seguintes: Campos, S. João da Barra, Macahé, S. Francisco de Paula, Santa Maria Magdalena, S. Sebastião do Alto, Cantagallo, Itaocára, S. Fidelis, Santo Antonio de Padua, Monte Verde e Itaperuna. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O terceiro districto comprehenderá os municipios seguintes: Barra do Pirahy, Barra Mansa, Rezende, Pirahy, Rio Claro, Angra dos Reis, Paraty, Mangaratyba, Itaguahy, S. João Marcos, Vassouras, Valença, Santa Thereza, Parahyba do Sul, Sapucaia, Sumidouro, Duas Barras e Carmo. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; VI. O Estado de Minas Geraes formará sete districtos eleitoraes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O primeiro districto comprehenderá os municipios seguintes: Bello Horizonte, Santa Quiteria, Bomfim, Pará, Pitanguy, Sabará, Villa Nova de Lima, Caeté, Santa Barbara, Itabira, Ferros, S. Miguel de Guanhães, Serro, Conceição, Curvello, Sete Lagoas, Santa Luiza do Rio das Velhas, Itaúna, Diamantina, Antonio Dias Abaixo, Contagem, Villa Pequy, Villa Rio Piracicaba, Villa Paraopeba e Pirapora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O segundo districto comprehenderá os municipios seguintes: Leopoldina, Juiz de Fóra, Rio Preto, Lima Duarte, Rio Novo, Mar de Hespanha, Guarará, S. João Nepomuceno, Ubá, Rio Branco, Cataguazes, S. José de Além Parahyba, São Paulo de Muriahé, S. Manoel, Carangola, Viçosa e Palma. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O terceiro districto comprehenderá os municipios seguintes: Barbacena, Palmyra, Pomba, Piranga, Ponte Nova, Abre Campo, S. Domingos do Prata, Alvinopolis, Marianna, Ouro Preto, Queluz, Entre Rios, Oliveira, Alto Rio Doce, Prados, Tiradentes, Manhuassú, Caratinga, Villa Mercês, Villa Guarany, Rio Casca, Passa Tempo, Claudio, Rio Espera, Lagôa Dourada, Rezende Costa, Rio José Pedro, S. Manoel do Motum e Aymorés. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O quarto districto comprehenderá os municipios seguintes: Lavras, S. João d'El Rey, Bom Successo, Itapecerica, Formiga, Bambuhy, Piumhi, Campo Bello, Dores da Boa Esperança, Tres Pontas, Alfenas, Carmo do Rio Claro, Varginha, Tres Corações do Rio Verde, Aguas Virtuosas, Campos Geraes, Ayuruoca, Turvo, Silvestre Ferraz, Baependy, Caxambú, Villa Nepomuceno, Perdões, Divinopolis, Eloy Mendes, Cambuquira, Conceição do Rio Verde e Villa Gomes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º O quinto districto comprehenderá os seguintes municipios: Pouso Alegre, Passa Quatro, Pouso Alto, Christine, Pedra Branca, Itajubá, Santa Rita de Sapucahy, Santo Antonio do Machado, Ouro Fino, Jacutinga, Paraisopolis, Cambuhy, Jaguary, Caldas, Poços de Caldas, Caracol, Cabo Verde, Santa Rita da Extrema, Virginia, Maria da Fé, Villa Braz, Paraguassú, Campestre, S. José dos Botelhos, Silvianopolis, Campanha e S. Gonçalo do Sapucahy. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º O sexto districto comprehenderá os municipios seguintes: Uberaba, Monte Santo, Muzambinho, Guaranesia, Jacuhy, S. Sebastião do Paraizo, Passos, Santa Rita de Cassia, Villa Nova de Rezende, Sacramento, Araxá, Uberabinha, Fructal, Prata, Monte Alegre, Araguary, Estrella do Monte, Carmello, Patrocinio, Carmo do Paranahyba, Dores do Indayá, Abaeté, Patos, Paracatú, Santo Antonio do Monte, Arceburgo, Guaxupé, Conquista, Ituyutaba, S. Gothardo, Villa João Pinheiro, Abbadia de Bom Successo e Bom Despacho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º O setimo districto comprehenderá os municipios seguintes: Grão Mongol, Arassuahy, Boa Vista do Tremedal, Rio Pardo, Salinas, Januaria, S. Francisco, Montes Claros, Villa Brazilia, Minas Novas Theophilo Ottoni, Peçanha, São João Baptista, Bocayuva, S. Miguel de Jequitinhonha, Fortaleza, S. João Evangelista, Capellinha e Inconfidencia. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; VII. O Estado de S. Paulo formará quatro districtos eleitoraes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º 1º Districto: - S. Paulo, Cotia, Guarulhos, Itapecerica, Juquery, Botucatú, Parnahyba, Santo Amaro, São Bernardo, Santos, S. Vicente, Itanhaen, Iguape, Cananéa, Xiririca Iporanga, Apiahy, S. Roque, Araçariguama, Una, Piedade, Sorocaba, Campo Largo, Tieté, Tatuhi Guarehy, Pereiras, Rio Bonito, Itapetininga, Angatuba, S. Miguel Archanjo, Sarapuhy, Pilar, Capão Bonito, Faxima Bom successo, Itararé, Itabaré, Ribeirão Branco, Santo Antonio da Boa Vista Itaporanga, Anhenby, S. Manoel, Avaré, Itatinga, Santa Barbara do Rio Pardo, Espirito Santo do Turvo, S. Pedro do Turvo, Agudos, Barurú, Lençóes Campos Novos do Paranapanema, Monte Alegre, Pirajú, Fartura, Santa Cruz do Rio Pardo Nazareth, Curralinho, Ribeira, Piratininga, Pwnnapolis, Pirajuhy, Ipuassú, Platina e Salto Grande do Paranapanema. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º 2º Districto: - Atibaia, Campinas, Jundiahy, Itatiba, Bragança, Piracaia, Salto, Indaiatuba, Cabreuva, Itú, Monte Mór, Capivary, Porto Feliz, Piracicaba, Rio das Pedras, São Pedro, Santa Barbara, Limeira, Araras, Leme, Santa Cruz da Conceição, Pirassinunga, Porto Ferreira, Santa Rita do Passa, Quatro, Descalvado, Rio Claro, Annopolis, S. Carlos, Ribeirão Bonito, Boa Esperança, Brotas, Dous Corregos, Mineiros, Jahú, Pederneiras, S. João da Bocaina, Bariry, Ibitinga, Itapolis, Araraquara, Mattão, Taquaritinga, Jaboticabal, Monte Alto, Bebedouro, Pitangueiras, Barretos, s. José do Rio Preto, Barra Bonita, Bica de Pedra, Monte Azul, Santa Adelia e Dourado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º 3º Districto: - Ribeirão Preto, Amparo, Pedreira, Serra Negra, Soccorro, Mogy-Mirim, Mogy-Guassú, Espirito Santo do Pinhal, Itapira Palmeira, Casa Blanca, Tambahú, S. João da Boa Vista, S. José do Rio Pardo, S. Simão, Cravinhos, Sertãozinho Cajurú, Santo Antonio da Alegria, Caconde, Mocóca, Batataes, Jardinopolis, Franca, Orlandina, Patrocinio do Sapucahy, Ituverava, Igarapava, Santa Rosa e Brodowski. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º 4º Districto: - Guaratinguetá, Santa Izabel, Igaratá, Mogy das Cruzes, Guararema, Sallesopolis, S. Sebastião, Villa Bella, Caraguatatuba Ubatuba, S. Luiz do Parahytinga, Natividade, Parahybuna, Lagoinha, Redempção, Jambeiro, Santa Branca Jacarehy, S. José dos Campos, Caçapava, Buquira, Taubaté, Tremembé, Pindamonhangaba, S. Bento do Sapucahy, Cunha, Lorena, Piquete, Cachoeira, Silveiras, Jatahy, Cruzeiro, Pinheiro, Queluz Arcas, S. José do Barreiro e Bananal. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII. O Estado do Rio Grande do Sul formará tres districtos eleitoraes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O primeiro districto se comporá dos seguintes municipios: Porto Alegre, Viamão, Gravatahy, S. Leopoldo, Taquara, S. Francisco de Paula, Santo Antonio da Patrulha, Conceição do Arroio, Torres, Alfredo Chaves, Antonio Prado, Bento Gonçalves, Garibaldi, Caxias, Cahy, Montenegro, Triumpho, Estrella, Lageado, Guaporé, Venancio Ayres, Taquary, Santo Amaro e Encantado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O segundo districto se comporá dos seguintes municipios: Cruz Alta, Julio de Castilhos, Santa Maria, Cachoeira, Rio Pardo, Santa Cruz, Soledade, Passo Fundo, Palmeira, Quarahy, Santo Angelo, S. Luiz, S. Borja, Itaquy, Uruguayana, Alegrete, S. Francisco de Assis, S. Thiago do Boqueirão, S. Vicente, Lagôa Vermelha, Vaccaria, Ijuhi e Bom Jesus. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O terceiro districto se comporá dos seguintes municipios: Pelotas, Rio Grande, S. José do Norte, Jaguarão, Arroio Grande, Santa Victoria do Palmar, Cangussú, S. Lourenço, Piratiny, Cacimbinhas, Herval, Bagé, D. Pedrito, Livramento, Rosario, S. Jeronymo, S. Gabriel, Lavras, Caçapava, S. Sepé, Encruzilhada, S. João de Camaquam e Dôres de Camaquam. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; IX. O Districto Federal formará dous districtos eleitoraes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O 1º districto se comporá dos districtos municipaes da Gavea, Copacabana, Lagôa, Gloria, S. José, Candelaria, Santa Rita, ilha do Governador e ilha de Paquetá, Sacramento, Santo Antonio, Santa Thereza, Sant'Anna e Gambôa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O 2º districto se comporá dos districtos municipaes de Espirito santo, S. Christovão, Engenho Velho, Andarahy e Tijuca, Engenho Novo e Meyer, Inhaúma, Irajá, Jacarepaguá, Campo Crande, Santa Cruz e Guaratiba.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X. Os municipios que forem creados posteriormente pertencerão no districto daquelle ou daquelles de que forem desmembrados. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Si se compuzerem de territorios pertencentes a dous ou mais districtos, farão parte daquelle em que se achar a sédo municipal. </P>
+<P align=center>DISPOSIÇÕES PENAES </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 48. Além dos definidos no Codigo Penal, serão considerados crimes contra o livre exercicio dos direitos politicos os factos mencionados nos artigos seguintes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;Deixar qualquer dos membros da mesa de rubricar os boletins da eleição dados aos fiscaes. Pena: de dous a seis mezes de prisão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;A fraude de qualquer natureza praticada pela mesa eleitoral ou junta apuradora da eleição será punida com a seguinte: Pena: de seis mezes a um anno. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. A falsificação de actas eleitoraes será punida com o dobro da pena estabelecida neste artigo, ficando isento de qualquer pena o membro da mesa eleitoral ou junta apuradora que contra a fraude protestar no acto de ser ella praticada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;Deixar o funccionario federal de denunciar, promover ou dar andamento ao processo por crimes definidos nesta lei. Pena: suspensão dos direitos politicos por dous a quatro annos e perda do emprego com inhabilitação para outro pelo mesmo tempo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;O cidadão que usar de titulo falso ou alheio para votar. Pena: prisão por dous a quatro mezes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;Deixar o mesario ou o secretario de comparecer no dia da eleição ou da apuração, sem causa justificada, abandonar o serviço ou deixar de cumprir dentro dos prazos estabelecidos os deveres que lhe são impostos. Pena: dous a seis mezes de prisão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;Deixar qualquer funccionario de dar certidões a que é obrigado pela presente lei. Pena: um a tres mezes de prisão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;Todas as vezes que a Camara ou o Senado, na verificação e reconhecimento de poderes dos seus membros, julgar nullos ou não apurar, por vicios e fraudes, documentos ou actos eleitoraes, remetterá, por intermedio da respectiva mesa, as mesmas actas e documentos á competente autoridade, para que, pelos meios legaes, se torne effectiva a responsabilidade dos que para taes fraudes e vicios houverem concorrido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;Os crimes definidos nesta lei e os de igual natureza do Codigo Penal serão de acção publica, cabendo dar a denuncia nas comarcas das capitaes dos Estados aos procuradores da Republica perante o juiz seccional, e nas demais aos ajudantes dos mesmos procuradores perante os supplentes do substituto do juiz federal, que prepararão o processo até o despacho de pronuncia exclusive, cabendo ao juiz federal a pronuncia e mais actos de julgamento, passando tambem, da pronuncia em deante, a funccionar o procurador da Republica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A denuncia por taes crimes poderá, ser igualmente dada perante as autoridades competentes por cinco eleitores em uma só petição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O processo correrá perante a Justiça Federal e a fórma será a estabelecida na legislação vigente para os crimes de responsabilidade dos funccionarios publicos, competindo originariamente ao Supremo Tribunal, quando o culpado fôr o Governador ou Presidente do Estado ou o juiz federal. Neste caso, a denuncia caberá, ao procurador geral da Republica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As penas serão augmentadas de um terço, quando os crimes forem commettidos por funccionarios publicos. </P>
+<P align=center>DISPOSIÇÕES GERAES </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 57. Em cada um dos municipios em que se dividirem os Estados, haverá tres supplentes do substituto do juiz federal e um ajudante do procurador da Republica. O Governo Federal creará agencias do Correio nas sédes dos municipios que ainda não as tiverem, e providenciará, como fôr melhor, autorizada para isto a despeza necessaria, sobre os livros a que se refere esta lei, para que sejam os mesmos distribuidos com a precisa antecedencia pelas delegacias fiscaes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Todos os officios, livros, manuscriptos, referentes ao serviço eleitoral serão entregues ás repartições postaes em involucros perfeitamente fechados, lacrados, e rubricados, e deverão conter no endereço esta declaração - Serviço Eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Todos os officios, livros, manuscriptos, relativos ao serviço eleitoral transitarão pelas repartições postaes sempre sob registro e os funccionarios dos Correios são obrigados a declarar no certificado de registro os nomes das pessoas que lhes entregarem os objectos para registrar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Toda a correspondencia relativa ao serviço eleitoraI está isenta de pagamento de quaesquer taxas postaes, quer representadas em sellos ordinarios, quer em officiaes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Os funccionarios postaes não poderão recusar o registro de qualquer officio ou maço que traga no endereço a declaração - Serviço Eleitoral - salvo quando o officio ou maço não estiver perfeitamente fechado ou apresentar indicios de violação.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;§ 5º As repartições postaes farão a expedição e a entrega da correspondencia eleitoral no menor prazo possivel; e, na entrega, cingir-se-hão sempre á lettra dos endereços, que deverão ser tão explicitos quanto possivel. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Os funccionarios dos Correios que, por qualquer meio crearem embaraços á remessa dos papeis eleitoraes, ou concorrerem directa ou indirectamente para a sua violação ou extravio, incorrerão, além das penas estabelecidas no Codigo Penal, na suspensão das respectivas funcções, por seis mezes, com a perda total dos vencimentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;E' considerada constrangimento illegal, salvo o caso de flagrante delicto, a prisão ou detenção pessoal de membros da mesa eleitoral, desde que estejam constituidas até a terminação dos trabalhos, bem assim a prisão ou detenção pessoal do eleitor desde cinco dias antes até cinco dias depois da eleição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;Fica o Governo autorizado a fazer por conta da União todas as despezas necessarias á execução desta lei, abrindo para isto o credito extraordinario que fôr preciso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;Os requerimentos e documentos para fins eleitoraes serão isentos de sello e de quaesquer direitos, sendo gratuito o reconhecimento de firma. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;O trabalho eleitoral prefere a qualquer outro serviço publico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;As mesas da Camara e do Senado teem competencia para se dirigir aos Governadores dos Estados e mais autoridades administrativas e judiciarias federaes ou estadoaes, solicitando qualquer informação ou documento referente a materia eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;As mesas eIeitoraes teem competencia para lavrar auto de flagrante delicto contra o cidadão que votar ou tentar votar com titulo que não lhe pertencer, e para apprehender o titulo suspeito, devendo livrar-se solto, independente de fiança, o delinquente, logo que estiver lavrado o auto, que será remettido, com as provas do crime, á autoridade competente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;Todos os livros destinados ao serviço eleitoral serão assignalados com o carimbo das repartições que os expedirem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;A' justiça federal ou á estadoal poderão os candidatos aos cargos eleitoraes requerer protestos ou fazer perante ellas a prova dos seus direitos para fundamentarem a defesa de suas eleições perante o poder verificador. <BR>&nbsp;&nbsp;&nbsp; Aos escrivães que servirem em taes processos serão devidas custas, pagas pelos requerentes, de accôrdo com os respectivos regimentos, e contados como si se tratasse de simples justificações e protestos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;Fica o Governo autorizado a expedir as instrucções necessarias á execução desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;Ficam revogadas as leis n. 1.269, de 15 de novembro de 1904, n. 1.425, de 27 de novembro de 1905, n. 2.419, de 11 de julho de 1911, e mais disposições em contrario. </P>
+<P>Rio de Janeiro, 27 de dezembro de 1916, 95º da Independencia e 28º da Republica. </P>
+<P>WENCESLAU BRAZ P. GOMES<BR>Carlos Maximiliano Pereira dos Santos <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 29/12/1916
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 29/12/1916, Página 14687 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

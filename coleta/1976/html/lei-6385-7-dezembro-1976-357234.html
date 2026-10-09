@@ -1,0 +1,922 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 6.385, DE 7 DE DEZEMBRO DE 1976 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre o mercado de valores mobiliários e cria a Comissão de Valores Mobiliários. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 6.385, DE 7 DE DEZEMBRO DE 1976 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-6385-7-dezembro-1976-357234-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-6385-7-dezembro-1976-357234-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-6385-7-dezembro-1976-357234-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=204989">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-6385-7-dezembro-1976-357234-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 6.385, DE 7 DE DEZEMBRO DE 1976</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre o mercado de valores mobiliários e cria a Comissão de Valores Mobiliários. <BR>
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA:&nbsp;<BR>Faço saber que o Congresso Nacional&nbsp;decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Das Disposições Gerais </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Serão disciplinadas e fiscalizadas de acordo com esta Lei as seguintes atividades: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a emissão e distribuição de valores mobiliários no mercado; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a negociação e intermediação no mercado de valores mobiliários; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a organização, o funcionamento e as operações das bolsas de valores; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a administração de carteiras e a custódia de valores mobiliários; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - a auditoria das companhias abertas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - os serviços de consultor e analista de valores mobiliários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;São valores mobiliários sujeitos ao regime desta Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - as ações, partes beneficiárias e debêntures, os cupões desses títulos e os bônus de subscrição; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os certificados de depósito de valores mobiliários; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - outros títulos criados ou emitidos pelas sociedades anônimas, a critério do Conselho Monetário Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único - </I>Excluem-se no regime desta Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - os títulos da dívida pública federal, estadual ou municipal; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os títulos cambiais de responsabilidade de instituição financeira, exceto as debêntures. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Compete ao Conselho Monetário Nacional: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - definir a política a ser observada na organização e no funcionamento do mercado de valores mobiliários; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - regular a utilização do crédito nesse mercado; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - fixar, a orientação geral a ser observada pela Comissão de Valores Mobiliários no exercício de suas atribuições; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - definir as atividades da Comissão de Valores Mobiliários que devem ser exercidas em coordenação com o Banco Central do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Ressalvado o disposto nesta Lei, a fiscalização do mercado financeiro e de capitais continuará a ser exercida, nos termos da legislação em vigor, pelo Banco Central do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;O Conselho Monetário Nacional e a Comissão de Valores Imobiliários exercerão as atribuições previstas na lei para o fim de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - estimular a formação de poupanças e a sua aplicação em valores mobiliários; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - promover a expansão e o funcionamento eficiente e regular do mercado de ações, e estimular as aplicações permanentes em ações do capital social de companhias abertas sob controle de capitais privados nacionais; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - assegurar o funcionamento eficiente e regular dos mercados da bolsa e de balcão; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - proteger os titulares de valores mobiliários e os investidores do mercado contra: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>emissões irregulares de valores mobiliários; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>atos ilegais de administradores e acionistas controladores das companhias abertas, ou de administradores de carteira de valores mobiliários. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - evitar ou coibir modalidades de fraude ou manipulaçao destinadas a criar condições artifíciais de demanda, oferta ou preço dos valores mobiliários negociados no mercado; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - assegurar o acesso do público a inforrmações sobre os valores mobiliários negociados e as companhias que os tenham emitido; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - assegurar a observância de práticas comerciais equitativas no mercado de valores mobiliários; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - assegurar a observância no mercado, das condições de utilização de crédito fixadas pelo Conselho Monetário Nacional. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Da Comissão de Valores Mobiliários </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;É instituída a Comissão de Valores Mobiliários, entidade autárquica, vinculada ao Ministério da Fazenda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;A Comissão de Valores Mobiliários será administrada por um presidente e quatro diretores, nomeados pelo Presidente da República, dentre pessoas de ilibada reputação e reconhecida competência em matéria de mercado de capitais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º. O presidente e os diretores serão substituídos, em suas faltas, na forma do regimento interno, e serão demissíveis<EM> ad nutum</EM> . <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º. O presidente da Comissão terá assento no Conselho Monetário Nacional, com direito a voto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º. A Comissão funcionará como órgão de deliberação colegiada de acordo com o regimento interno previamente aprovado pele Ministro da Fazenda, e no qual serão fixadas as atribuições do presidente, dos diretores e do colegiado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º. O quadro permanente do pessoal da Comissão será constituído de empregos regidos pela legislação trabalhista, cujo provimento, excetuadas as funções compreendidas no Grupo Direção e Assessoramento Superior, será feito mediante concurso público. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;A Comissão custeará as despesas necessárias ao seu funcionamento com os recursos provenientes de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - dotações das reservas monetárias a que se refere o Art. 12 da Lei nº 5.143, de 20 de outubro de 1966, alterado pelo Decreto-lei nº 1.342, de 28 de agosto de 1974 que lhe forem atribuídas pelo Conselho Monetário Nacional; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - dotações que lhe forem consignadas no orçamento federal; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - receitas provenientes da prestação de serviços pela Comissão, observada a tabela aprovada pelo Conselho Monetário Nacional; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - renda de bens patrimonais e receitas eventuais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Compete à Comissão de Valores Mobiliários: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - regulamentar, com observância da política definida pelo Conselho Monetário Nacional, as matérias expressamente previstas nesta Lei e na lei de sociedades por ações; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - administrar os registros instituídos por esta Lei; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - fiscalizar permanentemente as atividades e os serviços do mercado de valores mobiliários, de que trata o Art. 1º, bem como a veiculação de informações relativas ao mercado, às pessoas que dele participem, e aos valores nele negociados; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - propor ao Conselho Monetário Nacional a eventual fixação de limites máximos de preço, comissões, emolumentos e quaisquer outras vantagens cobradas pelos intermediários do mercado; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - fiscalizar e inspecionar as companhias abertas dada prioridade às que não apresentem lucro em balanço ou às que deixem de pagar o dividendo mínimo obrigatório. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º. O disposto neste artigo não exclui a competência das bolsas de valores com relação aos seus membros e aos valores mobiliários nelas negociados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º. Ressalvado o disposto no Art. 28 a Comissão de Valores Mobiliários guardará sigilo das informações que obtiver, no exercício de seus poderes de fiscalização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º. Em conformidade com o que dispuser seu regimento, a Comissão de Valores Mobiliários poderá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - publicar projeto de ato normativo para receber sugestões de interessados; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - convocar, a seu juízo, qualquer pessoa que possa contribuir com informações ou opiniões para o aperfeiçoamento das normas a serem promulgadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;A Comissão de Valores Mobiliários terá jurisdição em todo o território nacional e no exercício de suas atribuições, observado o disposto no Art. 15, § 2º, poderá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - examinar registros contábeis, livros ou documentos: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>as pessoas naturais e jurídicas que integram o sistema de distribuição de valores mobiliários (Art. 15); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>das companhias abertas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>dos fundos e sociedades de investimento; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>das carteiras e depósitos de valores mobiliários (Arts. 23 e 24); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>dos auditores independentes; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>dos consultores e analistas de valores mobiliários; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>de outras pessoas quaisquer, naturais ou jurídicas, que participem do mercado, ou de negócios no mercado, quando houver suspeita fundada de fraude ou manipulação, destinada a criar condições artificiais de demanda, oferta ou preço dos valores mobíliários; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - intimar as pessoas referidas no inciso anterior a prestar informações ou esclarecimentos, sob pena de multa; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - requisitar informações de qualquer órgão público, autarquia ou empresa pública; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - determinar às companhias abertas que republiquem, com correções ou aditamentos, demonstrações financeiras, relatórios ou informações divulgadas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - apurar, mediante inquérito administrativo, atos ilegais e práticas não equitativas de administradores e acionistas de companhias abertas, dos intermediários e dos demais participantes do mercado; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - aplicar aos autores das infrações indicadas no inciso anterior as penalidades previstas no Art. 11, sem prejuízo da responsabilidade civil ou penal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º. Com o fim de prevenir ou corrigir situações anormais do mercado, como tais conceituadas pelo Conselho Monetário Nacional, a Comissão poderá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - suspender a negociação de determinado valor mobiliário ou decretar o recesso de bolsa de valores; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - suspender ou cancelar os registros de que trata esta Lei; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - divulgar informações ou recomendações com o fim de esclarecer ou orientar os participantes do mercado; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - proibir aos participantes do mercado, sob cominação de multa, a prática de atos que especificar, prejudiciais ao seu funcionamento regular. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º. - O inquérito, nos casos do inciso V deste artigo, observará o procedimento fixado pelo Conselho Monetário Nacional, assegurada ampla defesa.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;A Comissão de Valores Mobiliários poderá celebrar convênios para a execução dos serviços de sua competência em qualquer parte do território nacional, observadas as normas da legislação em vigor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;A Comissão de Valores Mobiliários poderá impor aos infratores das normas desta Lei, da lei de sociedades por ações, das suas resoluções, bem como de outras normas legais cujo cumprimento lhe incumba fiscalizar, as seguintes penalidades: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - advertência; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - multa; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - suspensão do exercício de cargo de administrador de companhia aberta ou de entidade do sistema de distribuição de valores; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - inabilitação para o exercício dos cargos referidos no inciso anterior; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - suspensão da autorização ou registro para o exercício das atividades de que trata esta Lei; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - cassação da autorização ou registro indicados no inciso anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º. A multa não excederá o maior destes valores: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - quinhentas vezes o valor nominal de urna Obrigação Reajustável do Tesouro Nacional; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - trinta por cento do valor da emissão ou operação irregular. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º. A multa cominada pela inexecução de ordem da Comissão não excederá dez vezes o valor nominal de uma Obrigação Reajustável do Tesouro Nacional por dia de atraso no seu cumprimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º. As penalidades dos incisos III a VI somente serão aplicadas nos casos de infração grave, assim definidos em normas da Comissão, ou de reincidência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º. As penalidades só serão impostas com observância do procedimento previsto no § 2º do Art. 9º, cabendo recurso para o Conselho Monetário Nacional, nos termos do regulamento por este aprovado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Quando o inquérito, instaurado de acordo com o § 2º do art. 9º, concluir pela ocorrência de crime de ação pública, a Comissão de Valores Mobiliários oficiará ao Ministério Público, para a propositura da ação penal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;A Comissão de Valores Mobiliários manterá serviço para exercer atividade consultiva ou de orientação junto aos agentes do mercado de valores mobiliários ou a qualquer investidor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Fica a critério na Comissão de Valores Mobiliários divulgar ou não as respostas às consultas ou aos critérios de orientação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;A Comissão de Valores Mobiliários poderá prever em seu orçamento, dotações de verbas às bolsas de valores, nas condições a serem aprovadas pelo Conselho Monetário Nacional. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Do Sistema de Distribuição </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;O sistema de distribuição de valores mobiliários compreende: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - as instituições financeiras e demais sociedades que tenham por objeto distribuir emissão de valores mobiliários: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>como agentes da companhia emissora; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>por conta própria, subscrevendo ou comprando a emissão para a colocar no mercado; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - as sociedades que tenham por objeto a compra de valores mobiliários em circulação no mercado, para os revender por conta própria; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - as sociedades e os agentes autonômos que exerçam atividades de mediação na negociação de valores mobiliários, em bolsas de valores ou no mercado de balcão; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - as bolsas de valores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º. Compete ao Conselho Monetário Nacional definir: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - os tipos de instituição financeira que poderão exercer atividades no mercado de valores mobiliários, bem como as espécies de operação que poderão realizar e de serviços que poderão prestar nesse mercado; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a especialização de operações ou serviços a ser observada pelas sociedades do mercado, e as condições em que poderão cumular espécies de operação ou serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º. Em relação às instituições financeiras e demais sociedades autorizadas a explorar simultaneamente operações ou serviços no mercado de valores mobiliários e nos mercados sujeitos à fiscalização do Banco Central do Brasil, as atribuições da Comissão de Valores Mobiliários serão limitadas às atividades submetidas ao regime da presente Lei, e serão exercidas sem prejuízo das atribuições daquele. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º. Compete ao Conselho Monetário Nacional regulamentar o disposto no parágrafo anterior, assegurando a coordenação de serviços entre o Banco Central do Brasil e a comissão de Valores Mobiliários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Depende de prévia autorização da Comissão de Valores Mobiliários o exercício das seguintes atividades: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - distribuição de emissão no mercado (Art. 15, I); <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - compra de valores mobiliários para revendê-los por conta própria (Art. 15, II); <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - mediação ou corretagem na bolsa de valores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Só os agentes autônomos e as sociedades com registro na Comissão poderão exercer a atividade de mediação ou corretagem de valores mobiliários fora da bolsa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;As bolsas de valores terão autonomia administrativa, financeira e patrimonial, operando sob a supervisão da Comissão de Valores Mobiliários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Às bolsas de valores incumbe, como órgãos auxiliares da Comissão de Valores Mobiliários, fiscalizar os respectivos membros e as operações nelas realizadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Compete à Comissão de Valores Mobiliários: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - propor ao Conselho Monetário Nacional a aprovação de normas gerais sobre: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>condições para obter autorização ou registro necessário ao exercício das atividades indicadas no Art. 16, e respectivos procedimentos administrativos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>condições de idoneidade, capacidade financeiras e habilitação técnica a que deverão satisfazer os administradores de sociedades e os agentes autônomos, no exercício das atividades mencionadas na alínea anterior; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>condições de constituição e extinção das bolsas de valores, forma jurídica, órgãos de administração e seu preenchimento; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>exercício do poder disciplinar pelas bolsas, sobre os seus membros, imposição de penas e casos de exclusão; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>número de sociedades corretoras, membros da bolsa; requisitos ou condições de admissão quanto à idoneidade, capacidade financeira e habilitação técnica dos seus administradores; e representação no recinto da bolsa; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>administração das bolsas; emolumentos, comissões e quaisquer outros custos cobrados pelas bolsas ou seus membros, quando for o caso; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>condições de realização das operações a termo; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - definir: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>as espécies de operação autorizadas na bolsa e no mercado de balcão; métodos e práticas que devem ser observados no mercado; e responsabilidade dos intermediários nas operações; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>a configuração de condições artificiais de demanda, oferta ou preço de valores mobiliários, ou de manipulação de preço; operações fraudulentas e práticas não equitativas na distribuição ou intermediação de valores; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>normas aplicáveis ao registro de operações a ser mantido pelas entidades do sistema de distribuição (Art. 15). </TD></TR></TBODY></TABLE>&nbsp; <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Da Negociação no Mercado </B><BR><BR></CENTER>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Emissão e Distribuição </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;Nenhuma emissão pública de valores mobiliários será distribuída no mercado sem prévio registro na Comissão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º. São atos de distribuição, sujeitos à norma deste artigo, a venda, promessa de venda, oferta à venda ou subscrição, assim como a aceitação de pedido de venda ou subscrição de valores mobiliários, quando os pratiquem a companhia emissora, seus fundadores ou as pessoas a ela equiparadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º. Equiparam-se à companhia emissora para os fins deste artigo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o seu acionista controlador e as pessoas por ela controladas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o coobrigado nos títulos; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - as instituições financeiras e demais sociedades a que se refere o Art. 15, inciso I; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - quem quer que tenha subscrito valores da emissão, ou os tenha adquirido à companhia emissora, com o fim de os colocar no mercado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º . Caracterizam a emissão pública: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a utilização de listas ou boletins de venda ou subscrição, folhetos, prospectos ou anúncios destinados ao público; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a procura de subscritores ou adquirentes para os títulos por meio de empregados, agentes ou corretores; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a negociação feita em loja, escritório ou estabelecimento aberto ao público, ou com a utilização dos serviços públicos de comunicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º. A emissão pública só poderá ser colocada no mercado através do sistema previsto no Art. 15, podendo a Comissão exigir a participação de instituição financeira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º. Compete à Comissão expedir normas para a execução do disposto neste artigo, podendo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - definir outras situações que configurem emissão pública, para fins de registro, assim como os casos em que este poderá ser dispensado, tendo em vista o interesse do público investidor; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - fixar o procedimento do registro e especificar as informações que devam instruir o seu pedido, inclusive sobre: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a companhia emissora, os empreendimentos ou atividades que explora ou pretende explorar, sua situação econômica e financeira, administração e principais acionistas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>as características da emissão e a aplicação a ser dada aos recursos dela provenientes; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o vendedor dos valores mobiliários, se for o caso; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>os participantes na distribuição, sua remuneração e seu relacionamento com a companhia emissora ou com o vendedor. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º. A Comissão poderá subordinar o registro a capital mínimo da companhia emissora e a valor mínimo da emissão, bem como a que sejam divulgadas as informações que julgar necessárias para proteger os interesses do público investidor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º. O pedido de registro será acompanhado dos prospectos e outros documentos quaisquer a serem publicados ou distribuídos, para oferta, anúncio ou promoção do lançamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;A Comissão mandará suspender a emissão ou a distribuição que se esteja processando em desacordo com o artigo anterior, particularmente quando: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a emissão tenha sido julgada fraudulenta ou ilegal, ainda que após efetuado o registro; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a oferta, o lançamento, a promoção ou o anúncio dos valores se esteja fazendo em condições diversas das constantes do registro, ou com informações falsas dolosas ou substancialmente imprecisas. <BR><BR>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Negociação na Bolsa e no Mercado de Balcão </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;A Comissão de Valores Mobiliários manterá, além do registro de que trata o Art. 19: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o registro para negociação na bolsa; Il - o registro para negociação no mercado de balcão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º. Somente os valores mobiliários emitidos por companhia registrada nos termos deste artigo podem ser negociados na bolsa e no mercado de balcão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º. O registro do Art. 19 importa registro para o mercado de balcão, mas não para a bolsa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º. O registro para negociação na bolsa vale também como registro para o mercado de balcão, mas o segundo não dispensa o primeiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º. São atividades do mercado de balcão as realizadas com a participação das empresas ou profissionais indicados no Art. 15, incisos I, II e III, ou nos seus estabelecimentos, excluídas as operações efetuadas em bolsa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º. Cada bolsa de valores poderá estabelecer requisitos próprios para que os valores sejam admitidos à negociação no seu recinto, mediante prévia aprovação da Comissão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º. Compete à Comissão expedir normas para a execução do disposto neste artigo, especificando: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - casos em que os registros podem ser dispensados, recusados, suspensos ou cancelados; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - informações e documentos que devam ser apresentados pela companhia para a obtenção do registro, e seu procedimento. <BR><BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Das Companhias Abertas </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;Considera-se aberta a companhia cujos valores mobiliários estejam admitidos à negociação na bolsa ou no mercado de balcão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Compete à Comissão expedir normas aplicáveis às companhias abertas, sobre: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a natureza das informações que devam divulgar e a periodicidade da divulgação; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - relatório da administração e demonstrações financeiras; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a compra de ações emitidas pela própria companhia e a alienação das ações em tesouraria; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - padrões de contabilidade; relatórios e pareceres de auditores independentes; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - informações que devam ser prestadas por administradores e acionistas controladores, relativas à compra, permuta ou venda de ações emitidas pela companhia e por sociedades controladas ou controladoras; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - a divulgação de deliberações da assembléia geral e dos órgãos de administração da companhia, ou de fatos relevantes ocorridos nos seis negócios, que possam influir, de modo ponderável, na decisão dos investidores do mercado, de vender ou comprar valores mobiliários emitidos pela companhia; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - as demais matérias previstas em lei. <BR><BR>
+<CENTER><B>CAPÍTULO VI </CENTER></B>
+<CENTER><B>Da Administração de Carteiras e Custódia de Valores Mobiliários </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;O exercício profissional da administração de carteiras de valores mobiliários de outras pessoas está sujeito à autorização prévia da Comissão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º. O disposto neste artigo se aplica à gestão profissional e recursos ou valores mobiliários entregues ao administrador, com autorização para que este compre ou venda valores mobiliários por conta do comitente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º. Compete à Comissão estabelecer as normas a serem observadas pelos administradores na gestão de carteiras e sua remuneração, observado o disposto no Art. 8º inciso IV. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Compete à Comissão autorizar a atividade de custódia de valores mobiliários, cujo exercício será privativo das instituições financeiras e das bolsas de valores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Considera-se custódia de valores mobiliários o depósito para guarda, recebimento de dividendos e bonificações, resgate, amortização ou reembolso, e exercício de direitos de subscrição, sem que o depositário, tenha poderes, salvo autorização expressa do depositante em cada caso, para alienar os valores mobiliários depositados ou reaplicar as importâncias recebidas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Salvo mandato expresso com prazo não superior a um ano, o administrador de carteira e o depositário de valores mobiliários não podem exercer o direito de voto que couber às ações sob sua administração ou custódia. <BR><BR>
+<CENTER><B>CAPÍTULO VII </CENTER></B>
+<CENTER><B>Dos Auditores Independentes, Consultores e </CENTER></B>
+<CENTER><B>Analistas de Valores Mobiliários </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Somente as empresas de auditoria contábil ou auditores contábeis independentes, registrados na Comissão de Valores Mobiliários poderão auditar, para os efeitos desta Lei, as demonstrações financeiras de companhias abertas e das instituições, sociedades ou empresas que integram o sistema de distribuição e intermediação de valores mobiliários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º. A Comissão estabelecerá as condições para o registro e o seu procedimento, e definirá os casos em que poderá ser recusado, suspenso ou cancelado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º. As empresas de auditoria contábil ou auditores contábeis independentes responderão, civilmente, pelos prejuízos que causarem a terceiros em virtude de culpa ou dolo no exercício das funções previstas neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;A Comissão poderá fixar normas sobre o exercício das atividades de consultor e analista de valores mobiliários. <BR><BR>
+<CENTER><B>CAPÍTULO VIII </CENTER></B>
+<CENTER><B>Das Disposições Finais e Transitórias </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;O Banco Central do Brasil, a Comissão de Valores Mobiliários e a Secretaria da Receita Federal manterão um sistema de intercâmbio de informações, relativas à fiscalização que exerçam, nas áreas de suas respectivas competências, no mercado de valores mobiliários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Enquanto não for instalada a Comissão de Valores Mobiliários, suas funções serão exercidas pelo Banco Central do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Conselho Monetário Nacional regulamentará o disposto neste artigo quanto ao prazo para instalação e as funções a serem progressivamente assumidas pela Comissão, à medida que se forem instalando os seus serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Os servidores do Banco Central do Brasil, que forem colocados à disposição da Comissão, para o exercício de funções técnicas ou de confiança, poderão optar pela percepção da retribuição, inclusive vantagens, a que façam jus no órgão de origem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;Esta Lei entrará em vigor na data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Revogam-se as disposições em contrário. </P>
+<P>Brasília, 7 de dezembro de 1976; 155º da Independência e 88º da República. </P>
+<P>ERNESTO GEISEL <BR>João Paulo dos Reis Velloso <BR>Mário Henrique Simonsen <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 09/12/1976
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 9/12/1976, Página 16037 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1976, Página 70 
+                                                        Vol. 7          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

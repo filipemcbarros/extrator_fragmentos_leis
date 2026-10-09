@@ -1,0 +1,932 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 9.610, DE 19 DE FEVEREIRO DE 1998 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Altera, atualiza e consolida a legislação sobre direitos autorais e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 9.610, DE 19 DE FEVEREIRO DE 1998 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-9610-19-fevereiro-1998-365399-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-9610-19-fevereiro-1998-365399-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-9610-19-fevereiro-1998-365399-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-9610-19-fevereiro-1998-365399-veto-19478-pl.html">Veto</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=227532">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-9610-19-fevereiro-1998-365399-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 9.610, DE 19 DE FEVEREIRO DE 1998</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Altera, atualiza e consolida a legislação sobre direitos autorais e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							&nbsp;&nbsp;&nbsp;&nbsp; <STRONG>O PRESIDENTE DA REPÚBLICA</STRONG> <BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER><B>Título I </CENTER></B>
+<CENTER><B>Disposições Preliminares </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Esta Lei regula os direitos autorais, entendendo-se sob esta denominação os direitos de autor e os que lhes são conexos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Os estrangeiros domiciliados no exterior gozarão da proteção assegurada nos acordos, convenções e tratados em vigor no Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Aplica-se o disposto nesta Lei aos nacionais ou pessoas domiciliadas em país que assegure aos brasileiros ou pessoas domiciliadas no Brasil a reciprocidade na proteção aos direitos autorais ou equivalentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Os direitos autorais reputam-se, para os efeitos legais, bens móveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Interpretam-se restritivamente os negócios jurídicos sobre os direitos autorais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;Para os efeitos desta Lei, considera-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - publicação - o oferecimento de obra literária, artística ou científica ao conhecimento do público, com o consentimento do autor, ou de qualquer outro titular de direito de autor, por qualquer forma ou processo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - transmissão ou emissão - a difusão de sons ou de sons e imagens, por meio de ondas radioelétricas; sinais de satélite; fio, cabo ou outro condutor; meios óticos ou qualquer outro processo eletromagnético; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - retransmissão - a emissão simultânea da transmissão de uma empresa por outra; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - distribuição - a colocação à disposição do público do original ou cópia de obras literárias, artísticas ou científicas, interpretações ou execuções fixadas e fonogramas, mediante a venda, locação ou qualquer outra forma de transferência de propriedade ou posse; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - comunicação ao público - ato mediante o qual a obra é colocada ao alcance do público, por qualquer meio ou procedimento e que não consista na distribuição de exemplares; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - reprodução - a cópia de um ou vários exemplares de uma obra literária, artística ou científica ou de um fonograma, de qualquer forma tangível, incluindo qualquer armazenamento permanente ou temporário por meios eletrônicos ou qualquer outro meio de fixação que venha a ser desenvolvido; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - contrafação - a reprodução não autorizada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - obra: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>em co-autoria - quando é criada em comum, por dois ou mais autores; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>anônima - quando não se indica o nome do autor, por sua vontade ou por ser desconhecido; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>pseudônima - quando o autor se oculta sob nome suposto; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>inédita - a que não haja sido objeto de publicação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>póstuma - a que se publique após a morte do autor; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>originária - a criação primígena; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>derivada - a que, constituindo criação intelectual nova, resulta da transformação de obra originária; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>coletiva - a criada por iniciativa, organização e responsabilidade de uma pessoa física ou jurídica, que a publica sob seu nome ou marca e que é constituída pela participação de diferentes autores, cujas contribuições se fundem numa criação autônoma; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>i)</I></TD>
+<TD>audiovisual - a que resulta da fixação de imagens com ou sem som, que tenha a finalidade de criar, por meio de sua reprodução, a impressão de movimento, independentemente dos processos de sua captação, do suporte usado inicial ou posteriormente para fixá-lo, bem como dos meios utilizados para sua veiculação; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - fonograma - toda fixação de sons de uma execução ou interpretação ou de outros sons, ou de uma representação de sons que não seja uma fixação incluída em uma obra audiovisual; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - editor - a pessoa física ou jurídica à qual se atribui o direito exclusivo de reprodução da obra e o dever de divulgá-la, nos limites previstos no contrato de edição; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - produtor - a pessoa física ou jurídica que toma a iniciativa e tem a responsabilidade econômica da primeira fixação do fonograma ou da obra audiovisual, qualquer que seja a natureza do suporte utilizado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XII - radiodifusão - a transmissão sem fio, inclusive por satélites, de sons ou imagens e sons ou das representações desses, para recepção ao público e a transmissão de sinais codificados, quando os meios de decodificação sejam oferecidos ao público pelo organismo de radiodifusão ou com seu consentimento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIII - artistas intérpretes ou executantes - todos os atores, cantores, músicos, bailarinos ou outras pessoas que representem um papel, cantem, recitem, declamem, interpretem ou executem em qualquer forma obras literárias ou artísticas ou expressões do folclore. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Não serão de domínio da União, dos Estados, do Distrito Federal ou dos Municípios as obras por eles simplesmente subvencionadas. <BR><BR>
+<CENTER><B>Título II </CENTER></B>
+<CENTER><B>Das Obras Intelectuais </CENTER></B><BR><BR>
+<CENTER>Capítulo I <BR>Das Obras Protegidas </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;São obras intelectuais protegidas as criações do espírito, expressas por qualquer meio ou fixadas em qualquer suporte, tangível ou intangível, conhecido ou que se invente no futuro, tais como: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - os textos de obras literárias, artísticas ou científicas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - as conferências, alocuções, sermões e outras obras da mesma natureza; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - as obras dramáticas e dramático-musicais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - as obras coreográficas e pantomímicas, cuja execução cênica se fixe por escrito ou por outra qualquer forma; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - as composições musicais, tenham ou não letra; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - as obras audiovisuais, sonorizadas ou não, inclusive as cinematográficas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - as obras fotográficas e as produzidas por qualquer processo análogo ao da fotografia; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - as obras de desenho, pintura, gravura, escultura, litografia e arte cinética; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - as ilustrações, cartas geográficas e outras obras da mesma natureza; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - os projetos, esboços e obras plásticas concernentes à geografia, engenharia, topografia, arquitetura, paisagismo, cenografia e ciência; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - as adaptações, traduções e outras transformações de obras originais, apresentadas como criação intelectual nova; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XII - os programas de computador; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIII - as coletâneas ou compilações, antologias, enciclopédias, dicionários, bases de dados e outras obras, que, por sua seleção, organização ou disposição de seu conteúdo, constituam uma criação intelectual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os programas de computador são objeto de legislação específica, observadas as disposições desta Lei que lhes sejam aplicáveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A proteção concedida no inciso XIII não abarca os dados ou materiais em si mesmos e se entende sem prejuízo de quaisquer direitos autorais que subsistam a respeito dos dados ou materiais contidos nas obras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º No domínio das ciências, a proteção recairá sobre a forma literária ou artística, não abrangendo o seu conteúdo científico ou técnico, sem prejuízo dos direitos que protegem os demais campos da propriedade imaterial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Não são objeto de proteção como direitos autorais de que trata esta Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - as idéias, procedimentos normativos, sistemas, métodos, projetos ou conceitos matemáticos como tais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os esquemas, planos ou regras para realizar atos mentais, jogos ou negócios; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - os formulários em branco para serem preenchidos por qualquer tipo de informação, científica ou não, e suas instruções; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - os textos de tratados ou convenções, leis, decretos, regulamentos, decisões judiciais e demais atos oficiais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - as informações de uso comum tais como calendários, agendas, cadastros ou legendas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - os nomes e títulos isolados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - o aproveitamento industrial ou comercial das idéias contidas nas obras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;À cópia de obra de arte plástica feita pelo próprio autor é assegurada a mesma proteção de que goza o original. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;A proteção à obra intelectual abrange o seu título, se original e inconfundível com o de obra do mesmo gênero, divulgada anteriormente por outro autor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O título de publicações periódicas, inclusive jornais, é protegido até um ano após a saída do seu último número, salvo se forem anuais, caso em que esse prazo se elevará a dois anos. <BR><BR>
+<CENTER>Capítulo II <BR>Da Autoria das Obras Intelectuais </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Autor é a pessoa física criadora de obra literária, artística ou científica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A proteção concedida ao autor poderá aplicar-se às pessoas jurídicas nos casos previstos nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Para se identificar como autor, poderá o criador da obra literária, artística ou científica usar de seu nome civil, completo ou abreviado até por suas iniciais, de pseudônimo ou qualquer outro sinal convencional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;Considera-se autor da obra intelectual, não havendo prova em contrário, aquele que, por uma das modalidades de identificação referidas no artigo anterior, tiver, em conformidade com o uso, indicada ou anunciada essa qualidade na sua utilização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;É titular de direitos de autor quem adapta, traduz, arranja ou orquestra obra caída no domínio público, não podendo opor-se a outra adaptação, arranjo, orquestração ou tradução, salvo se for cópia da sua. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;A co-autoria da obra é atribuída àqueles em cujo nome, pseudônimo ou sinal convencional for utilizada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Não se considera co-autor quem simplesmente auxiliou o autor na produção da obra literária, artística ou científica, revendo-a, atualizando-a, bem como fiscalizando ou dirigindo sua edição ou apresentação por qualquer meio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Ao co-autor, cuja contribuição possa ser utilizada separadamente, são asseguradas todas as faculdades inerentes à sua criação como obra individual, vedada, porém, a utilização que possa acarretar prejuízo à exploração da obra comum. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;São co-autores da obra audiovisual o autor do assunto ou argumento literário, musical ou lítero-musical e o diretor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Consideram-se co-autores de desenhos animados os que criam os desenhos utilizados na obra audiovisual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;É assegurada a proteção às participações individuais em obras coletivas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Qualquer dos participantes, no exercício de seus direitos morais, poderá proibir que se indique ou anuncie seu nome na obra coletiva, sem prejuízo do direito de haver a remuneração contratada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Cabe ao organizador a titularidade dos direitos patrimoniais sobre o conjunto da obra coletiva. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O contrato com o organizador especificará a contribuição do participante, o prazo para entrega ou realização, a remuneração e demais condições para sua execução. <BR><BR>
+<CENTER>Capítulo III <BR>Do Registro das Obras Intelectuais </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;A proteção aos direitos de que trata esta Lei independe de registro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;É facultado ao autor registrar a sua obra no órgão público definido no <I>caput</I> e no § 1º do art. 17 da Lei nº 5.988, de 14 de dezembro de 1973. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;Para os serviços de registro previstos nesta Lei será cobrada retribuição, cujo valor e processo de recolhimento serão estabelecidos por ato do titular do órgão da administração pública federal a que estiver vinculado o registro das obras intelectuais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;Os serviços de registro de que trata esta Lei serão organizados conforme preceitua o § 2º do art. 17 da Lei nº 5.988, de 14 de dezembro de 1973. <BR><BR>
+<CENTER><B>Título III </CENTER></B>
+<CENTER><B>Dos Direitos do Autor </CENTER></B><BR><BR>
+<CENTER>Capítulo I <BR>Disposições Preliminares </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;Pertencem ao autor os direitos morais e patrimoniais sobre a obra que criou. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;Os co-autores da obra intelectual exercerão, de comum acordo, os seus direitos, salvo convenção em contrário. <BR><BR>
+<CENTER>Capítulo II <BR>Dos Direitos Morais do Autor </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;São direitos morais do autor: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o de reivindicar, a qualquer tempo, a autoria da obra; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o de ter seu nome, pseudônimo ou sinal convencional indicado ou anunciado, como sendo o do autor, na utilização de sua obra; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o de conservar a obra inédita; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - o de assegurar a integridade da obra, opondo-se a quaisquer modificações ou à prática de atos que, de qualquer forma, possam prejudicá-la ou atingi-lo, como autor, em sua reputação ou honra; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - o de modificar a obra, antes ou depois de utilizada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - o de retirar de circulação a obra ou de suspender qualquer forma de utilização já autorizada, quando a circulação ou utilização implicarem afronta à sua reputação e imagem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - o de ter acesso a exemplar único e raro da obra, quando se encontre legitimamente em poder de outrem, para o fim de, por meio de processo fotográfico ou assemelhado, ou audiovisual, preservar sua memória, de forma que cause o menor inconveniente possível a seu detentor, que, em todo caso, será indenizado de qualquer dano ou prejuízo que lhe seja causado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Por morte do autor, transmitem-se a seus sucessores os direitos a que se referem os incisos I a IV. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Compete ao Estado a defesa da integridade e autoria da obra caída em domínio público. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Nos casos dos incisos V e VI, ressalvam-se as prévias indenizações a terceiros, quando couberem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Cabe exclusivamente ao diretor o exercício dos direitos morais sobre a obra audiovisual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;O autor poderá repudiar a autoria de projeto arquitetônico alterado sem o seu consentimento durante a execução ou após a conclusão da construção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O proprietário da construção responde pelos danos que causar ao autor sempre que, após o repúdio, der como sendo daquele a autoria do projeto repudiado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Os direitos morais do autor são inalienáveis e irrenunciáveis. <BR><BR>
+<CENTER>Capítulo III <BR>Dos Direitos Patrimoniais do Autor e de sua Duração </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Cabe ao autor o direito exclusivo de utilizar, fruir e dispor da obra literária, artística ou científica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Depende de autorização prévia e expressa do autor a utilização da obra, por quaisquer modalidades, tais como: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a reprodução parcial ou integral; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a edição; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a adaptação, o arranjo musical e quaisquer outras transformações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a tradução para qualquer idioma; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - a inclusão em fonograma ou produção audiovisual; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - a distribuição, quando não intrínseca ao contrato firmado pelo autor com terceiros para uso ou exploração da obra; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - a distribuição para oferta de obras ou produções mediante cabo, fibra ótica, satélite, ondas ou qualquer outro sistema que permita ao usuário realizar a seleção da obra ou produção para percebê-la em um tempo e lugar previamente determinados por quem formula a demanda, e nos casos em que o acesso às obras ou produções se faça por qualquer sistema que importe em pagamento pelo usuário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - a utilização, direta ou indireta, da obra literária, artística ou científica, mediante: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>representação, recitação ou declamação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>execução musical; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>emprego de alto-falante ou de sistemas análogos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>radiodifusão sonora ou televisiva; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>captação de transmissão de radiodifusão em locais de freqüência coletiva; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>sonorização ambiental; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>a exibição audiovisual, cinematográfica ou por processo assemelhado; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>emprego de satélites artificiais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>i)</I></TD>
+<TD>emprego de sistemas óticos, fios telefônicos ou não, cabos de qualquer tipo e meios de comunicação similares que venham a ser adotados; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>j)</I></TD>
+<TD>exposição de obras de artes plásticas e figurativas; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - a inclusão em base de dados, o armazenamento em computador, a microfilmagem e as demais formas de arquivamento do gênero; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - quaisquer outras modalidades de utilização existentes ou que venham a ser inventadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;No exercício do direito de reprodução, o titular dos direitos autorais poderá colocar à disposição do público a obra, na forma, local e pelo tempo que desejar, a título oneroso ou gratuito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O direito de exclusividade de reprodução não será aplicável quando ela for temporária e apenas tiver o propósito de tornar a obra, fonograma ou interpretação perceptível em meio eletrônico ou quando for de natureza transitória e incidental, desde que ocorra no curso do uso devidamente autorizado da obra, pelo titular. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Em qualquer modalidade de reprodução, a quantidade de exemplares será informada e controlada, cabendo a quem reproduzir a obra a responsabilidade de manter os registros que permitam, ao autor, a fiscalização do aproveitamento econômico da exploração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;As diversas modalidades de utilização de obras literárias, artísticas ou científicas ou de fonogramas são independentes entre si, e a autorização concedida pelo autor, ou pelo produtor, respectivamente, não se estende a quaisquer das demais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Quando uma obra feita em regime de co-autoria não for divisível, nenhum dos co-autores, sob pena de responder por perdas e danos, poderá, sem consentimento dos demais, publicá-la ou autorizar-lhe a publicação, salvo na coleção de suas obras completas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Havendo divergência, os co-autores decidirão por maioria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Ao co-autor dissidente é assegurado o direito de não contribuir para as despesas de publicação, renunciando a sua parte nos lucros, e o de vedar que se inscreva seu nome na obra. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Cada co-autor pode, individualmente, sem aquiescência dos outros, registrar a obra e defender os próprios direitos contra terceiros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;Ninguém pode reproduzir obra que não pertença ao domínio público, a pretexto de anotá-la, comentá-la ou melhorá-la, sem permissão do autor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os comentários ou anotações poderão ser publicados separadamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;As cartas missivas, cuja publicação está condicionada à permissão do autor, poderão ser juntadas como documento de prova em processos administrativos e judiciais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Quando o autor, em virtude de revisão, tiver dado à obra versão definitiva, não poderão seus sucessores reproduzir versões anteriores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;O direito de utilização econômica dos escritos publicados pela imprensa, diária ou periódica, com exceção dos assinados ou que apresentem sinal de reserva, pertence ao editor, salvo convenção em contrário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A autorização para utilização econômica de artigos assinados, para publicação em diários e periódicos, não produz efeito além do prazo da periodicidade acrescido de vinte dias, a contar de sua publicação, findo o qual recobra o autor o seu direito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;A aquisição do original de uma obra, ou de exemplar, não confere ao adquirente qualquer dos direitos patrimoniais do autor, salvo convenção em contrário entre as partes e os casos previstos nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;O autor tem o direito, irrenunciável e inalienável, de perceber, no mínimo, cinco por cento sobre o aumento do preço eventualmente verificável em cada revenda de obra de arte ou manuscrito, sendo originais, que houver alienado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Caso o autor não perceba o seu direito de seqüência no ato da revenda, o vendedor é considerado depositário da quantia a ele devida, salvo se a operação for realizada por leiloeiro, quando será este o depositário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Os direitos patrimoniais do autor, excetuados os rendimentos resultantes de sua exploração, não se comunicam, salvo pacto antenupcial em contrário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Tratando-se de obra anônima ou pseudônima, caberá a quem publicá-la o exercício dos direitos patrimoniais do autor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O autor que se der a conhecer assumirá o exercício dos direitos patrimoniais, ressalvados os direitos adquiridos por terceiros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;Os direitos patrimoniais do autor perduram por setenta anos contados de 1° de janeiro do ano subseqüente ao de seu falecimento, obedecida a ordem sucessória da lei civil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Aplica-se às obras póstumas o prazo de proteção a que alude o <I>caput</I> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Quando a obra literária, artística ou científica realizada em co-autoria for indivisível, o prazo previsto no artigo anterior será contado da morte do último dos co-autores sobreviventes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Acrescer-se-ão aos dos sobreviventes os direitos do co-autor que falecer sem sucessores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Será de setenta anos o prazo de proteção aos direitos patrimoniais sobre as obras anônimas ou pseudônimas, contado de 1° de janeiro do ano imediatamente posterior ao da primeira publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Aplicar-se-á o disposto no art. 41 e seu parágrafo único, sempre que o autor se der a conhecer antes do termo do prazo previsto no <I>caput</I> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;O prazo de proteção aos direitos patrimoniais sobre obras audiovisuais e fotográficas será de setenta anos, a contar de 1° de janeiro do ano subseqüente ao de sua divulgação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;Além das obras em relação às quais decorreu o prazo de proteção aos direitos patrimoniais, pertencem ao domínio público: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - as de autores falecidos que não tenham deixado sucessores; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - as de autor desconhecido, ressalvada a proteção legal aos conhecimentos étnicos e tradicionais. <BR><BR>
+<CENTER>Capítulo IV <BR>Das Limitações aos Direitos Autorais </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Não constitui ofensa aos direitos autorais: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a reprodução: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>na imprensa diária ou periódica, de notícia ou de artigo informativo, publicado em diários ou periódicos, com a menção do nome do autor, se assinados, e da publicação de onde foram transcritos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>em diários ou periódicos, de discursos pronunciados em reuniões públicas de qualquer natureza; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>de retratos, ou de outra forma de representação da imagem, feitos sob encomenda, quando realizada pelo proprietário do objeto encomendado, não havendo a oposição da pessoa neles representada ou de seus herdeiros; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>de obras literárias, artísticas ou científicas, para uso exclusivo de deficientes visuais, sempre que a reprodução, sem fins comerciais, seja feita mediante o sistema Braille ou outro procedimento em qualquer suporte para esses destinatários; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a reprodução, em um só exemplar de pequenos trechos, para uso privado do copista, desde que feita por este, sem intuito de lucro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a citação em livros, jornais, revistas ou qualquer outro meio de comunicação, de passagens de qualquer obra, para fins de estudo, crítica ou polêmica, na medida justificada para o fim a atingir, indicando-se o nome do autor e a origem da obra; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - o apanhado de lições em estabelecimentos de ensino por aqueles a quem elas se dirigem, vedada sua publicação, integral ou parcial, sem autorização prévia e expressa de quem as ministrou; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - a utilização de obras literárias, artísticas ou científicas, fonogramas e transmissão de rádio e televisão em estabelecimentos comerciais, exclusivamente para demonstração à clientela, desde que esses estabelecimentos comercializem os suportes ou equipamentos que permitam a sua utilização;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - a representação teatral e a execução musical, quando realizadas no recesso familiar ou, para fins exclusivamente didáticos, nos estabelecimentos de ensino, não havendo em qualquer caso intuito de lucro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - a utilização de obras literárias, artísticas ou científicas para produzir prova judiciária ou administrativa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - a reprodução, em quaisquer obras, de pequenos trechos de obras preexistentes, de qualquer natureza, ou de obra integral, quando de artes plásticas, sempre que a reprodução em si não seja o objetivo principal da obra nova e que não prejudique a exploração normal da obra reproduzida nem cause um prejuízo injustificado aos legítimos interesses dos autores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;São livres as paráfrases e paródias que não forem verdadeiras reproduções da obra originária nem lhe implicarem descrédito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;As obras situadas permanentemente em logradouros públicos podem ser representadas livremente, por meio de pinturas, desenhos, fotografias e procedimentos audiovisuais. <BR><BR>
+<CENTER>Capítulo V <BR>Da Transferência dos Direitos de Autor </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;Os direitos de autor poderão ser total ou parcialmente transferidos a terceiros, por ele ou por seus sucessores, a título universal ou singular, pessoalmente ou por meio de representantes com poderes especiais, por meio de licenciamento, concessão, cessão ou por outros meios admitidos em Direito, obedecidas as seguintes limitações: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a transmissão total compreende todos os direitos de autor, salvo os de natureza moral e os expressamente excluídos por lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - somente se admitirá transmissão total e definitiva dos direitos mediante estipulação contratual escrita; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - na hipótese de não haver estipulação contratual escrita, o prazo máximo será de cinco anos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a cessão será válida unicamente para o país em que se firmou o contrato, salvo estipulação em contrário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - a cessão só se operará para modalidades de utilização já existentes à data do contrato; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - não havendo especificações quanto à modalidade de utilização, o contrato será interpretado restritivamente, entendendo-se como limitada apenas a uma que seja aquela indispensável ao cumprimento da finalidade do contrato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;A cessão total ou parcial dos direitos de autor, que se fará sempre por escrito, presume-se onerosa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Poderá a cessão ser averbada à margem do registro a que se refere o art. 19 desta Lei, ou, não estando a obra registrada, poderá o instrumento ser registrado em Cartório de Títulos e Documentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Constarão do instrumento de cessão como elementos essenciais seu objeto e as condições de exercício do direito quanto a tempo, lugar e preço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;A cessão dos direitos de autor sobre obras futuras abrangerá, no máximo, o período de cinco anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O prazo será reduzido a cinco anos sempre que indeterminado ou superior, diminuindo-se, na devida proporção, o preço estipulado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;A omissão do nome do autor, ou de co-autor, na divulgação da obra não presume o anonimato ou a cessão de seus direitos. <BR><BR>
+<CENTER><B>Título IV </CENTER></B>
+<CENTER><B>Da Utilização de Obras Intelectuais e dos Fonogramas </CENTER></B><BR><BR>
+<CENTER>Capítulo I<BR>Da Edição </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;Mediante contrato de edição, o editor, obrigando-se a reproduzir e a divulgar a obra literária, artística ou científica, fica autorizado, em caráter de exclusividade, a publicá-la e a explorá-la pelo prazo e nas condições pactuadas com o autor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Em cada exemplar da obra o editor mencionará: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o título da obra e seu autor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - no caso de tradução, o título original e o nome do tradutor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o ano de publicação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - o seu nome ou marca que o identifique. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;Pelo mesmo contrato pode o autor obrigar-se à feitura de obra literária, artística ou científica em cuja publicação e divulgação se empenha o editor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;Em caso de falecimento ou de impedimento do autor para concluir a obra, o editor poderá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - considerar resolvido o contrato, mesmo que tenha sido entregue parte considerável da obra; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - editar a obra, sendo autônoma, mediante pagamento proporcional do preço; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - mandar que outro a termine, desde que consintam os sucessores e seja o fato indicado na edição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>É vedada a publicação parcial, se o autor manifestou a vontade de só publicá-la por inteiro ou se assim o decidirem seus sucessores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;Entende-se que o contrato versa apenas sobre uma edição, se não houver cláusula expressa em contrário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>No silêncio do contrato, considera-se que cada edição se constitui de três mil exemplares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;O preço da retribuição será arbitrado, com base nos usos e costumes, sempre que no contrato não a tiver estipulado expressamente o autor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;Se os originais forem entregues em desacordo com o ajustado e o editor não os recusar nos trinta dias seguintes ao do recebimento, ter-se-ão por aceitas as alterações introduzidas pelo autor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;Quaisquer que sejam as condições do contrato, o editor é obrigado a facultar ao autor o exame da escrituração na parte que lhe corresponde, bem como a informá-lo sobre o estado da edição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;Ao editor compete fixar o preço da venda, sem, todavia, poder elevá-lo a ponto de embaraçar a circulação da obra. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;O editor será obrigado a prestar contas mensais ao autor sempre que a retribuição deste estiver condicionada à venda da obra, salvo se prazo diferente houver sido convencionado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;A obra deverá ser editada em dois anos da celebração do contrato, salvo prazo diverso estipulado em convenção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Não havendo edição da obra no prazo legal ou contratual, poderá ser rescindido o contrato, respondendo o editor por danos causados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;Enquanto não se esgotarem as edições a que tiver direito o editor, não poderá o autor dispor de sua obra, cabendo ao editor o ônus da prova. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Na vigência do contrato de edição, assiste ao editor o direito de exigir que se retire de circulação edição da mesma obra feita por outrem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Considera-se esgotada a edição quando restarem em estoque, em poder do editor, exemplares em número inferior a dez por cento do total da edição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;Somente decorrido um ano de lançamento da edição, o editor poderá vender, como saldo, os exemplares restantes, desde que o autor seja notificado de que, no prazo de trinta dias, terá prioridade na aquisição dos referidos exemplares pelo preço de saldo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;Esgotada a edição, e o editor, com direito a outra, não a publicar, poderá o autor notificá-lo a que o faça em certo prazo, sob pena de perder aquele direito, além de responder por danos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;O autor tem o direito de fazer, nas edições sucessivas de suas obras, as emendas e alterações que bem lhe aprouver. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O editor poderá opor-se às alterações que lhe prejudiquem os interesses, ofendam sua reputação ou aumentem sua responsabilidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;Se, em virtude de sua natureza, for imprescindível a atualização da obra em novas edições, o editor, negando-se o autor a fazê-la, dela poderá encarregar outrem, mencionando o fato na edição. <BR><BR>
+<CENTER>Capítulo II <BR>Da Comunicação ao Público </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;Sem prévia e expressa autorização do autor ou titular, não poderão ser utilizadas obras teatrais, composições musicais ou lítero-musicais e fonogramas, em representações e execuções públicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Considera-se representação pública a utilização de obras teatrais no gênero drama, tragédia, comédia, ópera, opereta, balé, pantomimas e assemelhadas, musicadas ou não, mediante a participação de artistas, remunerados ou não, em locais de freqüência coletiva ou pela radiodifusão, transmissão e exibição cinematográfica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Considera-se execução pública a utilização de composições musicais ou lítero-musicais, mediante a participação de artistas, remunerados ou não, ou a utilização de fonogramas e obras audiovisuais, em locais de freqüência coletiva, por quaisquer processos, inclusive a radiodifusão ou transmissão por qualquer modalidade, e a exibição cinematográfica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Consideram-se locais de freqüência coletiva os teatros, cinemas, salões de baile ou concertos, boates, bares, clubes ou associações de qualquer natureza, lojas, estabelecimentos comerciais e industriais, estádios, circos, feiras, restaurantes, hotéis, motéis, clínicas, hospitais, órgãos públicos da administração direta ou indireta, fundacionais e estatais, meios de transporte de passageiros terrestre, marítimo, fluvial ou aéreo, ou onde quer que se representem, executem ou transmitam obras literárias, artísticas ou científicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Previamente à realização da execução pública, o empresário deverá apresentar ao escritório central, previsto no art. 99, a comprovação dos recolhimentos relativos aos direitos autorais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Quando a remuneração depender da freqüência do público, poderá o empresário, por convênio com o escritório central, pagar o preço após a realização da execução pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º O empresário entregará ao escritório central, imediatamente após a execução pública ou transmissão, relação completa das obras e fonogramas utilizados, indicando os nomes dos respectivos autores, artistas e produtores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º As empresas cinematográficas e de radiodifusão manterão à imediata disposição dos interessados, cópia autêntica dos contratos, ajustes ou acordos, individuais ou coletivos, autorizando e disciplinando a remuneração por execução pública das obras musicais e fonogramas contidas em seus programas ou obras audiovisuais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;O autor, observados os usos locais, notificará o empresário do prazo para a representação ou execução, salvo prévia estipulação convencional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;Ao autor assiste o direito de opor-se à representação ou execução que não seja suficientemente ensaiada, bem como fiscalizá-la, tendo, para isso, livre acesso durante as representações ou execuções, no local onde se realizam. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;O autor da obra não pode alterar-lhe a substância, sem acordo com o empresário que a faz representar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;O empresário, sem licença do autor, não pode entregar a obra a pessoa estranha à representação ou à execução. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;Os principais intérpretes e os diretores de orquestras ou coro, escolhidos de comum acordo pelo autor e pelo produtor, não podem ser substituídos por ordem deste, sem que aquele consinta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;O autor de obra teatral, ao autorizar a sua tradução ou adaptação, poderá fixar prazo para utilização dela em representações públicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Após o decurso do prazo a que se refere este artigo, não poderá opor-se o tradutor ou adaptador à utilização de outra tradução ou adaptação autorizada, salvo se for cópia da sua. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;Autorizada a representação de obra teatral feita em co-autoria, não poderá qualquer dos co-autores revogar a autorização dada, provocando a suspensão da temporada contratualmente ajustada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76.&nbsp;É impenhorável a parte do produto dos espetáculos reservada ao autor e aos artistas. <BR><BR>
+<CENTER>Capítulo III<BR>Da Utilização da Obra de Arte Plástica </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77.&nbsp;Salvo convenção em contrário, o autor de obra de arte plástica, ao alienar o objeto em que ela se materializa, transmite o direito de expô-la, mas não transmite ao adquirente o direito de reproduzi-la. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78.&nbsp;A autorização para reproduzir obra de arte plástica, por qualquer processo, deve se fazer por escrito e se presume onerosa. <BR><BR>
+<CENTER>Capítulo IV <BR>Da Utilização da Obra Fotográfica </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 79.&nbsp;O autor de obra fotográfica tem direito a reproduzi-la e colocá-la à venda, observadas as restrições à exposição, reprodução e venda de retratos, e sem prejuízo dos direitos de autor sobre a obra fotografada, se de artes plásticas protegidas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A fotografia, quando utilizada por terceiros, indicará de forma legível o nome do seu autor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º É vedada a reprodução de obra fotográfica que não esteja em absoluta consonância com o original, salvo prévia autorização do autor. <BR><BR>
+<CENTER>Capítulo V <BR>Da Utilização de Fonograma </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 80.&nbsp;Ao publicar o fonograma, o produtor mencionará em cada exemplar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o título da obra incluída e seu autor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o nome ou pseudônimo do intérprete; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o ano de publicação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - o seu nome ou marca que o identifique. <BR><BR>
+<CENTER>Capítulo VI<BR>Da Utilização da Obra Audiovisual </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 81.&nbsp;A autorização do autor e do intérprete de obra literária, artística ou científica para produção audiovisual implica, salvo disposição em contrário, consentimento para sua utilização econômica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A exclusividade da autorização depende de cláusula expressa e cessa dez anos após a celebração do contrato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Em cada cópia da obra audiovisual, mencionará o produtor: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o título da obra audiovisual; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os nomes ou pseudônimos do diretor e dos demais co-autores; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o título da obra adaptada e seu autor, se for o caso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - os artistas intérpretes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - o ano de publicação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - o seu nome ou marca que o identifique. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 82.&nbsp;O contrato de produção audiovisual deve estabelecer: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a remuneração devida pelo produtor aos co-autores da obra e aos artistas intérpretes e executantes, bem como o tempo, lugar e forma de pagamento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o prazo de conclusão da obra; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a responsabilidade do produtor para com os co-autores, artistas intérpretes ou executantes, no caso de co-produção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 83.&nbsp;O participante da produção da obra audiovisual que interromper, temporária ou definitivamente, sua atuação, não poderá opor-se a que esta seja utilizada na obra nem a que terceiro o substitua, resguardados os direitos que adquiriu quanto à parte já executada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 84.&nbsp;Caso a remuneração dos co-autores da obra audiovisual dependa dos rendimentos de sua utilização econômica, o produtor lhes prestará contas semestralmente, se outro prazo não houver sido pactuado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 85.&nbsp;Não havendo disposição em contrário, poderão os co-autores da obra audiovisual utilizar-se, em gênero diverso, da parte que constitua sua contribuição pessoal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se o produtor não concluir a obra audiovisual no prazo ajustado ou não iniciar sua exploração dentro de dois anos, a contar de sua conclusão, a utilização a que se refere este artigo será livre. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 86.&nbsp;Os direitos autorais de execução musical relativos a obras musicais, lítero-musicais e fonogramas incluídos em obras audiovisuais serão devidos aos seus titulares pelos responsáveis dos locais ou estabelecimentos a que alude o § 3º do art. 68 desta Lei, que as exibirem, ou pelas emissoras de televisão que as transmitirem. <BR><BR>
+<CENTER>Capítulo VII <BR>Da Utilização de Bases de Dados </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 87.&nbsp;O titular do direito patrimonial sobre uma base de dados terá o direito exclusivo, a respeito da forma de expressão da estrutura da referida base, de autorizar ou proibir: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - sua reprodução total ou parcial, por qualquer meio ou processo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - sua tradução, adaptação, reordenação ou qualquer outra modificação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a distribuição do original ou cópias da base de dados ou a sua comunicação ao público; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a reprodução, distribuição ou comunicação ao público dos resultados das operações mencionadas no inciso II deste artigo. <BR><BR>
+<CENTER>Capítulo VIII <BR>Da Utilização da Obra Coletiva </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 88.&nbsp;Ao publicar a obra coletiva, o organizador mencionará em cada exemplar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o título da obra; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a relação de todos os participantes, em ordem alfabética, se outra não houver sido convencionada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o ano de publicação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - o seu nome ou marca que o identifique. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para valer-se do disposto no § 1º do art. 17, deverá o participante notificar o organizador, por escrito, até a entrega de sua participação. <BR><BR>
+<CENTER><B>Título V </CENTER></B>
+<CENTER><B>Dos Direitos Conexos </CENTER></B><BR><BR>
+<CENTER>Capítulo I <BR>Disposições Preliminares </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 89.&nbsp;As normas relativas aos direitos de autor aplicam-se, no que couber, aos direitos dos artistas intérpretes ou executantes, dos produtores fonográficos e das empresas de radiodifusão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A proteção desta Lei aos direitos previstos neste artigo deixa intactas e não afeta as garantias asseguradas aos autores das obras literárias, artísticas ou científicas. <BR><BR>
+<CENTER>Capítulo II <BR>Dos Direitos dos Artistas Intérpretes ou Executantes </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 90.&nbsp;Tem o artista intérprete ou executante o direito exclusivo de, a título oneroso ou gratuito, autorizar ou proibir: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a fixação de suas interpretações ou execuções; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a reprodução, a execução pública e a locação das suas interpretações ou execuções fixadas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a radiodifusão das suas interpretações ou execuções, fixadas ou não; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a colocação à disposição do público de suas interpretações ou execuções, de maneira que qualquer pessoa a elas possa ter acesso, no tempo e no lugar que individualmente escolherem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - qualquer outra modalidade de utilização de suas interpretações ou execuções. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Quando na interpretação ou na execução participarem vários artistas, seus direitos serão exercidos pelo diretor do conjunto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A proteção aos artistas intérpretes ou executantes estende-se à reprodução da voz e imagem, quando associadas às suas atuações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 91.&nbsp;As empresas de radiodifusão poderão realizar fixações de interpretação ou execução de artistas que as tenham permitido para utilização em determinado número de emissões, facultada sua conservação em arquivo público. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A reutilização subseqüente da fixação, no País ou no exterior, somente será lícita mediante autorização escrita dos titulares de bens intelectuais incluídos no programa, devida uma remuneração adicional aos titulares para cada nova utilização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 92.&nbsp;Aos intérpretes cabem os direitos morais de integridade e paternidade de suas interpretações, inclusive depois da cessão dos direitos patrimoniais, sem prejuízo da redução, compactação, edição ou dublagem da obra de que tenham participado, sob a responsabilidade do produtor, que não poderá desfigurar a interpretação do artista. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O falecimento de qualquer participante de obra audiovisual, concluída ou não, não obsta sua exibição e aproveitamento econômico, nem exige autorização adicional, sendo a remuneração prevista para o falecido, nos termos do contrato e da lei, efetuada a favor do espólio ou dos sucessores. <BR><BR>
+<CENTER>Capítulo III <BR>Dos Direitos dos Produtores Fonográficos </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 93.&nbsp;O produtor de fonogramas tem o direito exclusivo de, a título oneroso ou gratuito, autorizar-lhes ou proibir-lhes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a reprodução direta ou indireta, total ou parcial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a distribuição por meio da venda ou locação de exemplares da reprodução; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a comunicação ao público por meio da execução pública, inclusive pela radiodifusão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - quaisquer outras modalidades de utilização, existentes ou que venham a ser inventadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 94.&nbsp;Cabe ao produtor fonográfico perceber dos usuários a que se refere o art. 68, e parágrafos, desta Lei os proventos pecuniários resultantes da execução pública dos fonogramas e reparti-los com os artistas, na forma convencionada entre eles ou suas associações. <BR><BR>
+<CENTER>Capítulo IV <BR>Dos Direitos das Empresas de Radiodifusão </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 95.&nbsp;Cabe às empresas de radiodifusão o direito exclusivo de autorizar ou proibir a retransmissão, fixação e reprodução de suas emissões, bem como a comunicação ao público, pela televisão, em locais de freqüência coletiva, sem prejuízo dos direitos dos titulares de bens intelectuais incluídos na programação. <BR><BR>
+<CENTER>Capítulo V<BR>Da Duração dos Direitos Conexos </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 96.&nbsp;É de setenta anos o prazo de proteção aos direitos conexos, contados a partir de 1º de janeiro do ano subseqüente à fixação, para os fonogramas; à transmissão, para as emissões das empresas de radiodifusão; e à execução e representação pública, para os demais casos. <BR><BR>
+<CENTER><B>Título VI </CENTER></B>
+<CENTER><B>Das Associações de Titulares de Direitos de Autor e dos que lhes são Conexos </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 97.&nbsp;Para o exercício e defesa de seus direitos, podem os autores e os titulares de direitos conexos associar-se sem intuito de lucro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º É vedado pertencer a mais de uma associação para a gestão coletiva de direitos da mesma natureza. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Pode o titular transferir-se, a qualquer momento, para outra associação, devendo comunicar o fato, por escrito, à associação de origem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As associações com sede no exterior far-se-ão representar, no País, por associações nacionais constituídas na forma prevista nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 98.&nbsp;Com o ato de filiação, as associações tornam-se mandatárias de seus associados para a prática de todos os atos necessários à defesa judicial ou extrajudicial de seus direitos autorais, bem como para sua cobrança. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os titulares de direitos autorais poderão praticar, pessoalmente, os atos referidos neste artigo, mediante comunicação prévia à associação a que estiverem filiados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 99.&nbsp;As associações manterão um único escritório central para a arrecadação e distribuição, em comum, dos direitos relativos à execução pública das obras musicais e lítero-musicais e de fonogramas, inclusive por meio da radiodifusão e transmissão por qualquer modalidade, e da exibição de obras audiovisuais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O escritório central organizado na forma prevista neste artigo não terá finalidade de lucro e será dirigido e administrado pelas associações que o integrem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O escritório central e as associações a que se refere este Título atuarão em juízo e fora dele em seus próprios nomes como substitutos processuais dos titulares a eles vinculados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O recolhimento de quaisquer valores pelo escritório central somente se fará por depósito bancário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O escritório central poderá manter fiscais, aos quais é vedado receber do empresário numerário a qualquer título. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º A inobservância da norma do parágrafo anterior tornará o faltoso inabilitado à função de fiscal, sem prejuízo das sanções civis e penais cabíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 100.&nbsp;O sindicato ou associação profissional que congregue não menos de um terço dos filiados de uma associação autoral poderá, uma vez por ano, após notificação, com oito dias de antecedência, fiscalizar, por intermédio de auditor, a exatidão das contas prestadas a seus representados. <BR><BR>
+<CENTER><B>Título VII </CENTER></B>
+<CENTER><B>Das Sanções às Violações dos Direitos Autorais </CENTER></B><BR><BR>
+<CENTER>Capítulo I <BR>Disposição Preliminar </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 101.&nbsp;As sanções civis de que trata este Capítulo aplicam-se sem prejuízo das penas cabíveis. <BR><BR>
+<CENTER>Capítulo II <BR>Das Sanções Civis </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 102.&nbsp;O titular cuja obra seja fraudulentamente reproduzida, divulgada ou de qualquer forma utilizada, poderá requerer a apreensão dos exemplares reproduzidos ou a suspensão da divulgação, sem prejuízo da indenização cabível. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 103.&nbsp;Quem editar obra literária, artística ou científica, sem autorização do titular, perderá para este os exemplares que se apreenderem e pagar-lhe-á o preço dos que tiver vendido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Não se conhecendo o número de exemplares que constituem a edição fraudulenta, pagará o transgressor o valor de três mil exemplares, além dos apreendidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 104.&nbsp;Quem vender, expuser a venda, ocultar, adquirir, distribuir, tiver em depósito ou utilizar obra ou fonograma reproduzidos com fraude, com a finalidade de vender, obter ganho, vantagem, proveito, lucro direto ou indireto, para si ou para outrem, será solidariamente responsável com o contrafator, nos termos dos artigos precedentes, respondendo como contrafatores o importador e o distribuidor em caso de reprodução no exterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 105.&nbsp;A transmissão e a retransmissão, por qualquer meio ou processo, e a comunicação ao público de obras artísticas, literárias e científicas, de interpretações e de fonogramas, realizadas mediante violação aos direitos de seus titulares, deverão ser imediatamente suspensas ou interrompidas pela autoridade judicial competente, sem prejuízo da multa diária pelo descumprimento e das demais indenizações cabíveis, independentemente das sanções penais aplicáveis; caso se comprove que o infrator é reincidente na violação aos direitos dos titulares de direitos de autor e conexos, o valor da multa poderá ser aumentado até o dobro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 106.&nbsp;A sentença condenatória poderá determinar a destruição de todos os exemplares ilícitos, bem como as matrizes, moldes, negativos e demais elementos utilizados para praticar o ilícito civil, assim como a perda de máquinas, equipamentos e insumos destinados a tal fim ou, servindo eles unicamente para o fim ilícito, sua destruição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 107.&nbsp;Independentemente da perda dos equipamentos utilizados, responderá por perdas e danos, nunca inferiores ao valor que resultaria da aplicação do disposto no art. 103 e seu parágrafo único, quem: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - alterar, suprimir, modificar ou inutilizar, de qualquer maneira, dispositivos técnicos introduzidos nos exemplares das obras e produções protegidas para evitar ou restringir sua cópia; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - alterar, suprimir ou inutilizar, de qualquer maneira, os sinais codificados destinados a restringir a comunicação ao público de obras, produções ou emissões protegidas ou a evitar a sua cópia; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - suprimir ou alterar, sem autorização, qualquer informação sobre a gestão de direitos;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - distribuir, importar para distribuição, emitir, comunicar ou puser à disposição do público, sem autorização, obras, interpretações ou execuções, exemplares de interpretações fixadas em fonogramas e emissões, sabendo que a informação sobre a gestão de direitos, sinais codificados e dispositivos técnicos foram suprimidos ou alterados sem autorização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 108.&nbsp;Quem, na utilização, por qualquer modalidade, de obra intelectual, deixar de indicar ou de anunciar, como tal, o nome, pseudônimo ou sinal convencional do autor e do intérprete, além de responder por danos morais, está obrigado a divulgar-lhes a identidade da seguinte forma: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - tratando-se de empresa de radiodifusão, no mesmo horário em que tiver ocorrido a infração, por três dias consecutivos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - tratando-se de publicação gráfica ou fonográfica, mediante inclusão de errata nos exemplares ainda não distribuídos, sem prejuízo de comunicação, com destaque, por três vezes consecutivas em jornal de grande circulação, dos domicílios do autor, do intérprete e do editor ou produtor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - tratando-se de outra forma de utilização, por intermédio da imprensa, na forma a que se refere o inciso anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 109.&nbsp;A execução pública feita em desacordo com os arts. 68, 97, 98 e 99 desta Lei sujeitará os responsáveis a multa de vinte vezes o valor que deveria ser originariamente pago. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 110.&nbsp;Pela violação de direitos autorais nos espetáculos e audições públicas, realizados nos locais ou estabelecimentos a que alude o art. 68, seus proprietários, diretores, gerentes, empresários e arrendatários respondem solidariamente com os organizadores dos espetáculos. <BR><BR>
+<CENTER>Capítulo III<BR>Da Prescrição da Ação </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 111.&nbsp;(VETADO) <BR><BR>
+<CENTER><B>Título VIII </CENTER></B>
+<CENTER><B>Disposições Finais e Transitórias </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 112.&nbsp;Se uma obra, em conseqüência de ter expirado o prazo de proteção que lhe era anteriormente reconhecido pelo § 2º do art. 42 da Lei nº. 5.988, de 14 de dezembro de 1973, caiu no domínio público, não terá o prazo de proteção dos direitos patrimoniais ampliado por força do art. 41 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 113.&nbsp;Os fonogramas, os livros e as obras audiovisuais sujeitar-se-ão a selos ou sinais de identificação sob a responsabilidade do produtor, distribuidor ou importador, sem ônus para o consumidor, com o fim de atestar o cumprimento das normas legais vigentes, conforme dispuser o regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 114.&nbsp;Esta Lei entra em vigor cento e vinte dias após sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 115.&nbsp;Ficam revogados os arts. 649 a 673 e 1.346 a 1.362 do Código Civil e as Leis nºs 4.944, de 6 de abril de 1966; 5.988, de 14 de dezembro de 1973, excetuando-se o art. 17 e seus §§ 1º e 2º; 6.800, de 25 de junho de 1980; 7.123, de 12 de setembro de 1983; 9.045, de 18 de maio de 1995, e demais disposições em contrário, mantidos em vigor as Leis nºs 6.533, de 24 de maio de 1978 e 6.615, de 16 de dezembro de 1978. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 19 de fevereiro de 1998; 177º da Independência e 110º da República. </P>
+<P>FERNANDO HENRIQUE CARDOSO <BR>Francisco Weffort <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 20/02/1998
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 20/2/1998, Página 3          
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1998, Página 665 
+                                                        Vol. 2          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

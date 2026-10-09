@@ -1,0 +1,928 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 9.605, DE 12 DE FEVEREIRO DE 1998 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre as sanções penais e administrativas derivadas de condutas e atividades lesivas ao meio ambiente, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 9.605, DE 12 DE FEVEREIRO DE 1998 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-9605-12-fevereiro-1998-365397-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-9605-12-fevereiro-1998-365397-normaatualizada-pl.docx">formato docx</a>)
+                                                &nbsp;
+                                                    (<a href="lei-9605-12-fevereiro-1998-365397-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-9605-12-fevereiro-1998-365397-veto-19463-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-9605-12-fevereiro-1998-365397-retificacao-172836-pl.html">Retificação</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=188347">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-9605-12-fevereiro-1998-365397-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 9.605, DE 12 DE FEVEREIRO DE 1998</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre as sanções penais e administrativas derivadas de condutas e atividades lesivas ao meio ambiente, e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							<P>&nbsp;&nbsp;&nbsp;&nbsp;<STRONG> O PRESIDENTE DA REPÚBLICA</STRONG> <BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR></P>
+<CENTER>CAPÍTULO I <BR>DISPOSIÇÕES GERAIS </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Quem, de qualquer forma, concorre para a prática dos crimes previstos nesta Lei, incide nas penas a estes cominadas, na medida da sua culpabilidade, bem como o diretor, o administrador, o membro de conselho e de órgão técnico, o auditor, o gerente, o preposto ou mandatário de pessoa jurídica, que, sabendo da conduta criminosa de outrem, deixar de impedir a sua prática, quando podia agir para evitá-la. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;As pessoas jurídicas serão responsabilizadas administrativa, civil e penalmente conforme o disposto nesta Lei, nos casos em que a infração seja cometida por decisão de seu representante legal ou contratual, ou de seu órgão colegiado, no interesse ou benefício da sua entidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A responsabilidade das pessoas jurídicas não exclui a das pessoas físicas, autoras, co-autoras ou partícipes do mesmo fato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Poderá ser desconsiderada a pessoa jurídica sempre que sua personalidade for obstáculo ao ressarcimento de prejuízos causados à qualidade do meio ambiente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;(VETADO) <BR><BR></P>
+<CENTER>CAPÍTULO II <BR>DA APLICAÇÃO DA PENA </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Para imposição e gradação da penalidade, a autoridade competente observará: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a gravidade do fato, tendo em vista os motivos da infração e suas conseqüências para a saúde pública e para o meio ambiente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os antecedentes do infrator quanto ao cumprimento da legislação de interesse ambiental; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a situação econômica do infrator, no caso de multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;As penas restritivas de direitos são autônomas e substituem as privativas de liberdade quando: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - tratar-se de crime culposo ou for aplicada a pena privativa de liberdade inferior a quatro anos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a culpabilidade, os antecedentes, a conduta social e a personalidade do condenado, bem como os motivos e as circunstâncias do crime indicarem que a substituição seja suficiente para efeitos de reprovação e prevenção do crime. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As penas restritivas de direitos a que se refere este artigo terão a mesma duração da pena privativa de liberdade substituída. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;As penas restritivas de direito são: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - prestação de serviços à comunidade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - interdição temporária de direitos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - suspensão parcial ou total de atividades; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - prestação pecuniária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - recolhimento domiciliar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;A prestação de serviços à comunidade consiste na atribuição ao condenado de tarefas gratuitas junto a parques e jardins públicos e unidades de conservação, e, no caso de dano da coisa particular, pública ou tombada, na restauração desta, se possível. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;As penas de interdição temporária de direito são a proibição de o condenado contratar com o Poder Público, de receber incentivos fiscais ou quaisquer outros benefícios, bem como de participar de licitações, pelo prazo de cinco anos, no caso de crimes dolosos, e de três anos, no de crimes culposos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;A suspensão de atividades será aplicada quando estas não estiverem obedecendo às prescrições legais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;A prestação pecuniária consiste no pagamento em dinheiro à vítima ou à entidade pública ou privada com fim social, de importância, fixada pelo juiz, não inferior a um salário mínimo nem superior a trezentos e sessenta salários mínimos. O valor pago será deduzido do montante de eventual reparação civil a que for condenado o infrator. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;O recolhimento domiciliar baseia-se na autodisciplina e senso de responsabilidade do condenado, que deverá, sem vigilância, trabalhar, freqüentar curso ou exercer atividade autorizada, permanecendo recolhido nos dias e horários de folga em residência ou em qualquer local destinado a sua moradia habitual, conforme estabelecido na sentença condenatória. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;São circunstâncias que atenuam a pena: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - baixo grau de instrução ou escolaridade do agente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - arrependimento do infrator, manifestado pela espontânea reparação do dano, ou limitação significativa da degradação ambiental causada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - comunicação prévia pelo agente do perigo iminente de degradação ambiental; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - colaboração com os agentes encarregados da vigilância e do controle ambiental. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;São circunstâncias que agravam a pena, quando não constituem ou qualificam o crime: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - reincidência nos crimes de natureza ambiental; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ter o agente cometido a infração: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>para obter vantagem pecuniária; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>coagindo outrem para a execução material da infração; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>afetando ou expondo a perigo, de maneira grave, a saúde pública ou o meio ambiente; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>concorrendo para danos à propriedade alheia; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>atingindo áreas de unidades de conservação ou áreas sujeitas, por ato do Poder Público, a regime especial de uso; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>atingindo áreas urbanas ou quaisquer assentamentos humanos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>em período de defeso à fauna; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>em domingos ou feriados; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>i)</I></TD>
+<TD>à noite; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>j)</I></TD>
+<TD>em épocas de seca ou inundações; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>l)</I></TD>
+<TD>no interior do espaço territorial especialmente protegido; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>m)</I></TD>
+<TD>com o emprego de métodos cruéis para abate ou captura de animais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>n)</I></TD>
+<TD>mediante fraude ou abuso de confiança; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>o)</I></TD>
+<TD>mediante abuso do direito de licença, permissão ou autorização ambiental; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>p)</I></TD>
+<TD>no interesse de pessoa jurídica mantida, total ou parcialmente, por verbas públicas ou beneficiada por incentivos fiscais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>q)</I></TD>
+<TD>atingindo espécies ameaçadas, listadas em relatórios oficiais das autoridades competentes; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>r)</I></TD>
+<TD>facilitada por funcionário público no exercício de suas funções. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Nos crimes previstos nesta Lei, a suspensão condicional da pena pode ser aplicada nos casos de condenação a pena privativa de liberdade não superior a três anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;A verificação da reparação a que se refere o § 2º do art. 78 do Código Penal será feita mediante laudo de reparação do dano ambiental, e as condições a serem impostas pelo juiz deverão relacionar-se com a proteção ao meio ambiente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;A multa será calculada segundo os critérios do Código Penal; se revelar-se ineficaz, ainda que aplicada no valor máximo, poderá ser aumentada até três vezes, tendo em vista o valor da vantagem econômica auferida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;A perícia de constatação do dano ambiental, sempre que possível, fixará o montante do prejuízo causado para efeitos de prestação de fiança e cálculo de multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A perícia produzida no inquérito civil ou no juízo cível poderá ser aproveitada no processo penal, instaurando-se o contraditório. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;A sentença penal condenatória, sempre que possível, fixará o valor mínimo para reparação dos danos causados pela infração, considerando os prejuízos sofridos pelo ofendido ou pelo meio ambiente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Transitada em julgado a sentença condenatória, a execução poderá efetuar-se pelo valor fixado nos termos do <I>caput</I>, sem prejuízo da liquidação para apuração do dano efetivamente sofrido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;As penas aplicáveis isolada, cumulativa ou alternativamente às pessoas jurídicas, de acordo com o disposto no art. 3º, são: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - multa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - restritivas de direitos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - prestação de serviços à comunidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;As penas restritivas de direitos da pessoa jurídica são: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - suspensão parcial ou total de atividades; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - interdição temporária de estabelecimento, obra ou atividade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - proibição de contratar com o Poder Público, bem como dele obter subsídios, subvenções ou doações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A suspensão de atividades será aplicada quando estas não estiverem obedecendo às disposições legais ou regulamentares, relativas à proteção do meio ambiente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A interdição será aplicada quando o estabelecimento, obra ou atividade estiver funcionando sem a devida autorização, ou em desacordo com a concedida, ou com violação de disposição legal ou regulamentar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A proibição de contratar com o Poder Público e dele obter subsídios, subvenções ou doações não poderá exceder o prazo de dez anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;A prestação de serviços à comunidade pela pessoa jurídica consistirá em: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - custeio de programas e de projetos ambientais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - execução de obras de recuperação de áreas degradadas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - manutenção de espaços públicos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - contribuições a entidades ambientais ou culturais públicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;A pessoa jurídica constituída ou utilizada, preponderantemente, com o fim de permitir, facilitar ou ocultar a prática de crime definido nesta Lei terá decretada sua liquidação forçada, seu patrimônio será considerado instrumento do crime e como tal perdido em favor do Fundo Penitenciário Nacional. <BR><BR></P>
+<CENTER>CAPÍTULO III <BR>DA APREENSÃO DO PRODUTO E DO INSTRUMENTO DE INFRAÇÃO <BR>ADMINISTRATIVA OU DE CRIME </CENTER>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Verificada a infração, serão apreendidos seus produtos e instrumentos, lavrando-se os respectivos autos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os animais serão libertados em seu habitat ou entregues a jardins zoológicos, fundações ou entidades assemelhadas, desde que fiquem sob a responsabilidade de técnicos habilitados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Tratando-se de produtos perecíveis ou madeiras, serão estes avaliados e doados a instituições científicas, hospitalares, penais e outras com fins beneficentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os produtos e subprodutos da fauna não perecíveis serão destruídos ou doados a instituições científicas, culturais ou educacionais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Os instrumentos utilizados na prática da infração serão vendidos, garantida a sua descaracterização por meio da reciclagem. <BR><BR></P>
+<CENTER>CAPÍTULO IV<BR>DA AÇÃO E DO PROCESSO PENAL </CENTER>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Nas infrações penais previstas nesta Lei, a ação penal é pública incondicionada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Nos crimes ambientais de menor potencial ofensivo, a proposta de aplicação imediata de pena restritiva de direitos ou multa, prevista no art. 76 da Lei nº 9.099, de 26 de setembro de 1995, somente poderá ser formulada desde que tenha havido a prévia composição do dano ambiental, de que trata o art. 74 da mesma lei, salvo em caso de comprovada impossibilidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;As disposições do art. 89 da Lei nº 9.099, de 26 de setembro de 1995, aplicam-se aos crimes de menor potencial ofensivo definidos nesta Lei, com as seguintes modificações: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a declaração de extinção de punibilidade, de que trata o § 5° do artigo referido no <I>caput</I>, dependerá de laudo de constatação de reparação do dano ambiental, ressalvada a impossibilidade prevista no inciso I do § 1° do mesmo artigo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - na hipótese de o laudo de constatação comprovar não ter sido completa a reparação, o prazo de suspensão do processo será prorrogado, até o período máximo previsto no artigo referido no <I>caput</I>, acrescido de mais um ano, com suspensão do prazo da prescrição; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - no período de prorrogação, não se aplicarão as condições dos incisos II, III e IV do § 1° do artigo mencionado no <I>caput</I>; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - findo o prazo de prorrogação, proceder-se-á à lavratura de novo laudo de constatação de reparação do dano ambiental, podendo, conforme seu resultado, ser novamente prorrogado o período de suspensão, até o máximo previsto no inciso II deste artigo, observado o disposto no inciso III; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - esgotado o prazo máximo de prorrogação, a declaração de extinção de punibilidade dependerá de laudo de constatação que comprove ter o acusado tomado as providências necessárias à reparação integral do dano. <BR><BR></P>
+<CENTER>CAPÍTULO V <BR>DOS CRIMES CONTRA O MEIO AMBIENTE&nbsp;<BR>&nbsp;</CENTER>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Dos Crimes contra a Fauna </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Matar, perseguir, caçar, apanhar, utilizar espécimes da fauna silvestre, nativos ou em rota migratória, sem a devida permissão, licença ou autorização da autoridade competente, ou em desacordo com a obtida: Pena - detenção de seis meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Incorre nas mesmas penas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - quem impede a procriação da fauna, sem licença, autorização ou em desacordo com a obtida; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - quem modifica, danifica ou destrói ninho, abrigo ou criadouro natural; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - quem vende, expõe à venda, exporta ou adquire, guarda, tem em cativeiro ou depósito, utiliza ou transporta ovos, larvas ou espécimes da fauna silvestre, nativa ou em rota migratória, bem como produtos e objetos dela oriundos, provenientes de criadouros não autorizados ou sem a devida permissão, licença ou autorização da autoridade competente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No caso de guarda doméstica de espécie silvestre não considerada ameaçada de extinção, pode o juiz, considerando as circunstâncias, deixar de aplicar a pena. § 3° São espécimes da fauna silvestre todos aqueles pertencentes às espécies nativas, migratórias e quaisquer outras, aquáticas ou terrestres, que tenham todo ou parte de seu ciclo de vida ocorrendo dentro dos limites do território brasileiro, ou águas jurisdicionais brasileiras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º A pena é aumentada de metade, se o crime é praticado: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - contra espécie rara ou considerada ameaçada de extinção, ainda que somente no local da infração; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - em período proibido à caça;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - durante a noite; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - com abuso de licença; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - em unidade de conservação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - com emprego de métodos ou instrumentos capazes de provocar destruição em massa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º A pena é aumentada até o triplo, se o crime decorre do exercício de caça profissional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º As disposições deste artigo não se aplicam aos atos de pesca. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Exportar para o exterior peles e couros de anfíbios e répteis em bruto, sem a autorização da autoridade ambiental competente: Pena - reclusão, de um a três anos, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;Introduzir espécime animal no País, sem parecer técnico oficial favorável e licença expedida por autoridade competente: Pena - detenção, de três meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Praticar ato de abuso, maus-tratos, ferir ou mutilar animais silvestres, domésticos ou domesticados, nativos ou exóticos: Pena - detenção, de três meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Incorre nas mesmas penas quem realiza experiência dolorosa ou cruel em animal vivo, ainda que para fins didáticos ou científicos, quando existirem recursos alternativos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A pena é aumentada de um sexto a um terço, se ocorre morte do animal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;Provocar, pela emissão de efluentes ou carreamento de materiais, o perecimento de espécimes da fauna aquática existentes em rios, lagos, açudes, lagoas, baías ou águas jurisdicionais brasileiras: Pena - detenção, de um a três anos, ou multa, ou ambas cumulativamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Incorre nas mesmas penas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - quem causa degradação em viveiros, açudes ou estações de aqüicultura de domínio público; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - quem explora campos naturais de invertebrados aquáticos e algas, sem licença, permissão ou autorização da autoridade competente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - quem fundeia embarcações ou lança detritos de qualquer natureza sobre bancos de moluscos ou corais, devidamente demarcados em carta náutica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;Pescar em período no qual a pesca seja proibida ou em lugares interditados por órgão competente: Pena - detenção de um ano a três anos ou multa, ou ambas as penas cumulativamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Incorre nas mesmas penas quem: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - pesca espécies que devam ser preservadas ou espécimes com tamanhos inferiores aos permitidos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - pesca quantidades superiores às permitidas, ou mediante a utilização de aparelhos, petrechos, técnicas e métodos não permitidos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - transporta, comercializa, beneficia ou industrializa espécimes provenientes da coleta, apanha e pesca proibidas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Pescar mediante a utilização de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - explosivos ou substâncias que, em contato com a água, produzam efeito semelhante; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - substâncias tóxicas, ou outro meio proibido pela autoridade competente: Pena - reclusão de um ano a cinco anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;Para os efeitos desta Lei, considera-se pesca todo ato tendente a retirar, extrair, coletar, apanhar, apreender ou capturar espécimes dos grupos dos peixes, crustáceos, moluscos e vegetais hidróbios, suscetíveis ou não de aproveitamento econômico, ressalvadas as espécies ameaçadas de extinção, constantes nas listas oficiais da fauna e da flora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;Não é crime o abate de animal, quando realizado: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - em estado de necessidade, para saciar a fome do agente ou de sua família; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - para proteger lavouras, pomares e rebanhos da ação predatória ou destruidora de animais, desde que legal e expressamente autorizado pela autoridade competente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - por ser nocivo o animal, desde que assim caracterizado pelo órgão competente. <BR></P>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Dos Crimes contra a Flora </CENTER>
+<P></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Destruir ou danificar floresta considerada de preservação permanente, mesmo que em formação, ou utilizá-la com infringência das normas de proteção: Pena - detenção, de um a três anos, ou multa, ou ambas as penas cumulativamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se o crime for culposo, a pena será reduzida à metade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Cortar árvores em floresta considerada de preservação permanente, sem permissão da autoridade competente: Pena - detenção, de um a três anos, ou multa, ou ambas as penas cumulativamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Causar dano direto ou indireto às Unidades de Conservação e às áreas de que trata o art. 27 do Decreto nº 99.274, de 6 de junho de 1990, independentemente de sua localização: Pena - reclusão, de um a cinco anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Entende-se por Unidades de Conservação as Reservas Biológicas, Reservas Ecológicas, Estações Ecológicas, Parques Nacionais, Estaduais e Municipais, Florestas Nacionais, Estaduais e Municipais, Áreas de Proteção Ambiental, Áreas de Relevante Interesse Ecológico e Reservas Extrativistas ou outras a serem criadas pelo Poder Público. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A ocorrência de dano afetando espécies ameaçadas de extinção no interior das Unidades de Conservação será considerada circunstância agravante para a fixação da pena. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Se o crime for culposo, a pena será reduzida à metade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;Provocar incêndio em mata ou floresta: Pena - reclusão, de dois a quatro anos, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se o crime é culposo, a pena é de detenção de seis meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Fabricar, vender, transportar ou soltar balões que possam provocar incêndios nas florestas e demais formas de vegetação, em áreas urbanas ou qualquer tipo de assentamento humano: Pena - detenção de um a três anos ou multa, ou ambas as penas cumulativamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;Extrair de florestas de domínio público ou consideradas de preservação permanente, sem prévia autorização, pedra, areia, cal ou qualquer espécie de minerais: Pena - detenção, de seis meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;Cortar ou transformar em carvão madeira de lei, assim classificada por ato do Poder Público, para fins industriais, energéticos ou para qualquer outra exploração, econômica ou não, em desacordo com as determinações legais: Pena - reclusão, de um a dois anos, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Receber ou adquirir, para fins comerciais ou industriais, madeira, lenha, carvão e outros produtos de origem vegetal, sem exigir a exibição de licença do vendedor, outorgada pela autoridade competente, e sem munir-se da via que deverá acompanhar o produto até final beneficiamento: Pena - detenção, de seis meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Incorre nas mesmas penas quem vende, expõe à venda, tem em depósito, transporta ou guarda madeira, lenha, carvão e outros produtos de origem vegetal, sem licença válida para todo o tempo da viagem ou do armazenamento, outorgada pela autoridade competente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;Impedir ou dificultar a regeneração natural de florestas e demais formas de vegetação: Pena - detenção, de seis meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;Destruir, danificar, lesar ou maltratar, por qualquer modo ou meio, plantas de ornamentação de logradouros públicos ou em propriedade privada alheia: Pena - detenção, de três meses a um ano, ou multa, ou ambas as penas cumulativamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>No crime culposo, a pena é de um a seis meses, ou multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;Destruir ou danificar florestas nativas ou plantadas ou vegetação fixadora de dunas, protetora de mangues, objeto de especial preservação: Pena - detenção, de três meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;Comercializar motosserra ou utilizá-la em florestas e nas demais formas de vegetação, sem licença ou registro da autoridade competente: Pena - detenção, de três meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;Penetrar em Unidades de Conservação conduzindo substâncias ou instrumentos próprios para caça ou para exploração de produtos ou subprodutos florestais, sem licença da autoridade competente: Pena - detenção, de seis meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;Nos crimes previstos nesta Seção, a pena é aumentada de um sexto a um terço se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - do fato resulta a diminuição de águas naturais, a erosão do solo ou a modificação do regime climático; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o crime é cometido: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>no período de queda das sementes; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>no período de formação de vegetações; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>contra espécies raras ou ameaçadas de extinção, ainda que a ameaça ocorra somente no local da infração; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>em época de seca ou inundação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>durante a noite, em domingo ou feriado. <BR></TD></TR></TBODY></TABLE></P>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Da Poluição e outros Crimes Ambientais </B></CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 54.&nbsp;Causar poluição de qualquer natureza em níveis tais que resultem ou possam resultar em danos à saúde humana, ou que provoquem a mortandade de animais ou a destruição significativa da flora: Pena - reclusão, de um a quatro anos, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Se o crime é culposo: Pena - detenção, de seis meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Se o crime: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - tornar uma área, urbana ou rural, imprópria para a ocupação humana; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - causar poluição atmosférica que provoque a retirada, ainda que momentânea, dos habitantes das áreas afetadas, ou que cause danos diretos à saúde da população; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - causar poluição hídrica que torne necessária a interrupção do abastecimento público de água de uma comunidade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - dificultar ou impedir o uso público das praias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - ocorrer por lançamento de resíduos sólidos, líquidos ou gasosos, ou detritos, óleos ou substâncias oleosas, em desacordo com as exigências estabelecidas em leis ou regulamentos: Pena - reclusão, de um a cinco anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Incorre nas mesmas penas previstas no parágrafo anterior quem deixar de adotar, quando assim o exigir a autoridade competente, medidas de precaução em caso de risco de dano ambiental grave ou irreversível. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;Executar pesquisa, lavra ou extração de recursos minerais sem a competente autorização, permissão, concessão ou licença, ou em desacordo com a obtida: Pena - detenção, de seis meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Nas mesmas penas incorre quem deixa de recuperar a área pesquisada ou explorada, nos termos da autorização, permissão, licença, concessão ou determinação do órgão competente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;Produzir, processar, embalar, importar, exportar, comercializar, fornecer, transportar, armazenar, guardar, ter em depósito ou usar produto ou substância tóxica, perigosa ou nociva à saúde humana ou ao meio ambiente, em desacordo com as exigências estabelecidas em leis ou nos seus regulamentos: Pena - reclusão, de um a quatro anos, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Nas mesmas penas incorre quem abandona os produtos ou substâncias referidos no <I>caput</I>, ou os utiliza em desacordo com as normas de segurança. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Se o produto ou a substância for nuclear ou radioativa, a pena é aumentada de um sexto a um terço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Se o crime é culposo: Pena - detenção, de seis meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;Nos crimes dolosos previstos nesta Seção, as penas serão aumentadas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - de um sexto a um terço, se resulta dano irreversível à flora ou ao meio ambiente em geral; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - de um terço até a metade, se resulta lesão corporal de natureza grave em outrem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - até o dobro, se resultar a morte de outrem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As penalidades previstas neste artigo somente serão aplicadas se do fato não resultar crime mais grave. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;Construir, reformar, ampliar, instalar ou fazer funcionar, em qualquer parte do território nacional, estabelecimentos, obras ou serviços potencialmente poluidores, sem licença ou autorização dos órgãos ambientais competentes, ou contrariando as normas legais e regulamentares pertinentes: Pena - detenção, de um a seis meses, ou multa, ou ambas as penas cumulativamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;Disseminar doença ou praga ou espécies que possam causar dano à agricultura, à pecuária, à fauna, à flora ou aos ecossistemas: Pena - reclusão, de um a quatro anos, e multa. <BR><BR><BR></P>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Dos Crimes contra o Ordenamento Urbano e o Patrimônio Cultural </CENTER>
+<P></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;Destruir, inutilizar ou deteriorar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - bem especialmente protegido por lei, ato administrativo ou decisão judicial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - arquivo, registro, museu, biblioteca, pinacoteca, instalação científica ou similar protegido por lei, ato administrativo ou decisão judicial: Pena - reclusão, de um a três anos, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se o crime for culposo, a pena é de seis meses a um ano de detenção, sem prejuízo da multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;Alterar o aspecto ou estrutura de edificação ou local especialmente protegido por lei, ato administrativo ou decisão judicial, em razão de seu valor paisagístico, ecológico, turístico, artístico, histórico, cultural, religioso, arqueológico, etnográfico ou monumental, sem autorização da autoridade competente ou em desacordo com a concedida: Pena - reclusão, de um a três anos, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;Promover construção em solo não edificável, ou no seu entorno, assim considerado em razão de seu valor paisagístico, ecológico, artístico, turístico, histórico, cultural, religioso, arqueológico, etnográfico ou monumental, sem autorização da autoridade competente ou em desacordo com a concedida: Pena - detenção, de seis meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;Pichar, grafitar ou por outro meio conspurcar edificação ou monumento urbano: Pena - detenção, de três meses a um ano, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se o ato for realizado em monumento ou coisa tombada em virtude do seu valor artístico, arqueológico ou histórico, a pena é de seis meses a um ano de detenção, e multa. <BR></P>
+<CENTER><B>Seção V </CENTER></B>
+<CENTER><B>Dos Crimes contra a Administração Ambiental </CENTER>
+<P></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;Fazer o funcionário público afirmação falsa ou enganosa, omitir a verdade, sonegar informações ou dados técnico-científicos em procedimentos de autorização ou de licenciamento ambiental: Pena - reclusão, de um a três anos, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;Conceder o funcionário público licença, autorização ou permissão em desacordo com as normas ambientais, para as atividades, obras ou serviços cuja realização depende de ato autorizativo do Poder Público: Pena - detenção, de um a três anos, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se o crime é culposo, a pena é de três meses a um ano de detenção, sem prejuízo da multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;Deixar, aquele que tiver o dever legal ou contratual de fazê-lo, de cumprir obrigação de relevante interesse ambiental: Pena - detenção, de um a três anos, e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se o crime é culposo, a pena é de três meses a um ano, sem prejuízo da multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;Obstar ou dificultar a ação fiscalizadora do Poder Público no trato de questões ambientais: Pena - detenção, de um a três anos, e multa. <BR><BR></P>
+<CENTER>CAPÍTULO VI <BR>DA INFRAÇÃO ADMINISTRATIVA </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;Considera-se infração administrativa ambiental toda ação ou omissão que viole as regras jurídicas de uso, gozo, promoção, proteção e recuperação do meio ambiente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º São autoridades competentes para lavrar auto de infração ambiental e instaurar processo administrativo os funcionários de órgãos ambientais integrantes do Sistema Nacional de Meio Ambiente - SISNAMA, designados para as atividades de fiscalização, bem como os agentes das Capitanias dos Portos, do Ministério da Marinha. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Qualquer pessoa, constatando infração ambiental, poderá dirigir representação às autoridades relacionadas no parágrafo anterior, para efeito do exercício do seu poder de polícia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A autoridade ambiental que tiver conhecimento de infração ambiental é obrigada a promover a sua apuração imediata, mediante processo administrativo próprio, sob pena de co-responsabilidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º As infrações ambientais são apuradas em processo administrativo próprio, assegurado o direito de ampla defesa e o contraditório, observadas as disposições desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;O processo administrativo para apuração de infração ambiental deve observar os seguintes prazos máximos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - vinte dias para o infrator oferecer defesa ou impugnação contra o auto de infração, contados da data da ciência da autuação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - trinta dias para a autoridade competente julgar o auto de infração, contados da data da sua lavratura, apresentada ou não a defesa ou impugnação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - vinte dias para o infrator recorrer da decisão condenatória à instância superior do Sistema Nacional do Meio Ambiente - SISNAMA, ou à Diretoria de Portos e Costas, do Ministério da Marinha, de acordo com o tipo de autuação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - cinco dias para o pagamento de multa, contados da data do recebimento da notificação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;As infrações administrativas são punidas com as seguintes sanções, observado o disposto no art. 6º: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - advertência; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - multa simples; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - multa diária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - apreensão dos animais, produtos e subprodutos da fauna e flora, instrumentos, petrechos, equipamentos ou veículos de qualquer natureza utilizados na infração; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - destruição ou inutilização do produto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - suspensão de venda e fabricação do produto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - embargo de obra ou atividade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - demolição de obra; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - suspensão parcial ou total de atividades; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - restritiva de direitos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Se o infrator cometer, simultaneamente, duas ou mais infrações, ser-lhe-ão aplicadas, cumulativamente, as sanções a elas cominadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A advertência será aplicada pela inobservância das disposições desta Lei e da legislação em vigor, ou de preceitos regulamentares, sem prejuízo das demais sanções previstas neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A multa simples será aplicada sempre que o agente, por negligência ou dolo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - advertido por irregularidades que tenham sido praticadas, deixar de saná-las, no prazo assinalado por órgão competente do SISNAMA ou pela Capitania dos Portos, do Ministério da Marinha; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - opuser embaraço à fiscalização dos órgãos do SISNAMA ou da Capitania dos Portos, do Ministério da Marinha. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4° A multa simples pode ser convertida em serviços de preservação, melhoria e recuperação da qualidade do meio ambiente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º A multa diária será aplicada sempre que o cometimento da infração se prolongar no tempo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º A apreensão e destruição referidas nos incisos IV e V do <I>caput</I> obedecerão ao disposto no art. 25 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º As sanções indicadas nos incisos VI a IX do <I>caput</I> serão aplicadas quando o produto, a obra, a atividade ou o estabelecimento não estiverem obedecendo às prescrições legais ou regulamentares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º As sanções restritivas de direito são: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - suspensão de registro, licença ou autorização; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - cancelamento de registro, licença ou autorização; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - perda ou restrição de incentivos e benefícios fiscais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - perda ou suspensão da participação em linhas de financiamento em estabelecimentos oficiais de crédito; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - proibição de contratar com a Administração Pública, pelo período de até três anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;Os valores arrecadados em pagamento de multas por infração ambiental serão revertidos ao Fundo Nacional do Meio Ambiente, criado pela Lei nº 7.797, de 10 de julho de 1989, Fundo Naval, criado pelo Decreto nº 20.923, de 8 de janeiro de 1932, fundos estaduais ou municipais de meio ambiente, ou correlatos, conforme dispuser o órgão arrecadador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;A multa terá por base a unidade, hectare, metro cúbico, quilograma ou outra medida pertinente, de acordo com o objeto jurídico lesado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;O valor da multa de que trata este Capítulo será fixado no regulamento desta Lei e corrigido periodicamente, com base nos índices estabelecidos na legislação pertinente, sendo o mínimo de R$ 50,00 (cinqüenta reais) e o máximo de R$ 50.000.000,00 (cinqüenta milhões de reais). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76.&nbsp;O pagamento de multa imposta pelos Estados, Municípios, Distrito Federal ou Territórios substitui a multa federal na mesma hipótese de incidência. <BR><BR></P>
+<CENTER>CAPÍTULO VII <BR>DA COOPERAÇÃO INTERNACIONAL PARA A PRESERVAÇÃO DO MEIO AMBIENTE </CENTER>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77.&nbsp;Resguardados a soberania nacional, a ordem pública e os bons costumes, o Governo brasileiro prestará, no que concerne ao meio ambiente, a necessária cooperação a outro país, sem qualquer ônus, quando solicitado para: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - produção de prova; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - exame de objetos e lugares; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - informações sobre pessoas e coisas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - presença temporária da pessoa presa, cujas declarações tenham relevância para a decisão de uma causa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - outras formas de assistência permitidas pela legislação em vigor ou pelos tratados de que o Brasil seja parte. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1° A solicitação de que trata este artigo será dirigida ao Ministério da Justiça, que a remeterá, quando necessário, ao órgão judiciário competente para decidir a seu respeito, ou a encaminhará à autoridade capaz de atendê-la. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A solicitação deverá conter: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o nome e a qualificação da autoridade solicitante; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o objeto e o motivo de sua formulação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a descrição sumária do procedimento em curso no país solicitante; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a especificação da assistência solicitada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - a documentação indispensável ao seu esclarecimento, quando for o caso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78.&nbsp;Para a consecução dos fins visados nesta Lei e especialmente para a reciprocidade da cooperação internacional, deve ser mantido sistema de comunicações apto a facilitar o intercâmbio rápido e seguro de informações com órgãos de outros países.<BR><BR></P>
+<CENTER>CAPÍTULO VIII <BR>DISPOSIÇÕES FINAIS </CENTER>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 79.&nbsp;Aplicam-se subsidiariamente a esta Lei as disposições do Código Penal e do Código de Processo Penal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 80.&nbsp;O Poder Executivo regulamentará esta Lei no prazo de noventa dias a contar de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 81.&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 82.&nbsp;Revogam-se as disposições em contrário. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 12 de fevereiro de 1998; 177º da Independência e 110º da República. </P>
+<P>FERNANDO HENRIQUE CARDOSO <BR>Gustavo Krause </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 13/02/1998
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 13/2/1998, Página 1          
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Diário do Congresso Nacional
+                                                         - 23/9/1999, Página 13967      
+                                                        
+                                                        (Apreciação de Veto)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1998, Página 630 
+                                                        Vol. 2          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

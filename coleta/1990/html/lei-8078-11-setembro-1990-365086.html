@@ -1,0 +1,953 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 8.078, DE 11 DE SETEMBRO DE 1990 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre a proteção do consumidor e dá outras providências. " />
+
+<!-- CSS do portal-tema: necessário para o botão de compartilhamento -->
+<link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T3NRZN7V');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T3NRZN7V"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 8.078, DE 11 DE SETEMBRO DE 1990 - Publicação Original</h2>
+
+			<div class="g-contexto-compartilhamento g-contexto-compartilhamento--extendido g-impressao">
+				<!-- Elemento propositalmente vazio, preenchido pelo JS de compartilhamento do portal -->
+			</div>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-8078-11-setembro-1990-365086-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-8078-11-setembro-1990-365086-normaatualizada-pl.docx">formato docx</a>)
+                                                &nbsp;
+                                                    (<a href="lei-8078-11-setembro-1990-365086-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-8078-11-setembro-1990-365086-veto-26721-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-8078-11-setembro-1990-365086-retificacao-64418-pl.html">Retificação</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=214992">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-8078-11-setembro-1990-365086-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 8.078, DE 11 DE SETEMBRO DE 1990</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre a proteção do consumidor e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; O PRESIDENTE DA REPÚBLICA <BR></STRONG>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte lei: <BR><BR></P>
+<CENTER><B>TÍTULO I </CENTER></B>
+<CENTER><B>Dos Direitos do Consumidor&nbsp;</B><BR><BR>&nbsp; </CENTER>
+<CENTER>CAPÍTULO I <BR>Disposições Gerais </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;O presente código estabelece normas de proteção e defesa do consumidor, de ordem pública e interesse social, nos termos dos arts. 5º, inciso XXXII, 170, inciso V, da Constituição Federal e art. 48 de suas Disposições Transitórias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Consumidor é toda pessoa física ou jurídica que adquire ou utiliza produto ou serviço como destinatário final. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Equipara-se a consumidor a coletividade de pessoas, ainda que indetermináveis, que haja intervindo nas relações de consumo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Fornecedor é toda pessoa física ou jurídica, pública ou privada, nacional ou estrangeira, bem como os entes despersonalizados, que desenvolvem atividade de produção, montagem, criação, construção, transformação, importação, exportação, distribuição ou comercialização de produtos ou prestação de serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Produto é qualquer bem, móvel ou imóvel, material ou imaterial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Serviço é qualquer atividade fornecida no mercado de consumo, mediante remuneração, inclusive as de natureza bancária, financeira, de crédito e securitária, salvo as decorrentes das relações de caráter trabalhista. <BR><BR><BR></P>
+<CENTER>CAPÍTULO II <BR>Da Política Nacional de Relações de Consumo </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;A Política Nacional de Relações de Consumo tem por objetivo o atendimento das necessidades dos consumidores, o respeito a sua dignidade, saúde e segurança, a proteção de seus interesses econômicos, a melhoria da sua qualidade de vida, bem como a transferência e harmonia das relações de consumo, atendidos os seguintes princípios: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - reconhecimento da vulnerabilidade do consumidor no mercado de consumo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ação governamental no sentido de proteger efetivamente o consumidor: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>por iniciativa direta; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>por incentivos à criação e desenvolvimento de associações representativas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>pela presença do Estado no mercado de consumo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>pela garantia dos produtos e serviços com padrões adequados de qualidade, segurança, durabilidade e desempenho. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - harmonização dos interesses dos participantes das relações de consumo e compatibilização da proteção do consumidor com a necessidade de desenvolvimento econômico e tecnológico, de modo a viabilizar os princípios nos quais se funda a ordem econômica (art. 170, da Constituição Federal), sempre com base na boa-fé e equilíbrio nas relações entre consumidores e fornecedores; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - educação e informação de fornecedores e consumidores, quanto aos seus direitos e deveres, com vistas à melhoria do mercado de consumo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - incentivo à criação pelos fornecedores de meios eficientes de controle de qualidade e segurança de produtos e serviços, assim como de mecanismos alternativos de solução de conflitos de consumo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - coibição e repressão eficientes de todos os abusos praticados no mercado de consumo, inclusive a concorrência desleal e utilização indevida de inventos e criações industriais das marcas e nomes comerciais e signos distintivos, que possam causar prejuízos aos consumidores; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - racionalização e melhoria dos serviços públicos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - estudo constante das modificações do mercado de consumo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;Para a execução da Política Nacional das Relações de Consumo, contará o poder público com os seguintes instrumentos, entre outros: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - manutenção de assistência jurídica, integral e gratuita para o consumidor carente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - instituição de Promotorias de Justiça de Defesa do Consumidor, no âmbito do Ministério Público; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - criação de delegacias de polícia especializadas no atendimento de consumidores vítimas de infrações penais de consumo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - criação de Juizados Especiais de Pequenas Causas e Varas Especializadas para a solução de litígios de consumo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - concessão de estímulos à criação e desenvolvimento das Associações de Defesa do Consumidor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º (Vetado). <BR><BR><BR></P>
+<CENTER>CAPÍTULO III <BR>Dos Direitos Básicos do Consumidor </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;São direitos básicos do consumidor: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a proteção da vida, saúde e segurança contra os riscos provocados por práticas no fornecimento de produtos e serviços considerados perigosos ou nocivos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a educação e divulgação sobre o consumo adequado dos produtos e serviços, asseguradas a liberdade de escolha e a igualdade nas contratações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a informação adequada e clara sobre os diferentes produtos e serviços, com especificação correta de quantidade, características, composição, qualidade e preço, bem como sobre os riscos que apresentem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a proteção contra a publicidade enganosa e abusiva, métodos comerciais coercitivos ou desleais, bem como contra práticas e cláusulas abusivas ou impostas no fornecimento de produtos e serviços; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - a modificação das cláusulas contratuais que estabeleçam prestações desproporcionais ou sua revisão em razão de fatos supervenientes que as tornem excessivamente onerosas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - a efetiva prevenção e reparação de danos patrimoniais e morais, individuais, coletivos e difusos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - o acesso aos órgãos judiciários e administrativos com vistas à prevenção ou reparação de danos patrimoniais e morais, individuais, coletivos ou difusos, assegurada a proteção Jurídica, administrativa e técnica aos necessitados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - a facilitação da defesa de seus direitos, inclusive com a inversão do ônus da prova, a seu favor, no processo civil, quando, a critério do juiz, for verossímil a alegação ou quando for ele hipossuficiente, segundo as regras ordinárias de experiências; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - (Vetado); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - a adequada e eficaz prestação dos serviços públicos em geral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Os direitos previstos neste código não excluem outros decorrentes de tratados ou convenções internacionais de que o Brasil seja signatário, da legislação interna ordinária, de regulamentos expedidos pelas autoridades administrativas competentes, bem como dos que derivem dos princípios gerais do direito, analogia, costumes e eqüidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Tendo mais de um autor a ofensa, todos responderão solidariamente pela reparação dos danos previstos nas normas de consumo. <BR><BR><BR></P>
+<CENTER>CAPÍTULO IV<BR>Da Qualidade de Produtos e Serviços, da Prevenção e da Reparação dos Danos<BR><BR>&nbsp; </CENTER>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Da Proteção à Saúde e Segurança </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Os produtos e serviços colocados no mercado de consumo não acarretarão riscos à saúde ou segurança dos consumidores, exceto os considerados normais e previsíveis em decorrência de sua natureza e fruição, obrigando-se os fornecedores, em qualquer hipótese, a dar as informações necessárias e adequadas a seu respeito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Em se tratando de produto industrial, ao fabricante cabe prestar as informações a que se refere este artigo, através de impressos apropriados que devam acompanhar o produto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;O fornecedor de produtos e serviços potencialmente nocivos ou perigosos à saúde ou segurança deverá informar, de maneira ostensiva e adequada, a respeito da sua nocividade ou periculosidade, sem prejuízo da adoção de outras medidas cabíveis em cada caso concreto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;O fornecedor não poderá colocar no mercado de consumo produto ou serviço que sabe ou deveria saber apresentar alto grau de nocividade ou periculosidade à saúde ou segurança. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O fornecedor de produtos e serviços que, posteriormente à sua introdução no mercado de consumo, tiver conhecimento da periculosidade que apresentem, deverá comunicar o fato imediatamente às autoridades competentes e aos consumidores, mediante anúncios publicitários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os anúncios publicitários a que se refere o parágrafo anterior serão veiculados na imprensa, rádio e televisão, às expensas do fornecedor do produto ou serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Sempre que tiverem conhecimento de periculosidade de produtos ou serviços à saúde ou segurança dos consumidores, a União, os Estados, o Distrito Federal e os Municípios deverão informá-los a respeito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;(Vetado). <BR><BR></P>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Da Responsabilidade pelo Fato do Produto e do Serviço </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;O fabricante, o produtor, o construtor, nacional ou estrangeiro, e o importador respondem, independentemente da existência de culpa, pela reparação dos danos causados aos consumidores por defeitos decorrentes de projeto, fabricação, construção, montagem, fórmulas, manipulação, apresentação ou acondicionamento de seus produtos, bem como por informações insuficientes ou inadequadas sobre sua utilização e riscos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O produto é defeituoso quando não oferece a segurança que dele legitimamente se espera, levando-se em consideração as circunstâncias relevantes, entre as quais: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - sua apresentação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o uso e os riscos que razoavelmente dele se esperam; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a época em que foi colocado em circulação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O produto não é considerado defeituoso pelo fato de outro de melhor qualidade ter sido colocado no mercado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O fabricante, o construtor, o produtor ou importador só não será responsabilizado quando provar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - que não colocou o produto no mercado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - que, embora haja colocado o produto no mercado, o defeito inexiste; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a culpa exclusiva do consumidor ou de terceiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;O comerciante é igualmente responsável, nos termos do artigo anterior, quando: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o fabricante, o construtor, o produtor ou o importador não puderem ser identificados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o produto for fornecido sem identificação clara do seu fabricante, produtor, construtor ou importador; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - não conservar adequadamente os produtos perecíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Aquele que efetivar o pagamento ao prejudicado poderá exercer o direito de regresso contra os demais responsáveis, segundo sua participação na causação do evento danoso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;O fornecedor de serviços responde, independentemente da existência de culpa, pela reparação dos danos causados aos consumidores por defeitos relativos à prestação dos serviços, bem como por informações insuficientes ou inadequadas sobre sua fruição e riscos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º O serviço é defeituoso quando não fornece a segurança que o consumidor dele pode esperar, levando-se em consideração as circunstâncias relevantes, entre as quais: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o modo de seu fornecimento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o resultado e os riscos que razoavelmente dele se esperam; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a época em que foi fornecido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O serviço não é considerado defeituoso pela adoção de novas técnicas. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 3º O fornecedor de serviços só não será responsabilizado quando provar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - que, tendo prestado o serviço, o defeito inexiste; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a culpa exclusiva do consumidor ou de terceiro. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 4º A responsabilidade pessoal dos profissionais liberais será apurada mediante a verificação de culpa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Para os efeitos desta Seção, equiparam-se aos consumidores todas as vítimas do evento. <BR><BR><BR><BR></P>
+<CENTER><B>SEÇÃO III </CENTER></B>
+<CENTER><B>Da Responsabilidade por Vício do Produto e do Serviço </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Os fornecedores de produtos de consumo duráveis ou não duráveis respondem solidariamente pelos vícios de qualidade ou quantidade que os tornem impróprios ou inadequados ao consumo a que se destinam ou lhes diminuam o valor, assim como por aqueles decorrentes da disparidade, com as indicações constantes do recipiente, da embalagem, rotulagem ou mensagem publicitária, respeitadas as variações decorrentes de sua natureza, podendo o consumidor exigir a substituição das partes viciadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Não sendo o vício sanado no prazo máximo de trinta dias, pode o consumidor exigir, alternativamente e à sua escolha: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a substituição do produto por outro da mesma espécie, em perfeitas condições de uso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a restituição imediata da quantia paga, monetariamente atualizada, sem prejuízo de eventuais perdas e danos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o abatimento proporcional do preço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Poderão as partes convencionar a redução ou ampliação do prazo previsto no parágrafo anterior, não podendo ser inferior a sete nem superior a cento e oitenta dias. Nos contratos de adesão, a cláusula de prazo deverá ser convencionada em separado, por meio de manifestação expressa do consumidor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O consumidor poderá fazer uso imediato das alternativas do § 1º deste artigo sempre que, em razão da extensão do vício, a substituição das partes viciadas puder comprometer a qualidade ou características do produto, diminuir-lhe o valor ou se tratar de produto essencial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Tendo o consumidor optado pela alternativa do inciso I do § 1° deste artigo, e não sendo possível a substituição do bem, poderá haver substituição por outro de espécie, marca ou modelo diversos, mediante complementação ou restituição de eventual diferença de preço, sem prejuízo do disposto nos incisos II e III do § 1º deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º No caso de fornecimento de produtos in natura , será responsável perante o consumidor o fornecedor imediato, exceto quando identificado claramente seu produtor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º São impróprios ao uso e consumo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - os produtos cujos prazos de validade estejam vencidos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os produtos deteriorados, alterados, adulterados, avariados, falsificados, corrompidos, fraudados, nocivos à vida ou à saúde, perigosos ou, ainda, aqueles em desacordo com as normas regulamentares de fabricação, distribuição ou apresentação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - os produtos que, por qualquer motivo, se revelem inadequados ao fim a que se destinam. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;Os fornecedores respondem solidariamente pelos vícios de quantidade do produto sempre que, respeitadas as variações decorrentes de sua natureza, seu conteúdo líquido for inferior às indicações constantes do recipiente, da embalagem, rotulagem ou de mensagem publicitária, podendo o consumidor exigir, alternativamente e à sua escolha: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o abatimento proporcional do preço; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - complementação do peso ou medida; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a substituição do produto por outro da mesma espécie, marca ou modelo, sem os aludidos vícios; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a restituição imediata da quantia paga, monetariamente atualizada, sem prejuízo de eventuais perdas e danos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Aplica-se a este artigo o disposto no § 4° do artigo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O fornecedor imediato será responsável quando fizer a pesagem ou a medição e o instrumento utilizado não estiver aferido segundo os padrões oficiais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;O fornecedor de serviços responde pelos vícios de qualidade que os tornem impróprios ao consumo ou lhes diminuam o valor, assim como por aqueles decorrentes da disparidade com as indicações constantes da oferta ou mensagem publicitária, podendo o consumidor exigir, alternativamente e à sua escolha: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a reexecução dos serviços, sem custo adicional e quando cabível; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a restituição imediata da quantia paga, monetariamente atualizada, sem prejuízo de eventuais perdas e danos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o abatimento proporcional do preço. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º A reexecução dos serviços poderá ser confiada a terceiros devidamente capacitados, por conta e risco do fornecedor. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º São impróprios os serviços que se mostrem inadequados para os fins que razoavelmente deles se esperam, bem como aqueles que não atendam as normas regulamentares de prestabilidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;No fornecimento de serviços que tenham por objetivo a reparação de qualquer produto considerar-se-á implícita a obrigação do fornecedor de empregar componentes de reposição originais adequados e novos, ou que mantenham as especificações técnicas do fabricante, salvo, quanto a estes últimos, autorização em contrário do consumidor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;Os órgãos públicos, por si ou suas empresas, concessionárias, permissionárias ou sob qualquer outra forma de empreendimento, são obrigados a fornecer serviços adequados, eficientes, seguros e, quanto aos essenciais, contínuos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Nos casos de descumprimento, total ou parcial, das obrigações referidas neste artigo, serão as pessoas jurídicas compelidas a cumpri-las e a reparar os danos causados, na forma prevista neste código. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;A ignorância do fornecedor sobre os vícios de qualidade por inadequação dos produtos e serviços não o exime de responsabilidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;A garantia legal de adequação do produto ou serviço independe de termo expresso, vedada a exoneração contratual do fornecedor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;É vedada a estipulação contratual de cláusula que impossibilite, exonere ou atenue a obrigação de indenizar prevista nesta e nas seções anteriores. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Havendo mais de um responsável pela causação do dano, todos responderão solidariamente pela reparação prevista nesta e nas seções anteriores. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Sendo o dano causado por componente ou peça incorporada ao produto ou serviço, são responsáveis solidários seu fabricante, construtor ou importador e o que realizou a incorporação. <BR><BR><BR></P>
+<CENTER><B>SEÇÃO IV </CENTER></B>
+<CENTER><B>Da Decadência e da Prescrição </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;O direito de reclamar pelos vícios aparentes ou de fácil constatação caduca em: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - trinta dias, tratando-se de fornecimento de serviço e de produtos não duráveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - noventa dias, tratando-se de fornecimento de serviço e de produtos duráveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Inicia-se a contagem do prazo decadencial a partir da entrega efetiva do produto ou do término da execução dos serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Obstam a decadência: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a reclamação comprovadamente formulada pelo consumidor perante o fornecedor de produtos e serviços até a resposta negativa correspondente, que deve ser transmitida de forma inequívoca; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a instauração de inquérito civil, até seu encerramento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Tratando-se de vício oculto, o prazo decadencial inicia-se no momento em que ficar evidenciado o defeito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Prescreve em cinco anos a pretensão à reparação pelos danos causados por fato do produto ou do serviço prevista na Seção II deste Capítulo, iniciando-se a contagem do prazo a partir do conhecimento do dano e de sua autoria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>(Vetado). <BR><BR><BR></P>
+<CENTER><B>SEÇÃO V </CENTER></B>
+<CENTER><B>Da Desconsideração da Personalidade Jurídica </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;O juiz poderá desconsiderar a personalidade jurídica da sociedade quando, em detrimento do consumidor, houver abuso de direito, excesso de poder, infração da lei, fato ou ato ilícito ou violação dos estatutos ou contrato social. A desconsideração também será efetivada quando houver falência, estado de insolvência, encerramento ou inatividade da pessoa jurídica provocados por má administração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As sociedades integrantes dos grupos societários e as sociedades controladas, são subsidiariamente responsáveis pelas obrigações decorrentes deste código. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As sociedades consorciadas são solidariamente responsáveis pelas obrigações decorrentes deste código. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º As sociedades coligadas só responderão por culpa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Também poderá ser desconsiderada a pessoa jurídica sempre que sua personalidade for, de alguma forma, obstáculo ao ressarcimento de prejuízos causados aos consumidores. <BR><BR><BR></P>
+<CENTER>CAPÍTULO V <BR>Das Práticas Comerciais&nbsp;<BR><BR>&nbsp; </CENTER>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Das Disposições Gerais </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Para os fins deste Capítulo e do seguinte, equiparam-se aos consumidores todas as pessoas determináveis ou não, expostas às práticas nele previstas. <BR><BR><BR></P>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Da Oferta </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Toda informação ou publicidade, suficientemente precisa, veiculada por qualquer forma ou meio de comunicação com relação a produtos e serviços oferecidos ou apresentados, obriga o fornecedor que a fizer veicular ou dela se utilizar e integra o contrato que vier a ser celebrado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;A oferta e apresentação de produtos ou serviços devem assegurar informações corretas, claras, precisas, ostensivas e em língua portuguesa sobre suas características, qualidades, quantidade, composição, preço, garantia, prazos de validade e origem, entre outros dados, bem como sobre os riscos que apresentam à saúde e segurança dos consumidores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Os fabricantes e importadores deverão assegurar a oferta de componentes e peças de reposição enquanto não cessar a fabricação ou importação do produto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Cessadas a produção ou importação, a oferta deverá ser mantida por período razoável de tempo, na forma da lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;Em caso de oferta ou venda por telefone ou reembolso postal, deve constar o nome do fabricante e endereço na embalagem, publicidade e em todos os impressos utilizados na transação comercial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;O fornecedor do produto ou serviço é solidariamente responsável pelos atos de seus prepostos ou representantes autônomos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Se o fornecedor de produtos ou serviços recusar cumprimento à oferta, apresentação ou publicidade, o consumidor poderá, alternativamente e à sua livre escolha: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - exigir o cumprimento forçado da obrigação, nos termos da oferta, apresentação ou publicidade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - aceitar outro produto ou prestação de serviço equivalente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - rescindir o contrato, com direito à restituição de quantia eventualmente antecipada, monetariamente atualizada, e a perdas e danos. <BR><BR><BR></P>
+<CENTER><B>SEÇÃO III </CENTER></B>
+<CENTER><B>Da Publicidade </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;A publicidade deve ser veiculada de tal forma que o consumidor, fácil e imediatamente, a identifique como tal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O fornecedor, na publicidade de seus produtos ou serviços, manterá, em seu poder, para informação dos legítimos interessados, os dados fáticos, técnicos e científicos que dão sustentação à mensagem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;É proibida toda publicidade enganosa ou abusiva. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º É enganosa qualquer modalidade de informação ou comunicação de caráter publicitário, inteira ou parcialmente falsa, ou, por qualquer outro modo, mesmo por omissão, capaz de induzir em erro o consumidor a respeito da natureza, características, qualidade, quantidade, propriedades, origem, preço e quaisquer outros dados sobre produtos e serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º É abusiva, dentre outras a publicidade discriminatória de qualquer natureza, a que incite à violência, explore o medo ou a superstição, se aproveite da deficiência de julgamento e experiência da criança, desrespeita valores ambientais, ou que seja capaz de induzir o consumidor a se comportar de forma prejudicial ou perigosa à sua saúde ou segurança. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Para os efeitos deste código, a publicidade é enganosa por omissão quando deixar de informar sobre dado essencial do produto ou serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;O ônus da prova da veracidade e correção da informação ou comunicação publicitária cabe a quem as patrocina. <BR><BR><BR></P>
+<CENTER><B>SEÇÃO IV </CENTER></B>
+<CENTER><B>Das Práticas Abusivas </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;É vedado ao fornecedor de produtos ou serviços: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - condicionar o fornecimento de produto ou de serviço ao fornecimento de outro produto ou serviço, bem como, sem justa causa, a limites quantitativos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - recusar atendimento às demandas dos consumidores, na exata medida de suas disponibilidades de estoque, e, ainda, de conformidade com os usos e costumes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - enviar ou entregar ao consumidor, sem solicitação prévia, qualquer produto, ou fornecer qualquer serviço; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - prevalecer-se da fraqueza ou ignorância do consumidor, tendo em vista sua idade, saúde, conhecimento ou condição social, para impingir-lhe seus produtos ou serviços; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - exigir do consumidor vantagem manifestamente excessiva; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - executar serviços sem a prévia elaboração de orçamento e autorização expressa do consumidor, ressalvadas as decorrentes de práticas anteriores entre as partes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - repassar informação depreciativa, referente a ato praticado pelo consumidor no exercício de seus direitos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - colocar, no mercado de consumo, qualquer produto ou serviço em desacordo com as normas expedidas pelos órgãos oficiais competentes ou, se normas específicas não existirem, pela Associação Brasileira de Normas Técnicas ou outra entidade credenciada pelo Conselho Nacional de Metrologia, Normalização e Qualidade Industrial (Conmetro); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - deixar de estipular prazo para o cumprimento de sua obrigação ou deixar a fixação de seu termo inicial a seu exclusivo critério; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os serviços prestados e os produtos remetidos ou entregues ao consumidor, na hipótese prevista no inciso III, equiparam-se às amostras grátis, inexistindo obrigação de pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;O fornecedor de serviço será obrigado a entregar ao consumidor orçamento prévio discriminando o valor da mão-de-obra, dos materiais e equipamentos a serem empregados, as condições de pagamento, bem como as datas de início e término dos serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Salvo estipulação em contrário, o valor orçado terá validade pelo prazo de dez dias, contado de seu recebimento pelo consumidor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Uma vez aprovado pelo consumidor, o orçamento obriga os contraentes e somente pode ser alterado mediante livre negociação das partes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O consumidor não responde por quaisquer ônus ou acréscimos decorrentes da contratação de serviços de terceiros não previstos no orçamento prévio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;No caso de fornecimento de produtos ou de serviços sujeitos ao regime de controle ou de tabelamento de preços, os fornecedores deverão respeitar os limites oficiais sob pena de não o fazendo, responderem pela restituição da quantia recebida em excesso, monetariamente atualizada, podendo o consumidor exigir à sua escolha, o desfazimento do negócio, sem prejuízo de outras sanções cabíveis. <BR><BR><BR></P>
+<CENTER><B>SEÇÃO V </CENTER></B>
+<CENTER><B>Da Cobrança de Dívidas </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Na cobrança de débitos, o consumidor inadimplente não será exposto a ridículo, nem será submetido a qualquer tipo de constrangimento ou ameaça. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O consumidor cobrado em quantia indevida tem direito à repetição do indébito, por valor igual ao dobro do que pagou em excesso, acrescido de correção monetária e juros legais, salvo hipótese de engano justificável. <BR><BR><BR></P>
+<CENTER><B>SEÇÃO VI </CENTER></B>
+<CENTER><B>Dos Bancos de Dados e Cadastros de Consumidores </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;O consumidor, sem prejuízo do disposto no art. 86, terá acesso às informações existentes em cadastros, fichas, registros e dados pessoais e de consumo arquivados sobre ele, bem como sobre as suas respectivas fontes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os cadastros e dados de consumidores devem ser objetivos, claros, verdadeiros e em linguagem de fácil compreensão, não podendo conter informações negativas referentes a período superior a cinco anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A abertura de cadastro, ficha, registro e dados pessoais e de consumo deverá ser comunicada por escrito ao consumidor, quando não solicitada por ele. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O consumidor, sempre que encontrar inexatidão nos seus dados e cadastros, poderá exigir sua imediata correção, devendo o arquivista, no prazo de cinco dias úteis, comunicar a alteração aos eventuais destinatários das informações incorretas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Os bancos de dados e cadastros relativos a consumidores, os serviços de proteção ao crédito e congêneres são considerados entidades de caráter público. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Consumada a prescrição relativa à cobrança de débitos do consumidor, não serão fornecidas, pelos respectivos Sistemas de Proteção ao Crédito, quaisquer informações que possam impedir ou dificultar novo acesso ao crédito junto aos fornecedores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;Os órgãos públicos de defesa do consumidor manterão cadastros atualizados de reclamações fundamentadas contra fornecedores de produtos e serviços, devendo divulgá-lo pública e anualmente. A divulgação indicará se a reclamação foi atendida ou não pelo fornecedor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º É facultado o acesso às informações lá constantes para orientação e consulta por qualquer interessado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Aplicam-se a este artigo, no que couber, as mesmas regras enunciadas no artigo anterior e as do parágrafo único do art. 22 deste código. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;(Vetado). <BR><BR></P>
+<CENTER>CAPÍTULO VI <BR>Da Proteção Contratual&nbsp;<BR><BR>&nbsp; </CENTER>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Disposições Gerais </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Os contratos que regulam as relações de consumo não obrigarão os consumidores, se não lhes for dada a oportunidade de tomar conhecimento prévio de seu conteúdo, ou se os respectivos instrumentos forem redigidos de modo a dificultar a compreensão de seu sentido e alcance. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;As cláusulas contratuais serão interpretadas de maneira mais favorável ao consumidor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;As declarações de vontade constantes de escritos particulares, recibos e pré-contratos relativos às relações de consumo vinculam o fornecedor, ensejando inclusive execução específica, nos termos do art. 84 e parágrafos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;O consumidor pode desistir do contrato, no prazo de 7 dias a contar de sua assinatura ou do ato de recebimento do produto ou serviço, sempre que a contratação de fornecimento de produtos e serviços ocorrer fora do estabelecimento comercial, especialmente por telefone ou a domicílio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se o consumidor exercitar o direito de arrependimento previsto neste artigo, os valores eventualmente pagos, a qualquer título, durante o prazo de reflexão, serão devolvidos, de imediato, monetariamente atualizados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;A garantia contratual é complementar à legal e será conferida mediante termo escrito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O termo de garantia ou equivalente deve ser padronizado e esclarecer, de maneira adequada em que consiste a mesma garantia, bem como a forma, o prazo e o lugar em que pode ser exercitada e os ônus a cargo do consumidor, devendo ser-lhe entregue, devidamente preenchido pelo fornecedor, no ato do fornecimento, acompanhado de manual de instrução, de instalação e uso do produto em linguagem didática, com ilustrações. <BR><BR><BR></P>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Das Cláusulas Abusivas </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;São nulas de pleno direito, entre outras, as cláusulas contratuais relativas ao fornecimento de produtos e serviços que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - impossibilitem, exonerem ou atenuem a responsabilidade do fornecedor por vícios de qualquer natureza dos produtos e serviços ou impliquem renúncia ou disposição de direitos. Nas relações de consumo entre o fornecedor e o consumidor pessoa jurídica, a indenização poderá ser limitada, em situações justificáveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - subtraiam ao consumidor a opção de reembolso da quantia já paga, nos casos previstos neste código; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - transfiram responsabilidades a terceiros; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - estabeleçam obrigações consideradas iníquas, abusivas, que coloquem o consumidor em desvantagem exagerada, ou sejam incompatíveis com a boa-fé ou a eqüidade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - (Vetado); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - estabeleçam inversão do ônus da prova em prejuízo do consumidor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - determinem a utilização compulsória de arbitragem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - imponham representante para concluir ou realizar outro negócio jurídico pelo consumidor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - deixem ao fornecedor a opção de concluir ou não o contrato, embora obrigando o consumidor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - permitam ao fornecedor, direta ou indiretamente, variação do preço de maneira unilateral; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - autorizem o fornecedor a cancelar o contrato unilateralmente, sem que igual direito seja conferido ao consumidor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XII - obriguem o consumidor a ressarcir os custos de cobrança de sua obrigação, sem que igual direito lhe seja conferido contra o fornecedor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIII - autorizem o fornecedor a modificar unilateralmente o conteúdo ou a qualidade do contrato, após sua celebração; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIV - infrinjam ou possibilitem a violação de normas ambientais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XV - estejam em desacordo com o sistema de proteção ao consumidor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XVI - possibilitem a renúncia do direito de indenização por benfeitorias necessárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Presume-se exagerada, entre outros casos, a vantagem que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - ofende os princípios fundamentais do sistema jurídico a que pertence; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - restringe direitos ou obrigações fundamentais inerentes à natureza do contrato, de tal modo a ameaçar seu objeto ou o&nbsp;equilíbrio contratual; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - se mostra excessivamente onerosa para o consumidor, considerando-se a natureza e conteúdo do contrato, o interesse das partes e outras circunstâncias peculiares ao caso. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º A nulidade de uma cláusula contratual abusiva não invalida o contrato, exceto quando de sua ausência, apesar dos esforços de integração, decorrer ônus excessivo a qualquer das partes. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 3º (Vetado). </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 4º É facultado a qualquer consumidor ou entidade que o represente requerer ao Ministério Público que ajuíze a competente ação para ser declarada a nulidade de cláusula contratual que contrarie o disposto neste código ou de qualquer forma não assegure o justo equilíbrio entre direitos e obrigações das partes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;No fornecimento de produtos ou serviços que envolva outorga de crédito ou concessão de financiamento ao consumidor, o fornecedor deverá, entre outros requisitos, informá-lo prévia e adequadamente sobre: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - preço do produto ou serviço em moeda corrente nacional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - montante dos juros de mora e da taxa efetiva anual de juros; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - acréscimos legalmente previstos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - número e periodicidade das prestações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - soma total a pagar, com e sem financiamento. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º As multas de mora decorrentes do inadimplemento de obrigação no seu termo não poderão ser superiores a dez por cento do valor da prestação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º É assegurado ao consumidor a liquidação antecipada do débito, total ou parcialmente, mediante redução proporcional dos juros e demais acréscimos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;Nos contratos de compra e venda de móveis ou imóveis mediante pagamento em prestações, bem como nas alienações fiduciárias em garantia, consideram-se nulas de pleno direito as cláusulas que estabeleçam a perda total das prestações pagas em benefício do credor que, em razão do inadimplemento, pleitear a resolução do contrato e a retomada do produto alienado. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Nos contratos do sistema de consórcio de produtos duráveis, a compensação ou a restituição das parcelas quitadas, na forma deste artigo, terá descontada, além da vantagem econômica auferida com a fruição, os prejuízos que o desistente ou inadimplente causar ao grupo. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os contratos de que trata o <EM>caput</EM> deste artigo serão expressos em moeda corrente nacional. <BR><BR><BR><BR></P>
+<CENTER><B>SEÇÃO III </CENTER></B>
+<CENTER><B>Dos Contratos de Adesão </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;Contrato de adesão é aquele cujas cláusulas tenham sido aprovadas pela autoridade competente ou estabelecidas unilateralmente pelo fornecedor de produtos ou serviços, sem que o consumidor possa discutir ou modificar substancialmente seu conteúdo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A inserção de cláusula no formulário não desfigura a natureza de adesão do contrato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Nos contratos de adesão admite-se cláusula resolutória, desde que&nbsp;alternativa, cabendo a escolha ao consumidor, ressalvando-se o disposto no § 2º do artigo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os contratos de adesão escritos serão redigidos em termos claros e com caracteres ostensivos e legíveis, de modo a facilitar sua compreensão pelo consumidor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º As cláusulas que implicarem limitação de direito do consumidor deverão ser redigidas com destaque, permitindo sua imediata e fácil compreensão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º (Vetado). <BR><BR><BR></P>
+<CENTER>CAPÍTULO VII <BR>Das Sanções Administrativas </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;A União, os Estados e o Distrito Federal, em caráter concorrente e nas suas respectivas áreas de atuação administrativa, baixarão normas relativas à produção, industrialização, distribuição e consumo de produtos e serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A União, os Estados, o Distrito Federal e os Municípios fiscalizarão e controlarão a produção, industrialização, distribuição, a publicidade de produtos e serviços e o mercado de consumo, no interesse da preservação da vida, da saúde, da segurança, da informação e do bem-estar do consumidor, baixando as normas que se fizerem necessárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os órgãos federais, estaduais, do Distrito Federal e municipais com atribuições para fiscalizar e controlar o mercado de consumo manterão comissões permanentes para elaboração, revisão e atualização das normas referidas no § 1°, sendo obrigatória a participação dos consumidores e fornecedores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Os órgãos oficiais poderão expedir notificações aos fornecedores para que, sob pena de desobediência, prestem informações sobre questões de interesse do consumidor, resguardado o segredo industrial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;As infrações das normas de defesa do consumidor ficam sujeitas, conforme o caso, às seguintes sanções administrativas, sem prejuízo das de natureza civil, penal e das definidas em normas específicas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - multa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - apreensão do produto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - inutilização do produto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - cassação do registro do produto junto ao órgão competente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - proibição de fabricação do produto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - suspensão de fornecimento de produtos ou serviço; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - suspensão temporária de atividade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - revogação de concessão ou permissão de uso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - cassação de licença do estabelecimento ou de atividade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - interdição, total ou parcial, de estabelecimento, de obra ou de atividade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - intervenção administrativa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XII - imposição de contrapropaganda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As sanções previstas neste artigo serão aplicadas pela autoridade administrativa, no âmbito de sua atribuição, podendo ser aplicadas cumulativamente, inclusive por medida cautelar, antecedente ou incidente de procedimento administrativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;A pena de multa, graduada de acordo com a gravidade da infração, a vantagem auferida e a condição econômica do fornecedor será aplicada mediante procedimento administrativo nos termos da lei, revertendo para o fundo de que trata a Lei n° 7.347, de 24 de julho de 1985, sendo a infração ou dano de âmbito nacional, ou para os fundos estaduais de proteção ao consumidor nos demais casos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A multa será em montante nunca inferior a trezentas e não superior a três milhões de vezes o valor do Bônus do Tesouro Nacional (BTN), ou índice equivalente que venha substituí-lo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;As penas de apreensão, de inutilização de produtos, de proibição de fabricação de produtos, de suspensão do fornecimento de produto ou serviço, de cassação do registro do produto e revogação da concessão ou permissão de uso serão aplicadas pela administração, mediante procedimento administrativo, assegurada ampla defesa, quando forem constatados vícios de quantidade ou de qualidade por inadequação ou insegurança do produto ou serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;As penas de cassação de alvará de licença, de interdição e de suspensão temporária da atividade, bem como a de intervenção administrativa, serão aplicadas mediante procedimento administrativo, assegurada ampla defesa, quando o fornecedor reincidir na prática das infrações de maior gravidade previstas neste código e na legislação de consumo. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º A pena de cassação da concessão será aplicada à concessionária de serviço público, quando violar obrigação legal ou contratual. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º A pena de intervenção administrativa será aplicada sempre que as circunstâncias de fato desaconselharem a cassação de licença, a interdição ou suspensão da atividade. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 3º Pendendo ação judicial na qual se discuta a imposição de penalidade administrativa, não haverá reincidência até o trânsito em julgado da sentença. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;A imposição de contrapropaganda será cominada quando o fornecedor incorrer na prática de publicidade enganosa ou abusiva, nos termos do art. 36 e seus parágrafos, sempre às expensas do infrator. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A contrapropaganda será divulgada pelo responsável da mesma forma, freqüência e dimensão e, preferencialmente no mesmo veículo, local, espaço e horário, de forma capaz de desfazer o malefício da publicidade enganosa ou abusiva. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º (Vetado). </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 3º (Vetado). <BR><BR><BR><BR></P>
+<CENTER><B>TÍTULO II </CENTER></B>
+<CENTER><B>Das Infrações Penais </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;Constituem crimes contra as relações de consumo previstas neste código, sem prejuízo do disposto no Código Penal e leis especiais, as condutas tipificadas nos artigos seguintes . <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;Omitir dizeres ou sinais ostensivos sobre a nocividade ou periculosidade de produtos, nas embalagens, nos invólucros, recipientes ou publicidade: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena - Detenção de seis meses a dois anos e multa. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Incorrerá nas mesmas penas quem deixar de alertar, mediante recomendações escritas ostensivas, sobre a periculosidade do serviço a ser prestado. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Se o crime é culposo: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena Detenção de um a seis meses ou multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;Deixar de comunicar à autoridade competente e aos consumidores a nocividade ou periculosidade de produtos cujo conhecimento seja posterior à sua colocação no mercado: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena - Detenção de seis meses a dois anos e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Incorrerá nas mesmas penas quem deixar de retirar do mercado, imediatamente quando determinado pela autoridade competente, os produtos nocivos ou perigosos, na forma deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;Executar serviço de alto grau de periculosidade, contrariando determinação de autoridade competente: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena - Detenção de seis meses a dois anos e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As penas deste artigo são aplicáveis sem prejuízo das correspondentes à lesão corporal e à morte. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;Fazer afirmação falsa ou enganosa, ou omitir informação relevante sobre a natureza, característica, qualidade, quantidade, segurança, desempenho, durabilidade, preço ou garantia de produtos ou serviços: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena - Detenção de três meses a um ano e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Incorrerá nas mesmas penas quem patrocinar a oferta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Se o crime é culposo; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena - Detenção de um a seis meses ou multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;Fazer ou promover publicidade que sabe ou deveria saber ser enganosa ou abusiva: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena - Detenção de três meses a um ano e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;Fazer ou promover publicidade que sabe ou deveria saber ser capaz de induzir o consumidor a se comportar de forma prejudicial ou perigosa a sua saúde ou segurança: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena - Detenção de seis meses a dois anos e multa: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;Deixar de organizar dados fáticos, técnicos e científicos que dão base à publicidade: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena - Detenção de um a seis meses ou multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;Empregar na reparação de produtos, peça ou componentes de reposição usados, sem autorização do consumidor: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena - Detenção de três meses a um ano e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;Utilizar, na cobrança de dívidas, de ameaça, coação, constrangimento físico ou moral, afirmações falsas incorretas ou enganosas ou de qualquer outro procedimento que exponha o consumidor, injustificadamente, a ridículo ou interfira com seu trabalho, descanso ou lazer: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena - Detenção de três meses a um ano e multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;Impedir ou dificultar o acesso do consumidor às informações que sobre ele constem em cadastros, banco de dados, fichas e registros: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena - Detenção de seis meses a um ano ou multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;Deixar de corrigir imediatamente informação sobre consumidor constante de cadastro, banco de dados, fichas ou registros que sabe ou deveria saber ser inexata: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena - Detenção de um a seis meses ou multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;Deixar de entregar ao consumidor o termo de garantia adequadamente preenchido e com especificação clara de seu conteúdo; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena - Detenção de um a seis meses ou multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;Quem, de qualquer forma, concorrer para os crimes referidos neste Código incide nas penas a esses cominadas na medida de sua culpabilidade, bem como o diretor, administrador ou gerente da pessoa jurídica que promover, permitir ou por qualquer modo aprovar o fornecimento, oferta, exposição à venda ou manutenção em depósito de produtos ou a oferta e prestação de serviços nas condições por ele proibidas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76.&nbsp;São circunstâncias agravantes dos crimes tipificados neste código: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - serem cometidos em época de grave crise econômica ou por ocasião de calamidade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ocasionarem grave dano individual ou coletivo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - dissimular-se a natureza ilícita do procedimento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - quando cometidos: <BR><BR></P>
+<P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>por servidor público, ou por pessoa cuja condição econômico-social seja manifestamente superior à da vítima; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>em detrimento de operário ou rurícola; de menor de dezoito ou maior de sessenta anos ou de pessoas portadoras de deficiência mental interditadas ou não; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - serem praticados em operações que envolvam alimentos, medicamentos ou quaisquer outros produtos ou serviços essenciais . <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77.&nbsp;A pena pecuniária prevista nesta Seção será fixada em dias-multa, correspondente ao mínimo e ao máximo de dias de duração da pena privativa da liberdade cominada ao crime. Na individualização desta multa, o juiz observará o disposto no art. 60, §1° do Código Penal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78.&nbsp;Além das penas privativas de liberdade e de multa, podem ser impostas, cumulativa ou alternadamente, observado o disposto nos arts. 44 a 47, do Código Penal: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a interdição temporária de direitos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a publicação em órgãos de comunicação de grande circulação ou audiência, às expensas do condenado, de notícia sobre os fatos e a condenação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a prestação de serviços à comunidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 79.&nbsp;O valor da fiança, nas infrações de que trata este código, será fixado pelo juiz, ou pela autoridade que presidir o inquérito, entre cem e duzentas mil vezes o valor do Bônus do Tesouro Nacional (BTN), ou índice equivalente que venha a substituí-lo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se assim recomendar a situação econômica do indiciado ou réu, a fiança poderá ser:&nbsp;<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>reduzida até a metade de seu valor mínimo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>aumentada pelo juiz até vinte vezes. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 80.&nbsp;No processo penal atinente aos crimes previstos neste código, bem como a outros crimes e contravenções que envolvam relações de consumo, poderão intervir, como assistentes do Ministério Público, os legitimados indicados no art. 82, inciso III e IV, aos quais também é facultado propor ação penal subsidiária, se a denúncia não for oferecida no prazo legal.<BR><BR><BR></P>
+<CENTER><B>TÍTULO III </CENTER></B>
+<CENTER><B>Da Defesa do Consumidor em Juízo</B><BR><BR>&nbsp; </CENTER>
+<CENTER>CAPÍTULO I <BR>Disposições Gerais </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 81.&nbsp;A defesa dos interesses e direitos dos consumidores e das vítimas poderá ser exercida em juízo individualmente, ou a título coletivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A defesa coletiva será exercida quando se tratar de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - interesses ou direitos difusos, assim entendidos, para efeitos deste código, os transindividuais, de natureza indivisível, de que sejam titulares pessoas indeterminadas e ligadas por circunstâncias de fato; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - interesses ou direitos coletivos, assim entendidos, para efeitos deste código, os transindividuais, de natureza indivisível de que seja titular grupo, categoria ou classe de pessoas ligadas entre si ou com a parte contrária por uma relação jurídica base; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - interesses ou direitos individuais homogêneos, assim entendidos os decorrentes de origem comum. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 82.&nbsp;Para os fins do art. 100, parágrafo único, são legitimados concorrentemente: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o Ministério Público, <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a União, os Estados, os Municípios e o Distrito Federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - as entidades e órgãos da Administração Pública, direta ou indireta, ainda que sem personalidade jurídica, especificamente destinados à defesa dos interesses e direitos protegidos por este código; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - as associações legalmente constituídas há pelo menos um ano e que incluam entre seus fins institucionais a defesa dos interesses e direitos protegidos por este código, dispensada a autorização assemblear. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O requisito da pré-constituição pode ser dispensado pelo juiz, nas ações previstas nos arts. 91 e seguintes, quando haja manifesto interesse social evidenciado pela dimensão ou característica do dano, ou pela relevância do bem jurídico a ser protegido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 83.&nbsp;Para a defesa dos direitos e interesses protegidos por este código são admissíveis todas as espécies de ações capazes de propiciar sua adequada e efetiva tutela. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 84.&nbsp;Na ação que tenha por objeto o cumprimento da obrigação de fazer ou não fazer, o juiz concederá a tutela específica da obrigação ou determinará providências que assegurem o resultado prático equivalente ao do adimplemento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A conversão da obrigação em perdas e danos somente será admissível se por elas optar o autor ou se impossível a tutela específica ou a obtenção do resultado prático correspondente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A indenização por perdas e danos se fará sem prejuízo da multa (art. 287, do Código de Processo Civil). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Sendo relevante o fundamento da demanda e havendo justificado receio de ineficácia do provimento final, é lícito ao juiz conceder a tutela liminarmente ou após justificação prévia, citado o réu. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O juiz poderá, na hipótese do § 3° ou na sentença, impor multa diária ao réu, independentemente de pedido do autor, se for suficiente ou compatível com a obrigação, fixando prazo razoável para o cumprimento do preceito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Para a tutela específica ou para a obtenção do resultado prático equivalente, poderá o juiz determinar as medidas necessárias, tais como busca e apreensão, remoção de coisas e pessoas, desfazimento de obra, impedimento de atividade nociva, além de requisição de força policial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 85.&nbsp;(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 86.&nbsp;(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 87.&nbsp;Nas ações coletivas de que trata este código não haverá adiantamento de custas, emolumentos, honorários periciais e quaisquer outras despesas, nem condenação da associação autora, salvo comprovada má-fé, em honorários de advogados, custas e despesas processuais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Em caso de litigância de má-fé, a associação autora e os diretores responsáveis pela propositura da ação serão solidariamente condenados em honorários advocatícios e ao décuplo das custas, sem prejuízo da responsabilidade por perdas e danos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 88.&nbsp;Na hipótese do art. 13, parágrafo único deste código, a ação de regresso poderá ser ajuizada em processo autônomo, facultada a possibilidade de prosseguir-se nos mesmos autos, vedada a denunciação da lide. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 89.&nbsp;(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 90.&nbsp;Aplicam-se às ações previstas neste título as normas do Código de Processo Civil e da Lei nº 7.347, de 24 de julho de 1985, inclusive no que respeita ao inquérito civil, naquilo que não contrariar suas disposições. civil, naquilo que não contrariar suas disposições. <BR><BR><BR></P>
+<CENTER>CAPÍTULO II <BR>Das Ações Coletivas Para a Defesa de Interesses Individuais Homogêneos </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 91.&nbsp;Os legitimados de que trata o art. 81 poderão propor, em nome próprio e no interesse das vítimas ou seus sucessores, ação civil coletiva de responsabilidade pelos danos individualmente sofridos, de acordo com o disposto nos artigos seguintes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 92.&nbsp;O Ministério Público, se não ajuizar a ação, atuará sempre como fiscal da lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 93.&nbsp;Ressalvada a competência da Justiça Federal, é competente para a causa a justiça local: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - no foro do lugar onde ocorreu ou deva ocorrer o dano, quando de âmbito local; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - no foro da Capital do Estado ou no do Distrito Federal, para os danos de âmbito nacional ou regional, aplicando-se as regras do Código de Processo Civil aos casos de competência concorrente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 94.&nbsp;Proposta a ação, será publicado edital no órgão oficial, a fim de que os interessados possam intervir no processo como litisconsortes, sem prejuízo de ampla divulgação pelos meios de comunicação social por parte dos órgãos de defesa do consumidor.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 95.&nbsp;Em caso de procedência do pedido, a condenação será genérica, fixando a responsabilidade do réu pelos danos causados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 96.&nbsp;(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 97.&nbsp;A liquidação e a execução de sentença poderão ser promovidas pela vítima e seus sucessores, assim como pelos legitimados de que trata o art. 82. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 98.&nbsp;A execução poderá ser coletiva, sendo promovida pelos legitimados de que trata o art. 81, abrangendo as vítimas cujas indenizações já tiverem sido fixadas em sentença de liquidação, sem prejuízo do ajuizamento de outras execuções. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º A execução coletiva far-se-á com base em certidão das sentenças de liquidação, da qual deverá constar a ocorrência ou não do trânsito em julgado. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º É competente para a execução o juízo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - da liquidação da sentença ou da ação condenatória, no caso de execução individual; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - da ação condenatória, quando coletiva a execução. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 99.&nbsp;Em caso de concurso de créditos decorrentes de condenação prevista na Lei n° 7.347, de 24 de julho de 1985, e de indenizações pelos prejuízos individuais resultantes do mesmo evento danoso, estas terão preferência no pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para efeito do disposto neste artigo, a destinação da importância recolhida ao fundo criado pela Lei n° 7.347, de 24 de julho de 1985, ficará sustada enquanto pendentes de decisão de segundo grau as ações de indenização pelos danos individuais, salvo na hipótese de o patrimônio do devedor ser manifestamente suficiente para responder pela integralidade das dívidas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 100.&nbsp;Decorrido o prazo de um ano sem habilitação de interessados em número compatível com a gravidade do dano, poderão os legitimados do art. 82 promover a liquidação e execução da indenização devida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O produto da indenização devida reverterá para o fundo criado pela Lei n° 7.347, de 24 de julho de 1985. <BR><BR><BR></P>
+<CENTER>CAPÍTULO III <BR>Das Ações de Responsabilidade do Fornecedor de Produtos e Serviços </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 101.&nbsp;Na ação de responsabilidade civil do fornecedor de produtos e serviços, sem prejuízo do disposto nos Capítulos I e II deste título, serão observadas as seguintes normas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a ação pode ser proposta no domicílio do autor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o réu que houver contratado seguro de responsabilidade poderá chamar ao processo o segurador, vedada a integração do contraditório pelo Instituto de Resseguros do Brasil. Nesta hipótese, a sentença que julgar procedente o pedido condenará o réu nos termos do art. 80 do Código de Processo Civil. Se o réu houver sido declarado falido, o síndico será intimado a informar a existência de seguro de responsabilidade, facultando-se, em caso afirmativo, o ajuizamento de ação de indenização diretamente contra o segurador, vedada a denunciação da lide ao Instituto de Resseguros do Brasil e dispensado o litisconsórcio obrigatório com este. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 102.&nbsp;Os legitimados a agir na forma deste código poderão propor ação visando compelir o Poder Público competente a proibir, em todo o território nacional, a produção, divulgação, distribuição ou venda, ou a determinar&nbsp;alteração na composição, estrutura, fórmula ou acondicionamento de produto, cujo uso ou consumo regular se revele nocivo ou perigoso à saúde pública e à incolumidade pessoal. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º (Vetado). </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º (Vetado). <BR><BR><BR></P>
+<CENTER>CAPÍTULO IV<BR>Da Coisa Julgada </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 103.&nbsp;Nas ações coletivas de que trata este código, a sentença fará coisa julgada: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - <EM>erga omnes</EM> , exceto se o pedido for julgado improcedente por insuficiência de provas, hipótese em que qualquer legitimado poderá intentar outra ação, com idêntico fundamento, valendo-se de nova prova, na hipótese do inciso I do parágrafo único do art. 81; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ultra partes , mas limitadamente ao grupo, categoria ou classe, salvo improcedência por insuficiência de provas, nos termos do inciso anterior, quando se tratar da hipótese prevista no inciso II do parágrafo único do art. 81;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - <EM>erga omnes</EM> , apenas no caso de procedência do pedido, para beneficiar todas as vítimas e seus sucessores, na hipótese do inciso III do parágrafo único do art. 81. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os efeitos da coisa julgada previstos nos incisos I e II não prejudicarão interesses e direitos individuais dos integrantes da coletividade, do grupo, categoria ou classe. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na hipótese prevista no inciso III, em caso de improcedência do pedido, os interessados que não tiverem intervindo no processo como litisconsortes poderão propor ação de indenização a título individual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os efeitos da coisa julgada de que cuida o art. 16, combinado com o art. 13 da Lei nº 7.347, de 24 de julho de 1985, não prejudicarão as ações de indenização por danos pessoalmente sofridos, propostas individualmente ou na forma prevista neste código, mas, se procedente o pedido, beneficiarão as vítimas e seus sucessores, que poderão proceder à liquidação e à execução, nos termos dos arts. 96 a 99. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Aplica-se o disposto no parágrafo anterior à sentença penal condenatória. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 104.&nbsp;As ações coletivas, previstas nos incisos I e II&nbsp;do parágrafo único do art. 81, não induzem litispendência para as ações individuais, mas os efeitos da coisa julgada erga omnes ou ultra partes a que aludem os incisos II e III do artigo anterior não beneficiarão os autores das ações individuais, se não for requerida sua suspensão no prazo de trinta dias, a contar da ciência nos autos do ajuizamento da ação coletiva. <BR><BR></P>
+<CENTER><B>TÍTULO IV </CENTER></B>
+<CENTER><B>Do Sistema Nacional de Defesa do Consumidor </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 105.&nbsp;Integram o Sistema Nacional de Defesa do Consumidor (SNDC) os órgãos federais, estaduais, do Distrito Federal e municipais e as entidades privadas de defesa do consumidor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 106.&nbsp;O Departamento Nacional de Defesa do Consumidor, da Secretaria Nacional de Direito Econômico (MJ), ou órgão federal que venha substituí-lo, é organismo de coordenação da política do Sistema Nacional de Defesa do Consumidor, cabendo-lhe: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - planejar, elaborar, propor, coordenar e executar a política nacional de proteção ao consumidor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - receber, analisar, avaliar e encaminhar consultas, denúncias ou sugestões apresentadas por entidades representativas ou pessoas jurídicas de direito público ou privado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - prestar aos consumidores orientação permanente sobre seus direitos e garantias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - informar, conscientizar e motivar o consumidor através dos diferentes meios de comunicação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - solicitar à polícia judiciária a instauração de inquérito policial para a apreciação de delito contra os consumidores, nos termos da legislação vigente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - representar ao Ministério Público competente para fins de adoção de medidas processuais no âmbito de suas atribuições; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - levar ao conhecimento dos órgãos competentes as infrações de ordem administrativa que violarem os interesses difusos, coletivos, ou individuais dos consumidores; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - solicitar o concurso de órgãos e entidades da União, Estados, do Distrito Federal e Municípios, bem como auxiliar a fiscalização de preços, abastecimento, quantidade e segurança de bens e serviços; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - incentivar, inclusive com recursos financeiros e outros programas especiais, a formação de entidades de defesa do consumidor pela população e pelos órgãos públicos estaduais e municipais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XII - (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIII - desenvolver outras atividades compatíveis com suas finalidades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para a consecução de seus objetivos, o Departamento Nacional de Defesa do Consumidor poderá solicitar o concurso de órgãos e entidades de notória especialização técnico-científica. <BR><BR><BR></P>
+<CENTER><B>TÍTULO V </CENTER></B>
+<CENTER><B>Da Convenção Coletiva de Consumo </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 107.&nbsp;As entidades civis de consumidores e as associações de fornecedores ou sindicatos de categoria econômica podem regular, por convenção escrita, relações de consumo que tenham por objeto estabelecer condições relativas ao preço, à qualidade, à quantidade, à garantia e características de produtos e serviços, bem como à reclamação e composição do conflito de consumo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A convenção tornar-se-á obrigatória a partir do registro do instrumento no cartório de títulos e documentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A convenção somente obrigará os filiados às entidades signatárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Não se exime de cumprir a convenção o fornecedor que se desligar da entidade em data posterior ao registro do instrumento. <BR><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 108.&nbsp;(Vetado). <BR><BR></P>
+<CENTER><B>TÍTULO VI </CENTER></B>
+<CENTER><B>Disposições Finais </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 109.&nbsp;(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 110.&nbsp;Acrescente-se o seguinte inciso IV ao art. 1º da Lei nº 7.347, de 24 de julho de 1985: </P>
+<DIR>"IV - a qualquer outro interesse difuso ou coletivo."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 111.&nbsp;O inciso II do art. 5º da Lei nº 7.347, de 24 de julho de 1985, passa a ter a seguinte redação: </P>
+<DIR>"II - inclua, entre suas finalidades institucionais, a proteção ao meio ambiente, ao consumidor, ao patrimônio artístico, estético, histórico, turístico e paisagístico, ou a qualquer outro interesse difuso ou coletivo."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 112.&nbsp;O § 3º do art. 5º da Lei nº 7.347, de 24 de julho de 1985, passa a ter a seguinte redação: </P>
+<DIR>"§ 3º Em caso de desistência infundada ou abandono da ação por associação legitimada, o Ministério Público ou outro legitimado assumirá a titularidade ativa."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 113.&nbsp;Acrescente-se os seguintes §§ 4º, 5º e 6º ao art. 5º da Lei nº 7.347, de 24 de julho de 1985: </P>
+<DIR>"§ 4º O requisito da pré-constituição poderá ser dispensado pelo juiz, quando haja manifesto interesse social evidenciado pela dimensão ou característica do dano, ou pela relevância do bem jurídico a ser protegido. <BR><BR>§ 5º Admitir-se-á o litisconsórcio facultativo entre os Ministérios Públicos da União, do Distrito Federal e dos Estados na defesa dos interesses e direitos de que cuida esta lei. <BR><BR>§ 6º Os órgãos públicos legitimados poderão tomar dos interessados compromisso de ajustamento de sua conduta às exigências legais, mediante combinações, que terá eficácia de título executivo extrajudicial."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 114.&nbsp;O art. 15 da Lei nº 7.347, de 24 de julho de 1985, passa a ter a seguinte redação: </P>
+<DIR>"Art. 15.&nbsp;Decorridos sessenta dias do trânsito em julgado da sentença condenatória, sem que a associação autora lhe promova a execução, deverá fazê-lo o Ministério Público, facultada igual iniciativa aos demais legitimados."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 115.&nbsp;Suprima-se o <EM>caput</EM> do art. 17 da Lei nº 7.347, de 24 de julho de 1985, passando o parágrafo único a constituir o <EM>caput</EM> , com a seguinte redação: </P>
+<DIR>"Art. 17.&nbsp;Em caso de litigância de má-fé, a danos."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 116.&nbsp;Dê-se a seguinte redação ao art. 18 da Lei n° 7.347, de 24 de julho de 1985: </P>
+<DIR>"Art. 18.&nbsp;Nas ações de que trata esta lei, não haverá adiantamento de custas, emolumentos, honorários periciais e quaisquer outras despesas, nem condenação da associação autora, salvo comprovada má-fé, em honorários de advogado, custas e despesas processuais."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 117.&nbsp;Acrescente-se à Lei n° 7.347, de 24 de julho de 1985, o seguinte dispositivo, renumerando-se os seguintes: </P>
+<DIR>"Art. 21.&nbsp;Aplicam-se à defesa dos direitos e interesses difusos, coletivos e individuais, no que for cabível, os dispositivos do Título III da lei que instituiu o Código de Defesa do Consumidor."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 118.&nbsp;Este Código entrará em vigor dentro de cento e oitenta dias a contar de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 119.&nbsp;Revogam-se as disposições em contrário. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Brasília, 11 de setembro de 1990; 169° da Independência e 102° da República. </P>
+<P>FERNANDO COLLOR <BR>Bernardo Cabral <BR>Zélia M. Cardoso de Mello <BR>Ozires Silva </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 - Suplemento de 12/09/1990
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1 - Suplemento
+                                                         - 12/9/1990, Página 1          
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+
+<!-- JS do portal-tema: necessário para o botão de compartilhamento -->
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/vendor-bundle.js"></script>
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/camara-bundle.js"></script>
+
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

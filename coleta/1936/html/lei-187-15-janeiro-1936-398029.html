@@ -1,0 +1,946 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 187, DE 15 DE JANEIRO DE 1936 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre as duplicatas e contas assignadas. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 187, DE 15 DE JANEIRO DE 1936 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                            <li>  	
+                                                <a href="lei-187-15-janeiro-1936-398029-republicacao-75567-pl.html">Republicação</a>
+                                            </li>
+                                    <li>
+                                        <a href="lei-187-15-janeiro-1936-398029-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 187, DE 15 DE JANEIRO DE 1936</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							<META name=GENERATOR content="MSHTML 6.00.2800.1595">Dispõe sobre as duplicatas e contas assignadas. 
+						</p>
+				
+						<div class="texto">
+							<META name=GENERATOR content="Microsoft DHTML Editing Control">
+<P>O PRESIDENTE DA REPÚBLICA dos Estados Unidos do Brasil: <BR>Faço saber que o PODER LEGISLATIVO decreta e eu sanciono a seguinte lei: <BR><BR></P>
+<P align=center><B>CAPÍTULO I</P></B>
+<CENTER><B>DA FACTURA OU CONTA DE VENDA E DA DUPLICATA </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Nas vendas mercantis a prazo entre vendedor e comprador domiciliados no territorio brasileiro, aquelle é obrigado a emittir e entregar ou remetter a este a factura ou conta de venda e respectiva duplicata, que este lhe devolverá, depois de assignal-a, ficando com aquella. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Se o comprador não souber ou não puder ler, nem escrever, a duplicata será, assignada a rogo, com duas testemunhas, ou por procurador com poderas especiaes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A factura discriminará as mercadorias vendidas e a duplicata indicará a importancia da factura, que lhe deu origem, devendo ter ambas a mesma data. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Uma só duplicata não póde corresponder a varias facturas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Quando convier ao vendedor, a factura poderá indicar sómente os numeros e valores das notas parciaes expedidas por occasião das vendas ou entregas das mercadorias, desde que essas notas sejam destacadas de livro-talão com as folhas numeradas seguidamente, duplicadas a carbono e as cópias archivadas e conservadas em bôa guarda emquanto não se prescrever a acção pertinente á duplicata. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Não se póde extrahir duplicata que não corresponda a uma venda effectiva de mercadorias entregues, real ou symbolicamente, e acompanhadas da respeetiva factura. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;A perda ou extravio da duplicata obriga o vendedor a extrahir triplicata, que terá os mesmos effeitos e os mesmos requisitos daquella. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;A duplicata conterá: </P>
+<P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a denominação "duplicata", data e numero de ordem; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o numero da factura, do seu copiador e respectiva folha; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>a importancia da factura a que corresponde, por algarismos e por extenso; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>o nome e domicilio do vendedor; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>o nome e domicilio do comprador; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>a data do vencimento, com a determinação de dia certo ou com a declaração de dar-se a tantos dias da data da apresentação da duplicata ou de ser á, vista; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>o reconhecimento de sua exactidão e a obrigação de pagal-a, para ser firmada do proprio punho, do comprador, salva a hypothese do art. 1º, § 1º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>a clausula á- ordem; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>i)</I></TD>
+<TD>o logar onde deve ser paga, entendendo-se, na ausencia desta declaração, que o pagamento será effectuado no domicilio do vendedor. </TD></TR></TBODY></TABLE></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A duplicata póde ser manuscripta, dactylographada ou impressa, tendo, nestes casos, os claros para serem preenchidos a mão, a machina ou a carbono no acto da expedição, desde que contenha todos os requisitos acima exigidos, sendo permittido conter outros dizeres ou esclarecimentos, uma vez que lhe não alterem a feição caracteristica de expressão de contracto de compra e venda e de promessa de pagamento do preço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A duplicata será assignada no acto da emissão, de proprio punho, pelo vendedor, ou seu procurador, com poderes especiaes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º E' permittida a alteração da praça de pagamento da duplicata, desde que o vendedor e comprador nisso concordem, e nella expressamente o declarem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;A duplicata indicará sempre o valor total da factura, ainda que o comprador tenha qualquer importancia a credito com o vendedor, mencionando este, quando autoriizado, o credito e o liquido, que o comprador deverá reconhecer. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Se o comprador tiver com o vendedor credito igual ou superior á importancia da compra e autorizar a deducção, dispensar-se-á a duplicata por tratar-se, então, de venda á vista. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Não se comprehenderão no valor total da factura os abatimentos de preços das mercadorias feitos pelo vendedor no acto da emissão da factura original, desde que constem della. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As vendas mercantis para pagamento contra a entrega da mercadoria ou do conhecimento do transporte, sejam ou não da mesma praça vendedor e comprador ou para pagamento á, vista ou a prazo menor de trinta (30) dias poderá representar-se tambem por duplicatas, em que se declara que o pagamento será feito nessas condições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;Nas vendas a prestações, poderá o vendedor emittir, em vez de uma só, da importancia global do preço, tantas em quantas fôr elle dividido, tomando estas duplicatas o mesmo numero de ordem, addicionado de um algarismo romano, em ordem crescente, ou letra do alphabet designativo de cada prestação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;As vendas parcelladas, feitas ao mesmo conprador, dentro do mez, serão acompanhadas de notas, ficando o vendedor obrigado a emittir, de conformidade com o art. 1º e seus paragraphos e art. 2º, a factura e a duplicata, caso pagamento não haja sido effectuado de accôrdo com o estabelecido no art. 25, nº 1. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. As vendas parcelladas, effectuada por estabelecimentos atacadistas, a partir do dia 22 de cada mez, poderão ser acompanhadas de notas, extrahidas segundo prescreve o art. 1º § 3º, contendo a declaração - valor par o dia 1 do mez de... - passando a fazer parte das venda deste ultimo mez. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Nas vendas feitas directamente a consumidores dentro do mez do calendario, entre o mesmo vendedor comprador, dispensa-se a emissão de facturas e duplicatas <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Se, porém, a venda exceder de 300$000 cada mez a seu pagamento demorar além de trinta dias, contados da ultimo dia do mez da compra, é obrigatoria a emissão da factura e duplicata, nos termos do art. 2º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Se a compra fôr inferior a 300$000 e o vendedor emittir a duplicata, o comprador é obrigado a assignal-a devolvel-a, mas não lhe poderá ser marcado prazo para. pagamento menor de trinta dias, contados na fórma do § 1º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Nas vendas feitas por consignatarios ou commissarios e facturadas em nome e por conta do consignada ou committente, cumprirão aquelles os dispositivos desta lei. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º Nas consignações feitas por commerciantes, se as mercadorias forern vendidas por conta do consignatario este é obrigado, na occasião de expedir a factura e duplicata ao comprador, a communicar a venda ao consignador, par que, por sua vez, expeça factura e duplicata correspondente á mesma venda, afim de ser assignada por elle consignatario mencionando-se o prazo estipulado para a liquidação do saldo da conta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Se o consignatario declarar, na communicação feita que o producto liquido apurado está á disposição do consignador, é facultado a este registrar a venda como se fosse á vista, dispensado, então, de emittir duplicata. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Sempre que se tratar de vendas parcelladas, de conta propria, effectuadas pelo consignatario, de mercadoria consignadas em varias partidas, a communicação ao consignador, para os effeitos deste artigo, poderá ser mensal, e qualquer data do mez, correspondendo a todas as vendas feita nesse periodo. <BR><BR></P>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>DA REMESSA E DA DEVOLUÇÃO DE DUPLICATA </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;A remessa da duplicata poderá ser feita directamente pelo vendedor ou por seus representantes, por intermedio de bancos, procuradores .ou correspondentes, que se incumbam de apresental-a ao comprador, na praça ou lugar de seu estabelecimento, podendo os intermediarios devolvel-a depois de assignada, ou conserval-a em seu poder até o momento do resgate, seguindo as instrucções de quem lhes commetteu o encargo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp; A duplicata. quando não fôr á vista, deverá ser devolvida pelo comprador, devidamente assignada, de modo a estar em poder do vendedor ou portador dentro do prazo do respectivo vencimento, não podendo a devolução, entretanto, exceder aos seguintes prazos: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>de 30 dias, quando o comprador fôr estabelecido na mesma praça do vendedor, ou em praça diversa, desde que a mala postal chegue ao logar de domicilio do destinatario dentro em quarenta e oito horas de sua expedição; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>de 60 dias, nos casos não incluidos na letra anterior; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>de 120 dias, excepcionalmente, quando o comprador fôr estabelecido no Territorio do Acre, e no interior dos Estados do Amazonas, Pará, Matto Grosso, Goyaz e localidades de outros Estados, onde ae difficuldades de communicação e transporte exigirem, para a devolução, prazo superior a sessenta dias; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>o portador da duplicata então é obrigado a fazer ao vendedor, até o primeiro dia util após a expiração dos prazos previstos neste artigo, as communicações relativas ao acceite do titulo para os fins dos registros de que trata o art. 24, § 1º. </TD></TR></TBODY></TABLE></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Estes prazos contar-se-ão da data da duplicata, a qual deverá ser remettida pelo vendedor ao comprador dentro de dez dias da sua emissão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Quando a duplicata fôr confiada a banco, casa commercial ou representante do vendedor, estabelecido na mesma praça do comprador, contar-se-á o prazo da letra a da data da entrega da duplicata ao comprador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Dentro dos trinta dias consecutivos á terminação dos prazos de que trata o artigo precedente, e não havendo a prorogação facultada pelo art. 13, paragrapho unico, o vendedor fornecerá á repartição arrecadadora do seu domicilio, para a competente acção fiscal, o nome e o domicilio dos compradores que o hajam transgredido, com indicação do numero, da data e do valor de cada titulo não devolvido ou não acceito. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. Quando, porém, a duplicata não tiver sido remettida ao comprador directamente pelo vendedor, o prazo de 30 dias só começará a correr do em que houver recebido do portador o aviso da falta de acceite ou de devolução. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;O comprador só poderá deixar de assignar a duplicata, por motivo : </P>
+<P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>de avaria, de extravio ou de não recebimento das mercadorias, quando não viajarem por sua conta e risco; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>de vicios, defeitos è differenças na qualidade ou na quantidade das mercadorias; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>de divergencia nos prazos ou preços ajustados. </TD></TR></TBODY></TABLE></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. Occorrendo qualquer dessas hypotheses, considerar-se-ão prorogados os prazos do art. 11, pelo tempo indispensavel para resolver-se a divergencia, comtanto que o novo prazo não exceda ao originario. <BR></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Terminada a dilação do paragrapho unico anterior, e não chegando os interessados a accôrdo, será o titulo, obrigatoriamente, devolvido, acompanhado de carta em que o comprador declare os fundamentos da recusa de sua assignatura, ficando a seu cargo a prova habil da entrega do titulo e da carta ao vendedor ou portador. Concomitantemente, fará a devolução das mercadorias ou a sua consignação no juizo competente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;A duplicata emittida e não assignada em virtude da annullação da venda mercantil que a motivou, póde ser acceita por quem adquirir as mesmas mercadorias, desde que o faça dentro dos prazos do art. 11 e fiquem as causas do cancollamento da venda plenamente. justificadas na correspondencia commercial dos interessados, constante dos copiadores respectivos, regulamente escripturados. <BR><BR></P>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>DA LIQUIDAÇÃO E PAGAMENTO DA DUPLICATA </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Ao comprador é licito resgatar a duplicata antes de assignal-a, nos prazos aqui estabelecidos, devolvendo-a, acompanhada da respectiva importancia, ao vendedor ou ao portador, que nella passará o recibo competente. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. Se o dinheiro fôr enviado sem a duplicata, o vendedor ou o portador passará recibo em separado, com referencia expressa á mesma duplicata, para todos os effeitos legaes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Na liquidação ou pagamento da duplicata, quando o portador fôr o vendedor, poderão ser deduzidos quaesquer creditos a favor do devedor, resultantes de devolução de mercadorias, differanças de preços, enganos verificados, pagamentos por conta e outros motivos semelhantes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;O vendedor, ou o portador autorizado por aquelle, ou o endossatario, poderá conceder reforma ou prorogação do prazo de vencimento da duplicata, mediante declaração nesta escripta e assignada de proprio punho. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. A prorogação poderá dar-se tambem pela extracção de nova duplicata, com os mesmos requisitos e com o mesmo numero, indicativo da reforma e substituição, que se mencionará na columna das observações do Registro de Duplicatas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;O pagamento da duplicata póde ser assegurado por aval, sendo o avalista, equiparado áquelle cujo nome indicar: na falta de indicação, áquelle abaixo de cuja firma lançar a sua; fóra desses casos, ao comprador. <BR><BR></P>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>DO PROTESTO </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;A. duplicata. é protestavel: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>por falta de assignatura ou de devolução; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>por falta de pagamento.&nbsp; </TD></TR></TBODY></TABLE></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. Nos casos da letra e, o protesto será tirado no domicilio do comprador ou do vencedor, como a este fôr mais conveniente, dentro do prazo de trinta dias subsequentes aos marcados nos arts. 11 e 13, paragrapho unico </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; O protesto, neste caso, será tirado á vista da duplicata quando devolvida e apresentada em cartorio com o certificado postal ou qualquer outro documento comprobatorio da sua entrega ao comprador ou da sua devolução; e, em falta desta pelas indicações do protestante ou á vista da triplicata, extrahida pelo vendedor, por elle datada e assignada, entregue em cartorio com a prova da entrega ou da remessa da duplicata, indicando seu numero de ordem e acompanhada da cópia da factura.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;Si a demora na devolução da duplicata se verificar por ser o comprador domiciliado em praça ou localidade longinqua, onde seja deficiente o serviço postal, o que se provará mediante o certificado.do registro do Correio, os prazos para o protesto considerar-se-ão prorogados de accôrda com o paragrapho unico do art. 13. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;O protesto por falta de pagamento será tirado em face da duplicação no logar em que ella deva ser paga, em qualquer tempo, depois de vencida e emquanto não prescripta a acção compotente, que é a executiva. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O portador qne não tirar, em tempo util e fórma regular, o protesto da duplicata, perderá o direito de regresso contra os endossadores e avalistas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A acção executiva para a cobrança da duplicata ou da triplicata contra o comprador e respectivos avalistas, prescreve em cinco annos, a contar da data do vencimento; e a contra os endossadores e respectivos avalistas em doze mezes, contados da data do protesto necessario. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A acção poderá ser proposta contra algum ou todos os coobrigados, sem obsorvancia da ordem dos endosaos; os signatarios da duplicata ou da triplicata obrigam-se solidariamente pelo acceite, e pelo pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;O instrumento do protesto conterá os requisitos do art. 29 do decreto n. 2.044, de 31 de dezembro de de cujos demais dispositivos se applicarão á duplicata e triplicata, no que fôr possivel <BR><BR></P>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>DA ESCRIPTA ESPECIAL </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Todo commerciante, pessoa natural ou juridica é obrigado a ter e escripturar, além dos livros indicados no art. 11 e com as formalidades dos arts, 13 a 18 do codigo commercial : <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>o Registro de Duplicatas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o Registro das Vendas a Vista. </TD></TR></TBODY></TABLE></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No Registro de Duplicatas serão escripturadas, chronologicamente, todas as duplicatas e triplicatas emittidas, com o numero de ordem, data e valor das facturas originarias e data de sua expedição; nome e residencia do comprador; datas de acceite da duplicata e do protesto por falta de assignata ou de devolução, annotando-se as prorogações e outras circumstancias necessarias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No Registro de Vendas á Vista serão lançadas pelo total todas as vendas desta natureza, tenha ou não sido emittida factura ou nota de venda, de conformidade com os outros livros obrigatorios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Estes livros, que não poderão conter emendas, borrões ou raspaduras, deverão ser conservados nos proprios estabelecimento afim de serem exhibidos aos agentes fiscaes, federaes ou estaduaes, sempre que exigidos, não podendo ser retirados dos mesmos estabelecimentos, sob qualquer pretexto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Quando o commerciante mantiver secções ou postos de venda de mercadorias em differentes locaes e os seus encarregados lhe prestarem contas diariamente, poderá centralizar no escriptorio do estabelecimento a escripta daquellas; postos ou agencias, tendo, porém, bem discriminado o movimento de cada um. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Consideram-se vendas á vista: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I, as effectuadas mediante pagamento em dinheiro de contado e as realizadas, pagas e escripturadas dentro de trinta' dias, contados da data da operação; <BR>&nbsp;&nbsp;&nbsp;&nbsp; II, as entre comprador e vendedor domiciliados na mesmà praga e para pagamento contra a entrega de conta, do conhecimento de transporte, do recibo de deposito, do warrant e respectivo conhecimento de deposito quando ainda não separados, ou, finalmente, contra a entrega da propria mercadoria: <BR>&nbsp;&nbsp;&nbsp;&nbsp; III, as de café, productos da lavoura, pecuaria e industrias derivadas, facturadas até o maximo de trinta dias, com obrigação de pagamento á vista, no acto da retirada ou entrega da mercadoria; <BR>&nbsp;&nbsp;&nbsp;&nbsp; IV, as feitas directarnente a consumidores dentro do, mez, entre o mesmo vendedor e o mesmo comprador, quando' não excedentes de trezentos mil réis (300$000) cada mez o pagamento não demorar mais de trinta dias contados do ultimo dia do mez da compra; <BR>&nbsp;&nbsp;&nbsp;&nbsp; V, as de fundos ds commercio, ou do estabelecimento, mediante balanço, para transferencia deste, desde que o preço seja pago dentro em quarenta dias, caso em que serão lançadas no livro competente, no ultimo dia da transacção, encerrando-o; <BR>&nbsp;&nbsp;&nbsp;&nbsp; VI, as de mercadorias, effectuadas a bordo dos navios nacionaes. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. Para escripturação das vendas de mercadorias a bordo dos navios nacionaes, haverá um livro especial, nos termos do modelo, já em uso, authenticado pela repartição fiscal federal da séde do registro maritimo do navio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Os commerciantes, estabelecidos nas praças de pará e do Amazonas nas transacções que fizerem para o interior dos mesmos Estados, poderão usar talões de notas de venda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os talões terão numero de ordem e serão constituidos de folhas fixas e folhas destacaveis, aquellas para as primeiras vias e estas para as segundas, tiradas a carbono, de sorte que, effectuada a venda em viagem, o commerciante ou seu preposto entregue ao comprador a segunda via da nota, conservando a primeira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As duplicatas, oriundas de taes vendas, conservarão os requisitos do art. 3º, substituidas, nos respectivos modelos, as palavras - constante de nossa factura n..... desta data - pelas seguintes - conforme nota de venda desta data, n....., extrahida do talão authenticado n......... <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Os livros referidos no art. 24 pagarão o imposto do sello federal a que estão sujeitos os livros indicados art. 11 do Codigo Commercial e serão rubricados como elles, sem prejuizo de qualquer outra disposição de lei estadual neste sentido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;As duplicatas e triplicatas não estão sujeitas a imposto federal de qualquer especie. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. Não estão tambem sujeitos ao imposto de sello federal os endossos lançados nas duplicatas ou tryplicatas, antes do seu vencimento. <BR><BR></P>
+<CENTER><B>CAPÍTULO VI </CENTER></B>
+<CENTER><B>DAS MULTAS E DAS PENAS </CENTER>
+<P></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Aos contraventores das disposições desta lei applicar-se-ão as seguintes multas : <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º De 100$000 a 200$000: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>aos que, dentro de uma quinzena, deixarem de escripturar o movimento de vendas á vista de oito ou mais dias; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>nos que deixarem em atrazo, por mais de quinze dias, o livro de Registro de Duplicatas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>aos que infringirem o disposto nos §§ 2º e 3º do artido 1º e § 1º do art. 11 e art. 12. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º De 300$000 a 500$000: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>aos que emittirem duplicatas ou triplicatas sem as formalidades desta lei ; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>aos que depois de intimados, se recusarem a exhibir aos representantes do fisco os livros de que trata esta lei. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º De 500$000 a 1:000$000: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>aos que deixarem de devolver as duplicatas e triplicatas, na forma e nos prazos legaes; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>aos que falsificarem ou aduÌterarem a escripturação dos livros exigidos por esta lei. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Para a fiscalização do cumprimento desta lei e para a applicação das multas, seu processo e recurso, applicar-se-ão, no que fôr possivel, as disposições dos decretos federaes ns. 22.061, 24.763 e 24.036, sem prejuizo de qualquer outra disposição de lei estadual nesse sentido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º As multas estabelecidas devem ser impostas em gráos minimos, médio ou maximo, attendendo á natureza da contravenção, se dolosa ou culposa, e á importaueia do negocio do contraventor ou da duplicata sobre que versar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Ao comprador que deixar de devolver a duplicata devidamente acceita, nos casos de que trata esta lei, ou que a devolver sem acceite, salvo o disposto nos arts. 12 paragrapho unico, e 14, será imposta a multa de 10 % do valor, da mesma duplicata, não podendo essa multa ser inferior a, 100$000, nem superior a 1:000$000. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;A. falta dos livros exigidos pelo art. 24, do pagamento do sello devido e a inobservancia, quanto a elles, dos dispositivos da lei deste, ficarão por ella disciplinados na sua fiscalização, na imposição das multas, no respectivo processo e nos recursos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Incorrerá na pena de prisão cellular por um a quatro annos, além da multa de 10 % sobre o respectivo montante, o que expedir duplicata que não corresponda a uma,venda effectiva de mercadorias entregues real ou symbolicamente e acompanhadas da respectiva factura. <BR></P>
+<CENTER><B>CAPÍTULO VII </CENTER></B>
+<CENTER><B>DAS DISPOSIÇÕES GERAIS </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;Os livros de que trata esta lei obedecerão aos modelos annexos ao decreto nº 22.061, de 9 de novembro de 1932, podendo os Estados adoptal-os para a arrecadação e fiscalização do imposto a que se refere o art. 8º, I, letra e da Constituição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;A opção, facultada pelo art. 57, § 2º, do decreto nº 5.138, de 5 de janeiro de 1927, fica extensiva aos productores em geral, cabendo, porém, em todos os casos, sómente quando se faça sob fiscalização de funccionarios federaes a arrecadação do imposto estadual sobre as vendas e consignações realizadas pelos contribuintes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Fica o Governo Federal autorizado a celebrar accordos com os dos Estados, afim de que funccionarios federaes effectuern, ou auxiliem, a arrecadação, ou a fiscalização dos impostos estaduaes sobre vendas e consignacões, e afim de assegurar a cobrança desse mesmo imposto nas vendas feitas ao Governo Federal, ou a repartições ou serviços que delle dependam . </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 36 As vendas de commerciantes e productores, inclusive imdustriaes, e as consignações, somente no Territorio&nbsp;do Acre&nbsp;e a bordo dos navios nacionaes, desde que não se&nbsp;trate de navegação fluvial em dominio territorial dos Estados&nbsp; (art. 20, alinea II, e art. 21, alinea II, da Constituição Federal), continuarão sujeitas ao imposto federal de vendas mercantis, na forma do regulamento approvado pelo decreto&nbsp;n. 22.061, de 9 de novembro de 1932. O Governo regulamentará a isenção do pequeno productor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;As vendas e consignações por commerciantes&nbsp;e productores inclusive industriaes, consideram-se effectuadas localidade em que tenha séde o estabelecimento do vendedor ou consignante; e, quando o vendedor, ou consignante tenha mais de um estabelecimento, consideram-se realizadas onde se ache situado o de que de fez originariamente expedição da mercadoria, ou em que o producto vendido consignado, foi obtido, ou preparado, inicial ou definitivamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;O funccionario federal, que verificar infracção desta lei, ou falta de pagamento de imposto estadual, remettera cópia do auto, que lavrar, á repartição estadual competente </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 39. Os Estados que tornarem effectiva a cobrança do imposto a elles attribuido pelo art. 8º - I - e da Consituição Federal, poderão arrecadal-o em sello adherido ás duplicatas e triplicatas ou aos livros referidos no art. 24. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Os livros de escripturação dos estabelecimentos commerciaes ou industriaes devem ser apresentados aos agentes do fisco federal ou estadual, na parte referente aos actos sobre os quaes haja fundadas suspeitas de infracção da presente lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;As multas apontadas no art. 29, bem como as impostas pela falta dos livros de que trata esta lei, não prejudicam as que, por essas infracções, venham a ser estabelecidas em leis estaduaes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Esta lei entrará em vigor, em todo o territorio nacional, no dia 1 de janeiro de 1936, e será communicada por telegramma aos Governadores, revogadas as disposições em contrario. </P>
+<P>Rio de Janeiro, 15 de Janeiro de 1936, 115º da Independencia e 48º da Republica. </P>
+<P>GETULIO VARGAS<BR>Arthur de Souza Costa <BR></P>
+<P>&nbsp;</P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 20/01/1936
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 20/1/1936, Página 1539  
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1936, Página 38 
+                                                        Vol. 1          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,805 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 10.637, DE 30 DE DEZEMBRO DE 2002 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre a não-cumulatividade na cobrança da contribuição para os Programas de Integração Social (PIS) e de Formação do Patrimônio do Servidor Público (Pasep), nos casos que especifica; sobre o pagamento e o parcelamento de débitos tributários federais, a compensação de créditos fiscais, a declaração de inaptidão de inscrição de pessoas jurídicas, a legislação aduaneira, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 10.637, DE 30 DE DEZEMBRO DE 2002 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-10637-30-dezembro-2002-491384-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-10637-30-dezembro-2002-491384-normaatualizada-pl.docx">formato docx</a>)
+                                                &nbsp;
+                                                    (<a href="lei-10637-30-dezembro-2002-491384-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-10637-30-dezembro-2002-491384-veto-14566-pl.html">Veto</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=69840">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-10637-30-dezembro-2002-491384-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 10.637, DE 30 DE DEZEMBRO DE 2002</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre a não-cumulatividade na cobrança da contribuição para os Programas de Integração Social (PIS) e de Formação do Patrimônio do Servidor Público (Pasep), nos casos que especifica; sobre o pagamento e o parcelamento de débitos tributários federais, a compensação de créditos fiscais, a declaração de inaptidão de inscrição de pessoas jurídicas, a legislação aduaneira, e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							&nbsp;&nbsp;&nbsp;&nbsp; <STRONG>O PRESIDENTE DA REPÚBLICA</STRONG> <BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER>CAPÍTULO I <BR>DA COBRANÇA NÃO-CUMULATIVA DO PIS E DO PASEP </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;A contribuição para o PIS/Pasep tem como fato gerador o faturamento mensal, assim entendido o total das receitas auferidas pela pessoa jurídica, independentemente de sua denominação ou classificação contábil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para efeito do disposto neste artigo, o total das receitas compreende a receita bruta da venda de bens e serviços nas operações em conta própria ou alheia e todas as demais receitas auferidas pela pessoa jurídica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A base de cálculo da contribuição para o PIS/Pasep é o valor do faturamento, conforme definido no <EM>caput</EM> . <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Não integram a base de cálculo a que se refere este artigo, as receitas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - decorrentes de saídas isentas da contribuição ou sujeitas à alíquota zero; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - auferidas pela pessoa jurídica revendedora, na revenda de mercadorias em relação às quais a contribuição seja exigida da empresa vendedora, na condição de substituta tributária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - de venda dos produtos de que tratam as Leis nº 9.990, de 21 de julho de 2000, no 10.147, de 21 de dezembro de 2000, e nº 10.485, de 3 de julho de 2002, ou quaisquer outras submetidas à incidência monofásica da contribuição; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - referentes a: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>vendas canceladas e aos descontos incondicionais concedidos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>reversões de provisões e recuperações de créditos baixados como perda, que não representem ingresso de novas receitas, o resultado positivo da avaliação de investimentos pelo valor do patrimônio líquido e os lucros e dividendos derivados de investimentos avaliados pelo custo de aquisição, que tenham sido computados como receita. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Para determinação do valor da contribuição para o PIS/Pasep aplicar-se-á, sobre a base de cálculo apurada conforme o disposto no art. 1º, a alíquota de 1,65% (um inteiro e sessenta e cinco centésimos por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Do valor apurado na forma do art. 2º a pessoa jurídica poderá descontar créditos calculados em relação a: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - bens adquiridos para revenda, exceto em relação às mercadorias e aos produtos referidos nos incisos III e IV do § 3º do art. 1º; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - bens e serviços utilizados como insumo na fabricação de produtos destinados à venda ou à prestação de serviços, inclusive combustíveis e lubrificantes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - aluguéis de prédios, máquinas e equipamentos, pagos a pessoa jurídica, utilizados nas atividades da empresa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - despesas financeiras decorrentes de empréstimos e financiamentos de pessoa jurídica, exceto de optante pelo Sistema Integrado de Pagamento de Impostos e Contribuições das Microempresas e das Empresas de Pequeno Porte (Simples); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - máquinas e equipamentos adquiridos para utilização na fabricação de produtos destinados à venda, bem como a outros bens incorporados ao ativo imobilizado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - edificações e benfeitorias em imóveis de terceiros, quando o custo, inclusive de mão-de-obra, tenha sido suportado pela locatária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - bens recebidos em devolução, cuja receita de venda tenha integrado faturamento do mês ou de mês anterior, e tributada conforme o disposto nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O crédito será determinado mediante a aplicação da alíquota prevista no art. 2º sobre o valor: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - dos itens mencionados nos incisos I e II do <EM>caput</EM> , adquiridos no mês; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - dos itens mencionados nos incisos III a V do <EM>caput</EM> , incorridos no mês; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - dos encargos de depreciação e amortização dos bens mencionados nos incisos VI e VII do <EM>caput</EM> , incorridos no mês; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - dos bens mencionados no inciso VIII do <EM>caput</EM> , devolvidos no mês. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Não dará direito a crédito o valor de mão-de-obra paga a pessoa física. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O direito ao crédito aplica-se, exclusivamente, em relação: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - aos bens e serviços adquiridos de pessoa jurídica domiciliada no País; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - aos custos e despesas incorridos, pagos ou creditados a pessoa jurídica domiciliada no País; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - aos bens e serviços adquiridos e aos custos e despesas incorridos a partir do mês em que se iniciar a aplicação do disposto nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O crédito não aproveitado em determinado mês poderá sê-lo nos meses subseqüentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º Na hipótese de a pessoa jurídica sujeitar-se à incidência não-cumulativa da contribuição para o PIS/Pasep, em relação apenas a parte de suas receitas, o crédito será apurado, exclusivamente, em relação aos custos, despesas e encargos vinculados a essas receitas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º Observadas as normas a serem editadas pela Secretaria da Receita Federal, no caso de custos, despesas e encargos vinculados às receitas referidas no § 7º e àquelas submetidas ao regime de incidência cumulativa dessa contribuição, o crédito será determinado, a critério da pessoa jurídica, pelo método de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - apropriação direta, inclusive em relação aos custos, por meio de sistema de contabilidade de custos integrada e coordenada com a escrituração; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - rateio proporcional, aplicando-se aos custos, despesas e encargos comuns a relação percentual existente entre a receita bruta sujeita à incidência não-cumulativa e a receita bruta total, auferidas em cada mês. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 9º O método eleito pela pessoa jurídica será aplicado consistentemente por todo o ano-calendário, observadas as normas a serem editadas pela Secretaria da Receita Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;O contribuinte da contribuição para o PIS/Pasep é a pessoa jurídica que auferir as receitas a que se refere o art. 1º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;A contribuição para o PIS/Pasep não incidirá sobre as receitas decorrentes das operações de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - exportação de mercadorias para o exterior; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - prestação de serviços para pessoa física ou jurídica domiciliada no exterior, com pagamento em moeda conversível; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - vendas a empresa comercial exportadora com o fim específico de exportação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Na hipótese deste artigo, a pessoa jurídica vendedora poderá utilizar o crédito apurado na forma do art. 3º para fins de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - dedução do valor da contribuição a recolher, decorrente das demais operações no mercado interno; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - compensação com débitos próprios, vencidos ou vincendos, relativos a tributos e contribuições administrados pela Secretaria da Receita Federal, observada a legislação específica aplicável à matéria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A pessoa jurídica que, até o final de cada trimestre do ano civil, não conseguir utilizar o crédito por qualquer das formas previstas no § 1º, poderá solicitar o seu ressarcimento em dinheiro, observada a legislação específica aplicável à matéria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;O direito ao ressarcimento da contribuição para o PIS/Pasep de que tratam as Leis nº 9.363, de 13 de dezembro de 1996, e nº 10.276, de 10 de setembro de 2001, não se aplica à pessoa jurídica submetida à apuração do valor devido na forma dos arts. 2º e 3º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Relativamente à pessoa jurídica referida no <EM>caput</EM> : <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o percentual referido no § 1º do art. 2º da Lei nº 9.363, de 13 de dezembro de 1996, será de 4,04% (quatro inteiros e quatro centésimos por cento); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o índice da fórmula de determinação do fator (F), constante do Anexo único da Lei nº 10.276, de 10 de setembro de 2001, será de 0,03 (três centésimos). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;A empresa comercial exportadora que houver adquirido mercadorias de outra pessoa jurídica, com o fim específico de exportação para o exterior, que, no prazo de 180 (cento e oitenta) dias, contado da data da emissão da nota fiscal pela vendedora, não comprovar o seu embarque para o exterior, ficará sujeita ao pagamento de todos os impostos e contribuições que deixaram de ser pagos pela empresa vendedora, acrescidos de juros de mora e multa, de mora ou de ofício, calculados na forma da legislação que rege a cobrança do tributo não pago. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para efeito do disposto neste artigo, considera-se vencido o prazo para o pagamento na data em que a empresa vendedora deveria fazê-lo, caso a venda houvesse sido efetuada para o mercado interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No pagamento dos referidos tributos, a empresa comercial exportadora não poderá deduzir, do montante devido, qualquer valor a título de crédito de Imposto sobre Produtos Industrializados (IPI) ou de contribuição para o PIS/Pasep, decorrente da aquisição das mercadorias e serviços objeto da incidência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A empresa deverá pagar, também, os impostos e contribuições devidos nas vendas para o mercado interno, caso, por qualquer forma, tenha alienado ou utilizado as mercadorias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Permanecem sujeitas às normas da legislação da contribuição para o PIS/Pasep, vigentes anteriormente a esta Lei, não se lhes aplicando as disposições dos arts. 1º a 6º: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - as pessoas jurídicas referidas nos §§ 6º, 8º e 9º do art. 3º da Lei nº 9.718, de 27 de novembro de 1998 (parágrafos introduzidos pela Medida Provisória nº 2.158-35, de 24 de agosto de 2001), e Lei nº 7.102, de 20 de junho de 1983; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - as pessoas jurídicas tributadas pelo imposto de renda com base no lucro presumido ou arbitrado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - as pessoas jurídicas optantes pelo Simples; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - as pessoas jurídicas imunes a impostos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - os órgãos públicos, as autarquias e fundações públicas federais, estaduais e municipais, e as fundações cuja criação tenha sido autorizada por lei, referidas no art. 61 do Ato das Disposições Constitucionais Transitórias da Constituição de 1988; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - as receitas decorrentes das operações: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>referidas no inciso IV do § 3º do art. 1º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>sujeitas à substituição tributária da contribuição para o PIS/Pasep; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>referidas no art. 5º da Lei nº 9.716, de 26 de novembro de 1998; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - as receitas decorrentes de prestação de serviços de telecomunicações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;A contribuição de que trata o art. 1º deverá ser paga até o último dia útil da primeira quinzena do mês subseqüente ao da ocorrência do fato gerador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;A pessoa jurídica contribuinte do PIS/Pasep, submetida à apuração do valor devido na forma do art. 3º, terá direito a desconto correspondente ao estoque de abertura dos bens de que tratam os incisos I e II desse artigo, adquiridos de pessoa jurídica domiciliada no País, existentes em 1º de dezembro de 2002. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O montante de crédito presumido será igual ao resultado da aplicação do percentual de 0,65% (sessenta e cinco centésimos por cento) sobre o valor do estoque. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O crédito presumido calculado segundo o § 1º será utilizado em 12 (doze) parcelas mensais, iguais e sucessivas, a partir da data a que se refere o <EM>caput</EM> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A pessoa jurídica que, tributada com base no lucro presumido, passar a adotar o regime de tributação com base no lucro real, terá, na hipótese de, em decorrência dessa opção, sujeitar-se à incidência não-cumulativa da contribuição para o PIS/Pasep, direito a desconto correspondente ao estoque de abertura dos bens e ao aproveitamento do crédito presumido na forma prevista neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Até 31 de dezembro de 2003, o Poder Executivo submeterá ao Congresso Nacional projeto de lei tornando não-cumulativa a cobrança da Contribuição para o Financiamento da Seguridade Social (Cofins). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O projeto conterá também a modificação, se necessária, da alíquota da contribuição para o PIS/Pasep, com a finalidade de manter constante, em relação a períodos anteriores, a parcela da arrecadação afetada pelas alterações introduzidas por esta Lei. <BR><BR>
+<CENTER>CAPÍTULO II <BR>DAS OUTRAS DISPOSIÇÕES RELATIVAS À LEGISLAÇÃO TRIBUTÁRIA E ADUANEIRA </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;Poderão ser pagos até o último dia útil de janeiro de 2003, em parcela única, os débitos a que se refere o art. 11 da Medida Provisória nº 2.158-35, de 24 de agosto de 2001, vinculados ou não a qualquer ação judicial, relativos a fatos geradores ocorridos até 30 de abril de 2002. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para os efeitos deste artigo, a pessoa jurídica deverá comprovar a desistência expressa e irrevogável de todas as ações judiciais que tenham por objeto os tributos a serem pagos e renunciar a qualquer alegação de direito sobre a qual se fundam as referidas ações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na hipótese de que trata este artigo, serão dispensados os juros de mora devidos até janeiro de 1999, sendo exigido esse encargo, na forma do § 4º do art. 17 da Lei nº 9.779, de 19 de janeiro de 1999, acrescido pela Medida Provisória nº 2.158-35, de 24 de agosto de 2001, a partir do mês: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - de fevereiro do referido ano, no caso de fatos geradores ocorridos até janeiro de 1999; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - seguinte ao da ocorrência do fato gerador, nos demais casos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Na hipótese deste artigo, a multa, de mora ou de ofício, incidente sobre o débito constituído ou não, será reduzida no percentual fixado no <EM>caput</EM> do art. 6º da Lei nº 8.218, de 29 de agosto de 1991. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Para efeito do disposto no <EM>caput</EM> , se os débitos forem decorrentes de lançamento de ofício e se encontrarem com exigibilidade suspensa por força do inciso III do art. 151 da Lei nº 5.172, de 25 de outubro de 1966, o sujeito passivo deverá desistir expressamente e de forma irrevogável da impugnação ou do recurso interposto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Os débitos de que trata o art. 13, relativos a fatos geradores vinculados a ações judiciais propostas pelo sujeito passivo contra exigência de imposto ou contribuição instituído após 1º de janeiro de 1999 ou contra majoração, após aquela data, de tributo ou contribuição anteriormente instituído, poderão ser pagos em parcela única até o último dia útil de janeiro de 2003 com a dispensa de multas moratória e punitivas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para efeito deste artigo, o contribuinte ou o responsável deverá comprovar a desistência expressa e irrevogável de todas as ações judiciais que tenham por objeto os tributos a serem pagos na forma do <EM>caput</EM> , e renunciar a qualquer alegação de direito sobre as quais se fundam as referidas ações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O benefício de que trata este artigo somente poderá ser usufruído caso o contribuinte ou o responsável pague integralmente, no mesmo prazo estabelecido no <EM>caput</EM> , os débitos nele referidos, relativos a fatos geradores ocorridos de maio de 2002 até o mês anterior ao do pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Na hipótese deste artigo, os juros de mora devidos serão determinados pela variação mensal da Taxa de Juros de Longo Prazo (TJLP). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Relativamente aos tributos e contribuições administrados pela Secretaria da Receita Federal, o contribuinte ou o responsável que, a partir de 15 de maio de 2002, tenha efetuado pagamento de débitos, em conformidade com norma de caráter exonerativo, e divergir em relação ao valor de débito constituído de ofício, poderá impugnar, com base nas normas estabelecidas no Decreto nº 70.235, de 6 de março de 1972, a parcela não reconhecida como devida, desde que a impugnação: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - seja apresentada juntamente com o pagamento do valor reconhecido como devido; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - verse, exclusivamente, sobre a divergência de valor, vedada a inclusão de quaisquer outras matérias, em especial as de direito em que se fundaram as respectivas ações judiciais ou impugnações e recursos anteriormente apresentados contra o mesmo lançamento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - seja precedida do depósito da parcela não reconhecida como devida, determinada de conformidade com o disposto na Lei nº 9.703, de 17 de novembro de 1998. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Da decisão proferida em relação à impugnação de que trata este artigo caberá recurso nos termos do Decreto nº 70.235, de 6 de março de 1972 <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A conclusão do processo administrativo-fiscal, por decisão definitiva em sua esfera ou desistência do sujeito passivo, implicará a imediata conversão em renda do depósito efetuado, na parte favorável à Fazenda Nacional, transformando-se em pagamento definitivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A parcela depositada nos termos do inciso III do <EM>caput</EM> que venha a ser considerada indevida por força da decisão referida no § 2º sujeitar-se-á ao disposto na Lei nº 9.703, de 17 de novembro de 1998. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O disposto neste artigo também se aplica a majoração ou a agravamento de multa de ofício, na hipótese do art. 13. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Aplica-se o disposto nos arts. 13 e 14 às contribuições arrecadadas pelo Instituto Nacional do Seguro Social (INSS), observada regulamentação editada por esse órgão, em especial quanto aos procedimentos no âmbito de seu contencioso administrativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;A opção pela modalidade de pagamento de débitos prevista no <EM>caput</EM> do art. 5º da Medida Provisória nº 2.222, de 4 de setembro de 2001, poderá ser exercida até o último dia útil do mês de janeiro de 2003, desde que o pagamento seja efetuado em parcela única até essa data. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os débitos a serem pagos em decorrência do disposto no <EM>caput</EM> serão acrescidos de juros equivalentes à taxa do Sistema Especial de Liquidação e Custódia (Selic) para títulos federais, acumulada mensalmente, calculados a partir do mês de janeiro de 2002 até o mês anterior ao do pagamento, e adicionados de 1% (um por cento) relativamente ao mês em que o pagamento estiver sendo feito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Os débitos relativos à contribuição para o Programa de Formação do Patrimônio do Servidor Público (Pasep) dos Estados, do Distrito Federal e dos Municípios, bem como de suas autarquias e fundações públicas, sem exigibilidade suspensa, correspondentes a fato gerador ocorrido até 30 de abril de 2002, poderão ser pagos mediante regime especial de parcelamento, por opção da pessoa jurídica de direito público interno devedora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A opção referida no <EM>caput</EM> deverá ser formalizada até o último dia útil do mês de setembro de 2002, nos termos e condições estabelecidos pela Secretaria da Receita Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;O regime especial de parcelamento referido no art. 18 implica a consolidação dos débitos na data da opção e abrangerá a totalidade dos débitos existentes em nome da optante, constituídos ou não, inclusive os juros de mora incidentes até a data de opção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O débito consolidado na forma deste artigo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - sujeitar-se-á, a partir da data da consolidação, a juros equivalentes à taxa do Selic para títulos federais, acumulada mensalmente, calculados a partir da data de deferimento do pedido até o mês anterior ao do pagamento, e adicionados de 1% (um por cento) relativamente ao mês em que o pagamento estiver sendo feito; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - será pago mensalmente, até o último dia útil da primeira quinzena de cada mês, no valor equivalente a 5% (cinco por cento) do valor devido no mesmo mês pela optante, relativo ao Pasep correspondente ao fato gerador ocorrido no mês imediatamente anterior, até a liquidação total do débito; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a última parcela será paga pelo valor residual do débito, quando inferior ao referido no inciso II. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;A opção pelo regime especial de parcelamento referido no art. 18 sujeita a pessoa jurídica: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - à confissão irrevogável e irretratável dos débitos referidos no art. 19; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ao pagamento regular das parcelas do débito consolidado, bem como dos valores devidos relativos ao Pasep decorrentes de fatos geradores ocorridos posteriormente a 30 de abril de 2002. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A opção pelo regime especial exclui qualquer outra forma de parcelamento de débitos relativos ao Pasep. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;A pessoa jurídica optante pelo regime especial de parcelamento referido no art. 18 será dele excluída nas seguintes hipóteses: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - inobservância da exigência estabelecida no inciso I do art. 20; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - inadimplência, por 2 (dois) meses consecutivos ou 6 (seis) alternados, relativamente ao Pasep, inclusive decorrente de fatos geradores ocorridos posteriormente a 30 de abril de 2002. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A exclusão da pessoa jurídica do regime especial implicará exigibilidade imediata da totalidade do crédito confessado e ainda não pago. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A exclusão será formalizada por meio de ato da Secretaria da Receita Federal e produzirá efeitos a partir do mês subseqüente àquele em que a pessoa jurídica optante for cientificada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;A opção pelo parcelamento alternativo ao Refis de que trata o art. 12 da Lei nº 9.964, de 10 de abril de 2000, regularmente efetuada, poderá ser convertida em opção pelo Refis, e vice-versa, na hipótese de erro de fato cometido por ocasião do primeiro pagamento efetuado, observadas as normas estabelecidas pelo Comitê Gestor do referido Programa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A mudança de opção referida neste artigo deverá ser solicitada até o último dia útil do mês de janeiro de 2003. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A pessoa jurídica excluída do parcelamento alternativo ao Refis em razão de pagamento de parcela em valor inferior ao fixado no art. 12, § 1º, da Lei nº 9.964, de 10 de abril de 2000, acrescido de juros correspondentes à variação mensal da Taxa de Juros de Longo Prazo (TJLP), poderá ter sua opção restabelecida, observado o disposto no <EM>caput</EM> . <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A conversão da opção nos termos deste artigo não implica restituição ou compensação de valores já pagos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;O <EM>caput</EM> do art. 10 da Lei nº 10.522, de 19 de julho de 2002, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 10.&nbsp;Os débitos de qualquer natureza para com a Fazenda Nacional poderão ser parcelados em até sessenta parcelas mensais, a exclusivo critério da autoridade fazendária, na forma e condições previstas nesta Lei. <BR>........................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Relativamente aos tributos e contribuições administrados pela Secretaria da Receita Federal, na hipótese de, na data do pagamento realizado de conformidade com norma de caráter exonerativo, o contribuinte ou o responsável estiver sob ação de fiscalização relativamente à matéria a ser objeto desse pagamento, a parcela não reconhecida como devida poderá ser impugnada no prazo fixado na intimação constante do auto de infração ou da notificação de lançamento, nas condições estabelecidas pela referida norma, inclusive em relação ao depósito da respectiva parcela dentro do prazo previsto para o pagamento do valor reconhecido como devido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Poderão optar pelo Sistema Integrado de Pagamento de Impostos e Contribuições das Microempresas e das Empresas de Pequeno Porte (Simples), nas condições estabelecidas pela Lei nº 9.317, de 5 de dezembro de 1996, as pessoas jurídicas que se dediquem exclusivamente às atividades de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - agência de viagem e turismo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;A operação de comércio exterior realizada mediante utilização de recursos de terceiro presume-se por conta e ordem deste, para fins de aplicação do disposto nos arts. 77 a 81 da Medida Provisória nº 2.158-35, de 24 de agosto de 2001. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;As empresas de transporte internacional que operem em linha regular, por via aérea ou marítima, deverão prestar informações sobre tripulantes e passageiros, na forma e no prazo estabelecidos pela Secretaria da Receita Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O descumprimento do disposto neste artigo ensejará a aplicação de multa no valor de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - R$ 5.000,00 (cinco mil reais) por veículo cujas informações não sejam prestadas; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - R$ 200,00 (duzentos reais) por informação omitida, limitado ao valor de R$ 5.000,00 (cinco mil reais) por veículo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;As matérias-primas, os produtos intermediários e os materiais de embalagem, destinados a estabelecimento que se dedique, preponderantemente, à elaboração de produtos classificados nos Capítulos 2, 3, 4, 7, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 20, 23 (exceto códigos 2309.10.00 e 2309.90.30 e Ex-01 no código 2309.90.90), 28, 29, 30, 31 e 64, no código 2209.00.00, e nas posições 21.01 a 21.05.00, da Tabela de Incidência do Imposto sobre Produtos Industrializados - Tipi, inclusive aqueles a que corresponde a notação NT (não tributados), sairão do estabelecimento industrial com suspensão do referido imposto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O disposto neste artigo aplica-se, também, às saídas de matérias-primas, produtos intermediários e materiais de embalagem, quando adquiridos por: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - estabelecimentos industriais fabricantes, preponderantemente, de: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>componentes, chassis, carroçarias, partes e peças dos produtos a que se refere o art. 1º da Lei nº 10.485, de 3 de julho de 2002; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>partes e peças destinadas a estabelecimento industrial fabricante de produto classificado no Capítulo 88 da Tipi; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - pessoas jurídicas preponderantemente exportadoras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O disposto no <EM>caput</EM> e no inciso I do § 1º aplica-se ao estabelecimento industrial cuja receita bruta decorrente dos produtos ali referidos, no ano-calendário imediatamente anterior ao da aquisição, houver sido superior a 60% (sessenta por cento) de sua receita bruta total no mesmo período. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Para fins do disposto no inciso II do § 1º, considera-se pessoa jurídica preponderantemente exportadora aquela cuja receita bruta decorrente de exportação para o exterior, no ano-calendário imediatamente anterior ao da aquisição, houver sido superior a 80% (oitenta por cento) de sua receita bruta total no mesmo período. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º As matérias-primas, os produtos intermediários e os materiais de embalagem, importados diretamente por estabelecimento de que tratam o <EM>caput</EM> e o § 1º serão desembaraçados com suspensão do IPI. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º A suspensão do imposto não impede a manutenção e a utilização dos créditos do IPI pelo respectivo estabelecimento industrial, fabricante das referidas matérias-primas, produtos intermediários e materiais de embalagem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Nas notas fiscais relativas às saídas referidas no § 5º, deverá constar a expressão "Saída com suspensão do IPI", com a especificação do dispositivo legal correspondente, vedado o registro do imposto nas referidas notas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º Para os fins do disposto neste artigo, as empresas adquirentes deverão: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - atender aos termos e às condições estabelecidos pela Secretaria da Receita Federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - declarar ao vendedor, de forma expressa e sob as penas da lei, que atende a todos os requisitos estabelecidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;A falta de prestação das informações a que se refere o art. 5º da Lei Complementar nº 105, de 10 de janeiro de 2001, ou sua apresentação de forma inexata ou incompleta, sujeita a pessoa jurídica às seguintes penalidades: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - R$ 50,00 (cinqüenta reais) por grupo de cinco informações inexatas, incompletas ou omitidas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - R$ 5.000,00 (cinco mil reais) por mês-calendário ou fração, independentemente da sanção prevista no inciso I, na hipótese de atraso na entrega da declaração que venha a ser instituída para o fim de apresentação das informações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O disposto no inciso II do <EM>caput</EM> aplica-se também à declaração que não atenda às especificações que forem estabelecidas pela Secretaria da Receita Federal, inclusive quando exigida em meio digital. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As multas de que trata este artigo serão: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - apuradas considerando o período compreendido entre o dia seguinte ao término do prazo fixado para a entrega da declaração até a data da efetiva entrega; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - majoradas em 100% (cem por cento), na hipótese de lavratura de auto de infração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Na hipótese de lavratura de auto de infração, caso a pessoa jurídica não apresente a declaração, serão lavrados autos de infração complementares até a sua efetiva entrega. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;A falta de apresentação dos elementos a que se refere o art. 6º da Lei Complementar nº 105, de 10 de janeiro de 2001, ou sua apresentação de forma inexata ou incompleta, sujeita a pessoa jurídica à multa equivalente a 2% (dois por cento) do valor das operações objeto da requisição, apurado por meio de procedimento fiscal junto à própria pessoa jurídica ou ao titular da conta de depósito ou da aplicação financeira, bem como a terceiros, por mês-calendário ou fração de atraso, limitada a 10% (dez por cento), observado o valor mínimo de R$ 50.000,00 (cinqüenta mil reais). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>À multa de que trata este artigo aplica-se o disposto nos §§ 2º e 3º do art. 30. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;As entidades fechadas de previdência complementar poderão excluir da base de cálculo da contribuição para o PIS/Pasep e da Cofins, além dos valores já previstos na legislação vigente, os referentes a: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - rendimentos relativos a receitas de aluguel, destinados ao pagamento de benefícios de aposentadoria, pensão, pecúlio e resgates; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - receita decorrente da venda de bens imóveis, destinada ao pagamento de benefícios de aposentadoria, pensão, pecúlio e resgates; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - resultado positivo auferido na reavaliação da carteira de investimentos imobiliários referida nos incisos I e II. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As entidades de que trata o <EM>caput</EM> poderão pagar em parcela única, até o último dia útil do mês de novembro de 2002, com dispensa de juros e multa, os débitos relativos à contribuição para o PIS/Pasep e à Cofins, constituídos ou não, inscritos ou não em Dívida Ativa, ajuizados ou a ajuizar, referentes a fatos geradores ocorridos até 31 de julho de 2002 e decorrentes de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - rendimentos relativos a receitas de aluguel, destinados ao pagamento de benefícios de aposentadoria, pensão, pecúlio e resgates; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - receita decorrente da venda de bens imóveis, destinada ao pagamento de benefícios de aposentadoria, pensão, pecúlio e resgates; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - resultado positivo auferido na reavaliação da carteira de investimentos imobiliários referida nos incisos I e II. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;A condição e a vedação estabelecidas, respectivamente, no art. 13, § 2º, III, b, da Lei nº 9.249, de 26 de dezembro de 1995, e no art. 12, § 2º, a, da Lei nº 9.532, de 10 de dezembro de 1997, não alcançam a hipótese de remuneração de dirigente, em decorrência de vínculo empregatício, pelas Organizações da Sociedade Civil de Interesse Público (Oscip), qualificadas segundo as normas estabelecidas na Lei nº 9.790, de 23 de março de 1999, e pelas Organizações Sociais (OS), qualificadas consoante os dispositivos da Lei nº 9.637, de 15 de maio de 1998. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O disposto neste artigo aplica-se somente à remuneração não superior, em seu valor bruto, ao limite estabelecido para a remuneração de servidores do Poder Executivo Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;A receita decorrente da avaliação de títulos e valores mobiliários, instrumentos financeiros, derivativos e itens objeto de hedge , registrada pelas instituições financeiras e demais entidades autorizadas a funcionar pelo Banco Central do Brasil, instituições autorizadas a operar pela Superintendência de Seguros Privados ¿ Susep e sociedades autorizadas a operar em seguros ou resseguros em decorrência da valoração a preço de mercado no que exceder ao rendimento produzido até a referida data somente será computada na base de cálculo do Imposto de Renda das Pessoas Jurídicas, da Contribuição Social sobre o Lucro Líquido, da Contribuição para o Financiamento da Seguridade Social (Cofins) e da contribuição para o PIS/Pasep quando da alienação dos respectivos ativos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Na hipótese de desvalorização decorrente da avaliação mencionada no <EM>caput</EM> , o reconhecimento da perda para efeito do Imposto de Renda das Pessoas Jurídicas e da Contribuição Social sobre o Lucro Líquido será computada também quando da alienação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para fins do disposto neste artigo, considera-se alienação qualquer forma de transmissão da propriedade, bem como a liquidação, o resgate e a cessão dos referidos títulos e valores mobiliários, instrumentos financeiros derivativos e itens objeto de hedge . <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os registros contábeis de que trata este artigo serão efetuados em contrapartida à conta de ajustes específica para esse fim, na forma a ser estabelecida pela Secretaria da Receita Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Ficam convalidados os procedimentos efetuados anteriormente à vigência desta Lei, no curso do ano-calendário de 2002, desde que observado o disposto neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;Não será computada, na determinação do lucro real e da base de cálculo da Contribuição Social sobre o Lucro Líquido da pessoa jurídica, a parcela correspondente à diferença entre o valor de integralização de capital, resultante da incorporação ao patrimônio de outra pessoa jurídica que efetuar a subscrição e integralização, e o valor dessa participação societária registrado na escrituração contábil desta mesma pessoa jurídica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O valor da diferença apurada será controlado na parte B do Livro de Apuração do Lucro Real (Lalur) e somente deverá ser computado na determinação do lucro real e da base de cálculo da Contribuição Social sobre o Lucro Líquido: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - na alienação, liquidação ou baixa, a qualquer título, da participação subscrita, proporcionalmente ao montante realizado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - proporcionalmente ao valor realizado, no período de apuração em que a pessoa jurídica para a qual a participação societária tenha sido transferida realizar o valor dessa participação, por alienação, liquidação, conferência de capital em outra pessoa jurídica, ou baixa a qualquer título. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Não será considerada realização a eventual transferência da participação societária incorporada ao patrimônio de outra pessoa jurídica, em decorrência de fusão, cisão ou incorporação, observadas as condições do § 1º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;Relativamente aos fatos geradores ocorridos a partir de 1º de janeiro de 2003, a alíquota da Contribuição Social sobre o Lucro Líquido (CSLL), instituída pela Lei nº 7.689, de 15 de dezembro de 1988, será de 9% (nove por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Fica instituído, em relação aos tributos e contribuições administrados pela Secretaria da Receita Federal, bônus de adimplência fiscal, aplicável às pessoas jurídicas submetidas ao regime de tributação com base no lucro real ou presumido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O bônus referido no <EM>caput</EM> : <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - corresponde a 1% (um por cento) da base de cálculo da CSLL determinada segundo as normas estabelecidas para as pessoas jurídicas submetidas ao regime de apuração com base no lucro presumido; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - será calculado em relação à base de cálculo referida no inciso I, relativamente ao ano-calendário em que permitido seu aproveitamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na hipótese de período de apuração trimestral, o bônus será calculado em relação aos 4 (quatro) trimestres do ano-calendário e poderá ser deduzido da CSLL devida correspondente ao último trimestre. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Não fará jus ao bônus a pessoa jurídica que, nos últimos 5 (cinco) anos-calendário, se enquadre em qualquer das seguintes hipóteses, em relação a tributos e contribuições administrados pela Secretaria da Receita Federal: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - lançamento de ofício; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - débitos com exigibilidade suspensa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - inscrição em dívida ativa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - recolhimentos ou pagamentos em atraso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - falta ou atraso no cumprimento de obrigação acessória. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Na hipótese de decisão definitiva, na esfera administrativa ou judicial, que implique desoneração integral da pessoa jurídica, as restrições referidas nos incisos I e II do § 3º serão desconsideradas desde a origem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º O período de 5 (cinco) anos-calendário será computado por ano completo, inclusive aquele em relação ao qual dar-se-á o aproveitamento do bônus. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º A dedução do bônus dar-se-á em relação à CSLL devida no ano-calendário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º A parcela do bônus que não puder ser aproveitada em determinado período poderá sê-lo em períodos posteriores, vedado o ressarcimento ou a compensação distinta da referida neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º A utilização indevida do bônus instituído por este artigo implica a imposição da multa de que trata o inciso II do art. 44 da Lei nº 9.430, de 27 de dezembro de 1996, sem prejuízo do disposto em seu § 2º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 9º O bônus será registrado na contabilidade da pessoa jurídica beneficiária: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - na aquisição do direito, a débito de conta de Ativo Circulante e a crédito de Lucro ou Prejuízos Acumulados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - na utilização, a débito da provisão para pagamento da CSLL e a crédito da conta de Ativo Circulante referida no inciso I. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 10. A Secretaria da Receita Federal estabelecerá as normas necessárias à aplicação deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;As pessoas jurídicas poderão deduzir do lucro líquido, na determinação do lucro real e da base de cálculo da CSLL, as despesas operacionais relativas aos dispêndios realizados com pesquisa tecnológica e desenvolvimento de inovação tecnológica de produtos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Considera-se inovação tecnológica a concepção de novo produto ou processo de fabricação, bem como a agregação de novas funcionalidades ou características ao produto ou processo que implique melhorias incrementais e no efetivo ganho de qualidade ou produtividade, resultando maior competitividade no mercado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os valores relativos aos dispêndios incorridos em instalações fixas e na aquisição de aparelhos, máquinas e equipamentos, destinados à utilização em projetos de pesquisa e desenvolvimentos tecnológicos, metrologia, normalização técnica e avaliação da conformidade, aplicáveis a produtos, processos, sistemas e pessoal, procedimentos de autorização de registros, licenças, homologações e suas formas correlatas, bem como relativos a procedimentos de proteção de propriedade intelectual, poderão ser depreciados na forma da legislação vigente, podendo o saldo não depreciado ser excluído na determinação do lucro real, no período de apuração em que concluída sua utilização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O valor do saldo excluído na forma do § 2º deverá ser controlado na parte B do Livro de Apuração do Lucro Real (Lalur) e será adicionado, na determinação do lucro real, em cada período de apuração posterior, pelo valor da depreciação normal que venha a ser contabilizada como despesa operacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Para fins da dedução, os dispêndios deverão ser controlados contabilmente em contas específicas, individualizadas por projeto realizado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º No exercício de 2003, o disposto no <EM>caput</EM> deste artigo aplica-se também aos saldos, em 31 de dezembro de 2002, das contas do Ativo Diferido, referentes a dispêndios realizados com pesquisa tecnológica e desenvolvimento de inovação tecnológica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Sem prejuízo do disposto no art. 39, a pessoa jurídica poderá, ainda, excluir, na determinação do lucro real, valor equivalente a 100% (cem por cento) do dispêndio total de cada projeto que venha a ser transformado em depósito de patente, devidamente registrado no Instituto Nacional de Propriedade Industrial (INPI), e, cumulativamente, em pelo menos uma das seguintes entidades de exame reconhecidas pelo Tratado de Cooperação sobre Patentes (Patent Cooperation Treaty -PCT): <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Departamento Europeu de Patentes (European Patent Office); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Departamento Japonês de Patentes (Japan Patent Office); ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Departamento Norte-Americano de Patentes e Marcas (United States Patent and Trade Mark Office ). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O valor que servirá de base para a exclusão deverá ser controlado na parte B do Lalur, por projeto, até que sejam satisfeitas as exigências previstas nesta Lei, quando poderão ser excluídos na determinação do lucro real na forma prevista neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os valores registrados na forma do § 1º deverão, a qualquer tempo, ser comprovados por documentação idônea, que deverá estar à disposição da fiscalização da Secretaria da Receita Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Para convalidar a adequação dos dispêndios efetuados, com vistas ao gozo do benefício fiscal previsto no art. 40, os projetos de desenvolvimento de inovação tecnológica deverão ser submetidos à análise e aprovação do Ministério da Ciência e Tecnologia, nos termos dispostos no § 5º do art. 4º da Lei nº 8.661, de 2 de junho de 1993, observadas regras fixadas em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para gozo do benefício fiscal previsto nos arts. 39, 40 e 41, a pessoa jurídica deverá comprovar, quando for o caso, o recolhimento da contribuição de intervenção no domínio econômico instituída pela Lei nº 10.168, de 29 de dezembro de 2000, e alterada pela Lei nº 10.332, de 19 de dezembro de 2001. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Os dispêndios a que se referem os arts. 39 e 40 somente poderão ser deduzidos se pagos a pessoas físicas ou jurídicas residentes e domiciliadas no País, exceto os pagamentos destinados à obtenção e manutenção de patentes e marcas no exterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;Nos casos de apuração de excesso de custo de aquisição de bens, direitos e serviços, importados de empresas vinculadas e que sejam considerados indedutíveis na determinação do lucro real e da base de cálculo da contribuição social sobre o lucro líquido, apurados na forma do art. 18 da Lei nº 9.430, de 27 de dezembro de 1996, a pessoa jurídica deverá ajustar o excesso de custo, determinado por um dos métodos previstos na legislação, no encerramento do período de apuração, contabilmente, por meio de lançamento a débito de conta de resultados acumulados e a crédito de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - conta do ativo onde foi contabilizada a aquisição dos bens, direitos ou serviços e que permanecerem ali registrados ao final do período de apuração; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - conta própria de custo ou de despesa do período de apuração, que registre o valor dos bens, direitos ou serviços, no caso de esses ativos já terem sido baixados da conta de ativo que tenha registrado a sua aquisição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No caso de bens classificáveis no ativo permanente e que tenham gerado quotas de depreciação, amortização ou exaustão, no ano-calendário da importação, o valor do excesso de preço de aquisição na importação deverá ser creditado na conta de ativo em cujas quotas tenham sido debitadas, em contrapartida à conta de resultados acumulados a que se refere o <EM>caput</EM> . <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Caso a pessoa jurídica opte por adicionar, na determinação do lucro real e da base de cálculo da contribuição social sobre o lucro líquido, o valor do excesso apurado em cada período de apuração somente por ocasião da realização por alienação ou baixa a qualquer título do bem, direito ou serviço adquirido, o valor total do excesso apurado no período de aquisição deverá ser excluído do patrimônio líquido, para fins de determinação da base de cálculo dos juros sobre o capital próprio, de que trata o art. 9º da Lei nº 9.249, de 26 de dezembro de 1995, alterada pela Lei nº 9.430, de 27 de dezembro de 1996. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Na hipótese do § 2º, a pessoa jurídica deverá registrar o valor total do excesso de preço de aquisição em subconta própria que registre o valor do bem, serviço ou direito adquirido no exterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;O art. 13, <EM>caput</EM> , e o art. 14, I, da Lei nº 9.718, de 27 de novembro de 1998, passam a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 13.&nbsp;A pessoa jurídica cuja receita bruta total, no ano-calendário anterior, tenha sido igual ou inferior a R$ 48.000.000,00 (quarenta e oito milhões de reais), ou a R$ 4.000.000,00 (quatro milhões de reais) multiplicado pelo número de meses de atividade do ano-calendário anterior, quando inferior a 12 (doze) meses, poderá optar pelo regime de tributação com base no lucro presumido. <BR>........................................................................................" (NR)</DIR>
+<DIR>"Art. 14.&nbsp;..................................................................................... <BR><BR>I - cuja receita total, no ano-calendário anterior seja superior ao limite de R$ 48.000.000,00 (quarenta e oito milhões de reais), ou proporcional ao número de meses do período, quando inferior a 12 (doze) meses; <BR>.................................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;A pessoa jurídica integrante do Mercado Atacadista de Energia Elétrica (MAE), instituído pela Lei nº 10.433, de 24 de abril de 2002, poderá optar por regime especial de tributação, relativamente à contribuição para o Programa de Integração Social e de Formação do Patrimônio do Servidor Público (PIS/Pasep) e à Contribuição para o Financiamento da Seguridade Social (Cofins). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A opção pelo regime especial referido no <EM>caput</EM> : <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - será exercida mediante simples comunicado, nos termos e condições estabelecidos pela Secretaria da Receita Federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - produzirá efeitos em relação aos fatos geradores ocorridos a partir do mês subseqüente ao do exercício da opção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para os fins do regime especial referido no <EM>caput</EM> , considera-se receita bruta auferida nas operações de compra e venda de energia elétrica realizadas na forma da regulamentação de que trata o art. 14 da Lei nº 9.648, de 27 de maio de 1998, com a redação dada pela Lei nº 10.433, de 24 de abril de 2002, para efeitos de incidência da contribuição para o PIS/Pasep e da Cofins, os resultados positivos apurados mensalmente pela pessoa jurídica optante. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Na determinação da base de cálculo da contribuição para o PIS/Pasep e da Cofins, a pessoa jurídica optante poderá deduzir os valores devidos, correspondentes a ajustes de contabilizações encerradas de operações de compra e venda de energia elétrica, realizadas no âmbito do MAE, quando decorrentes de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - decisão proferida em processo de solução de conflitos, no âmbito do MAE, da Agência Nacional de Energia Elétrica (Aneel) ou em processo de arbitragem, na forma prevista no § 3º do art. 2º da Lei nº 10.433, de 24 de abril de 2002; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - resolução da Aneel; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - decisão proferida no âmbito do Poder Judiciário, transitada em julgado; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º A dedução de que trata o § 3º é permitida somente na hipótese em que o ajuste de contabilização caracterize anulação de receita sujeita à incidência do PIS/Pasep e da Cofins, na forma estabelecida pela Secretaria da Receita Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Sem prejuízo do disposto nos §§ 3º e 4º, geradoras de energia elétrica optantes poderão excluir da base de cálculo da contribuição para o PIS/Pasep e da Cofins o valor da receita auferida com a venda compulsória de energia elétrica por meio do Mecanismo de Realocação de Energia, de que trata a alínea b do parágrafo único do art. 14 da Lei nº 9.648, de 27 de maio de 1998, introduzida pela Lei nº 10.433, de 24 de abril de 2002. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Aplicam-se ao regime especial de que trata este artigo as demais normas aplicáveis às contribuições referidas no <EM>caput</EM> , observado o que se segue: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - em relação ao PIS/Pasep, não se aplica o disposto nos arts. 1º a 6º; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - em relação aos fatos geradores ocorridos até 31 de agosto de 2002, o pagamento dos valores devidos correspondentes à Cofins e ao PIS/Pasep poderá ser feito com dispensa de multa e de juros moratórios, desde que efetuado em parcela única, até o último dia útil do mês de setembro de 2002. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;O art. 74 da Lei nº 9.430, de 27 de dezembro de 1996, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 74.&nbsp;O sujeito passivo que apurar crédito, inclusive os judiciais com trânsito em julgado, relativo a tributo ou contribuição administrado pela Secretaria da Receita Federal, passível de restituição ou de ressarcimento, poderá utilizá-lo na compensação de débitos próprios relativos a quaisquer tributos e contribuições administrados por aquele Órgão. <BR><BR>§ 1º A compensação de que trata o <EM>caput</EM> será efetuada mediante a entrega, pelo sujeito passivo, de declaração na qual constarão informações relativas aos créditos utilizados e aos respectivos débitos compensados. <BR><BR>§ 2º A compensação declarada à Secretaria da Receita Federal extingue o crédito tributário, sob condição resolutória de sua ulterior homologação. <BR><BR>§ 3º Além das hipóteses previstas nas leis específicas de cada tributo ou contribuição, não poderão ser objeto de compensação: <BR><BR>I - o saldo a restituir apurado na Declaração de Ajuste Anual do Imposto de Renda da Pessoa Física; <BR><BR>II - os débitos relativos a tributos e contribuições devidos no registro da Declaração de Importação. <BR><BR>§ 4º Os pedidos de compensação pendentes de apreciação pela autoridade administrativa serão considerados declaração de compensação, desde o seu protocolo, para os efeitos previstos neste artigo. <BR><BR>§ 5º A Secretaria da Receita Federal disciplinará o disposto neste artigo." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;O <EM>caput</EM> do art. 6º da Lei nº 9.826, de 23 de agosto de 1999, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 6º&nbsp;A exportação de produtos nacionais sem que tenha ocorrido sua saída do território brasileiro somente será admitida, produzindo todos os efeitos fiscais e cambiais, quando o pagamento for efetivado em moeda estrangeira de livre conversibilidade e a venda for realizada para: <BR>........................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;O <EM>caput</EM> do art. 52 da Lei nº 9.532, de 10 de dezembro de 1997, passa a vigorar com a seguinte alteração: <BR><BR>
+<DIR>"Art. 52.&nbsp;O valor do IPI devido no desembaraço aduaneiro dos cigarros do código 2402.20.00 da Tipi será apurado da mesma forma que para o produto nacional, tomando-se por base a classe de enquadramento divulgada pela Secretaria da Receita Federal. <BR>........................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;O art. 33 do Decreto-Lei nº 1.593, de 21 de dezembro de 1977, passa a vigorar com a seguinte alteração: <BR><BR>
+<DIR>"Art. 33.&nbsp;Aplicam-se as seguintes penalidades, em relação ao selo de controle de que trata o art. 46 da Lei nº 4.502, de 30 de novembro de 1964, na ocorrência das seguintes infrações: <BR><BR>I - venda ou exposição à venda de produto sem o selo ou com emprego de selo já utilizado: multa igual ao valor comercial do produto, não inferior a R$ 1.000,00 (mil reais); <BR><BR>II - emprego ou posse de selo legítimo não adquirido pelo próprio estabelecimento diretamente da repartição fornecedora: multa de R$ 1,00 (um real) por unidade, não inferior a R$ 1.000,00 (mil reais); <BR><BR>III - emprego de selo destinado a produto nacional, quando se tratar de produto estrangeiro, e vice-versa; emprego de selo destinado a produto diverso; emprego de selo não utilizado ou marcado como previsto em ato da Secretaria da Receita Federal; emprego de selo que não estiver em circulação: consideram-se os produtos como não selados, equiparando-se a infração à falta de pagamento do Imposto sobre Produtos Industrializados, que será exigível, além da multa igual a 75% (setenta e cinco por cento) do valor do imposto exigido; <BR><BR>IV - fabricação, venda, compra, cessão, utilização ou posse, soltos ou aplicados, de selos de controle falsos: independentemente de sanção penal cabível, multa de R$ 5,00 (cinco reais) por unidade, não inferior a R$ 5.000,00 (cinco mil reais), além da apreensão dos selos não utilizados e da aplicação da pena de perdimento dos produtos em que tenham sido utilizados os selos; <BR><BR>V - transporte de produto sem o selo ou com emprego de selo já utilizado: multa igual a 50% (cinqüenta por cento) do valor comercial do produto, não inferior a R$ 1.000,00 (mil reais). <BR><BR>§ 1º Aplicar-se-á a mesma pena cominada no inciso II àqueles que fornecerem a outro estabelecimento, da mesma pessoa jurídica ou de terceiros, selos de controle legítimos adquiridos diretamente da repartição fornecedora. <BR><BR>§ 2º Aplicar-se-á ainda a pena de perdimento aos produtos do código 24.02.20.00 da Tabela de Incidência do Imposto sobre Produtos Industrializados (Tipi): <BR><BR>I - na hipótese de que tratam os incisos I e V do <EM>caput</EM> ; <BR><BR>II - encontrados no estabelecimento industrial, acondicionados em embalagem destinada a comercialização, sem o selo de controle. <BR><BR>§ 3º Para fins de aplicação das penalidades previstas neste artigo, havendo a constatação de produtos com selos de controle em desacordo com as normas estabelecidas pela Secretaria da Receita Federal, considerar-se-á irregular a totalidade do lote identificado onde os mesmos foram encontrados." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;É proibida a fabricação, em estabelecimento de terceiros, dos produtos do código 24.02.20.00 da Tipi. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Aos estabelecimentos que receberem ou tiverem em seu poder matérias-primas, produtos intermediários ou material de embalagem para a fabricação de cigarros para terceiros, aplica-se a penalidade prevista no inciso II do art. 15 do Decreto-Lei nº 1.593, de 21 de dezembro de 1977. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;O papel para cigarros, em bobinas, somente poderá ser vendido, no mercado interno, a estabelecimento industrial que possua o Registro Especial de que trata o art. 1º do Decreto-Lei nº 1.593, de 21 de dezembro de 1977, com a redação dada pela Medida Provisória nº 2.158-35, de 24 de agosto de 2001. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;Nas Convenções destinadas a evitar a dupla tributação da renda, a serem firmadas pelo Brasil com países integrantes do Mercado Comum do Sul (Mercosul), será incluída cláusula prevendo a concessão de crédito do imposto de renda sobre lucros e dividendos recebidos por pessoa jurídica domiciliada no Brasil que deveria ser pago no outro país signatário, mas que não haja sido em decorrência de lei de vigência temporária de incentivo ao desenvolvimento econômico, nacional, regional ou setorial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O crédito referido no <EM>caput</EM> , observadas as demais condições gerais de concessão e outras que vierem a ser estabelecidas em legislação específica, somente será admitido quando os lucros ou dividendos distribuídos provenham, diretamente, de atividade desenvolvida no país estrangeiro signatário, relativa aos setores: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - industrial, exceto da indústria de cigarro e bebidas em geral, inclusive os concentrados destas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - agrícola, de florestamento ou pesqueira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;O encargo de que trata o art 1º do Decreto-Lei nº 1.025, de 21 de outubro de 1969, inclusive na condição de que trata o art. 3º do Decreto-Lei nº 1.569, de 8 de agosto de 1977, nos pagamentos de débitos relativos a tributos e contribuições administrados pela Secretaria da Receita Federal, inscritos na Dívida Ativa da União, e efetuados a partir de 15 de maio de 2002, em virtude de norma de caráter exonerativo, inclusive nas hipóteses de que tratam os arts. 13 e 14 desta Lei, será calculado sobre os valores originalmente devidos, limitado ao valor correspondente à multa calculada nos termos do § 3º do art. 13. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;O art. 42 da Lei nº 9.430, de 27 de dezembro de 1996, passa a vigorar acrescido dos seguintes §§ 5º e 6º: <BR><BR>
+<DIR>"Art. 42.&nbsp;...................................................................................... <BR>.................................................................................................... <BR><BR>§ 5º Quando provado que os valores creditados na conta de depósito ou de investimento pertencem a terceiro, evidenciando interposição de pessoa, a determinação dos rendimentos ou receitas será efetuada em relação ao terceiro, na condição de efetivo titular da conta de depósito ou de investimento. <BR><BR>§ 6º Na hipótese de contas de depósito ou de investimento mantidas em conjunto, cuja declaração de rendimentos ou de informações dos titulares tenham sido apresentadas em separado, e não havendo comprovação da origem dos recursos nos termos deste artigo, o valor dos rendimentos ou receitas será imputado a cada titular mediante divisão entre o total dos rendimentos ou receitas pela quantidade de titulares." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;O art. 23 do Decreto-Lei nº 1.455, de 7 de abril de 1976, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 23.&nbsp;.................................................................................... <BR>.................................................................................................. <BR><BR>V - estrangeiras ou nacionais, na importação ou na exportação, na hipótese de ocultação do sujeito passivo, do real vendedor, comprador ou de responsável pela operação, mediante fraude ou simulação, inclusive a interposição fraudulenta de terceiros. <BR><BR>§ 1º O dano ao erário decorrente das infrações previstas no <EM>caput</EM> deste artigo será punido com a pena de perdimento das mercadorias. <BR><BR>§ 2º Presume-se interposição fraudulenta na operação de comércio exterior a não-comprovação da origem, disponibilidade e transferência dos recursos empregados. <BR><BR>§ 3º A pena prevista no § 1º converte-se em multa equivalente ao valor aduaneiro da mercadoria que não seja localizada ou que tenha sido consumida. <BR><BR>§ 4º O disposto no § 3º não impede a apreensão da mercadoria nos casos previstos no inciso I ou quando for proibida sua importação, consumo ou circulação no território nacional." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;O art. 81 da Lei nº 9.430, de 27 de dezembro de 1996, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 81.&nbsp;.................................................................................... <BR><BR>§ 1º Será também declarada inapta a inscrição da pessoa jurídica que não comprove a origem, a disponibilidade e a efetiva transferência, se for o caso, dos recursos empregados em operações de comércio exterior. <BR><BR>§ 2º Para fins do disposto no § 1º, a comprovação da origem de recursos provenientes do exterior dar-se-á mediante, cumulativamente: <BR><BR>I - prova do regular fechamento da operação de câmbio, inclusive com a identificação da instituição financeira no exterior encarregada da remessa dos recursos para o País; <BR><BR>II - identificação do remetente dos recursos, assim entendido como a pessoa física ou jurídica titular dos recursos remetidos. <BR><BR>§ 3º No caso de o remetente referido no inciso II do § 2º ser pessoa jurídica deverão ser também identificados os integrantes de seus quadros societário e gerencial. <BR><BR>§ 4º O disposto nos §§ 2º e 3º aplica-se, também, na hipótese de que trata o § 2º do art. 23 do Decreto-Lei nº 1.455, de 7 de abril de 1976." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;O art. 15 da Lei nº 10.451, de 10 de maio de 2002, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 15.&nbsp;Esta Lei entra em vigor na data de sua publicação, produzindo efeitos, no caso dos arts. 1º e 2º, em relação aos fatos geradores ocorridos a partir de 1º de janeiro de 2002, observado o disposto no art. 1º da Lei nº 9.887, de 7 de dezembro de 1999." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;O art. 21 da Lei nº 9.532, de 10 de dezembro de 1997, alterada pela Lei nº 9.887, de 7 de dezembro de 1999, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 21.&nbsp;Relativamente aos fatos geradores ocorridos durante os anos-calendário de 1998 a 2003, a alíquota de 25% (vinte e cinco por cento), constante das tabelas de que tratam os arts. 3º e 11 da Lei nº 9.250, de 26 de dezembro de 1995, e as correspondentes parcelas a deduzir, passam a ser, respectivamente, a alíquota, de 27,5% (vinte e sete inteiros e cinco décimos por cento), e as parcelas a deduzir, até 31 de dezembro de 2001, de R$ 360,00 (trezentos e sessenta reais) e R$ 4.320,00 (quatro mil, trezentos e vinte reais), e a partir de 1º de janeiro de 2002, aquelas determinadas pelo art. 1º da Lei nº 10.451, de 10 de maio de 2002, a saber, de R$ 423,08 (quatrocentos e vinte e três reais e oito centavos) e R$ 5.076,90 (cinco mil e setenta e seis reais e noventa centavos). <BR><BR><I>Parágrafo único. </I>São restabelecidas, relativamente aos fatos geradores ocorridos a partir de 1º de janeiro de 2004, a alíquota de 25% (vinte e cinco por cento) e as respectivas parcelas a deduzir de R$ 370,20 (trezentos e setenta reais e vinte centavos) e de R$ 4.442,40 (quatro mil, quatrocentos e quarenta e dois reais e quarenta centavos), de que tratam os arts. 3º e 11 da Lei nº 9.250, de 26 de dezembro de 1995, modificados em coerência com o art. 1º da Lei nº 10.451, de 10 de maio de 2002." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;O art. 43 da Medida Provisória nº 2.158-35, de 2001, passa a vigorar acrescido do seguinte § 2º, renumerando-se o parágrafo único para § 1º: <BR><BR>
+<DIR>"Art. 43.&nbsp;..................................................................................... <BR>................................................................................................... <BR><BR>§ 2º O disposto neste artigo, no que diz respeito aos produtos classificados nas posições 84.32 e 84.33, alcança apenas os veículos autopropulsados descritos nos Códigos 8432.30, 8432.40.00, 8432.80.00 (exceto rolos para gramados ou campo de esporte), 8433.20, 8433.30.00, 8433.40.00 e 8433.5." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;(VETADO) <BR><BR>
+<CENTER>CAPÍTULO III <BR>DAS DISPOSIÇÕES FINAIS </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;A Secretaria da Receita Federal e a Procuradoria-Geral da Fazenda Nacional editarão, no âmbito de suas respectivas competências, as normas necessárias à aplicação do disposto nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;(VETADO)</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;Esta Lei entra em vigor na data de sua publicação, produzindo efeitos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a partir de 1º de outubro de 2002, em relação aos arts. 29 e 49; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II&nbsp;- a partir de 1º de dezembro de 2002, em relação aos arts. 1º a 6º e 8º a 11; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a partir de 1º de janeiro de 2003, em relação aos arts. 34, 37 a 44, 46 e 48; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a partir da data da publicação desta Lei, em relação aos demais artigos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 30 de dezembro de 2002; 181º da Independência e 114º da República. </P>
+<P>FERNANDO HENRIQUE CARDOSO <BR>Pedro Malan</P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 - Edição Extra de 31/12/2002
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1 - Edição Extra
+                                                         - 31/12/2002, Página 2          
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

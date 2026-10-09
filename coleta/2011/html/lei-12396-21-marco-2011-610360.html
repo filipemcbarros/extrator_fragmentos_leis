@@ -1,0 +1,915 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 12.396, DE 21 DE MARÇO DE 2011 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Ratifica o Protocolo de Intenções firmado entre a União, o Estado do Rio de Janeiro e o Município do Rio de Janeiro, com a finalidade de constituir consórcio público, denominado Autoridade Pública Olímpica - APO." />
+
+<!-- CSS do portal-tema: necessário para o botão de compartilhamento -->
+<link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T3NRZN7V');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T3NRZN7V"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 12.396, DE 21 DE MARÇO DE 2011 - Publicação Original</h2>
+
+			<div class="g-contexto-compartilhamento g-contexto-compartilhamento--extendido g-impressao">
+				<!-- Elemento propositalmente vazio, preenchido pelo JS de compartilhamento do portal -->
+			</div>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                            <li>  	
+                                                <a href="lei-12396-21-marco-2011-610360-veto-132062-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-12396-21-marco-2011-610360-retificacao-132112-pl.html">Retificação</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=485275">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-12396-21-marco-2011-610360-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 12.396, DE 21 DE MARÇO DE 2011</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							<P>Ratifica o Protocolo de Intenções firmado entre a União, o Estado do Rio de Janeiro e o Município do Rio de Janeiro, com a finalidade de constituir consórcio público, denominado Autoridade Pública Olímpica - APO.</P>
+						</p>
+				
+						<div class="texto">
+							<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; A PRESIDENTA DA REPÚBLICA</STRONG><BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Ficam ratificados, na forma do Anexo, os termos do Protocolo de Intenções celebrado entre a União, o Estado do Rio de Janeiro e o Município do Rio de Janeiro para criação de consórcio público, sob a forma de autarquia em regime especial, denominado Autoridade Pública Olímpica - APO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;O Presidente da APO somente perderá o mandato em virtude de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - renúncia; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - condenação penal transitada em julgado; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - decisão definitiva em processo administrativo disciplinar, assegurados o contraditório e a ampla defesa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Sem prejuízo do disposto nas legislações penal e relativa à punição de atos de improbidade administrativa no serviço público, será causa da perda do mandato do Presidente da APO a inobservância dos deveres e proibições inerentes ao cargo que ocupa, apurada na forma do inciso III do <EM>caput </EM>deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;As atas das reuniões do Conselho Público Olímpico serão publicadas nos órgãos oficiais de imprensa dos entes consorciados ou no sítio da APO na rede mundial de computadores, sem prejuízo de sua divulgação por outros meios de comunicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Não se aplica ao Protocolo de Intenções referido no art. 1º desta Lei o disposto no inciso VIII e no § 1º do art. 4º da Lei nº 11.107, de 6 de abril de 2005. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;A APO manterá estrutura interna própria de auditoria, controladoria e correição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;A APO enviará ao Congresso Nacional relatório semestral de suas atividades e calendário de ações a cumprir, para acompanhamento dos prazos estabelecidos pelo Comitê Olímpico Internacional e pelo Comitê Paraolímpico Internacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;(VETADO) </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 8º O Poder Executivo federal regulamentará o disposto nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Esta Lei entra em vigor na data de sua publicação. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 21 de março de 2011; 190º da Independência e 123º da República. </P>
+<P>DILMA ROUSSEFF <BR>José Eduardo Cardozo <BR>Nelson Jobim <BR>Guido Mantega <BR>Miriam Belchior <BR>Orlando Silva de Jesus Júnior </P>
+<P align=center><STRONG>PROTOCOLO DE INTENÇÕES </STRONG></P>
+<P align=center>&nbsp;&nbsp;&nbsp;&nbsp;<STRONG> Protocolo de Intenções firmado entre a União, o Estado do Rio de Janeiro e o Município do Rio de Janeiro, com a finalidade de constituir consórcio público, denominado Autoridade Pública Olímpica - APO. </STRONG></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Considerando que em 2 de outubro de 2009, a cidade do Rio de Janeiro foi escolhida para sediar os Jogos Olímpicos e Paraolímpicos de 2016, após vencer processo eleitoral do Comitê Olímpico Internacional; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Considerando que a referida eleição decorreu dos esforços conjuntos do Governo Federal, do Governo do Estado do Rio de Janeiro, da Prefeitura da Cidade do Rio de Janeiro, dos esportistas, das entidades desportivas nacionais e da sociedade civil, tendo a candidatura brasileira apresentado as inúmeras garantias exigidas para sediar os eventos; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Considerando que, entre as garantias apresentadas, consta a criação de ente que integre os esforços dos governos federal, estadual e municipal para a viabilização dos serviços públicos e da infraestrutura necessários à organização e à realização dos referidos Jogos; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Considerando que a entidade federativa, na forma de consórcio público, denominada Autoridade Pública Olímpica - APO será a instituição responsável pela aprovação e monitoramento das obras e dos serviços que compõem a Carteira de Projetos Olímpicos; Resolvem os representantes legais da União, do Estado do Rio de Janeiro e do Município do Rio de Janeiro subscrever o presente protocolo de intenções, composto pelas disposições que se seguem. </P>
+<P align=center>CLÁUSULA PRIMEIRA - DA DENOMINAÇÃO </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; O consórcio público previsto neste protocolo de intenções será denominado AUTORIDADE PÚBLICA OLÍMPICA - APO e regido conforme o disposto na Lei nº 11.107, de 6 de abril de 2005, e demais normas específicas aplicáveis. </P>
+<P align=center>CLÁUSULA SEGUNDA - DOS ENTES CONSORCIADOS </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Subscrevem o presente instrumento de cooperação e de associação, visando a constituição futura do contrato de consórcio público interfederativo, denominado Autoridade Pública Olímpica - APO: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o Município do Rio de Janeiro ("Município"), pessoa jurídica de direito público interno, inscrita no CNPJ sob nº 02.709.449/0001-59, com sede na Cidade do Rio de Janeiro, neste ato representado por seu Prefeito; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o Estado do Rio de Janeiro ("Estado"), pessoa jurídica de direito público interno, inscrita no CNPJ sob nº 42.498.600/0001-71, com sede na Cidade do Rio de Janeiro, neste ato representado por seu Governador; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - a União ("União"), pessoa jurídica de direito público interno, inscrita no CNPJ sob nº 02.961.362/0001-74, com sede em Brasília, Distrito Federal, neste ato representado pelo Presidente da República. </P>
+<P align=center>CLÁUSULA TERCEIRA - DAS DEFINIÇÕES </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Para os fins deste protocolo de intenções, serão observadas as seguintes definições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - Jogos - Edição dos Jogos Olímpicos e Paraolímpicos de 2016, que serão realizados na cidade do Rio de Janeiro no ano de 2016; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - COI - Comitê Olímpico Internacional, entidade internacional de administração dos esportes olímpicos, com sede em Lausanne, na Suíça, proprietária dos direitos sobre os Jogos Olímpicos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - COMITÊ RIO 2016 - Comitê Organizador dos Jogos Olímpicos Rio 2016, entidade privada sem fins lucrativos reconhecida pelo COI, criada com o fim específico de realizar a organização dos Jogos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - Matriz de Responsabilidades - documento vinculante que estipula as obrigações de cada um dos seus signatários para com a organização e realização dos Jogos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - Consórcio Público - pessoa jurídica formada exclusivamente por entes da Federação, na forma da Lei nº 11.107, de 2005, e demais normas específicas aplicáveis, para estabelecer relações de cooperação federativa, inclusive a realização de objetivos de interesse comum, constituída como associação pública, com personalidade jurídica de direito público e natureza autárquica; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - Contrato de Rateio - contrato por meio do qual os entes consorciados comprometem-se a fornecer recursos financeiros para a realização das despesas do consórcio público; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - Carteira de Projetos Olímpicos - conjunto de obras e serviços selecionados pela APO como essenciais à realização dos Jogos Olímpicos e Paraolímpicos de 2016. </P>
+<P align=center>CLÁUSULA QUARTA - DO OBJETIVO E DAS FINALIDADAES </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A APO tem por objetivo coordenar a participação da União, do Estado do Rio de Janeiro e do Município do Rio de Janeiro na preparação e realização dos Jogos Olímpicos e Paraolímpicos de 2016, especialmente para assegurar o cumprimento das obrigações por eles assumidas perante o COI para esses fins e, notadamente: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a coordenação de ações governamentais para o planejamento e entrega das obras e serviços necessários à realização dos Jogos, incluindo a representação dos entes consorciados perante órgãos ou entidades da administração, direta ou indireta, e outros entes da Federação nos assuntos pertinentes ao seu objeto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o monitoramento da execução das obras e serviços referentes aos Projetos Olímpicos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - a consolidação do planejamento integrado das obras e serviços necessários aos Jogos, incluindo os cronogramas físico e financeiro e as fontes de financiamento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - o relacionamento, em conjunto com os próprios entes consorciados, com o COMITÊ RIO 2016 e demais entidades esportivas, nacionais e internacionais, responsáveis por modalidades olímpicas e paraolímpicas nos assuntos relacionados à organização e realização dos Jogos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - o planejamento referente ao uso do legado dos Jogos, com proposição de soluções sustentáveis sob os aspectos econômico, social e ambiental; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - a elaboração e atualização da Matriz de Responsabilidades junto aos consorciados e ao COMITÊ RIO 2016, visando definir obrigações das partes para a realização dos eventos, face as obrigações assumidas perante o COI; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - a homologação prévia dos termos de referência, projetos básicos e executivos relativos à preparação e realização dos Jogos com a estrita finalidade de verificar se atendem aos compromissos assumidos junto ao COI, a serem contratados pelos entes consorciados, inclusive por seus órgãos e entidades da administração direta e indireta, nos casos de utilização do regime diferenciado de licitações e contratos para as obras e serviços, estabelecido em lei federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - a interlocução, nos casos de impasses relacionados à execução de obras, com órgãos de controle, de licenciamento ambiental e demais órgãos envolvidos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo primeiro - Para a consecução de seu objetivo e de suas finalidades, poderá a APO exercer as seguintes atividades: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - realizar estudos técnicos e pesquisas, elaborar e monitorar planos, projetos e programas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - firmar convênios, contratos e acordos de qualquer natureza; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - excepcionalmente, contratar, manter ou executar obras e serviços referentes à Carteira de Projetos Olímpicos, mediante convênio com os entes consorciados, nos casos previstos no parágrafo segundo, inclusive por meio do regime diferenciado de licitações e contratos para as obras e serviços, estabelecido em lei federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - decidir sobre a transferência da responsabilidade sobre projetos integrantes da Carteira de Projetos Olímpicos que forem justificadamente comprovados como de elevado risco de não entrega pelo ente consorciado no prazo necessário à realização dos Jogos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - adquirir e administrar bens, móveis e imóveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - atuar na proteção da propriedade intelectual e das marcas relacionadas aos Jogos, utilizando-se dos meios jurídicos adequados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - exercer outras competências necessárias à fiel execução de seus objetivos e finalidades, desde que sejam compatíveis com o seu regime jurídico. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo segundo - Em caráter excepcional, poderá a APO, por decisão unânime do Conselho Público Olímpico, assumir o planejamento e a execução de obras ou de serviços sob a responsabilidade dos órgãos e das entidades da administração direta ou indireta dos entes consorciados, desde que a medida se justifique para a adimplência das obrigações contraídas perante o COI para a realização dos Jogos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo terceiro - Para a consecução do disposto no parágrafo segundo, a APO sub-rogar-se-á em todos os direitos e obrigações decorrentes de procedimentos licitatórios em curso, contratos ou instrumentos congêneres, permanecendo o ente originariamente competente responsável pelo ressarcimento dos custos incorridos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quarto - A APO poderá realizar novas licitações, contratações ou celebração de convênios para a execução das obras e serviços previstos no parágrafo segundo, caso seja imprescindível para assegurar o cumprimento das obrigações assumidas perante o COI. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quinto - No caso da transferência de responsabilidade de obras e serviços na forma do parágrafo segundo, o respectivo ente consorciado ficará obrigado ao ressarcimento à APO de todos os prejuízos causados, tais como custos de execução das obras e operação de serviços, multas rescisórias e encargos financeiros. </P>
+<P align=center>CLÁUSULA QUINTA - DO RESSARCIMENTO DAS DESPESAS ASSUMIDAS </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Na hipótese prevista no parágrafo terceiro da Cláusula Quarta, a União, observado o devido processo legal, com fundamento no art. 160, parágrafo único, inciso I, da Constituição, poderá reter quotas dos respectivos fundos de participação dos demais entes consorciados até o pagamento do crédito. </P>
+<P align=center>CLÁUSULA SEXTA - DA CARTEIRA DE PROJETOS OLÍMPICOS. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A APO deverá dar transparência aos critérios de seleção dos projetos que integrarão a Carteira de Projetos Olímpicos, priorizando o atendimento das exigências gerais estabelecidas pelo COI. </P>
+<P align=center>CLÁUSULA SÉTIMA - DA SEDE DA APO </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A APO terá sede e foro no Município do Rio de Janeiro, localizado no Estado do Rio de Janeiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único - </I>A APO poderá manter escritório de representação na cidade de Brasília, Distrito Federal, ou, excepcionalmente, em qualquer localidade relacionada à preparação e realização dos Jogos. </P>
+<P align=center>CLÁUSULA OITAVA - DA ÁREA DE ATUAÇÃO </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A APO terá como área de atuação o Estado do Rio de Janeiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único - </I>Excepcionalmente, a APO poderá atuar em outros Estados, no Distrito Federal e Municípios da Federação, com vistas à preparação e realização dos Jogos. </P>
+<P align=center>CLÁUSULA NONA - DA NATUREZA JURÍDICA </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A APO terá a forma de associação pública, com personalidade jurídica de direito público e natureza autárquica, integrando a administração indireta de cada um dos entes da Federação consorciados. </P>
+<P align=center>CLÁUSULA DÉCIMA - DOS ÓRGÃOS DE GESTÃO </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; São órgãos da APO: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o Conselho Público Olímpico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a Presidência; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - o Conselho de Governança; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - o Conselho Fiscal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - a Diretoria Executiva. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único - </I>Os estatutos da APO definirão a estrutura dos órgãos referidos nesta cláusula e poderão criar outros órgãos. </P>
+<P align=center>CLÁUSULA DÉCIMA PRIMEIRA - DO CONSELHO PÚBLICO OLÍMPICO </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A APO terá como instância máxima o Conselho Público Olímpico, órgão de natureza colegiada e permanente, constituído pelos Chefes dos Poderes Executivos da União, do Estado do Rio de Janeiro e do Município do Rio de Janeiro, ou por representantes por eles designados, cada um com direito a um voto. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo primeiro - O Conselho Público Olímpico reunir-seá ordinariamente uma vez a cada seis meses ou, extraordinariamente, por convocação de seu Presidente ou dos demais membros. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo segundo - As reuniões do Conselho Público Olímpico serão instaladas com a presença dos representantes dos três entes consorciados, e suas decisões serão tomadas por unanimidade, exceto nas hipóteses previstas na Cláusula Vigésima Segunda. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo terceiro - A aprovação e modificação dos estatutos da APO dar-se-ão por deliberação do Conselho Público Olímpico, na forma do parágrafo segundo, especialmente convocado para este fim. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quarto - O Conselho Público Olímpico será presidido pelo representante da União, conforme disposto em lei. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quinto - Compete ao Conselho Público Olímpico: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - aprovar e modificar os estatutos da APO; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - aprovar a proposta de orçamento da APO; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - aprovar a Carteira de Projetos Olímpicos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - nomear os membros do Conselho de Governança e do Conselho Fiscal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - decidir sobre o disposto no inciso IV do parágrafo primeiro e no parágrafo segundo da Cláusula Quarta; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - aprovar a Matriz de Responsabilidades. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo sexto - O disposto no inciso III do parágrafo quinto não dispensa as homologações prévias previstas no inciso VII da Cláusula Quarta e, observada a legislação vigente: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a necessidade de previsão orçamentária, aprovada pelo legislativo de cada ente, relativa às despesas com a infraestrutura e serviços acordados; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a adoção das medidas necessárias, no âmbito da responsabilidade de cada ente, para a contratação de operações de crédito ou de outras fontes de recursos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo sétimo - A decisão a que se refere o inciso V do parágrafo quinto deverá ser precedida da adoção, por parte da APO, de medidas preventivas, tais como a indicação ao ente consorciado dos projetos com elevado risco de inexecução no prazo acordado, bem como sugestão de soluções alternativas que podem ser adotadas. </P>
+<P align=center>CLÁUSULA DÉCIMA SEGUNDA - DA PRESIDÊNCIA E DA REPRESENTAÇÃO LEGAL DA APO </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; O Presidente da APO será escolhido pelo Presidente da República e por ele nomeado, após aprovação pelo Senado Federal, nos termos do art. 52, inciso III, alínea "f", da Constituição, e cumprirá mandato de quatro anos, permitida a recondução. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo primeiro - O cargo de Presidente da APO deverá ser ocupado por cidadão de reputação ilibada e elevado conceito no campo de especialidade do cargo. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo segundo - Incumbe ao Presidente a representação legal da APO, bem como a coordenação e superintendência de suas atividades, na forma disposta nos estatutos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo terceiro - As atribuições de representação legal da APO poderão ser delegadas ao Diretor Executivo, no todo ou em parte, por ato específico do Presidente, cuja eficácia dependerá de publicação na imprensa oficial. </P>
+<P align=center>CLÁUSULA DÉCIMA TERCEIRA - DO CONSELHO DE GOVERNANÇA </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; O Conselho de Governança é órgão permanente de assessoramento do Conselho Público Olímpico, de natureza colegiada. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo primeiro - O Conselho de Governança é composto pelos seguintes membros: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o Presidente da APO, que o presidirá; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o Diretor Executivo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - três representantes do Governo Federal, indicados pelo Presidente da APO; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - um representante da Prefeitura Municipal do Rio de Janeiro, indicado por seu Prefeito; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - um representante do Governo do Estado do Rio de Janeiro, indicado por seu Governador; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - um representante da sociedade civil, indicado pelo Conselho Público Olímpico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - um representante do COMITÊ RIO 2016, por ele indicado. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo segundo - As decisões emanadas do Conselho de Governança serão tomadas pela maioria de seus membros. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo terceiro - O Presidente do Conselho de Governança votará apenas nos casos em que houver empate. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quarto - Compete ao Conselho de Governança: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - opinar, antes de seu encaminhamento ao Conselho Público Olímpico, sobre: </P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>as diretrizes fundamentais de organização administrativa da APO; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o planejamento estratégico, financeiro e orçamentário da APO; </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - apreciar a prestação de contas da Diretoria Executiva, ouvido o Conselho Fiscal. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quinto - O Conselho de Governança poderá convidar representantes das áreas de interesse dos Jogos para expor sobre situações específicas sempre que julgar conveniente. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo sexto - Os membros do Conselho de Governança, exceto o Diretor Executivo, além do reembolso obrigatório das despesas de locomoção e estada, necessárias ao desempenho da função, receberão o valor mensal de R$ 2.200,00 (dois mil e duzentos reais), devido somente nos meses em que ocorrer reunião do colegiado. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo sétimo - A forma de convocação das reuniões, bem como o funcionamento do Conselho de Governança serão previstos nos estatutos. </P>
+<P align=center>CLÁUSULA DÉCIMA QUARTA - DO CONSELHO FISCAL </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; O Conselho Fiscal, de caráter permanente e colegiado, é o organismo de fiscalização econômico-financeira da APO e compõemse de três membros indicados pelo Presidente da APO e eleitos pelo Conselho Público Olímpico. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo primeiro - Compete ao Conselho Fiscal: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - fiscalizar os atos dos dirigentes da APO e verificar o cumprimento dos seus deveres legais e estatutários; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - opinar sobre a prestação de contas da Diretoria Executiva, fazendo constar do seu parecer as informações complementares que julgar necessárias ou úteis à sua avaliação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - opinar sobre as propostas a serem submetidas ao Conselho Público Olímpico e à Diretoria Executiva, relativas a matérias orçamentárias, financeiras e patrimoniais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - exercer as demais atribuições que lhe sejam estabelecidas pelos estatutos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo segundo - A forma de convocação das reuniões, bem como o funcionamento do Conselho Fiscal serão previstos nos estatutos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo terceiro - A APO estará sujeita às normas e procedimentos de controle externo da administração pública, na forma da legislação aplicável. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quarto - Os estatutos disporão acerca dos mecanismos internos de auditoria, controladoria e correição. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quinto - Os membros do Conselho Fiscal, além do reembolso obrigatório das despesas de locomoção e estada necessárias ao desempenho da função, receberão o valor mensal de R$ 2.200,00 (dois mil e duzentos reais), devido somente nos meses em que ocorrer reunião do colegiado. </P>
+<P align=center>CLÁUSULA DÉCIMA QUINTA - DA DIRETORIA EXECUTIVA </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A Diretoria Executiva será composta pelo Diretor Executivo e quatro diretores. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo primeiro - O Diretor Executivo e os demais diretores serão indicados e nomeados pelo Presidente da APO, cabendo ao primeiro a direção do órgão. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo segundo - Compete à Diretoria Executiva: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - propor ao Conselho Público Olímpico as diretrizes fundamentais de organização administrativa da APO; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - submeter ao Conselho Público Olímpico o planejamento estratégico, financeiro e orçamentário da APO; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - apresentar ao Conselho Público Olímpico a proposta de Carteira de Projetos Olímpicos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - submeter ao Conselho Público Olímpico relatórios sobre casos em que estejam ocorrendo situações excepcionais que possam comprometer o cumprimento dos cronogramas, orçamentos, qualidade das entregas, entre outros; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - aprovar o percentual máximo de cargos e funções, previstos no Anexo I, a serem providos durante o exercício seguinte, em conformidade com a demanda de trabalho e o estágio de organização dos Jogos, bem como os critérios e requisitos para sua ocupação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - aprovar o regimento interno, o regulamento de pessoal e o código de conduta do quadro de pessoal da APO; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - publicar, em meio oficial, a estrutura regimental e o quadro demonstrativo de cargos e funções da APO; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - divulgar, no início de cada exercício, os nomes dos ocupantes dos cargos e funções na estrutura da APO, por meio da imprensa oficial e do sítio do consórcio na rede mundial de computadores - internet; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - administrar a APO, tomar as providências adequadas à fiel execução das diretrizes e deliberações do Conselho Público Olímpico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - submeter ao Conselho Público Olímpico as propostas de plano plurianual e de orçamento anual da APO; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - praticar todos os atos necessários à execução da receita e da despesa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XII - exercer a gestão patrimonial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIII - cooperar e interagir com o COMITÊ RIO 2016; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIV - tomar todas as providências que repute necessárias ao bom funcionamento da APO; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XV - delegar competência aos diretores para decidirem, isoladamente, sobre questões incluídas nas atribuições da Diretoria Executiva; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVI - delegar poderes a diretores e servidores para autorização de despesas, estabelecendo limites e condições; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVII - aprovar a alienação ou a oneração de bens da APO; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVIII - praticar outros atos que lhe tenham sido delegados pelas instâncias superiores da APO; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIX - decidir sobre outros temas de gestão e administração destinados a preservar e cumprir a missão institucional da APO. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo terceiro - Os estatutos detalharão as funções e atribuições do Diretor Executivo e dos demais diretores. </P>
+<P align=center>CLÁUSULA DÉCIMA SEXTA - DA CONTRATAÇÃO DE PESSOAL </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A contratação de pessoal pela APO se dará por tempo determinado, na forma do inciso IX do art. 37 da Constituição, sendo o recrutamento sujeito a prévia aprovação em processo seletivo simplificado, conforme o regime da Lei nº 8.745, de 9 de dezembro de 1993. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo primeiro - Para consecução de seu objetivo e de suas finalidades, fica a APO equiparada às pessoas jurídicas referidas no art. 1º da Lei nº 8.745, de 1993, com vistas a contratação de pessoal técnico e administrativo por tempo determinado. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo segundo - Considera-se como necessidade temporária de excepcional interesse público a contratação de pessoal técnico e administrativo por tempo determinado, imprescindível à preparação e realização dos Jogos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo terceiro - As contratações dispostas no <EM>caput</EM> serão realizadas pelo prazo de até três anos, admitidas sucessivas prorrogações do contrato, desde que o prazo total não ultrapasse a data de extinção prevista para a APO. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quarto - Não se aplicam à APO os prazos a que alude o art. 4º da Lei nº 8.745, de 1993. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quinto - O nome dos contratados por tempo determinado e a denominação dos respectivos cargos temporários serão divulgado na imprensa oficial e no sítio da APO na rede mundial de computadores - internet. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo sexto - A APO poderá, ainda, exercer suas atividades com pessoal cedido de órgãos e entidades da administração pública federal e dos demais entes federados. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo sétimo - A APO poderá requisitar servidores dos entes consorciados para nela terem exercício, não podendo exceder a vinte por cento de seu quantitativo total de servidores. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo oitavo - A Diretoria Executiva decidirá sobre a conveniência e oportunidade acerca do momento para a realização do processo seletivo simplificado e da quantidade de pessoal a ser contratado em cada exercício financeiro. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo nono - A Diretoria Executiva apreciará e aprovará a proposta de contratação temporária a cada exercício, considerando os perfis e quantitativos e sua adequação às necessidades da APO e aos limites orçamentários definidos para as despesas com pessoal temporário. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo décimo - A remuneração dos profissionais contratados deverá observar os valores fixados na administração pública federal para cargos com atribuições semelhantes ou considerar valores de mercado, caso não haja referência na administração pública. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo décimo primeiro - Os contratados pela APO, na forma do <EM>caput</EM> desta Cláusula, são segurados obrigatórios da Previdência Social, como beneficiários do Regime Geral de Previdência Social disposto na Lei nº 8.213, de 24 de julho de 1991. </P>
+<P align=center>CLÁUSULA DÉCIMA SÉTIMA - DOS CARGOS COMISSIONADOS E DAS FUNÇÕES GRATIFICADAS </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Ficam criados, para exercício exclusivo na APO, os cargos Comissionados de Presidente da APO - CPAPO, de Diretor Executivo - CDE, de Diretor Técnico - CDT, de Superintendente - CSP, de Supervisor - CSU e de Assessoria - CA, e as Funções Técnicas - FT, constantes do Anexo I. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo primeiro - A remuneração dos cargos e funções é definida no Anexo II. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo segundo - Os ocupantes dos cargos e funções previstos no <EM>caput</EM> desta Cláusula serão segurados obrigatórios da Previdência Social, como beneficiários do Regime Geral de Previdência Social disposto na Lei nº 8.213, de 1991, ressalvado o caso de servidores estatutários eventualmente cedidos ou requisitados. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo terceiro - Os cargos comissionados de Diretor, de Superintendente, de Supervisor e de Assessoria são de livre nomeação e exoneração pelo Presidente da APO, até o limite fixado no orçamento anual da APO. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quarto - O cargo de Diretor Executivo deverá ser ocupado por cidadão de reputação ilibada, formação universitária e elevado conceito no campo de especialidade do cargo, devendo ser escolhido e nomeado pelo Presidente da APO. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quinto - O servidor ocupante de cargo efetivo, o militar ou o empregado permanente de qualquer dos Poderes da União, dos Estados, dos Municípios ou do Distrito Federal investido nos cargos a que se refere o <EM>caput</EM> desta Cláusula poderá optar por uma das remunerações a seguir discriminadas, observado o limite previsto no art. 37, inciso XI, da Constituição: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - do cargo comissionado, do cargo efetivo, do posto ou graduação, ou do emprego; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a remuneração do cargo efetivo, do posto ou graduação, ou do emprego, acrescida do percentual de quarenta por cento do respectivo cargo em comissão. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo sexto - As FT são de ocupação privativa de servidores cedidos ou requisitados de órgãos e entidades da administração pública federal e dos demais entes federados. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo sétimo - O servidor designado para ocupar FT perceberá a remuneração do cargo efetivo, acrescida do valor da função para a qual foi designado. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo oitavo - A Diretoria Executiva deverá divulgar anualmente o percentual máximo de cargos e funções a serem ocupados durante o exercício seguinte, em conformidade com a demanda de trabalho e o estágio de organização dos Jogos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo nono - Ato do Diretor-Executivo da APO divulgará, no início de cada exercício, o nome dos ocupantes dos cargos e funções na estrutura da APO, por meio da imprensa oficial e do sítio do consórcio na rede mundial de computadores - internet. </P>
+<P align=center>CLÁUSULA DÉCIMA OITAVA - DO REGIME DA ATIVIDADE FINANCEIRA </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A execução das receitas e das despesas da APO obedecerá às normas de direito financeiro dos entes consorciados aplicáveis às entidades públicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único - </I>Todas as demonstrações financeiras serão publicadas no sítio da APO na rede mundial de computadores - internet. </P>
+<P align=center>CLÁUSULA DÉCIMA NONA - DA RESPONSABILIDADE SUBSIDIÁRIA </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Os entes da Federação consorciados respondem subsidiariamente pelas obrigações da APO. </P>
+<P align=center>CLÁUSULA VIGÉSIMA - DAS RELAÇÕES FINANCEIRAS COM OS CONSORCIADOS </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A administração direta ou indireta de ente da Federação consorciado somente entregará recursos à APO quando houver assumido a obrigação de transferi-los por meio de contrato de rateio. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo primeiro - As despesas da APO serão custeadas pelos três entes consorciados, conforme contrato de rateio a ser estabelecido. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo segundo - O contrato de rateio deverá considerar o ressarcimento dos custos de que trata o parágrafo terceiro da Cláusula Quarta. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo terceiro - Caso não haja o pagamento da parte devida no contrato de rateio pelo ente consorciado, a União, com fundamento no art. 160, parágrafo único, da Constituição, poderá reter quotas dos respectivos fundos de participação dos demais entes consorciados até o adimplemento do respectivo crédito. </P>
+<P align=center>CLÁUSULA VIGÉSIMA PRIMEIRA - DOS CONVÊNIOS </P>
+<P align=left>&nbsp;&nbsp;&nbsp;&nbsp; A APO fica autorizada a celebrar convênios, protocolos, termos de cooperação ou outros tipos de avenças conveniais com entidades públicas ou privadas, visando o desenvolvimento de atividades institucionais ou de cooperação compatíveis com suas finalidades. </P>
+<P align=center>CLÁUSULA VIGÉSIMA SEGUNDA - DO RECESSO </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A retirada de ente consorciado da APO antes da extinção dependerá de lei específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único - </I>Os bens destinados à APO pelo consorciado que se retirar não serão revertidos ou retrocedidos, excetuadas as hipóteses de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - decisão do Conselho Público Olímpico tomada com o voto de, pelo menos, dois entes consorciados; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - expressa previsão no instrumento de transferência ou alienação. </P>
+<P align=center>CLÁUSULA VIGÉSIMA TERCEIRA - DAS HIPÓTESES DE EXCLUSÃO </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; São hipóteses de exclusão do ente consorciado: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a não inclusão, pelo ente consorciado, em sua lei orçamentária ou em créditos adicionais, de dotações suficientes para suportar as despesas a serem assumidas por meio de contrato de rateio, nos termos do planejamento anual ou plurianual da APO; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a subscrição de protocolo de intenções para a constituição de outro consórcio público com finalidades iguais ou, a juízo da maioria do Conselho Público Olímpico, assemelhadas ou incompatíveis; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - a existência de motivos graves, reconhecidos em deliberação fundamentada da maioria dos membros do Conselho Público Olímpico. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo primeiro - A exclusão prevista no inciso I ocorrerá após prévia suspensão, período em que o ente consorciado poderá se reabilitar. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo segundo - Os estatutos estabelecerão o procedimento administrativo para a aplicação da pena de exclusão, respeitando o direito à ampla defesa e ao contraditório. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo terceiro - A aplicação da pena de exclusão dar-seá por meio de decisão da maioria dos membros do Conselho Público Olímpico. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quarto - O procedimento previsto na Lei nº 9.784, de 29 de janeiro de 1999, será aplicado subsidiariamente. </P>
+<P align=center>CLÁUSULA VIGÉSIMA QUARTA - DA EXTINÇÃO E DO PRAZO DE DURAÇÃO </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A APO será extinta em 31 de dezembro de 2018 ou, antes, por decisão unânime dos membros do Conselho Público Olímpico. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo primeiro - O Conselho Público Olímpico, por decisão unânime, poderá alterar o prazo de duração da APO, prorrogando- o por, no máximo, dois anos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo segundo - Até seis meses antes da extinção da APO, o Conselho Público Olímpico decidirá sobre a responsabilidade de cada ente pelas obrigações remanescentes do consórcio. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo terceiro - Até que haja a decisão de que trata o parágrafo segundo, os entes consorciados responderão, solidariamente, pelas obrigações remanescentes, garantido o direito de regresso em face dos entes beneficiados ou daqueles que deram causa à obrigação. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quarto. Com a extinção da APO, o pessoal cedido ou requisitado retornará aos seus órgãos de origem, e os contratos de trabalho de pessoal serão automaticamente extintos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo quinto - Na destinação do legado dos Jogos poderá a APO, mediante decisão de seu Conselho de Governança, transferir, doar ou destinar seus bens a qualquer órgão ou entidade que integre a administração de ente da Federação consorciado. </P>
+<P align=center>CLÁUSULA VIGÉSIMA QUINTA - DA ALTERAÇÃO DO CONTRATO DA APO </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A alteração do contrato que institui a APO dependerá de instrumento aprovado pelo Conselho Público Olímpico, ratificado mediante lei por todos os entes consorciados. </P>
+<P align=center>CLÁUSULA VIGÉSIMA SEXTA - DO REGIME JURÍDICO </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A APO será regida pela Lei Federal nº 11.107, de 6 de abril de 2005, e demais normas específicas aplicáveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único - </I>Em caso de omissão das normas referidas no <EM>caput</EM>, aplicam-se à APO, no que couberem, as disposições da Lei nº 10.406, de 10 de janeiro de 2002, relativas às associações civis. </P>
+<P align=center>CLÁUSULA VIGÉSIMA SÉTIMA - DOS PRINCÍPIOS </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Aplicam-se à APO os princípios constitucionais e legais que regem a administração pública e, em especial: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o respeito à autonomia dos entes federados consorciados, de modo que o ingresso ou a retirada da APO dependem apenas da vontade de cada um dos entes consorciados, sendo vedado que lhe sejam atribuídos incentivos para ingresso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a solidariedade, em razão da qual os entes consorciados se comprometem a não praticar qualquer ato, omissivo ou comissivo, que venha a prejudicar a boa execução e realização dos Jogos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - a transparência, permitindo o acesso de cada um dos entes consorciados a qualquer reunião ou documento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - a eficiência, permitindo que todas as decisões tomadas pela APO sejam explícita e previamente fundamentadas e que demonstrem sua viabilidade e economicidade. </P>
+<P align=center>CLÁUSULA VIGÉSIMA OITAVA - DA RATIFICAÇÃO E DO CONTRATO DE CONSÓRCIO PÚBLICO </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Somente será considerado consorciado o ente da Federação subscritor do protocolo de intenções que o ratificar integralmente por meio de lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único - </I>Após a ratificação mediante lei de cada um dos entes consorciados, o presente protocolo converter-se-á automaticamente em contrato de consórcio público. </P>
+<P align=center>CLÁUSULA VIGÉSIMA NONA - DA EXIGIBILIDADE </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Quando adimplente com suas obrigações, qualquer ente consorciado é parte legítima para exigir o pleno cumprimento das cláusulas previstas no presente protocolo. </P>
+<P align=center>CLÁUSULA TRIGÉSIMA - DA GESTÃO ASSOCIADA DE SERVIÇOS PÚBLICOS </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Não haverá gestão associada de serviços públicos e não serão concedidos, permitidos ou autorizados serviços públicos pela APO. </P>
+<P align=center>CLÁUSULA TRIGÉSIMA PRIMEIRA - DA PUBLICIDADE </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; O presente protocolo de intenções deverá ser publicado na imprensa oficial de cada um dos entes consorciados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único - </I>A publicação do protocolo de intenções poderá ser feita de forma resumida, desde que indique o local e o sítio da rede mundial de computadores - internet em que poderá ser obtido seu texto integral. </P>
+<P align=center>CLÁUSULA TRIGÉSIMA SEGUNDA - DA RESOLUÇÃO CONSESUAL DE CONFLITOS </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Os entes da Federação consorciados devem dar preferência à resolução de conflitos por mecanismos consensuais, tais como a conciliação e a mediação, na forma a ser definida nos estatutos da APO. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; E por estarem de acordo, os entes federados partícipes assinam o presente protocolo de intenções, em três vias, de igual teor e forma para os devidos fins de direito. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Em de fevereiro de 2011. </P>
+<P>MUNICÍPIO DO RIO DE JANEIRO <BR>Eduardo da Costa Paes - Prefeito do Município </P>
+<P>GOVERNO DO ESTADO DO RIO DE JANEIRO <BR>Sérgio Cabral Santos Filho - Governador do Estado </P>
+<P>UNIÃO <BR>Dilma Rousseff - Presidenta da República </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 22/03/2011
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 22/3/2011, Página 1 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+
+<!-- JS do portal-tema: necessário para o botão de compartilhamento -->
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/vendor-bundle.js"></script>
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/camara-bundle.js"></script>
+
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

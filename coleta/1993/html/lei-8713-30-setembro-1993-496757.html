@@ -1,0 +1,924 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 8.713, DE 30 DE SETEMBRO DE 1993 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Estabelece normas para as eleições de 3 de outubro de 1994." />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 8.713, DE 30 DE SETEMBRO DE 1993 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=216343">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-8713-30-setembro-1993-496757-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 8.713, DE 30 DE SETEMBRO DE 1993</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							<P>Estabelece normas para as eleições de 3 de outubro de 1994.</P>
+						</p>
+				
+						<div class="texto">
+							<STRONG>&nbsp;&nbsp;&nbsp;&nbsp; O PRESIDENTE DA REPÚBLICA</STRONG>&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER><B>&nbsp;</CENTER></B>
+<CENTER><B>DISPOSIÇÕES GERAIS </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;As eleições para Presidente e Vice-Presidente da República, Governador e Vice-Governador de Estado e do Distrito Federal, Senador, Deputado Federal, Deputado Estadual e Deputado Distrital serão realizadas simultaneamente, em todo o País, no dia 3 de outubro de 1994. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Na eleição para Senador, a representação de cada Estado e do Distrito Federal será renovada por dois terços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Será considerado eleito o candidato a Presidente, a Vice-Presidente, a Governador e a Vice-Governador, que obtiver maioria absoluta de votos, não computados os em branco e os nulos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Se nenhum candidato às eleições de que trata este artigo alcançar maioria absoluta na primeira votação, será realizado segundo turno no dia 15 de novembro de 1994, concorrendo, para as respectivas eleições, os dois candidatos mais votados, considerando-se eleito aquele que obtiver a maioria dos votos válidos em cada uma das eleições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Se, antes de realizado o segundo turno, ocorrer morte, desistência ou impedimento legal de candidato a Presidente ou a Governador, convocar-se-á, dentre os remanescentes, o de maior votação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Se, na hipótese dos parágrafos anteriores, remanescer em segundo lugar mais de um candidato com a mesma votação, qualificar-se-á o mais idoso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;A posse do Presidente, do Vice-Presidente, dos Governadores e Vice-Governadores eleitos nos termos desta lei dar-se-á no dia 1º de janeiro de 1995. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os Senadores e Deputados Federais serão empossados no dia 1º de fevereiro de 1995 e os Deputados Estaduais e Distritais tomarão posse na data indicada na Constituição do respectivo Estado ou na Lei Orgânica do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Nas eleições referidas nos artigos anteriores será aplicada a legislação eleitoral vigente, ressalvadas as regras especiais estabelecidas nesta lei. <BR><BR>
+<CENTER><B>&nbsp;</CENTER></B>
+<CENTER><B>DO REGISTRO DE CANDIDATOS </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;Poderá participar das eleições previstas nesta lei o partido que, até 3 de outubro de 1993, tenha obtido, junto ao Tribunal Superior Eleitoral, registro definitivo ou provisório, desde que, neste último caso, conte com, pelo menos, um representante titular na Câmara dos Deputados, na data da publicação desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Só poderá registrar candidato próprio à eleição para Presidente e Vice-Presidente da República: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - O partido que tenha obtido, pelo menos, cinco por cento dos votos apurados na eleição de 1990 para a Câmara dos Deputados, não computados os brancos e os nulos, distribuídos em, pelo menos, um terço dos Estados; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o partido que conte, na data da publicação desta lei, com representantes titulares na Câmara dos Deputados em número equivalente a, no mínimo, três por cento da composição da Casa, desprezada a fração resultante desse percentual; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - coligação integrada por, pelo menos, um partido que preencha condição prevista em um dos incisos anteriores, ou por partidos que, somados, atendam às mesmas condições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Só poderá registrar candidatos a Senador, Governador e Vice-Governador: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o partido que tenha atendido a uma das condições indicadas nos incisos I e II do parágrafo anterior; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o partido que, organizado na circunscrição, tenha obtido na eleição de 1990 para a respectiva Assembléia ou Câmara Legislativa três por cento dos votos apurados, excluídos os brancos e nulos; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - coligação integrada por, pelo menos, um partido que preencha uma das condições previstas nos incisos I e II deste parágrafo, ou por partidos que, somados, atendam às mesmas condições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Até cinco dias a contar da data da publicação desta lei, a Presidência da Câmara dos Deputados informará ao Tribunal Superior Eleitoral o número de Deputados Federais integrantes de cada bancada partidária naquela data. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Até 31 de dezembro de 1993, o Tribunal Superior Eleitoral divulgará a relação dos partidos aptos a registrar candidatos próprios às eleições para Presidente e Vice-Presidente da República, e ainda daqueles que, em cada Estado e no Distrito Federal, poderão registrar candidatos para Senador, Governador e Vice-Governador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;É facultado aos partidos políticos celebrar coligações para eleição majoritária, eleição proporcional ou ambas, desde que elas não sejam diferentes dentro da mesma circunscrição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A coligação terá denominação própria, que poderá ser a junção de todas as siglas dos partidos que a integram, sendo a ela atribuídas as prerrogativas e obrigações dos partidos políticos no que se refere ao processo eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na propaganda para eleição majoritária, a coligação usará, obrigatoriamente, sob sua denominação, as legendas de todos os partidos que a integram; na propaganda para eleição proporcional, cada partido usará apenas sua legenda sob o nome da coligação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Na formação de coligações, devem ser observadas, ainda, as seguintes normas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - na chapa da coligação podem ser inscritos candidatos filiados a qualquer partido político dela integrante; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o pedido de registro dos candidatos deve ser subscrito pelos presidentes dos partidos coligados ou por seus delegados, ou pela maioria dos membros dos respectivos órgãos executivos de direção; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - os partidos integrantes da coligação devem designar um representante, que terá atribuições equivalentes às de presidente de partido político no trato dos interesses e na representação da coligação, no que se refere ao processo eleitoral; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a coligação será representada perante a Justiça Eleitoral pela pessoa designada na forma do inciso III ou por delegados indicados pelos partidos que a compõem, podendo nomear até: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>três delegados perante o Juízo Eleitoral; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>quatro delegados perante o Tribunal Regional Eleitoral; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>cinco delegados perante o Tribunal Superior Eleitoral; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - celebrada a coligação, os partidos que a integram passam a funcionar como um único partido durante o processo eleitoral no relacionamento com a Justiça Eleitoral e no trato de interesses interpartidários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;As normas para a escolha dos candidatos e para a formação de coligações serão estabelecidas no estatuto do partido, que poderá fazê-lo de forma mais restritiva do que a prevista no <I>caput</I> do art. 6º desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Em caso de omissão do estatuto, caberá ao órgão de direção nacional do partido estabelecer as normas a que se refere este artigo, publicando-as no Diário Oficial até 2 de abril de 1994. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;A escolha dos candidatos pelos partidos e a deliberação sobre coligações deverão ser feitas no período de 2 de abril a 31 de maio de 1994, lavrando-se a respectiva ata em livro aberto e rubricado pela Justiça Eleitoral, podendo ser utilizados os já existentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Aos que, na data de publicação desta lei, forem detentores de mandato de Deputado Federal, Estadual ou Distrital, é assegurado o registro de candidatura para o mesmo cargo pelo partido a que estejam filiados na data da convenção, independentemente de sua escolha nesta, salvo deliberação em contrário do órgão de direção nacional do partido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para os fins do disposto no art. 10, não será computado no limite ali definido o número de candidatos da coligação ou partido que, na condição do parágrafo anterior, superar um terço dos lugares a preencher. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Para concorrer às eleições, o candidato deverá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - estar com a filiação deferida pelo respectivo partido até cem dias após a publicação desta lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - possuir domicílio eleitoral na circunscrição na qual pretende concorrer pelo menos desde 31 de dezembro de 1993. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Havendo fusão ou incorporação de partidos após 31 de dezembro de 1993, será considerada, para efeito de filiação partidária, a data de filiação do candidato ao partido originário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Cada partido poderá registrar candidatos para o Senado Federal, Câmara dos Deputados, Câmara Legislativa e Assembléias Legislativas até o número de lugares a preencher. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>No caso de coligação para as eleições proporcionais, independentemente do número de partidos que a integram, só poderão ser registrados candidatos até uma vez e meia o número de lugares a preencher, observado, para cada partido, o limite estabelecido no <I>caput</I> . <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Os partidos e coligações solicitarão à Justiça Eleitoral o registro de seus candidatos até às dezenove horas do dia 10 de junho de 1994. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O pedido de registro deve ser instruído com os seguintes documentos:&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>cópia, autenticada pela Justiça Eleitoral, da ata a que se refere o artigo 8º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>autorização do candidato; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>prova de filiação partidária; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>certidão de quitação eleitoral; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>declaração de bens, assinada pelo candidato, com os respectivos valores atualizados; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>certidões criminais fornecidas pelos órgãos de distribuição da Justiça Eleitoral, Federal e Estadual. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na hipótese de o partido ou coligação não requerer o registro de seus candidatos, estes poderão fazê-lo perante a Justiça Eleitoral em quarenta e oito horas a contar do encerramento do prazo previsto no <I>caput</I> . <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;O candidato às eleições proporcionais indicará, no pedido de registro, além de seu nome completo, as variações nominais com que deseja ser registrado, até o máximo de duas opções, que poderão ser o prenome, sobrenome, cognome, nome abreviado, apelido ou nome pelo qual é mais conhecido, desde que não se estabeleça dúvida quanto à sua identidade, não atente contra o pudor e não seja ridículo ou irreverente, mencionando em que ordem de preferência deseja registrar-se. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Verificada a ocorrência de homonímia, a Justiça Eleitoral procederá atendendo ao seguinte: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - havendo dúvida, poderá exigir do candidato prova de que é conhecido por dada opção de nome que indicou no pedido de registro e que possa confundir o eleitor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ao candidato que, na data de publicação desta lei, esteja exercendo mandato eletivo ou o tenha exercido nos últimos quatro anos, ou que nesse mesmo prazo tenha concorrido em eleição com um dos nomes por ele indicados, será deferida a sua utilização no registro, ficando outros candidatos impedidos de fazer propaganda com esse mesmo nome; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - ao candidato que, pela sua vida política, social ou profissional, seja identificado por um dado nome que tenha indicado, será deferido o registro com esse nome, observado o disposto na parte final do inciso anterior; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - em se tratando de candidatos cuja homonímia não se resolva pelas regras dos dois incisos anteriores, a Justiça Eleitoral os notificará para que em dois dias cheguem a acordo sobre os respectivos nomes a serem utilizados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - no caso do inciso anterior, não havendo acordo, a Justiça registrará cada candidato com o nome por ele indicado no pedido de registro, observada a ordem de preferência ali definida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A Justiça Eleitoral poderá exigir do candidato prova de que é conhecido por determinada opção de nome que tenha indicado, quando seu uso puder confundir o eleitor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A Justiça Eleitoral organizará, para auxiliar os escrutinadores na apuração, e publicará, até o dia 1º de setembro de 1994, as seguintes listas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a primeira, ordenada por partidos, terá a relação dos respectivos candidatos em ordem numérica com as duas variações de nome correspondentes a cada um, na ordem escolhida pelo candidato; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a segunda, com índice onomástico e organizada em ordem alfabética, nela constando o nome completo de cada candidato e cada variação de nome, também em ordem alfabética, seguidos da respectiva legenda e número. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Na apuração serão anulados os votos dados a homônimos em que não se possa identificar com exatidão a vontade do eleitor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Ao decidir sobre os pedidos de registro, a Justiça Eleitoral publicará obrigatoriamente as variações de nome deferidas aos candidatos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º A Justiça Eleitoral indeferirá todo pedido de variação de nome coincidente com nome de candidato a eleição majoritária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;É facultado ao partido ou coligação substituir candidato que for considerado inelegível ou falecer após o termo final do prazo do registro ou, ainda, que tiver seu registro indeferido ou cancelado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A escolha do substituto far-se-á na forma estabelecida no estatuto do partido a que pertencer o substituído, e o registro deverá ser requerido até oito dias contados do fato que deu origem à substituição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Tratando-se de eleições majoritárias, se o candidato for de coligação, a substituição deverá ser feita por decisão da maioria absoluta das comissões executivas dos partidos coligados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Nas eleições proporcionais, a substituição só se efetivará se o novo pedido, com a observância de todas as formalidades exigidas para o registro, for apresentado até sessenta dias antes do pleito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Se a convenção partidária regional se opuser, na deliberação sobre coligações às diretrizes legitimamente estabelecidas pelos órgãos superiores do partido, estes poderão, nos termos do respectivo estatuto, anular tais decisões e os atos delas decorrentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Estão sujeitos ao cancelamento do registro os candidatos que, até a data da eleição, forem expulsos do partido, em processo no qual seja assegurada ampla defesa e sejam observadas as normas estatutárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O cancelamento do registro será decretado pela Justiça Eleitoral, após solicitação do partido que registrou o candidato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Cabe à Justiça Eleitoral disciplinar a identificação dos partidos e de seus candidatos no processo eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Ao partido fica assegurado o direito de manter o número atribuído à sua legenda na eleição anterior, e ao candidato, nessa hipótese, o direito de manter o número que lhe foi atribuído na eleição anterior para o mesmo cargo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os candidatos de coligações, nas eleições majoritárias, serão registrados com o número da legenda de seu partido, e, nas eleições proporcionais com o número da legenda do respectivo partido acrescido do número que lhe couber no sorteio a que se refere o § 9º do art. 100, do Código Eleitoral, observado o disposto no parágrafo anterior. <BR><BR>
+<CENTER><B>&nbsp;</CENTER></B>
+<CENTER><B>DA CÉDULA OFICIAL </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;As cédulas oficiais para as eleições previstas nesta lei serão confeccionadas pela Justiça Eleitoral, que as imprimirá com exclusividade para distribuição às Mesas Receptoras, sendo sua impressão feita em papel opaco, com tinta preta e em tipos uniformes de letras e números. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Haverá duas cédulas distintas, uma para as eleições majoritárias e outra para as proporcionais, a serem confeccionadas segundo modelos constantes do anexo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os candidatos para eleição majoritária serão identificados pelo nome indicado no pedido de registro e pela sigla adotada pelo partido a que pertencem, e deverão figurar na ordem determinada por sorteio, observado, no que couber, o disposto no art. 12. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Para as eleições realizadas pelo sistema proporcional, a cédula terá espaços para que o eleitor escreva o nome ou o número do candidato escolhido, ou a sigla do partido de sua preferência ou o número deste. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Às eleições em segundo turno aplica-se o disposto no § 2º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º No prazo de quinze dias após a realização do sorteio a que se refere o § 2º, os Tribunais Regionais Eleitorais divulgarão o modelo da cédula completa com os nomes dos candidatos majoritários na ordem já definida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;As votações serão feitas em dois momentos distintos, na mesma urna, devendo ser entregue ao eleitor, primeiramente, a cédula destinada às eleições proporcionais, de cor branca, e, em seguida, a cédula destinada às eleições majoritárias, de cor amarela. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O eleitor dirigir-se-á à cabine duas vezes, sendo a primeira para preencher a cédula destinada às eleições proporcionais e a segunda para assinalar o voto na cédula destinada às eleições majoritárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A Justiça Eleitoral fixará o tempo de votação e o número de eleitores por Seção, de modo a garantir a realização das votações no prazo legal necessário ao exercício do voto. <BR><BR>
+<CENTER><B>&nbsp;</CENTER></B>
+<CENTER><B>DA FISCALIZAÇÃO DAS ELEIÇÕES </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;É defeso ao Juiz Eleitoral nomear para Mesa Receptora, Turma ou Junta Apuradora, fiscais e delegados dos Partidos Políticos, ou menor de dezoito anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;É vedada a participação de parentes, em qualquer grau, na mesma Mesa, Turma ou Junta Apuradora, ou de servidores de uma mesma repartição pública ou empresa privada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;Os eleitores nomeados para compor as Mesas Receptoras serão, no dia seguinte ao da eleição e ao do eventual segundo turno, dispensados do serviço sem prejuízo do salário, vencimento ou qualquer outra vantagem, mediante comprovação expedida pela Justiça Eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;A escolha de fiscais e delegados pelos partidos ou coligações não poderá recair em quem, por nomeação do Juiz Eleitoral, já faça parte de Mesa Receptora, ou em menor de dezoito anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O fiscal poderá ser nomeado para fiscalizar mais de uma Seção Eleitoral no mesmo local de votação, mesmo sendo eleitor de outra Zona Eleitoral, porém seu voto será admitido somente na Seção de sua inscrição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As credenciais dos fiscais e delegados serão expedidas, exclusivamente, pelos partidos ou coligações e não necessitam de visto do Juiz Eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Para efeito do disposto no parágrafo anterior, o presidente do partido ou o representante da coligação deverá registrar na Justiça Eleitoral o nome das pessoas autorizadas a expedir as credenciais dos fiscais e delegados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;Fica vedado aos juízes que sejam partes em ações judiciais que envolvam candidatos às eleições de 1994 participar de qualquer das fases do processo eleitoral nos diversos pleitos de que trata esta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Os partidos e coligações poderão fiscalizar todas as fases do processo de votação e apuração das eleições, inclusive o preenchimento dos boletins de urna e o processamento eletrônico da totalização dos resultados, sendo-lhes garantido o acesso antecipado aos programas de computador a serem utilizados na apuração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os fiscais e delegados dos partidos e coligações serão posicionados a uma distância não superior a um metro da Mesa Apuradora, de modo que possam observar diretamente a abertura da urna, a abertura e contagem das cédulas e o preenchimento do boletim. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os trabalhos de apuração não poderão ser realizados sem que seja dado cumprimento ao disposto no parágrafo anterior, sujeitos os responsáveis às penas previstas no art. 347 do Código Eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O não atendimento ao disposto no § 1º enseja a impugnação do resultado da urna, desde que apresentada antes de sua abertura. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º No prazo de 48 horas a contar do conhecimento dos programas de computador a que se refere o <I>caput</I> , o partido ou coligação poderá apresentar impugnação fundamentada junto à Justiça Eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Os partidos concorrentes ao pleito poderão constituir sistema próprio de fiscalização, apuração e totalização dos resultados, contratando inclusive empresas de auditoria de sistemas, que, credenciadas junto à Justiça Eleitoral, receberão, previamente, os programas de computador e, simultaneamente, os mesmos dados alimentadores do sistema oficial de apuração e totalização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Os órgãos encarregados do processamento eletrônico de dados são obrigados a fornecer aos partidos ou coligações, no mesmo momento da entrega ao Juiz encarregado, cópias dos dados contidos em fita magnética do processamento parcial de cada dia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;O boletim de urna, cujo modelo será aprovado pelo Tribunal Superior Eleitoral, conterá impressos os números dos candidatos concorrentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Juiz Presidente da Junta Apuradora é obrigado a entregar aos partidos concorrentes ao pleito ou coligações, e seus respectivos delegados ou fiscais credenciados, cópia do boletim de urna; não o fazendo, incorrerá na pena prevista no art. 310 do Código Eleitoral, aplicada cumulativamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A transcrição dos resultados apurados no boletim deverá ser feita na presença de fiscais, delegados e advogados dos partidos e coligações, que, ao final do preenchimento do boletim, receberão imediatamente exemplar idêntico, expedido pela Junta Eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Para os fins do disposto no parágrafo anterior, cada partido ou coligação credenciará dois fiscais perante a Junta Eleitoral, funcionando um de cada vez. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O rascunho, denominado borrão, ou qualquer outro tipo de papel utilizado pelo Juiz ou qualquer membro da Junta Apuradora, não poderá servir de consulta posterior à apuração perante a Junta totalizadora apuradora de votos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;O Juiz Presidente da Junta Apuradora é obrigado a recontar a urna cujo resultado apresentar no Boletim incoincidência com o número de votantes ou houver discrepância com os dados obtidos no momento da apuração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os Tribunais Regionais Eleitorais também são obrigados a proceder à contagem de votos sempre que os candidatos apresentarem boletins de urna incoincidentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Antes de concluir a expedição do Boletim de Apuração, o Juiz e os membros da Junta não poderão passar a apurar a urna subseqüente, sob pena de incorrer no crime previsto no art. 313 do Código Eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;A impugnação não recebida pela Junta Apuradora pode ser apresentada, em quarenta e oito horas, acompanhada de declaração de duas testemunhas ao Tribunal Regional Eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Tribunal decidirá sobre o recebimento em quarenta e oito horas, publicando o acórdão na própria sessão de julgamento e transmitindo imediatamente à Junta, via telex ou fax, o inteiro teor da decisão e da impugnação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Nos municípios com mais de uma Zona Eleitoral, a apuração das urnas correspondentes a cada uma será realizada em locais distintos. <BR><BR>
+<CENTER><B>&nbsp;</CENTER></B>
+<CENTER><B>DAS PESQUISAS E TESTES PRÉ-ELEITORAIS </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;A partir de 2 de abril de 1994, as entidades ou empresas que realizarem pesquisas de opinião pública relativas às eleições ou aos candidatos para serem levadas ao conhecimento público são obrigadas a registrar, junto à Justiça Eleitoral, até cinco dias antes da divulgação, as informações a seguir relacionadas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - quem contratou a realização da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - valor e origem dos recursos despendidos no trabalho; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a metodologia e o período de realização da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - o plano amostral e ponderação no que se refere a sexo, idade, grau de instrução, nível econômico e área física de realização do trabalho; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - o nome de quem pagou pela realização do trabalho; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - o sistema interno de controle e verificação, conferência e fiscalização da coleta de dados e do trabalho de campo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As informações relativas à eleição presidencial devem ser registradas no Tribunal Superior Eleitoral, e as relativas às demais eleições, no Tribunal Regional Eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A Justiça Eleitoral afixará imediatamente, no local de costume, aviso comunicando o registro das informações a que se refere este artigo, colocando-as à disposição dos partidos ou coligações com candidatos ao pleito, que a elas terão livre acesso pelo prazo de trinta dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Imediatamente após a divulgação da pesquisa, as empresas ou entidades a que se refere este artigo colocarão à disposição dos partidos ou coligações que possuam candidatos registrados para as eleições a que se refere a pesquisa todas as informações, resultados obtidos e demais elementos atinentes a cada um dos trabalhos efetuados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Os responsáveis pela empresa ou entidade de pesquisa, pelo órgão veiculador, partido, coligação ou candidato que divulgarem pesquisa não registrada estarão sujeitos à pena cominada no art. 323 do Código Eleitoral e à multa de valor igual ao contratado pela realização da pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Os partidos, mediante requerimento à Justiça Eleitoral, que determinará imediatamente a realização de diligência, terão acesso ao sistema interno de controle, verificação e fiscalização da coleta de dados dos institutos ou entidades que derem ao conhecimento público pesquisas de opinião relativas às eleições, e poderão, através da escolha livre e aleatória de planilhas individuais, mapas ou equivalentes, confrontar e conferir os dados publicados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A recusa ao cumprimento do disposto neste artigo ou qualquer ato que vise a retardar, impedir ou dificultar a ação fiscalizadora dos partidos, tornará os responsáveis pela entidade ou empresa de pesquisa sujeitos à pena de detenção de seis meses a um ano e multa de valor igual ao recebido pela realização da pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A comprovação de irregularidade ou dessemelhança entre os dados publicados e aqueles aferidos pela diligência do partido político tornará os responsáveis pela entidade ou instituto de pesquisa e os responsáveis pelo órgão divulgador sujeitos às penalidades indicadas no parágrafo anterior, sem prejuízo da obrigatoriedade de publicação dos dados corretos. <BR><BR>
+<CENTER><B>&nbsp;</CENTER></B>
+<CENTER><B>DA ARRECADAÇÃO E DA APLICAÇÃO DE RECURSOS NAS CAMPANHAS ELEITORAIS </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;As despesas da campanha eleitoral serão realizadas sob a responsabilidade dos partidos ou de seus candidatos, e por eles pagas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;Até cinco dias úteis após a escolha de seus candidatos em convenção, o partido constituirá Comitês Financeiros, com a finalidade de arrecadar recursos e aplicá-los nas campanhas eleitorais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os Comitês devem ser vinculados a cada uma das eleições para as quais o partido apresente candidato próprio, podendo haver reunião, num único comitê, das atribuições relativas às eleições de uma dada circunscrição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na eleição presidencial é obrigatória a criação de comitê nacional e facultativa a de comitês nos Estados e no Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os Comitês Financeiros serão registrados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - no Tribunal Superior Eleitoral, o nacional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - nos Tribunais Regionais Eleitorais, os estaduais e o distrital. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;O candidato a cargo eletivo fará, diretamente ou por intermédio de pessoa por ele designada, a administração financeira de sua própria campanha, utilizando recursos que lhe sejam repassados pelo comitê, inclusive os relativos à cota do Fundo Partidário, recursos próprios ou doações de pessoas físicas ou jurídicas, na forma estabelecida nesta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os comitês respondem solidariamente com os candidatos pelos recursos que repassem a estes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;É obrigatório para o partido e facultativo para o candidato abrir contas bancárias específicas para registrar todo o movimento financeiro da campanha. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;O candidato é o único responsável pela veracidade das informações financeiras e contábeis referentes à sua campanha, devendo assinar a respectiva prestação de contas sozinho ou, se for o caso, em conjunto com a pessoa que tenha designado para essa tarefa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;A partir da escolha dos candidatos em convenção, pessoas físicas ou jurídicas poderão fazer doações em dinheiro, ou estimáveis em dinheiro, para campanhas eleitorais, obedecido o disposto nesta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As doações e contribuições de que trata este artigo ficam limitadas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - no caso de pessoa física, a dez por cento dos rendimentos brutos no ano de 1993; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - no caso em que o candidato utilize recursos próprios, ao valor máximo de gastos estabelecido pelo seu partido, na forma desta lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - no caso de pessoa jurídica, a dois por cento da receita operacional bruta do ano de 1993. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os percentuais de que tratam os incisos I e III do § 1º poderão ser excedidos, desde que as contribuições e doações não sejam superiores a setenta mil Ufir e trezentas mil Ufir, respectivamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As contribuições e doações, as receitas e os rendimentos de que trata esta lei serão convertidas em Ufir, pelo valor desta no mês em que ocorrerem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Até cinco dias após a escolha dos candidatos, os órgãos de direção regional comunicarão ao órgão de direção nacional do partido o número de candidatos e o limite de gastos estabelecido para cada eleição na respectiva circunscrição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;O órgão de direção nacional consolidará os limites de gastos estabelecidos para cada circunscrição, acrescidos do limite que fixar para a eleição presidencial, e solicitará ao Ministério da Fazenda a emissão de Bônus Eleitorais ao portador em valor correspondente ao total de gastos previstos pelo partido para todas as eleições de que trata esta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;O Ministério da Fazenda emitirá os Bônus Eleitorais ao portador, os quais deverão: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - indicar o valor em moeda da doação, convertido em Unidade Fiscal de Referência (Ufir); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ser previamente numerados, para fins de identificação de sua distribuição posterior aos partidos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - ser emitidos em valores variados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;O órgão de direção nacional do partido repassará aos regionais os bônus correspondentes à respectiva circunscrição, os quais serão distribuídos aos candidatos no limite individual permitido para seus gastos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Toda doação a candidato específico deverá ser feita mediante troca por Bônus Eleitorais, correspondente ao seu valor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os recursos próprios do candidato poderão ser utilizados em sua campanha, desde que sejam integralmente convertidos em bônus recebidos do Comitê Financeiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;Os partidos e os candidatos manterão em seus arquivos, durante cinco anos, à disposição da Justiça Eleitoral, a relação completa de todas as doações recebidas com identificação dos doadores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;É vedado, a partido e candidato, receber direta ou indiretamente doação em dinheiro ou estimável em dinheiro, inclusive através de publicidade de qualquer espécie, procedente de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - entidade ou governo estrangeiro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - órgão da administração pública direta, ressalvado o Fundo Partidário, indireta ou fundação instituída em virtude de lei ou mantida com recursos provenientes do Poder Público; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - concessionário ou permissionário de serviço público estadual, distrital ou municipal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - entidade de direito privado que receba, na condição de beneficiária, recursos provenientes de contribuição compulsória em virtude de disposição legal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - entidade declarada de utilidade pública federal, estadual, distrital ou municipal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - entidade de classe ou sindical; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - pessoa jurídica sem fins lucrativos que receba recursos do exterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;O partido que receber recursos de origem vedada nesta lei ou gastar além dos limites estabelecidos na forma dos arts. 39 e 40 perderá o direito ao Fundo Partidário do ano seguinte. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;São considerados gastos eleitorais e, como tais, sujeitos a registro e aos limites fixados na forma desta lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - confecção de material impresso de qualquer natureza e tamanho; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - propaganda e publicidade direta ou indireta, por qualquer meio de divulgação destinada a conquistar votos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - aluguel de locais para a promoção de atos de campanha eleitoral; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - despesas com transporte ou deslocamento de pessoal a serviço das candidaturas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - correspondência e despesas postais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - despesas relativas à organização e ao funcionamento de comitês e serviços necessários às eleições; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - montagem e operação de carros de som, de propaganda e assemelhados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - produção ou patrocínio de espetáculos ou eventos promocionais de candidatura; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - produção de programas de rádio, televisão ou vídeo, inclusive os destinados à propaganda gratuita; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - pagamento de cachê de artistas ou animadores de eventos relacionados a candidaturas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - confecção, aquisição e distribuição de camisetas, chaveiros e outros brindes de campanha; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XII - realização de pesquisas ou testes pré-eleitorais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;Qualquer eleitor poderá realizar gastos pessoais até um mil Ufir em apoio aos candidatos de sua preferência desde que esses gastos não sejam sujeitos a reembolso pelo candidato ou pelos comitês ou partidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;A infração às normas que regem a administração financeira da campanha eleitoral sujeita o candidato à cassação do registro ou, se eleito, à perda do mandato, decretada pela Justiça Eleitoral, nos termos das disposições constitucionais e legais em vigor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;A prestação de contas dos Comitês Financeiros de âmbito nacional e regional deve ser elaborada de acordo com os princípios fundamentais de contabilidade aprovados pelo Conselho Federal de Contabilidade e assinada por profissional habilitado, pelo presidente do respectivo comitê ou pessoa por ele designada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;Até 30 de novembro de 1994, os Comitês Financeiros devem enviar à Justiça Eleitoral as prestações de contas referentes a cada campanha para cada uma das eleições previstas nesta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Da prestação de contas do partido deverão constar a numeração e valor total dos bônus distribuídos para cada uma das eleições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;Em anexo às prestações de contas devem ser apresentados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - os extratos das contas bancárias abertas pelo comitê e, se for caso, pelos candidatos para a movimentação dos recursos financeiros utilizados na campanha; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - relação dos cheques recebidos, indicando seus respectivos números. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os candidatos e partidos conservarão a documentação comprobatória de suas prestações de contas até cinco anos após a posse dos candidatos eleitos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;O candidato que usar a faculdade prevista no art. 36 deve apresentar ao Comitê Financeiro de seu partido a prestação de contas dos recursos arrecadados e aplicados em sua campanha, devendo dela constar as informações exigidas nesta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;Ao receber as prestações de contas e demais informações dos candidatos, deve o comitê: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - verificar se os valores declarados pelo candidato como tendo sido recebidos através do próprio comitê conferem com seus próprios registros financeiros e contábeis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - resumir as informações contidas nas prestações de contas, de forma a apresentar demonstrativo consolidado das campanhas de todos os candidatos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - encaminhar à Justiça Eleitoral o conjunto das prestações de contas dos candidatos e do próprio comitê, de forma ordenada que permita fácil compreensão das informações, assim como identificação de documentos e transações efetuadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O candidato é o único responsável pela veracidade das informações apresentadas na prestação de contas de sua campanha. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;A Justiça Eleitoral fará o exame da prestação de contas dos partidos e candidatos, referente a cada eleição, devendo verificar a sua regularidade e correta apresentação das contas, assegurado aos partidos participantes da eleição o direito de acompanhamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para efetuar os exames de que trata este artigo, a Justiça Eleitoral poderá requisitar técnicos do Tribunal de Contas da União, dos Estados, do Distrito Federal ou dos Municípios, pelo tempo que for necessário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Havendo indício de irregularidade na prestação de contas, a Justiça Eleitoral poderá requisitar diretamente às instituições financeiras os extratos e comprovantes de movimentação financeira das contas referidas no art. 52, I, bem como determinar diligências necessárias à complementação de informações ou ao saneamento das irregularidades encontradas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As prestações de contas a que se refere este artigo devem ser encaminhadas pelo órgão regional do partido ao Tribunal Eleitoral do respectivo Estado ou Distrito Federal, e pelo órgão nacional ao Tribunal Superior Eleitoral, devendo ser apreciadas até oito dias antes da diplomação dos eleitos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;Se, ao final da campanha, ocorrer sobra de recursos financeiros, deve ser declarada na prestação de contas e permanecerá depositada na respectiva conta bancária até o fim do prazo de impugnação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Após julgados todos os recursos, as sobras referidas neste artigo serão entregues ao partido. <BR><BR>
+<CENTER><B>&nbsp;</CENTER></B>
+<CENTER><B>DOS CRIMES ELEITORAIS </CENTER></B>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;Constitui crime eleitoral: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - doar, direta ou indiretamente, a partido, coligação ou candidato, recurso de valor superior ao definido em lei para aplicação em campanha eleitoral: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena: multa de valor igual ao do excesso verificado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - gastar recursos acima do valor definido nesta lei para aplicação em campanha eleitoral: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena: multa de valor igual ao do excesso verificado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - distribuir, no dia da eleição, qualquer espécie de propaganda política, inclusive volantes e outros impressos, ou fazer funcionar postos de distribuição ou de entrega de material de propaganda; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena: detenção de um a três meses; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - exercer, no dia da eleição, qualquer forma de aliciamento, coação ou manifestação tendente a influir na vontade do eleitor: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena: detenção de um a três meses; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - divulgar fato que sabe inverídico, distorcer ou manipular informações relativas a partido, coligação ou candidato, com o objetivo de influir na vontade do eleitor: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pena: detenção de dois meses a um ano ou pagamento de cento e vinte a cento e cinqüenta dias-multa, agravada se o crime é cometido pela imprensa, rádio ou televisão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Consideram-se recursos para os fins deste artigo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - quantia em dinheiro, seja em moeda nacional ou estrangeira; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - título representativo de valor mobiliário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - qualquer mercadoria que tenha valor econômico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a prestação, gratuita ou por preço significativamente inferior ao do mercado, de qualquer serviço, ressalvada a oferta de mão-de-obra por pessoa física; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - a utilização de qualquer equipamento ou material; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - a difusão de propaganda, por qualquer meio de comunicação, ou o pagamento das despesas necessárias à sua produção ou veiculação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - a cessão de imóvel, temporária ou definitiva; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - o pagamento de salário ou qualquer outra forma de remuneração a empregado ou prestador de serviço a partido ou a candidato; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - o pagamento, a terceiros, de quaisquer despesas relativas às hipóteses previstas neste artigo.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As penas indicadas no inciso II do <I>caput</I> serão aplicadas aos dirigentes partidários ou membros de comitês de partidos ou coligações e, se o responsável for o candidato, ser-lhe-ão aplicadas as penas sem prejuízo das previstas na lei complementar definidora de casos de inelegibilidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Aplicam-se as penas previstas no inciso I ao presidente, gerente, diretor, administrador ou equivalente responsável por pessoa jurídica da qual se originem os recursos destinados a partidos, coligações ou a candidato em valor acima dos previstos nesta lei.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O candidato, se responsável pelo crime, está sujeito às penas indicadas neste artigo e à cassação do registro de sua candidatura ou do diploma, se já eleito, observadas as disposições legais e constitucionais em vigor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;À pessoa jurídica da qual se originar recurso ilícito, na forma do artigo anterior, será aplicada multa de valor igual ao excesso verificado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O valor da multa pode ser aumentado até dez vezes, se o juiz considerar que, em virtude da situação econômica da infratora, é ineficaz a cominada neste artigo.&nbsp;<BR><B>&nbsp;</P></B>
+<CENTER><B>DA PROPAGANDA ELEITORAL EM GERAL </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;A propaganda eleitoral somente é permitida após a escolha do candidato pelo partido ou coligação em convenção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Ao postulante à candidatura para cargo eletivo é permitida a realização, na semana anterior à escolha pelo partido, de propaganda visando à indicação de seu nome. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A violação do disposto neste artigo sujeitará o responsável pela divulgação da propaganda, bem como o beneficiado, à multa de dez mil a vinte mil Ufir. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;É livre, independendo da obtenção de licença municipal e de autorização da Justiça Eleitoral, a veiculação de propaganda eleitoral por meio da fixação de faixas, placas, cartazes, pinturas ou inscrições em bens particulares, desde que haja permissão do detentor de sua posse. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Nos bens cujo uso dependa de cessão, permissão ou concessão do Poder Público, ou que a ele pertençam, bem como nos de uso comum, é vedada a veiculação de propaganda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;Independe da obtenção de licença municipal e de autorização da Justiça Eleitoral a veiculação de propaganda eleitoral pela distribuição de folhetos, volantes e outros impressos, devendo ser editados sob a responsabilidade de partido, coligação ou candidato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;A propaganda através de quadros ou painéis de publicidade ou outdoors somente será permitida após a realização do sorteio de que trata este artigo, sob pena de cassação do registro do candidato infrator. As empresas responsáveis pela afixação que não efetuarem a retirada do material ficarão sujeitas às penas previstas no art. 347 do Código Eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As empresas de publicidade deverão relacionar os pontos disponíveis para a veiculação de propaganda eleitoral, os quais não poderão ultrapassar a metade do total dos espaços existentes no território municipal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os locais destinados à propaganda eleitoral deverão ser assim distribuídos:&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>trinta por cento entre os partidos e coligações que tenham candidato a Presidente da República; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>trinta por cento entre os partidos e coligações que tenham candidato a Governador e Senador; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>quarenta por cento entre os partidos e coligações que tenham candidatos a deputados federais, estaduais ou distritais. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os locais a que se refere o parágrafo anterior deverão ser divididos em grupos eqüitativos de pontos com maior e menor impacto visual, tantos quantos forem os partidos e coligações concorrentes, para serem sorteados e utilizados durante a propaganda eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º A relação dos locais com a indicação dos grupos deverá ser entregue pelas empresas de publicidade aos Juízes Eleitorais nos Municípios, e ao Tribunal Regional Eleitoral, nas Capitais, até o dia 20 de junho de 1994. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º O sorteio a que se refere este artigo será realizado pela Justiça Eleitoral até o dia 25 de junho de 1994, para o que os Tribunais Regionais Eleitorais farão publicar na imprensa oficial até o dia 15 de junho de 1994 a relação de partidos e coligações que requereram registro de candidatos às eleições previstas nesta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Para efeito do sorteio, a coligação é equiparada a um partido, qualquer que seja o número de partidos que a integram. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º Após a realização do sorteio, os partidos e coligações deverão comunicar às empresas, por escrito, os períodos e a quantidade de quadros ou painéis que utilizarão dos grupos a que se refere o § 2º. Os que não forem utilizados não poderão ser redistribuídos entre os demais concorrentes, liberando-se a venda desses espaços, nos intervalos dos períodos estipulados, somente para publicidade sem fins eleitorais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º O preço cobrado pelas empresas para a veiculação da propaganda eleitoral de que trata este artigo não poderá ser superior àquele por elas praticado normalmente para a publicidade comercial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 9º Nos oito dias que antecedem a realização do pleito, não é permitida a alteração de mensagem veiculada nos quadros, painéis de publicidade e outdoors , sujeito o infrator às penas do art. 347 do Código Eleitoral. <BR><BR>
+<CENTER><B>&nbsp;</CENTER></B>
+<CENTER><B>DA PROPAGANDA ELEITORAL NA IMPRENSA </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;Será permitida, até o dia das eleições, a divulgação paga, na imprensa escrita, de propaganda eleitoral, no espaço máximo a ser utilizado, por edição, para cada candidato, partido ou coligação, de um oitavo de página de jornal padrão, e de um quarto de página de revista ou tablóide. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A violação do disposto neste artigo sujeitará os responsáveis pelos veículos de divulgação, bem como os partidos, coligações ou candidatos beneficiados, à multa de cinco mil a dez mil Ufir. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;A partir da escolha de candidato pelo partido, é assegurado o exercício do direito de resposta ao partido, coligação ou candidato atingido por afirmação caluniosa, difamatória ou injuriosa publicada em veículo de imprensa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O ofendido, ou seu representante legal, poderá requerer o exercício do direito de resposta ao Juiz Eleitoral, dentro de três dias da data da publicação, instruindo o pedido com um exemplar da publicação e o texto para resposta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A Justiça Eleitoral notificará imediatamente o ofensor para defender-se em quarenta e oito horas, devendo a decisão ser prolatada no prazo máximo de cinco dias a contar da data da formulação do pedido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Deferido o pedido, a divulgação da resposta dar-se-á no mesmo veículo, espaço, local, página, tamanho, caracteres e outros elementos de destaque usados na ofensa, em até quarenta e oito horas após a decisão, ou, por solicitação do ofendido, no mesmo dia da semana em que foi divulgada a ofensa, ainda que fora desse prazo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Se a ofensa for produzida em dia e hora que inviabilize sua reparação dentro dos prazos estabelecidos nos parágrafos anteriores, a Justiça Eleitoral determinará que a resposta seja divulgada imediatamente. <BR><BR>
+<CENTER><B>&nbsp;</CENTER></B>
+<CENTER><B>DA PROPAGANDA ELEITORAL NO RÁDIO E NA TELEVISÃO </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;A propaganda eleitoral no rádio e televisão é restrita ao horário gratuito definido nesta lei, vedada a veiculação de propaganda paga. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;A partir da escolha de candidatos em convenção, é vedado à emissora, na sua programação normal: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - transmitir pesquisa ou consulta de natureza eleitoral em que seja possível ou evidente a manipulação de dados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - utilizar trucagem, montagem ou outro recurso de áudio ou vídeo, ou produzir ou veicular programa, que possa degradar ou ridicularizar candidato, partido ou coligação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - veicular propaganda política ou difundir opinião favorável ou contrária a candidato, partido ou coligação, ou seus órgãos ou representantes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A não-observância do disposto neste artigo enseja a suspensão das transmissões da emissora por uma hora no mesmo horário em que a infração foi cometida, dobrado o tempo em caso de reincidência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;As emissoras de rádio e televisão ficam obrigadas a dar tratamento equânime a todos os candidatos em sua programação normal e seus noticiários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A manifesta preferência, na programação normal de emissora de rádio ou televisão, em favor de algum candidato ou em detrimento de outro, acarretará a suspensão das transmissões da emissora por um dia, por determinação da Justiça Eleitoral mediante denúncia de partido político, de candidato, ou do Ministério Público, ficando o responsável pela empresa sujeito às penalidades previstas no art. 323 do Código Eleitoral, e multa de cinco mil a dez mil Ufir. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A reincidência implica a duplicação da penalidade aplicada nos termos deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;A partir da escolha de candidatos em convenção, é assegurado o exercício do direito de resposta ao partido, coligação ou candidato atingido por afirmação caluniosa, difamatória ou injuriosa praticada nos horários destinados à programação normal das emissoras de rádio ou televisão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O ofendido, ou seu representante legal, poderá formular pedido para o exercício de direito de resposta dentro de quarenta e oito horas da veiculação do programa, dirigido ao respectivo Tribunal Regional Eleitoral, no caso de transmissão local, e ao Tribunal Superior Eleitoral, no caso de transmissão nacional ou interestadual, devendo a decisão ser prolatada improrrogavelmente em setenta e duas horas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para efeito de apreciação do exercício do direito de resposta previsto neste artigo, a Justiça Eleitoral, à vista do pedido, deverá notificar imediatamente o responsável pela emissora que realizou o programa, para que entregue em vinte e quatro horas, sob as penas do art. 347 do Código Eleitoral, cópia da fita da transmissão, que será devolvida após a decisão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Deferido o pedido, a resposta será dada em até quarenta e oito horas após a decisão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Se a ofensa for produzida em dia e hora que inviabilizem sua reparação dentro dos prazos estabelecidos nos parágrafos anteriores, a resposta será divulgada no horário deferido pela Justiça Eleitoral, ainda que seja nas quarenta e oito horas antecedentes ao pleito, em termos e forma previamente aprovados, de modo a não ensejar tréplica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;O responsável pela emissora, ao ser notificado pela Justiça Eleitoral ou informado por cópia protocolada que receber de reclamante, preservará a gravação até a decisão final do processo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;É vedada, a partir da data de escolha do candidato pelo partido, a transmissão de programa de rádio ou televisão por ele apresentado ou comentado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Sendo o nome do programa o mesmo que o do candidato, é proibida a sua divulgação, sob pena de cessação do respectivo registro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;Independentemente da veiculação de propaganda eleitoral gratuita no horário definido nesta lei, é facultada a transmissão, por emissora de radiodifusão, de debates entre candidatos à eleição majoritária, assegurada a participação de todos os partidos que tenham candidatos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A apresentação dos debates pode ser feita:&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>em conjunto, estando presentes todos os candidatos a um mesmo cargo eletivo, realizada num mesmo dia; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>em grupos, em dias diferentes, de modo que em cada sessão estejam presentes dois ou mais candidatos. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No caso da alínea <EM>b</EM>, os debates deverão fazer parte de programação previamente estabelecida e divulgada pela emissora, devendo a escolha do dia e da ordem de fala ser feita mediante sorteio, salvo se for celebrado acordo entre os partidos e coligações interessados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;Independentemente da veiculação de propaganda eleitoral gratuita no horário definido nesta lei, é também facultada a transmissão, por emissora de radiodifusão, de debates entre candidatos à eleição proporcional, assegurada a participação de todos os partidos que tenham candidatos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os debates serão organizados de modo a assegurar número equivalente de candidatos de todos os partidos, podendo desdobrar-se em mais de um dia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Será admitida a realização de debate sem a presença de candidato de algum partido, desde que o veículo de comunicação responsável comprove haver convidado o candidato do partido ausente com a antecedência mínima de setenta e duas horas da realização do debate. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º No caso de desdobramento do debate em mais de um dia, a escolha do dia e da ordem da fala deverá ser feita mediante sorteio, salvo se houver acordo entre os candidatos interessados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º É vedada a realização de mais de um debate pela mesma emissora com a presença do mesmo candidato, salvo se for, para isto, indicado pelo seu partido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;As emissoras de rádio e de televisão reservarão em sua programação, nos sessenta dias anteriores à antevéspera das eleições, duas horas diárias para a propaganda eleitoral gratuita, sendo uma hora para a eleição presidencial e uma hora para as eleições federais, estaduais e distritais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A veiculação de propaganda com vistas à eleição presidencial será feita em cadeia nacional, das 7:00h às 7:30h e das 20:30h às 21:00h na televisão, e das 7:00h às 7:30h e das 12:00h às 12:30h no rádio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para as eleições federais, estaduais e distritais, a propaganda será feita em rede estadual, das 7:30h às 8:00h e das 21:00h às 21:30h na televisão, e das 7:30h às 8:00h e das 12:30h às 13:00h no rádio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Às terças-feiras, quintas-feiras e sábados, o horário definido nos §§ 1º e 2º será inteiramente destinado à divulgação das propostas partidárias ou de candidatos quanto à atuação na Câmara dos Deputados, nas Assembléias Legislativas e na Câmara Legislativa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Havendo segundo turno, o tempo destinado ao horário gratuito previsto no <I>caput</I> ficará reduzido a trinta minutos diários para cada eleição e será dividido igualmente entre os candidatos. § 5º No caso do parágrafo anterior, a propaganda de rádio e televisão será realizada nos vinte dias que antecedem a antevéspera da eleição, observados, quanto ao início da programação, os horários fixados para a propaganda presidencial, seguindo-se imediatamente a propaganda para governador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º A emissora que não permanecer em rede ou cadeia no horário previsto nesta lei terá suspensas suas transmissões por vinte e quatro horas, por determinação da Justiça Eleitoral, à vista de reclamação de partido, coligação ou candidato, dobrando-se o período a cada reincidência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º Na hipótese do parágrafo anterior, a emissora penalizada divulgará, a cada quinze minutos, mensagem informando que se encontra fora do ar por determinação da Justiça Eleitoral, por ter desobedecido à lei eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º A fita com a gravação referente a cada programa eleitoral diário deve ser entregue, pelo partido ou coligação, às emissoras geradoras da transmissão:&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>no primeiro turno, até seis horas antes do início da formação das redes estaduais ou nacional; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>no segundo turno, até três horas antes da formação das redes estaduais ou nacional. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;A Justiça Eleitoral distribuirá o tempo em cada um dos períodos diários do horário reservado à propaganda eleitoral gratuita entre os partidos e coligações que tenham candidato a cada eleição de que trata esta lei, observados os seguintes critérios: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - na eleição presidencial: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>dez minutos divididos igualitariamente entre os partidos e coligações; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>vinte minutos divididos proporcionalmente ao número de representantes de cada partido ou coligação na Câmara dos Deputados, observado o disposto no § 1º; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - na eleição para Senador, dez minutos divididos pelo número de partidos ou coligações que tenham candidato próprio; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - na eleição para Governador e Vice-Governador de Estado ou do Distrito Federal: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>dez minutos divididos igualitariamente entre os partidos e coligações; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>dez minutos divididos proporcionalmente ao número de representantes de cada partido ou coligação na Câmara dos Deputados, observado o disposto no § 1º; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - nas eleições proporcionais, o horário definido no § 3º do artigo anterior será assim distribuído: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>vinte minutos divididos igualitariamente entre os partidos, independentemente de estarem coligados ou não; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>quarenta minutos divididos proporcionalmente ao número de representantes de cada partido na Câmara dos Deputados. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Na divisão prevista na alínea<EM> b</EM> do inciso I e na alínea <EM>b</EM> do inciso III, o número de representantes da coligação será igual à soma dos representantes dos partidos que a compõem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para os efeitos deste artigo, o número de representantes será o existente na data da publicação desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Para o partido que tenha resultado de fusão ou a que se tenha incorporado outro, o número de representantes corresponde ao somatório dos representantes que os partidos originários possuíam na data fixada no parágrafo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;Em nenhuma hipótese e sob nenhum pretexto serão admitidos os cortes instantâneos ou qualquer tipo de censura prévia aos programas eleitorais gratuitos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76.&nbsp;Os programas destinados à veiculação no horário gratuito pela televisão devem ser realizados em estúdio, seja para transmissão ao vivo ou pré-gravados, podendo utilizar música ou jingle do partido, criados para a campanha eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Nos programas a que se refere este artigo, é vedada a utilização de gravações externas, montagens ou trucagens. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A violação do disposto no parágrafo anterior sujeita o candidato à suspensão por um programa, duplicando-se a penalidade a cada reincidência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77.&nbsp;É assegurado o exercício do direito de resposta a qualquer pessoa, candidato ou não, partido ou coligação, em relação a quem sejam feitas afirmações ou transmitidas imagens caluniosas, difamatórias ou injuriosas no horário gratuito da propaganda eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O ofendido utilizará, para sua defesa, tempo igual ao usado para a ofensa, sendo nunca inferior a um minuto, deduzido este do tempo reservado ao partido ou coligação em cujo horário foi cometida a ofensa, devendo necessariamente responder aos fatos nela veiculados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Se o tempo reservado ao partido ou coligação a que pertencer o ofensor for inferior a um minuto, a resposta será levada ao ar tantas vezes quantas sejam necessárias para a sua complementação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O ofendido, ou seu representante legal, poderá formular pedido para o exercício do direito de resposta à Justiça Eleitoral, dentro de vinte e quatro horas do término da transmissão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Em prazo não superior a vinte e quatro horas, será notificado o ofensor para que exerça seu direito de defesa, também em vinte e quatro horas, após o que, no mesmo prazo, deverá ser proferida a decisão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Deferido o pedido, a emissora geradora do programa eleitoral gratuito deverá ser imediatamente notificada da decisão, na qual deverão estar indicados quais os períodos, diurno ou noturno, para a veiculação da resposta. A fita referente à resposta deverá ser entregue à emissora geradora, pelo ofendido, até trinta e seis horas após a ciência da decisão, e transmitida no programa subseqüente do partido ou coligação em cujo horário se praticou a ofensa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Se a ofensa for produzida em dia e hora que inviabilizem sua reparação dentro dos prazos estabelecidos nos parágrafos anteriores, a resposta será divulgada nos horários que a Justiça Eleitoral deferir, mesmo sendo nas quarenta e oito horas antes do pleito, em termos e forma previamente aprovados, de modo a não ensejar tréplica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º Da decisão sobre o deferimento do exercício do direito de resposta cabe recurso às instâncias superiores, em vinte e quatro horas da data de sua publicação, assegurado ao recorrido oferecer contra-razões em igual prazo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º Os Tribunais devem proferir suas decisões no prazo máximo de vinte e quatro horas, observando-se o disposto nos §§ 4º e 5º para a restituição do tempo em caso de provimento de recurso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 9º Se o ofendido for candidato, partido ou coligação que tenha utilizado o tempo concedido sem responder aos fatos veiculados na ofensa, terá subtraído tempo idêntico de seu respectivo programa eleitoral. Tratando-se de outra pessoa, ficará sujeita à suspensão de igual tempo concedido em eventuais novos pedidos de direito de resposta e a multa de duas mil a cinco mil Ufirs. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 10. A requerimento de partido, coligação ou candidato, a Justiça Eleitoral impedirá a reapresentação de propaganda ofensiva à honra de candidato, à moral e aos bons costumes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78.&nbsp;Na propaganda eleitoral, no horário gratuito, são aplicáveis ao partido, coligação ou candidato as vedações indicadas no art. 66, I e II. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A não-observância do disposto neste artigo sujeita o partido ou coligação a perda, no período do horário gratuito subseqüente, equivalente ao dobro do tempo utilizado na prática do ilícito, dobrado o tempo a cada reincidência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 79.&nbsp;É vedada às emissoras de televisão e radiodifusão a veiculação ou divulgação, durante o período da propaganda eleitoral gratuita, de filmes, novelas, minisséries ou qualquer outro programa, que faça alusão ou crítica que prejudique qualquer candidato ou partido político, mesmo que de maneira subjetiva. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O partido político que se julgar prejudicado poderá solicitar ao Tribunal, que suspenderá de imediato a programação, devendo em cinco dias julgar a questão em definitivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 80.&nbsp;O Poder Executivo editará normas regulamentando o modo e a forma de ressarcimento fiscal às emissoras de rádio e televisão, pelos espaços dedicados ao horário de propaganda eleitoral gratuita. <BR><BR>
+<CENTER><B>&nbsp;</CENTER></B>
+<CENTER><B>DISPOSIÇÕES FINAIS </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 81.&nbsp;Ao servidor público da administração direta ou indireta da União, dos Estados, do Distrito Federal e dos Municípios é garantido, no período compreendido entre 1º de junho e 31 de dezembro de 1994, permanecer na circunscrição do pleito e em seu cargo ou emprego, não podendo ser ex officio removido, transferido ou exonerado, ou ainda ser demitido sem justa causa ou dispensado, ter suprimidas ou readaptadas vantagens, ou por outros meios ter dificultado ou impedido seu exercício funcional ou permanência na circunscrição do pleito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º São considerados nulos de pleno direito, não gerando quaisquer obrigações para a pessoa jurídica interessada e nenhum direito para o servidor, os atos praticados sem observância do disposto neste artigo, bem como aqueles que importarem nomear, contratar ou admitir servidores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Excetua-se do disposto neste artigo:&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a nomeação dos aprovados em concurso público; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>a nomeação ou exoneração de cargos em comissão e designação ou dispensa de função de confiança; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>a nomeação para cargos do Poder Judiciário, do Ministério Público e dos órgãos de assessoramento superior vinculados à Presidência da República; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>a transferência ou remoção ex officio de policiais civis e militares e de agentes penitenciários. </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os atos indicados no parágrafo anterior devem ser fundamentados, e serão publicados no Diário Oficial dentro de quarenta e oito horas após a sua assinatura. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O atraso na publicação do Diário Oficial, relativo aos quinze dias que antecedem os prazos iniciais previstos neste artigo, implica a nulidade automática dos atos relativos a pessoal nele inseridos, salvo se o atraso for provocado por caso fortuito ou força maior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 82.&nbsp;Para as eleições previstas nesta lei, os pedidos de alistamento e de transferência de eleitores serão recebidos até 31 de maio de 1994. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 83.&nbsp;Aos crimes previstos nesta lei aplica-se o disposto nos arts. 287 e 355 a 364 do Código Eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 84.&nbsp;Salvo disposições específicas em contrário mencionadas nesta lei, as reclamações ou representações relativas ao seu descumprimento devem ser dirigidas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - aos Tribunais Regionais Eleitorais, nas eleições federais, estaduais e distritais; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ao Tribunal Superior Eleitoral, na eleição presidencial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os Tribunais Eleitorais designarão, para a apreciação das reclamações ou representações, três juízes auxiliares, que sobre elas decidirão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os recursos contra as decisões dos juízes auxiliares serão julgados pelo Plenário do Tribunal, em sessão a que esteja presente a maioria de seus membros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 85.&nbsp;O Tribunal Superior Eleitoral, por meio de instrução, reduzirá os prazos previstos nesta lei para o exercício do direito de resposta na imprensa, no rádio e na televisão, para garantir sua eficácia nos cinco dias que antecedem o pleito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 86.&nbsp;Nas eleições de que trata esta lei, será permitida a utilização de instrumentos que auxiliem o eleitor analfabeto a votar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os instrumentos de que trata este artigo não serão fornecidos pela Justiça Eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 87.&nbsp;No prazo previsto no § 1º do artigo 200 do Código Eleitoral, os partidos podem apresentar impugnação ao resultado de boletins de urna. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O pedido deve ser fundamentado em pelo menos um dos seguintes motivos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - não-fechamento da contabilidade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - apresentação, quanto a votos nulos, brancos ou válidos, de totais destoantes da média geral verificada nas demais Seções do mesmo Município ou Zona Eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Evidenciada a ocorrência alegada no pedido, é assegurada a recontagem da urna pelo Tribunal Regional Eleitoral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 88.&nbsp;Nos quinze dias anteriores à data das eleições a que se refere esta lei, os Tribunais Regionais Eleitorais esclarecerão o eleitor sobre o preenchimento da cédula eleitoral no momento da votação, mediante quatro inserções diárias, no rádio e na televisão, de até dois minutos cada uma. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As inserções serão veiculadas no período de uma hora antes do início e uma hora depois do final dos horários de propaganda eleitoral definidos no art. 74. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 89.&nbsp;O Tribunal Superior Eleitoral expedirá instruções para o fiel cumprimento desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 90.&nbsp;Esta lei entra em vigor na data de sua publicação. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 30 de setembro de 1993, 172º da Independência e 105º da República. </P>
+<P>ITAMAR FRANCO <BR>Maurício Corrêa </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 01/10/1993
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 1/10/1993, Página 14685 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1993, Página 2342 
+                                                        Vol. 9          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

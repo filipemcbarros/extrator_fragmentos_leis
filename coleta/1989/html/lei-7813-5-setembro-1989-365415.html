@@ -1,0 +1,923 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 7.813, DE 5 DE SETEMBRO DE 1989 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Autoriza o Poder Executivo a abrir ao Orçamento Fiscal da União créditos adicionais até o limite de NCz$ 129.922.059.309,00, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 7.813, DE 5 DE SETEMBRO DE 1989 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                            <li>  	
+                                                <a href="lei-7813-5-setembro-1989-365415-veto-27501-pl.html">Veto</a>
+                                            </li>
+                                    <li>
+                                        <a href="lei-7813-5-setembro-1989-365415-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 7.813, DE 5 DE SETEMBRO DE 1989</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Autoriza o Poder Executivo a abrir ao Orçamento Fiscal da União créditos adicionais até o limite de NCz$ 129.922.059.309,00, e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA <BR>Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp; Fica o Poder Executivo autorizado a abrir ao Orçamento Fiscal da União (Lei nº 7.715, de 3 de janeiro de 1989), Anexo II, com a respectiva aplicação nos Anexos III e IV, o crédito suplementar no valor de NCz$ 688.169.974,00 (seiscentos e oitenta e oito milhões, cento e sessenta e nove mil e novecentos e setenta e quatro cruzados novos), de conformidade com a programação constante dos Anexos I, II, e III desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os recursos necessários à execução do disposto neste artigo são provenientes de: 
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>cancelamento de dotações orçamentárias no valor de NCz$ 25.588.163,00 (vinte e cinco milhões, quinhentos e oitenta e oito mil e cento e sessenta e três cruzados novos), conforme indicado no Anexo IV desta Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>excesso de arrecadação de receitas vinculadas do Tesouro Nacional, no valor de NCz$ 376.112.955,00 (trezentos e setenta e seis milhões, cento e doze mil e novecentos e cinqüenta e cinco cruzados novos); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>ingresso de recursos provenientes de operações de crédito internas e externas, no valor de NCz$ 26.500.856,00 (vinte e seis milhões, quinhentos mil e oitocentos e cinqüenta e seis cruzados novos); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>disponibilidade provenientes de cancelamentos que ocorrerem em virtude da execução do disposto no art. 2º, da Lei nº 7.791, de 4 de julho de 1989, no valor de NCz$ 259.968.000,00 (duzentos e cinqüenta e nove milhões e novecentos e sessenta e oito mil cruzados novos). </TD></TR></TBODY></TABLE><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º &nbsp;Fica o Poder Executivo autorizado a abrir ao Orçamento Fiscal da União (Lei nº 7.715, de 1989), Anexo II, com a respectiva aplicação no Anexo III, o crédito especial até o limite de NCz$ 128.650.592.429,00 (cento e vinte e oito bilhões, seiscentos e cinqüenta milhões, quinhentos e noventa e dois mil e quatrocentos e vinte e nove cruzados novos), de conformidade com a programação constante dos Anexos V e VI desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Os recursos necessários à execução do disposto neste artigo são provenientes de: 
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>cancelamento de dotações orçamentárias, no valor de NCz$ 128.034.990,00 (cento e vinte e oito milhões, trinta e quatro mil e novecentos e noventa cruzados novos), conforme discriminado no Anexo VII desta Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>disponibilidade provenientes de cancelamentos que ocorrerem em virtude da execução do disposto no art. 2º, da Lei nº 7.791, de 4 de julho de 1989, no valor de NCz$ 550.450.000,00 (quinhentos e cinqüenta milhões e quatrocentos e cinqüenta mil cruzados novos); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>ingresso de recursos provenientes de operações de crédito externas, no valor de NCz$ 11.700.000,00 (onze milhões e setecentos mil cruzados novos); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>excesso de arrecadação de receitas vinculadas do Tesouro Nacional, no valor de NCz$ 194.717.274,00 (cento e noventa quatro milhões, setecentos e dezessete mil e duzentos e setenta e quatro cruzados novos); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>emissão de Títulos do Tesouro Nacional, no valor de NCz$ 127.765.690.165,00 (cento e vinte e sete bilhões, setecentos e sessenta e cinco milhões, seiscentos e noventa mil e cento e sessenta e cinco cruzados novos). </TD></TR></TBODY></TABLE><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º &nbsp;Fica o Poder Executivo autorizado a abrir ao Orçamento Fiscal da União (Lei nº 7.715, de 1989), Anexos II e III, o crédito suplementar no valor de NCz$ 254.638.971,00 (duzentos e cinqüenta e quatro milhões, seiscentos e trinta e oito mil e novecentos e setenta e um cruzados novos), de conformidade com a programação constante dos Anexos VIII e IX desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único - </I>Os recursos necessários à execução do disposto neste artigo são provenientes de: 
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>cancelamento de dotações orçamentárias no valor de NCz$ 11.372.283,00 (onze milhões, trezentos e setenta e dois mil, duzentos e oitenta e três cruzados novos), conforme discriminado no Anexo X desta Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>transferências de Recursos de Programas Espaciais (PIN e PROTERRA), no valor de NCz$ 11.904.600,00 (onze milhões, novecentos e quatro mil e seiscentos cruzados novos) e de Outros Recursos de Encargos Gerais da União no valor de NCz$ 104.002.002,00 (cento e quatro milhões, dois mil e dois cruzados novos); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>apropriação de Recursos Diretamente Arrecadados - Outras Fontes, no valor de NCz$ 23.392.572,00 (vinte e três milhões, trezentos e noventa e dois mil e quinhentos e setenta e dois cruzados novos) e de Recursos de Operações de Crédito Externas, no valor de NCz$ 6.156.000,00 (seis milhões e cento e cinqüenta e seis mil cruzados novos); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>incorporação de recursos decorrentes de Convênios, no valor de NCz$ 39.566.613,00 (trinta e nove milhões, quinhentos e sessenta e seis mil e seiscentos e treze cruzados novos); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>incorporação de saldos de exercícios anteriores, no valor de NCz$ 58.244.901,00 (cinqüenta e oito milhões, duzentos e quarenta e quatro mil e novecentos e um cruzados novos). </TD></TR></TBODY></TABLE><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º Fica o Poder Executivo autorizado a abrir ao Orçamento Fiscal da União (Lei nº 7.715, de 1989), Anexos II e III, crédito especial até o limite de NCz$ 240.098.736,00 (duzentos e quarenta milhões, noventa e oito mil e setecentos e trinta e seis cruzados novos), de conformidade com a programação constante do Anexo XI desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único - </I>Os recursos necessários à execução do disposto neste artigo são provenientes de: 
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>transferências de Recursos de Programas Especiais (PIN e Proterra), no valor de NCz$ 210.026.007,00 (duzentos e dez milhões, vinte e seis mil e sete cruzados novos); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>transferências de Outros Recursos dos Encargos Gerais da União, no valor de NCz$ 1.000.000,00 (um milhão de cruzados novos); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>ingresso de recursos provenientes de operações de crédito externas, no valor de NCz$ 7.220.000,00 (sete milhões e duzentos e vinte mil cruzados novos); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>incorporação de recursos decorrentes de Convênios, no valor de NCz$ 15.888.283,00 (quinze milhões, oitocentos e oitenta e oito mil e duzentos e oitenta e três cruzados novos); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>incorporação de saldos de exercícios anteriores, no valor de NCz$ 5.964.446,00 (cinco milhões, novecentos e sessenta e quatro mil e quatrocentos e quarenta e seis cruzados novos). </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp; Fica o Poder Executivo autorizado a abrir ao Orçamento Fiscal da União (Lei nº 7.715, de 1989), Anexo IV, o crédito suplementar no valor de NCz$ 6.978.810,00 (seis milhões, novecentos e setenta e oito mil e oitocentos e dez cruzados novos), de conformidade com a programação constante do Anexo XII desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os recursos necessários à execução do disposto neste artigo são provenientes de: 
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>incorporação de recursos decorrentes de Convênios, no valor de NCz$ 473.669,00 (quatrocentos e setenta e três mil e seiscentos e sessenta e nove cruzados novos); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>incorporação de saldos de exercícios anteriores, no valor de NCz$ 6.505.141,00 (seis milhões, quinhentos e cinco mil, cento e quarenta e um cruzados novos). </TD></TR></TBODY></TABLE><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp; Fica o Poder Executivo autorizado a abrir ao Orçamento Fiscal da União (Lei nº 7.715, de 1989), Anexo IV, o crédito especial até o limite de NCz$ 765.999,00 (setecentos e sessenta e cinco mil e novecentos e noventa e nove cruzados novos), de conformidade com a programação constante do Anexo XIII desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único - </I>Os recursos necessários à execução do disposto neste artigo são provenientes de: 
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>incorporação de recursos decorrentes de Convênios, no valor de NCz$ 2.700,00 (dois mil e setecentos cruzados novos); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>incorporação de saldos de exercícios anteriores, no valor de NCz$ 763.299,00 (setecentos e sessenta e três mil e duzentos e noventa e nove cruzados novos). </TD></TR></TBODY></TABLE><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º Os descritores dos Projetos e Atividades, a seguir relacionados, passam a vigorar com a seguinte redação: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - (VETADO). <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - no Anexo II da Lei nº 7.715, de 1989, com as alterações autorizadas pela Lei nº 7.742, de 1989. <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>"15109.15810312.682 - Assistência Financeira a Entidades Registradas no Conselho Nacional de Serviço Social. ASSEGURAR RECURSOS FINANCEIROS A ENTIDADES COMUNITÁRIAS OU FILANTRÓPICAS ATUANTES NAS ÁREAS DE EDUCAÇÃO, CULTURA, SAÚDE E ALIMENTAÇÃO, CONFORME ADENDO "B". </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>
+<P>15120.08431991.065 - Expansão e Melhoria do Ensino Técnico. </P>
+<P>AMPLIAR OFERTA E MELHORAR A QUALIDADE DO ENSINO TÉCNICO, ATRAVÉS DE CONSTRUÇÕES, REFORMAS, RESTAURAÇÕES, AMPLIAÇÕES, EQUIPAMENTOS E DESENVOLVIMENTO DE CURSOS, ABRANGENDO, ALÉM DE OUTRAS INSTITUIÇÕES, ESCOLA TÉCNICA NO MUNICÍPIO DE VOLTA REDONDA - RJ (NCZ$ 1.000.000,00), DE GOIANA - PE (NCZ$ 200.000,00), DE ACOPIARA - CE (NCZ$ 500.000,00), FEDERAL DE PERNAMBUCO (NCZ$ 100.000,00), DE SÃO LOURENÇO - PE (NCZ$ 150.000,00) E CAMARAGIBE - PE (NCZ$ 150.000,00), AGRÍCOLA NO MUNICÍPIO DE SENHOR DO BONFIM - BA (NCZ$ 250.000,00), DE SANTO AMARO - BA (NCZ$ 500.000,00), DE SUMÉ - PB (NCZ$ 700.000,00), DE PRINCESA ISABEL - PB (NCZ$ 700.000,00) DE GUARACIABA DO NORTE - CE (NCZ$ 250.000,00), DE CAMPOS SALES - CE (NCZ$ 250.000,00), DE SÃO BORJA - RS (NCZ$ 500.000,00), DE BREJO DA MADRE DE DEUS - PE (NCZ$ 250.000,00), DE BONITO - PE (NCZ$ 150.000,00), DE LAJEDO - PE (NCZ$ 150.000,00), E DE CATENDE - PE (NCZ$ 150.000,00), DE PESCA NO MUNICÍPIO DE VALENÇA - BA (NCZ$ 250.000,00) E DE PORTO SEGURO - BA (NCZ$ 1.500.000,00), PROFISSIONAL NO MUNICÍPIO DE BOA ESPERANÇA - ES (NCZ$ 100.000,00), TÉCNICAS ESTADUAIS DE PALMARES - PE (NCZ$ 500.000,00), E DE SÃO CAETANO - PE (NCZ$ 500.000,00) E FEDERAL DE CAMPOS - RJ (NCZ$ 200.000,00), AGROTÉCNICA DE AÇAILÂNDIA - MA (NCZ$ 1.000.000,00), DE SÃO BENTO - MA (NCZ$ 1.000.000,00), DE JOÃO ALFREDO - PE (NCZ$ 100.000,00), DE CASTANHAL - PA (NCZ$ 300.000,00), DE SANTA INÊS - BA (NCZ$ 2.000.000,00), DE PIO IX - PI (NCZ$ 200.000,00), DE RIBEIRO GONÇALVES - PI (NCZ$ 200.000,00), DE PICOS - PI (NCZ$ 200.000,00), DE BURITI DOS LOPES (NCZ$ 200.000,00), E DE VALENÇA - PI (NCZ$ 200.000,00), PROFISSIONALIZANTE DE TURISMO DE OLINDA - PE (NCZ$ 1.000.000,00), CONCLUSÃO DA CONSTRUÇÃO DA ESCOLA AGRÍCOLA DA EMARC - LINHARES - ES (NCZ$ 500.000,00) E DE PETROLÂNDIA - PE (NCZ$ 250.000,00), AMPLIAÇÃO E DESENVOLVIMENTO DE CURSOS DA ESCOLA AGROTÉCNICA DE SÃO JOÃO DO PIAUÍ - PI (NCZ$ 100.000,00), RECUPERAÇÃO DA ESCOLA AGROTÉCNICA FEDERAL DE BELO JARDIM - PE (NCZ$ 200.000,00), DA UNIDADE DE ENSINO DESCENTRALIZADO DA ESCOLA TÉCNICA FEDERAL DE PERNAMBUCO, EM PESQUEIRA - PE (NCZ$ 500.000,00), CONCLUSÃO DA UNIDADE DE ENSINO DESCENTRALIZADO DA ESCOLA TÉCNICA FEDERAL DE PETROLINA - PE (NCZ$ 800.000,00), E DA ESCOLA AGROTÉCNICA FEDERAL DOM AVELAR BRANDÃO VILELA EM PETROLINA - PE (NCZ$ 900.000,00). </P></TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - No Anexo III da Lei nº 7.715, de 1989, com as alterações introduzidas pela Lei nº 7.742, de 1989. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "a) 27102.16895427.072 - Construção de Ramais Ferroviários Trechos Belém-São Luís-Teresina. PROCEDER A ESTUDOS E LEVANTAMENTOS PARA ELABORAÇÃO DE PROJETOS DE VIABILIDADE ECONÔMICO-FINANCEIRA DA INTERLIGAÇÃO FERROVIÁRIA ENTRE BELÉM-SÃO LUÍS E TERESINA, BEM COMO PROCEDER ÀS OBRAS INICIAIS". </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"b) 27102.16895427.018 - Implantação da Variante Rio Paraguaçu - Projeto Diretriz (Mapele - Iaçu). MELHORAR O SISTEMA FERROVIÁRIO DA REGIÃO QUE SE ENCONTRA EM ADIANTADO ESTÁGIO DE DEGRADAÇÃO". </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "c) 27203.16905642.422 - Serviços de Dragagem de Manutenção. PROVER MEIOS PARA O FUNCIONAMENTO DAS ATIVIDADES VINCULADAS ÀS DRAGAGENS, DESTINANDO NCZ$ 1.433.190,00 PARA DRAGAGEM DO PORTO DE CAMOCIM NO CEARÁ".</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;"d) 27202.16885393.701 - Restauração de Malha Rodoviária Federal a cargo do Fundo Rodoviário Nacional. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DOTAR OS SEGMENTOS RODOVIÁRIOS DE CONDIÇÕES DE TRAFEGABILIDADE E SEGURANÇA, REDUZINDO OS CUSTOS OPERACIONAIS E O NÚMERO DE ACIDENTES ATRAVÉS DE SUA RESTAURAÇÃO, SENDO NCZ$ 7.165,00 PARA RECUPERAÇÃO DA REDE VIÁRIA DO CEARÁ, NCZ$ 1.791,00 PARA RESTAURAÇÃO DA BR-408/PE - TRECHOS: DIVISA PE/PB - RECIFE, LIGAÇÃO À PE 90. TRECHO CARDINA - LIMOEIRO E UMARI - SURUBIM, NCZ$ 2.866,00 PARA RESTAURAÇÃO DA BR-116/PR, TRECHO ENTRONCAMENTO BR-277 COM BR-423, SUBTRECHO RESTAURAÇÕES DE TRECHOS RODOVIÁRIOS (KM) 770 KM 100.1 A 118.8, NCZ$ 3.582,00 PARA CONSERVAÇÃO DA BR-040/TRÊS RIOS - PETRÓPOLIS/RJ, NCZ$ 7.165,00 PARA RESTAURAÇÃO DA BR-010, PA - DIVISA MA/PA - BELÉM, NCZ$ 10.748,00 PARA RESTAURAÇÃO DA BR-116 - TRECHOS FORTALEZA DIVISA CE/PI E CRUZETA/CRATEÚS, NCZ$ 3.941,00 PARA RESTAURAÇÃO DA BR-330 - TRECHO JEQUIÉ/ITAITABA, NCZ$ 2.866,00 PARA RESTAURAÇÃO DE 49,7 KM DA BR-285 - IJUÍ/VACARIA".</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"e) 25202.13764471.151 - Construção e Ampliação de Sistemas de Abastecimento D'água. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CONTRIBUIR PARA A REDUÇÃO DA MORBI-MORTALIDADE, PRINCIPALMENTE A INFANTIL, DEVIDO ÀS DOENÇAS ENTÉRICAS DE VEICULAÇÃO HÍDRICA E AUMENTAR A EXPECTATIVA DE VIDA E A PRODUTIVIDADE DAS POPULAÇÕES, SENDO NCZ$ 4.790,00 PARA SISTEMA DE ABASTECIMENTO D'ÁGUA DOS MUNICÍPIOS DA ILHA DE MARAJÓ (PA) - - IMPLANTAÇÃO E EXPANSÃO, NCZ$ 100.000,00 PARA APLICAÇÃO NO MUNICÍPIO DE PORTÃO/RS, NCZ$ 100.000,00 NA VILA POPULAR TRÊS PASSOS/RS E NCZ$ 200.000,00 NO MUNICÍPIO DE CONGONHAS - MG". </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "f) 13208.13764583.795 - Controle de Enchentes e Saneamento Urbano do Rio Subaé/BA. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OBRAS DE DEFESA CONTRA ENCHENTES E SANEAMENTO URBANO DO RIO SUBAÉ, DO MUNICÍPIO DE SANTO AMARO/BA, INCLUINDO A CONSTRUÇÃO DE 2 (DUAS) BARRAGENS". <BR>&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp; &nbsp;&nbsp;IV - no Anexo III da Lei nº 7.715, de 1989, com as alterações introduzidas pela Lei nº 7.742, de 1989, e com as modificações decorrentes do Anexo IX, desta Lei: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"a)13204.04160951.072 - Ampliação da Rede Armazenadora. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DESENVOLVER A INFRA-ESTRUTURA DE ARMAZENAGEM COM A FINALIDADE DE ATENDER ÀS NECESSIDADES DO SETOR AGROPECUÁRIO, SENDO NCZ$ 200.000,00 PARA APLICAÇÃO NO MUNICÍPIO DE TRÊS PASSOS - RS E NCZ$ 200.000,00 NO ESTADO DE RONDÔNIA". </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "b) 19201.07400311.250 - Apoio a Projetos de Desenvolvimento Regional. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REFORÇAR A AÇÃO GOVERNAMENTAL JUNTO A ÁREAS PERIFÉRICAS, INCENTIVANDO A IMPLANTAÇÃO RACIONAL DE PROJETOS DE BAIXO CUSTO E RESTAURANDO E/OU AMPLIANDO A MALHA RODOVIÁRIA VICINAL, VISANDO ATENDER ÁREAS DE POTENCIAL AGRÍCOLA E FLORESTAL DA AMAZÔNIA, SENDO NCZ$ 200.000,00 PARA O SISTEMA DE ABASTECIMENTO DE ÁGUA DE ARAGUAÍNA - TO, E NCZ$ 200.000,00 PARA O PROJETO DE ASSENTAMENTO RÁPIDO E IMPLANTAÇÃO E MANUTENÇÃO DE COLONOS NO ESTADO DE RONDÔNIA".</P>
+<P>&nbsp;&nbsp;&nbsp; &nbsp;"V - no Anexo III da Lei nº 7.715, de 1989, com as alterações introduzidas pela Lei nº 7.742, de 1989: <BR></P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>
+<P>19102.07401833.600 - Padre Cícero. </P>
+<P>IMPLANTAR NO SEMI-ÁRIDO NORDESTINO, EM PEQUENAS PROPRIEDADES E COMUNIDADES RURAIS, INFRA-ESTRUTURA HIDRÁULICA PERMANENTE PARA AMPLIAR A OFERTA DE ÁGUA MEDIANTE O USO DE TECNOLOGIAS SIMPLES E DE BAIXO CUSTO, COM VISTAS A PERMITIR O CONVÍVIO ADEQUADO DO HOMEM COM AS ESTIAGENS PERIÓDICAS; BEM COMO IMPLEMENTAR AÇÕES DE FORTALECIMENTO DA INFRA-ESTRUTURA SOCIAL E PRODUTIVA, VISANDO À MELHORIA DA QUALIDADE DE VIDA DA POPULAÇÃO RURAL, DANDO ÊNFASE À CONSTRUÇÃO DA BARRAGEM DE BRUSCAS E DA BARRAGEM DE POÇO REDONDO - PB; SENDO NCZ$ 1.000.000,00 PARA A BARRAGEM DO RIO PARDO, EM VITÓRIA DA CONQUISTA - BA; NCZ$ 3.811.330,00 PARA O SISTEMA DE ABASTECIMENTO DE ÁGUA NO RIO SALTO, EM LICÍNIO DE ALMEIDA - BA; NCZ$ 1.000.000,00 PARA ABASTECIMENTO DE ÁGUA, EM PORTEIRINHA - MG; NCZ$ 2.500.000,00 PARA CONCLUSÃO DO AÇUDE JENIPAPEIRO, NO MUNICÍPIO DE OLHO D'ÁGUA - PB; NCZ$ 1.000.000,00 PARA BARRAGEM NO MUNICÍPIO DE UBELITA - MG; NCZ$ 1.500.000,00 PARA AÇUDE EM HIDROLÂNDIA - CE; NCZ$ 200.000,00 PARA AÇUDE NO DISTRITO DE ANJINHO, EM SANTANA DO CARIRI - CE; NCZ$ 100.000,00 PARA ESGOTO CONDOMINIAL EM PORANGA - CE; NCZ$ 100.000,00 EM SALITRE - CE; NCZ$ 100.000,00 EM POTENGI - CE; NCZ$ 100.000,00 EM IBIPIAPINA - CE; NCZ$ 150.000,00 EM CRATEÚS - CE; NCZ$ 150.000,00 EM CRATO - CE; NCZ$ 1.000.000,00 PARA CONSTRUÇÃO DA BARRAGEM DE CARAÍBAS, EM SALINAS - MG; NCZ$ 2.000.000,00, PARA O AÇUDE GARCINHA; NCZ$ 1.000.000,00 PARA O AÇUDE PONTAL E NCZ$ 1.000.000,00 PARA O AÇUDE PAU FERRO, NO MUNICÍPIO DE PETROLINA - PE". <BR></P></TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp; Fica o Poder Executivo autorizado a cancelar a dotação à Atividade 32101.03080334.217 - Resgate de Letras do Tesouro Nacional - Série Especial, no valor de NCz$ 1.039.063.765,00 (um bilhão, trinta e nove milhões, sessenta e três mil e setecentos e sessenta e cinco cruzados novos), constante da Lei nº 7.742, de 1989, Anexo I, para a sua incorporação à Atividade 32101.03080334.253 - Administração da Dívida Pública Mobiliária Interna Federal, com sua respectiva fonte de recursos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º &nbsp;Fica o Poder Executivo autorizado a cancelar os saldos de Recursos Diretamente Arrecadados, originários do pedágio, em decorrência da Lei nº 7.712, de 22 de dezembro de 1988. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10. Fica o Poder Executivo autorizado a abrir ao Orçamento Fiscal da União (Lei nº 7.715, de 1989), anexo II, crédito suplementar no valor de NCz$ 70.782.000,00 (setenta milhões, setecentos e oitenta e dois mil cruzados novos), para reforço da dotação da Reserva de Contingência, código orçamentário "39000.99999999.999". <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os recursos necessários à abertura do crédito autorizado neste artigo decorrerão das disponibilidades provenientes de cancelamentos que ocorrerem em virtude da execução do disposto no art. 2º da Lei nº 7.791, de 4 de julho de 1989. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11. Fica o Poder Executivo autorizado a transferir, pelo valor dos respectivos saldos na data da transferência, e respeitado como limites máximos os respectivos valores fixados pela Lei nº 7.742, de 1989, com as mesmas fontes, títulos e descritores, mantida a classificação econômica da despesa, as dotações relacionadas nos incisos deste artigo, incluídas no programa de trabalho da Secretaria-Geral do Ministério da Agricultura para, especificamente, a Empresa Brasileira de Assistência Técnica e Extensão Rural - EMBRATER: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - 13102.04180212.210 - Coordenação e Manutenção da Assistência Técnica e Extensão Rural; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - 13102.04180663.120 - Assistência Técnica e Extensão Rural em Áreas de Reforma Agrária; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - 13102.04181111.080 - Difusão Tecnológica da Energização Rural; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - 13102.04181112.211 - Sistema Brasileiro de Assistência Técnica e Extensão Rural. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12. O produto da arrecadação dos impostos de que trata o art. 155, inciso I, da Constituição Federal, pertencente aos Territórios do Amapá e de Roraima, transformados em Estados (art. 14 do Ato das Disposições Constitucionais Transitórias), e por eles recolhido ao Tesouro Nacional, ser-lhes-á restituído, independentemente de sua inclusão no Orçamento Fiscal da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13. (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14. (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15. Esta Lei entra em vigor na data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16. Revogam-se as disposições em contrário. <BR><BR>
+<P>Brasília, 5 de setembro de 1989; 168º da Independência e 101º da República. </P>
+<P>JOSÉ SARNEY <BR>Mailson Ferreira da Nóbrega <BR>João Batista de Abreu </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 08/09/1989
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 8/9/1989, Página 15753      
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1 - Suplemento
+                                                         - 8/9/1989, Página 1          
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1989, Página 2143 
+                                                        Vol. 5          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,940 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 9.528, DE 10 DE DEZEMBRO DE 1997 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Altera dispositivos das Leis nºs. 8.212 e 8.213 ambas de 24 de julho de 1991, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 9.528, DE 10 DE DEZEMBRO DE 1997 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-9528-10-dezembro-1997-349414-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-9528-10-dezembro-1997-349414-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-9528-10-dezembro-1997-349414-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-9528-10-dezembro-1997-349414-veto-20484-pl.html">Veto</a>
+                                            </li>
+                                    <li>
+                                        <a href="lei-9528-10-dezembro-1997-349414-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 9.528, DE 10 DE DEZEMBRO DE 1997</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Altera dispositivos das Leis nºs. 8.212 e 8.213 ambas de 24 de julho de 1991, e dá outras providências. <BR>
+						</p>
+				
+						<div class="texto">
+							<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; O PRESIDENTE DA REPÚBLICA</STRONG>&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º Ficam restabelecidos os arts. 34, 35, 98 e 99, e alterados os arts. 12, 22, 25, 28, 29, 30, 31, 32, 33, 38, 39, 45, 47, 55, 69, 94 e 97 da Lei nº 8.212, de 24 de julho de 1991, com a seguinte redação: <BR><BR></P>
+<DIR>"Art. 12. ...................................................................................... <BR><BR>V - ............................................................................................... <EM>b) </EM>pessoa física, proprietária ou não, que explora atividade de extração mineral - garimpo -, em caráter permanente ou temporário, diretamente ou por intermédio de prepostos, com ou sem o auxílio de empregados, utilizados a qualquer título, ainda que de forma não contínua. <BR>...................................................................................... <BR><BR>§ 5º O dirigente sindical mantém, durante o exercício do mandato eletivo, o mesmo enquadramento no Regime Geral de Previdência Social - RGPS de antes da investidura."<BR><BR>&nbsp;"Art. 22. ...................................................................................... <BR><BR>I - vinte por cento sobre o total das remunerações pagas, devidas ou creditadas a qualquer titulo, durante o mês, aos segurados empregados que lhe prestem serviços, destinadas a retribuir o trabalho, qualquer que seja a sua forma, inclusive as gorjetas, os ganhos habituais sob a forma de utilidades e os adiantamentos decorrentes de reajuste salarial, quer pelos serviços efetivamente prestados, quer pelo tempo à disposição do empregador ou tomador de serviços, nos termos da lei ou do contrato ou, ainda, de convenção ou acordo coletivo de trabalho ou sentença normativa. <BR><BR>II - para o financiamento dos benefícios concedidos em razão do grau de incidência de incapacidade laborativa decorrente dos riscos ambientais do trabalho, conforme dispuser o regulamento, nos seguintes percentuais, sobre o total das remunerações pagas ou creditadas, no decorrer do mês, aos segurados empregados e trabalhadores avulsos: <BR>................................................................................................... <BR><BR>§ 2º (VETADO) <BR>....................................................................................................<BR><BR>§ 6º A contribuição empresarial da associação desportiva que mantém equipe de futebol profissional destinada à Seguridade Social, em substituição à prevista nos incisos I e II deste artigo, corresponde a cinco por cento da receita bruta, decorrente dos espetáculos desportivos de que participem em todo território nacional em qualquer modalidade desportiva, inclusive jogos internacionais, e de qualquer forma de patrocínio, licenciamento de uso de marcas e símbolos, publicidade, propaganda e de transmissão de espetáculos desportivos. <BR><BR>§7º Caberá à entidade promotora do espetáculo a responsabilidade de efetuar o desconto de cinco por cento da receita bruta decorrente dos espetáculos desportivos e o respectivo recolhimento ao Instituto Nacional do Seguro Social, no prazo de até dois dias úteis após a realização do evento. <BR><BR>§ 8º Caberá à associação desportiva que mantém equipe de futebol profissional informar à entidade promotora do espetáculo desportivo todas as receitas auferidas no evento, discriminando-as detalhadamente. <BR><BR>§ 9º No caso de a associação desportiva que mantém equipe de futebol profissional receber recursos de empresa ou entidade, a título de patrocínio, licenciamento de uso de marcas e símbolos, publicidade, propaganda e transmissão de espetáculos, esta última ficará com a responsabilidade de reter e recolher o percentual de cinco por cento da receita bruta decorrente do evento, inadmitida qualquer dedução, no prazo estabelecido na alínea "<EM>b</EM>", inciso I, do art. 30 desta Lei. <BR><BR>§ 10. Não se aplica o disposto nos §§ 6º ao 9º ás demais associações desportivas, que devem contribuir na forma dos incisos I e II deste artigo e do art. 23 desta Lei."</DIR>
+<DIR>"Art. 25. A contribuição do empregador rural pessoa física e do segurado especial referidas, respectivamente, na alínea "<EM>a"</EM> do inciso V e no inciso VII do art. 12 desta Lei, destinada a Seguridade Social, é de: <BR><BR>I - 2% da receita bruta proveniente da comercialização da sua produção; <BR><BR>II - 0,1% da receita bruta proveniente da comercialização da sua produção para o financiamento das prestações por acidente do trabalho. <BR>.................................................................................................."</DIR>
+<DIR>"Art. 28. ..................................................................................... <BR><BR>I - para o empregado e trabalhador avulso a remuneração auferida em uma ou mais empresas assim entendida a totalidade dos rendimentos pagos, devidos ou creditados a qualquer título, durante o mês, destinados a retribuir o trabalho, qualquer que seja a sua forma inclusive as gorjetas, os ganhos habituais sob a forma de utilidades e os adiantamentos decorrentes de reajuste salarial, quer pelos serviços efetivamente prestados, quer pelo tempo à disposição do empregador ou tomador de serviços nos termos da lei ou do contrato ou, ainda, de convenção ou acordo coletivo de trabalho ou sentença normativa; <BR>.................................................................................................... <BR><BR>§ 3º O limite mínimo do salário-de-contribuição corresponde ao piso salarial, legal ou normativo, da categoria ou, inexistindo este, ao salário mínimo, tomado no seu valor mensal, diário ou horário, conforme o ajustado e o tempo de trabalho efetivo durante o mês. <BR>.................................................................................................... <BR><BR>§ 8º Integram o salário-de-contribuição pelo seu valor total: </DIR>
+<DIR><EM>a) </EM>o total das diárias pagas, quando excedente a cinqüenta por cento da remuneração mensal; <BR><EM>b) </EM>(VETADO) <BR><EM>c) </EM>as gratificações e verbas, eventuais concedidas a qualquer título, ainda que denominadas pelas partes de liberalidade, ressalvado o disposto no § 9º. <BR><BR>§ 9º Não integram o salário-de-contribuição para os fins desta Lei, exclusivamente: </DIR>
+<DIR><EM>a) </EM>os benefícios da previdência social, nos termos e limites legais, salvo o salário maternidade; <BR>....................................................................................... <BR><EM>d) </EM>as importâncias recebidas a título de férias indenizadas e respectivo adicional constitucional, inclusive o valor correspondente à dobra da remuneração de férias de que trata o art. 137 da Consolidação das Leis do Trabalho - CLT; <BR><EM>e) </EM>as importâncias: <BR>1. previstas no inciso I do art. 10 do Ato das Disposições Constitucionais Transitórias; <BR>2. relativas à indenização por tempo de serviço, anterior a 5 de outubro de 1988, do empregado não optante pelo Fundo de Garantia do Tempo de Serviço - FGTS; <BR>3. recebidas a título da indenização de que trata o art. 479 da CLT; <BR>4. recebidas a título da indenização de que trata o art. 14 da Lei nº 5.889, de 8 de junho de 1973; <BR>5. recebidas a título de incentivo à demissão; <BR>.................................................................................... <BR><BR><EM>g) </EM>a ajuda de custo, em parcela única, recebida exclusivamente em decorrência de mudança de local de trabalho do empregado, na forma do art. 470 da CLT; <BR>..................................................................................... <BR><EM>l) </EM>o abono do Programa de Integração Social - PIS e do Programa de Assistência ao Servidor Público - PASEP; <BR><EM>m) </EM>os valores correspondentes a transporte, alimentação e habitação fornecidos pela empresa ao empregado contratado para trabalhar em localidade distante da de sua residência, em canteiro de obras ou local que, por força da atividade, exija deslocamento e estada, observadas as normas de proteção estabelecidas pelo Ministério do Trabalho; <BR><EM>n) </EM>a importância paga ao empregado a título de complementação ao valor do auxílio-doença, desde que este direito seja extensivo à totalidade dos empregados da empresa; <BR><EM>o) </EM>as parcelas destinadas à assistência ao trabalhador da agroindústria canavieira, de que trata o art. 36 da Lei nº 4.870, de 1º de dezembro de 1965; <BR><EM>p) </EM>o valor das contribuições efetivamente pago pela pessoa jurídica relativo a programa de previdência complementar, aberto ou fechado, desde que disponível à totalidade de seus empregados e dirigentes, observados, no que couber, os arts. 9º e 468 da CLT; <BR><EM>q) </EM>o valor relativo à assistência prestada por serviço médico ou odontológico, próprio da empresa ou por ela conveniado, inclusive o reembolso de despesas com medicamentos, óculos, aparelhos ortopédicos, despesas médico-hospitalares e outras similares, desde que a cobertura abranja a totalidade dos empregados e dirigentes da empresa; <BR><EM>r) </EM>o valor correspondente a vestuários, equipamentos e outros acessórios fornecidos ao empregado e utilizados no local do trabalho para prestação dos respectivos serviços; <BR><EM>s) </EM>o ressarcimento de despesas pelo uso de veículo do empregado e o reembolso creche pago em conformidade com a legislação trabalhista, observado o limite máximo de seis anos de idade, quando devidamente comprovadas as despesas realizadas; <BR><EM>t) </EM>o valor relativo a plano educacional que vise ao ensino fundamental e a cursos de capacitação e qualificação profissionais vinculados às atividades desenvolvidas pela empresa, desde que todos os empregados e dirigentes tenham acesso ao mesmo; <BR><EM>u) </EM>a importância recebida a título de bolsa de aprendizagem garantida ao adolescente até quatorze anos de idade, de acordo com o disposto no art. 64 da Lei nº 8.069, de 13 de julho de 1990; <BR><EM>v) </EM>os valores recebidos em decorrência da cessão de direitos autorais; <BR><EM>x) </EM>o valor da multa prevista no § 8º do art. 477 da CLT. <BR><BR>§ 10 Considera-se salário-de-contribuição, para o segurado empregado e trabalhador avulso, na condição prevista no § 5º do art. 12, a remuneração efetivamente auferida na entidade sindical ou empresa de origem."</DIR>
+<DIR>"Art. 29. .................................................................................. </DIR>
+<DIR>
+<TABLE cellSpacing=1 cellPadding=7 width=529 border=1>
+<TBODY>
+<TR>
+<TD vAlign=top colSpan=3><FONT size=2>
+<P align=justify>ESCALA DE SALÁRIOS&nbsp;- BASE</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="18%"><FONT size=2>
+<P align=center>CLASSE</FONT></P></TD>
+<TD vAlign=top width="30%"><FONT size=2>
+<P align=center>SALÁRIO - BASE</FONT></P></TD>
+<TD vAlign=top width="52%"><FONT size=2>
+<P align=center>NÚMERO MÍNIMO DE<BR>MESES DE PERMANÊNCIA<BR>EM CADA CLASSE<BR>(INTERSTÍCIOS)</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="18%"><FONT size=2>
+<P align=center>1</FONT></P></TD>
+<TD vAlign=top width="30%"><FONT size=2>
+<P align=center>R$ 120,00</FONT></P></TD>
+<TD vAlign=top width="52%"><FONT size=2>
+<P align=center>12</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="18%"><FONT size=2>
+<P align=center>2</FONT></P></TD>
+<TD vAlign=top width="30%"><FONT size=2>
+<P align=center>R$ 206,37</FONT></P></TD>
+<TD vAlign=top width="52%"><FONT size=2>
+<P align=center>12</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="18%"><FONT size=2>
+<P align=center>3</FONT></P></TD>
+<TD vAlign=top width="30%"><FONT size=2>
+<P align=center>R$ 309,56</FONT></P></TD>
+<TD vAlign=top width="52%"><FONT size=2>
+<P align=center>24</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="18%"><FONT size=2>
+<P align=center>4</FONT></P></TD>
+<TD vAlign=top width="30%"><FONT size=2>
+<P align=center>R$ 412,74</FONT></P></TD>
+<TD vAlign=top width="52%"><FONT size=2>
+<P align=center>24</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="18%"><FONT size=2>
+<P align=center>5</FONT></P></TD>
+<TD vAlign=top width="30%"><FONT size=2>
+<P align=center>R$ 515,93</FONT></P></TD>
+<TD vAlign=top width="52%"><FONT size=2>
+<P align=center>36</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="18%"><FONT size=2>
+<P align=center>6</FONT></P></TD>
+<TD vAlign=top width="30%"><FONT size=2>
+<P align=center>R$ 619,12</FONT></P></TD>
+<TD vAlign=top width="52%"><FONT size=2>
+<P align=center>48</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="18%"><FONT size=2>
+<P align=center>7</FONT></P></TD>
+<TD vAlign=top width="30%"><FONT size=2>
+<P align=center>R$ 722,30</FONT></P></TD>
+<TD vAlign=top width="52%"><FONT size=2>
+<P align=center>48</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="18%"><FONT size=2>
+<P align=center>8</FONT></P></TD>
+<TD vAlign=top width="30%"><FONT size=2>
+<P align=center>R$ 825,50</FONT></P></TD>
+<TD vAlign=top width="52%"><FONT size=2>
+<P align=center>60</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="18%"><FONT size=2>
+<P align=center>9</FONT></P></TD>
+<TD vAlign=top width="30%"><FONT size=2>
+<P align=center>R$ 928,68</FONT></P></TD>
+<TD vAlign=top width="52%"><FONT size=2>
+<P align=center>60</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="18%"><FONT size=2>
+<P align=center>10</FONT></P></TD>
+<TD vAlign=top width="30%"><FONT size=2>
+<P align=center>R$ 1.031,87</FONT></P></TD>
+<TD vAlign=top width="52%"><FONT size=2>
+<P align=center>-</FONT></P></TD></TR></TBODY></TABLE>................................................................................................"</DIR>
+<DIR>"Art. 30. ..................................................................................... </DIR>
+<DIR>III - a empresa adquirente, consumidora ou consignatária ou a cooperativa são obrigadas a recolher a contribuição de que trata o art. 25, até o dia 2 do mês subseqüente ao da operação de venda ou consignação da produção, independentemente de estas operações terem sido realizadas diretamente com o produtor ou com intermediário pessoa física, na forma estabelecida em regulamento; <BR><BR>IV - a empresa adquirente, consumidora ou consignatária ou a cooperativa ficam sub-rogadas nas obrigações da pessoa física de que trata a alínea "<EM>a</EM>" do inciso V do art. 12 e do segurado especial pelo cumprimento das obrigações do art. 25 desta Lei, independentemente de as operações de venda ou consignação terem sido realizadas diretamente, com o produtor ou com intermediário pessoa física, exceto no caso do inciso X deste artigo, na forma estabelecida em regulamento; <BR>................................................................................................... <BR><BR>VI - o proprietário, o incorporador definido na Lei nº 4.591, de 16 de dezembro de 1964, o dono da obra ou condôminio da unidade imobiliária, qualquer que seja a forma de contratação da construção, reforma ou acréscimo, são solidários com o construtor, e estes com a subempreiteira, pelo cumprimento das obrigações para com a Seguridade Social, ressalvado o seu direito regressivo contra o executor ou contratante da obra e admitida a retenção de importância a este devida para garantia do cumprimento dessas obrigações, não se aplicando, em qualquer hipótese, o benefício de ordem; <BR>................................................................................................... </DIR>
+<DIR>X - a pessoa física de que trata a alínea "<EM>a</EM>" do inciso V do art. 12 o segurado especial são obrigados a recolher a contribuição de que trata o art. 25 desta Lei no prazo estabelecido no inciso III deste artigo, caso comercializem sua produção: </DIR>
+<DIR><EM>a) </EM>no exterior; <BR><EM>b) </EM>diretamente, no varejo, ao consumidor pessoa física; <BR><EM>c) </EM>à pessoa física de que trata a alínea "<EM>a</EM>" do inciso V do art. 12; <BR><EM>d) </EM>ao segurado especial; <BR><BR>XI - aplica-se o disposto nos incisos III e IV deste artigo à pessoa física não produtor rural que adquire produção para venda no varejo a consumidor pessoa física. <BR>................................................................................................... <BR><BR>§ 3º Aplica-se à entidade sindical e à empresa de origem o disposto nas alíneas "<EM>a</EM>" e "<EM>b</EM>" do inciso I, relativamente à remuneração do segurado referido no § 5º do art. 12."</DIR>
+<DIR>"Art. 31. O contratante de quaisquer serviços executados mediante cessão de mão-de-obra, inclusive em regime de trabalho temporário, responde solidariamente com o executor pelas obrigações decorrentes desta Lei, em relação aos serviços prestados, exceto quanto ao disposto no art. 23, não se aplicando, em qualquer hipótese, o benefício de ordem. <BR>................................................................................................... <BR><BR>§ 2º Exclusivamente para os fins desta Lei, entende-se como cessão de mão-de-obra a colocação à disposição do contratante, em suas dependências ou nas de terceiros, de segurados que realizem serviços contínuos, relacionados ou não com atividades normais da empresa, quaisquer que sejam a natureza e a forma de contratação. <BR>..................................................................................................."</DIR>
+<DIR>"Art. 32. ..................................................................................... <BR><BR>IV - informar mensalmente ao Instituto Nacional do Seguro Social - INSS, por intermédio de documento a ser definido em regulamento, dados relacionados aos fatos geradores de contribuição previdenciária e outras informações de interesse do INSS. <BR><BR>§ 1º O Poder Executivo poderá estabelecer critérios diferenciados de periodicidade, de formalização ou de dispensa de apresentação do documento a que se refere o inciso IV, para segmentos de empresas ou situações específicas. <BR><BR>§ 2º As informações constantes do documento de que trata o inciso IV, servirão como base de cálculo das contribuições devidas ao Instituto Nacional do Seguro Social - INSS, bem como comporão a base de dados para fins de cálculo e concessão dos benefícios previdenciários. <BR><BR>§ 3º O regulamento disporá sobre local, data e forma de entrega do documento previsto no inciso IV. <BR><BR>§ 4º A não apresentação do documento previsto no inciso IV, independentemente do recolhimento da contribuição, sujeitará o infrator à pena administrativa correspondente a multa variável equivalente a um multiplicador sobre o valor mínimo previsto no art. 92, em função do número de segurados, conforme quadro abaixo: </DIR>
+<P>&nbsp;</P>
+<DIR>
+<CENTER>
+<TABLE cellSpacing=2 cellPadding=7 width=444 border=1>
+<TBODY>
+<TR>
+<TD vAlign=top width="51%" colSpan=2><FONT size=2>
+<P>0 a 5 segurados</FONT></P></TD>
+<TD vAlign=middle width="49%" colSpan=2><FONT size=2>
+<P>1/2 valor mínimo</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="51%" colSpan=2><FONT size=2>
+<P align=justify>6 a 15 segurados</FONT></P></TD>
+<TD vAlign=top width="49%" colSpan=2><FONT size=2>
+<P align=justify>1 x o valor mínimo</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="51%" colSpan=2><FONT size=2>
+<P align=justify>16 a 50 segurados</FONT></P></TD>
+<TD vAlign=top width="49%" colSpan=2><FONT size=2>
+<P align=justify>2 x o valor mínimo</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="51%" colSpan=2><FONT size=2>
+<P align=justify>51 a 100 segurados</FONT></P></TD>
+<TD vAlign=top width="49%" colSpan=2><FONT size=2>
+<P align=justify>5 x o valor mínimo</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="51%" colSpan=2><FONT size=2>
+<P align=justify>101 a 500 segurados</FONT></P></TD>
+<TD vAlign=top width="49%" colSpan=2><FONT size=2>
+<P align=justify>10 x o valor mínimo</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="51%" colSpan=2><FONT size=2>
+<P align=justify>501 a 1000 segurados</FONT></P></TD>
+<TD vAlign=top width="49%" colSpan=2><FONT size=2>
+<P align=justify>20 x o valor mínimo</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="51%" colSpan=2><FONT size=2>
+<P align=justify>1001 a 5000 segurados</FONT></P></TD>
+<TD vAlign=top width="49%" colSpan=2><FONT size=2>
+<P align=justify>35 x o valor mínimo</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="51%" colSpan=2><FONT size=2>
+<P align=justify>acima de 5000 segurados</FONT></P></TD>
+<TD vAlign=top width="49%" colSpan=2><FONT size=2>
+<P align=justify>50 x o valor mínimo</FONT></P></TD></TR></TBODY></TABLE></CENTER>
+<P></P><BR>§ 5º A apresentação do documento com dados não correspondentes aos fatos geradores sujeitará o infrator à pena administrativa correspondente à multa de cem por cento do valor devido relativo à contribuição não declarada, limitada aos valores previstos no parágrafo anterior. <BR><BR>§ 6º A apresentação do documento com erro de preenchimento nos dados não relacionados aos fatos geradores sujeitará o infrator à pena administrativa de cinco por cento do valor mínimo previsto no art. 92, por campo com informações inexatas, incompletas ou omissas, limitadas aos valores previstos no § 4º. <BR><BR>§ 7º A multa de que trata o § 4º sofrerá acréscimo de cinco por cento por mês calendário ou fração, a partir do mês seguinte àquele em que o documento deveria ter sido entregue. <BR><BR>§ 8º O valor mínimo a que se refere o § 4º será o vigente na data da lavratura do auto-de-infração. <BR><BR>§ 9º A empresa deverá apresentar o documento a que se refere o inciso IV, mesmo quando não ocorrerem fatos geradores de contribuição previdenciária, sob pena da multa prevista no § 4º. <BR><BR>§ 10. O descumprimento do disposto no inciso IV é condição impeditiva para expedição da prova de inexistência de débito para com o Instituto Nacional do Seguro Social - INSS. <BR><BR>§ 11. Os documentos comprobatórios do cumprimento das obrigações de que trata este artigo devem ficar arquivados na empresa durante dez anos, à disposição da fiscalização."</DIR>
+<DIR>"Art. 33. ..................................................................................... <BR><BR>§ 7º O crédito da seguridade social é constituído por meio de notificação de débito, auto-de-infração, confissão ou documento declaratório de valores devidos e não recolhidos apresentado pelo contribuinte."</DIR>
+<DIR>"Art. 34. As contribuições sociais e outras importâncias arrecadadas pelo INSS, incluídas ou não em notificação fiscal de lançamento, pagas com atraso, objeto ou não de parcelamento, ficam sujeitas aos juros equivalentes à taxa referencial do Sistema Especial de Liquidação e de Custódia - SELIC, a que se refere o art. 13 da Lei nº 9.065, de 20 de junho de 1995, incidentes sobre o valor atualizado, e multa de mora, todos de caráter irrelevável. <BR><BR><I>Parágrafo único. </I>O percentual dos juros moratórios relativos aos meses de vencimentos ou pagamentos das contribuições corresponderá a um por cento."</DIR>
+<DIR>"Art. 35. Para os fatos geradores ocorridos a partir de 11 de abril de 1997, sobre as contribuições sociais em atraso, arrecadadas pelo INSS, incidirá multa de mora, que não poderá ser relevada, nos seguintes termos: <BR><BR>I - para pagamento, após o vencimento de obrigação não incluída em notificação fiscal de lançamento: </DIR>
+<DIR><EM>a) </EM>quatro por cento, dentro do mês de vencimento da obrigação; <BR><EM>b) </EM>sete por cento, no mês seguinte; <BR><EM>c) </EM>dez por cento, a partir do segundo mês seguinte ao do vencimento da obrigação; <BR><BR>II - para pagamento de créditos incluídas em notificação fiscal de lançamento: </DIR>
+<DIR><EM>a) </EM>doze por cento, em até quinze dias do recebimento da notificação; <BR><EM>b) </EM>quinze por cento, após o 15º dia do recebimento da notificação; <BR><EM>c) </EM>vinte por cento, após apresentação de recurso desde que antecedido de defesa, sendo ambos tempestivos, até quinze dias da ciência da decisão do Conselho de Recursos da Previdência Social - CRPS; <BR><EM>d) </EM>vinte e cinco por cento, após o 15º dia da ciência da decisão do Conselho de Recursos da Previdência Social - CRPS, enquanto não inscrito em Dívida Ativa; <BR><BR>III - para pagamento do crédito inscrito em Dívida Ativa: </DIR>
+<DIR><EM>a) </EM>trinta por cento, quando não tenha sido objeto de parcelamento; <BR><EM>b) </EM>trinta e cinco por cento, se houve parcelamento; <BR><EM>c) </EM>quarenta por cento, após o ajuizamento da execução fiscal, mesmo que o devedor ainda não tenha sido citado, se o crédito não foi objeto de parcelamento; <BR><EM>d) </EM>cinqüenta por cento, após o ajuizamento da execução fiscal, mesmo que o devedor ainda não tenha sido citado, se o crédito foi objeto de parcelamento. <BR><BR>§ 1º Na hipótese de parcelamento ou reparcelamento, incidirá um acréscimo de vinte por cento sobre a multa de mora a que se refere o <EM><I>caput</I></EM> e seus incisos. <BR><BR>§ 2º Se houver pagamento antecipado à vista, no todo ou em parte, do saldo devedor, o acréscimo previsto no parágrafo anterior não incidirá sobre a multa correspondente à parte do pagamento que se efetuar. <BR><BR>§ 3º O valor do pagamento parcial, antecipado, do saldo devedor de parcelamento ou do reparcelamento somente poderá ser utilizado para quitação de parcelas na ordem inversa do vencimento, sem prejuízo da que for devida no mês de competência em curso e sobre a qual incidirá sempre o acréscimo a que se refere o § 1º deste artigo."</DIR>
+<DIR>"Art. 38. ..................................................................................... <BR><BR>§ 5º Será admitido o reparcelamento por uma única vez. <BR><BR>§ 6º Sobre o valor de cada prestação mensal decorrente de parcelamento serão acrescidos, por ocasião do pagamento, juros equivalentes à taxa referencial do Sistema Especial de Liquidação e de Custódia - SELIC, a que se refere o art. 13 da Lei nº 9.065, de 20 de junho de 1995, para títulos federais, acumulada mensalmente, calculados a partir do 1º dia do mês da concessão do parcelamento até o mês anterior ao do pagamento e de um por cento relativamente ao mês do pagamento. <BR><BR>§ 7º O deferimento do parcelamento pelo Instituto Nacional do Seguro Social - INSS fica condicionado ao pagamento da primeira parcela. <BR><BR>§ 8º Na hipótese do parágrafo anterior, não sendo paga a primeira parcela ou descumprida qualquer cláusula do acordo de parcelamento, proceder-se-á à inscrição da dívida confessada, salvo se já tiver sido inscrita na Dívida Ativa do Instituto Nacional do Seguro Social - INSS e à sua cobrança judicial."</DIR>
+<DIR>"Art. 39. ..................................................................................... <BR><BR>§ 3º O não recolhimento ou não parcelamento dos valores contidos no documento a que se refere o inciso IV do art. 32 importará na inscrição na Dívida Ativa do Instituto Nacional do Seguro Social - INSS."</DIR>
+<DIR>"Art. 45. ..................................................................................... <BR><BR>§ 4º Sobre os valores apurados na forma dos §§ 2º e 3º incidirão juros moratórios de um por cento ao mês e multa de dez por cento."</DIR>
+<DIR>"Art. 47. ..................................................................................... <BR><BR>I - ............................................................................................... </DIR>
+<DIR><EM>d) </EM>no registro ou arquivamento, no órgão próprio, de ato relativo a baixa ou redução de capital de firma individual, redução de capital social, cisão total ou parcial, transformação ou extinção de entidade ou sociedade comercial ou civil e transferência de controle de cotas de sociedades de responsabilidade limitada; <BR>.................................................................................................... "<BR></DIR>
+<DIR>"Art. 55. .................................................................................... <BR><BR>V - aplique integralmente o eventual resultado operacional na manutenção e desenvolvimento de seus objetivos institucionais apresentando, anualmente ao órgão do INSS competente, relatório circunstanciado de suas atividades. <BR>.................................................................................................."</DIR>
+<DIR>"Art. 69. O Ministério da Previdência e Assistência Social e o Instituto Nacional do Seguro Social - INSS manterão programa permanente de revisão da concessão e da manutenção dos benefícios da Previdência Social, a fim de apurar irregularidades e falhas existentes. <BR><BR>§ 1º Havendo indício de irregularidade na concessão ou na manutenção de benefício, a Previdência Social notificará o beneficiário para apresentar defesa, provas ou documentos de que dispuser, no prazo de trinta dias. <BR><BR>§ 2º A notificação a que se refere o parágrafo anterior far-se-á por via postal com aviso de recebimento e, não comparecendo o beneficiário nem apresentando defesa, será suspenso o benefício, com notificação ao beneficiário por edital resumido publicado uma vez em jornal de circulação na localidade. <BR><BR>§ 3º Decorrido o prazo concedido pela notificação postal ou pelo edital, sem que tenha havido resposta, ou caso seja considerada pela Previdência Social como insuficiente ou improcedente a defesa apresentada, o benefício será cancelado, dando-se conhecimento da decisão ao beneficiário."&nbsp;</DIR>
+<DIR>"Art. 94. O Instituto Nacional do Seguro Social - INSS poderá arrecadar e fiscalizar, mediante remuneração de 3,5% do montante arrecadado, contribuição por lei devida a terceiros, desde que provenha de empresa, segurado, aposentado ou pensionista a ele vinculado, aplicando-se a essa contribuição, no que couber, o disposto nesta Lei. <BR>..................................................................................................."</DIR>
+<DIR>"Art. 97. Fica o Instituto Nacional do Seguro Social - INSS autorizado a proceder a alienação ou permuta, por ato da autoridade competente, de bens imóveis de sua propriedade considerados desnecessários ou não vinculados às suas atividades operacionais. <BR><BR>§ 1º Na alienação a que se refere este artigo será observado o disposto no art. 18 e nos incisos I, II e III do art. 19, da Lei nº 8.666, de 21 de junho de 1993, alterada pelas Leis nºs 8.883, de 8 de junho de 1994, e 9.032, de 28 de abril de 1995. <BR><BR>§ 2º (VETADO)"</DIR>
+<DIR>"Art. 98. Nas execuções fiscais da dívida ativa do INSS, o leilão judicial dos bens penhorados realizar-se-á por leiloeiro oficial, indicado pelo credor, que procederá à hasta pública: <BR><BR>I - no primeiro leilão, pelo valor do maior lance, que não poderá ser inferior ao da avaliação; <BR><BR>II - no segundo leilão, por qualquer valor, excetuado o vil. <BR><BR>§ 1º Poderá o juiz, a requerimento do credor, autorizar seja parcelado o pagamento do valor da arrematação, na forma prevista para os parcelamentos administrativos de débitos previdenciários. <BR><BR>§ 2º Todas as condições do parcelamento deverão constar do edital de leilão. <BR><BR>§ 3º O débito do executado será quitado na proporção do valor de arrematação. <BR><BR>§ 4º O arrematante deverá depositar, no ato, o valor da primeira parcela. <BR><BR>§ 5º Realizado o depósito, será expedida carta de arrematação, contendo as seguintes disposições: </DIR>
+<DIR><EM>a) </EM>valor da arrematação, valor e número de parcelas mensais em que será pago; <BR><EM>b) </EM>constituição de hipoteca do bem adquirido, ou de penhor, em favor do credor, servindo a carta de título hábil para registro da garantia; <BR><EM>c) </EM>indicação do arrematante como fiel depositário do bem móvel, quando constituído penhor; <BR><EM>d) </EM>especificação dos critérios de reajustamento do saldo e das parcelas, que será sempre o mesmo vigente para os parcelamentos de débitos previdenciários. <BR><BR>§ 6º Se o arrematante não pagar, no vencimento, qualquer das parcelas mensais, o saldo devedor remanescente vencerá antecipadamente, que será acrescido em cinqüenta por cento de seu valor a título de multa, e, imediatamente inscrito em dívida ativa e executado. <BR><BR>§ 7º Se no primeiro ou no segundo leilões a que se refere o <EM><I>caput</I></EM> não houver licitante, o INSS poderá adjudicar o bem por cinqüenta por cento do valor da avaliação. <BR><BR>§ 8º Se o bem adjudicado não puder ser utilizado pelo INSS, e for de difícil venda, poderá ser negociado ou doado a outro órgão ou entidade pública que demonstre interesse na sua utilização. <BR><BR>§ 9º Não havendo interesse na adjudicação, poderá o juiz do feito, de ofício ou a requerimento do credor, determinar sucessivas repetições da hasta pública. <BR><BR>§ 10. O leiloeiro oficial, a pedido do credor, poderá ficar como fiel depositário dos bens penhorados e realizar a respectiva remoção."</DIR>
+<DIR>"Art. 99. O Instituto Nacional do Seguro Social - INSS poderá contratar leiloeiros oficiais para promover a venda administrativa dos bens, adjudicados judicialmente ou que receber em dação de pagamento. <BR><BR><I>Parágrafo único. </I>O INSS, no prazo de sessenta dias, providenciará alienação do bem por intermédio do leiloeiro oficial."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º Ficam restabelecidos o § 4º do art. 86 e os arts. 31 e 122, e alterados os arts. 11, 16, 18, 34, 58, 74, 75, 86, 94, 96, 102, 103, 126, 130 e 131 da Lei nº 8.213, de 24 de julho de 1991, com a seguinte redação: <BR><BR></P>
+<DIR>"Art. 11....................................................................................... <BR><BR>V - .............................................................................................. </DIR>
+<DIR><EM>a) </EM>a pessoa física, proprietária ou não, que explora atividade agropecuária ou pesqueira, em caráter permanente ou temporário, diretamente ou por intermédio de prepostos e com o auxílio de empregados, utilizados a qualquer título, ainda que de forma não contínua; <BR><EM>b) </EM>pessoa física, proprietária ou não, que explora atividade de extração mineral garimpo -, em caráter permanente ou temporário, diretamente ou por intermédio de prepostos, com ou sem auxílio de empregados, utilizados a qualquer título, ainda que de forma não contínua;<BR><EM>c) </EM>o ministro de confissão religiosa e o membro de instituto de vida consagrada e de congregação ou de ordem religiosa, este quando por ela mantido, salvo se filiado obrigatoriamente à Previdência Social em razão de outra atividade, ou a outro sistema previdenciário, militar ou civil, ainda que na condição de inativo; <BR><EM>d) </EM>o empregado de organismo oficial internacional ou estrangeiro em funcionamento no Brasil, salvo quando coberto por sistema próprio de previdência social; <BR><EM>e) </EM>o brasileiro civil que trabalha no exterior para organismo oficial internacional do qual o Brasil é membro efetivo, ainda que lá domiciliado e contratado, salvo quando coberto por sistema de previdência social do país do domicílio. <BR>.................................................................................... <BR><BR>§ 4º O dirigente sindical mantém, durante o exercício do mandato eletivo, o mesmo enquadramento no Regimento Geral de Previdência Social - RGPS de antes da investidura."</DIR>
+<DIR>"Art. 16. .................................................................................... <BR><BR>§ 2º O enteado e a menor tutelado equiparam-se a filho mediante declaração do segurado e desde que comprovada a dependência econômica na forma estabelecida no Regulamento. <BR>.................................................................................................."</DIR>
+<DIR>"Art. 18. ..................................................................................... <BR><BR>§ 2º O aposentado pelo Regime Geral de Previdência - RGPS que permanecer em atividade sujeita a este Regime, ou a ele retornar, não fará jus a prestação alguma da Previdência Social em decorrência do exercício dessa atividade, exceto ao salário-família e à reabilitação profissional, quando empregado."</DIR>
+<DIR>"Art. 31. O valor mensal do auxílio-acidente integra o salário-de-contribuição, para fins de cálculo do salário-de-benefício de qualquer aposentadoria, observado, no que couber, o disposto no art. 29 e no art. 86, § 5º."</DIR>
+<DIR>"Art. 34. ..................................................................................... <BR><BR>II - para o segurado empregado, o trabalhador avulso e o segurado especial, o valor mensal do auxílio-acidente, considerado como salário-de-contribuição para fins de concessão de qualquer aposentadoria, nos termos do art. 31; <BR><BR>III - para os demais segurados, os salários-de-contribuição referentes aos meses de contribuições efetivamente recolhidas."</DIR>
+<DIR>"Art. 58. A relação dos agentes nocivos químicos, físicos e biológicos ou associação de agentes prejudiciais à saúde ou à integridade física considerados para fins de concessão da aposentadoria especial de que trata o artigo anterior será definida pelo Poder Executivo. <BR><BR>§ 1º A comprovação da efetiva exposição do segurado aos agentes nocivos será feita mediante formulário, na forma estabelecida pelo Instituto Nacional do Seguro Social - INSS, emitido pela empresa ou seu preposto, com base em laudo técnico de condições ambientais do trabalho expedido por médico do trabalho ou engenheiro de segurança do trabalho. <BR><BR>§ 2º Do laudo técnico referida no parágrafo anterior deverão constar informação sobre a existência de tecnologia de proteção coletiva que diminua a intensidade do agente agressivo a limites de tolerância e recomendação sobre a sua adoção pelo estabelecimento respectivo. <BR><BR>§ 3º A empresa que não mantiver laudo técnico atualizado com referência aos agentes nocivos existentes no ambiente de trabalho de seus trabalhadores ou que emitir documento de comprovação de efetiva exposição em desacordo com o respectivo laudo estará sujeita à penalidade prevista no art. 133 desta Lei. <BR><BR>§ 4º A empresa deverá elaborar e manter atualizado perfil profissiográfico abrangendo as atividades desenvolvidas pelo trabalhador e fornecer a este, quando da rescisão do contrato de trabalho, cópia autêntica desse documento."</DIR>
+<DIR>"Art. 74. A pensão por morte será devida ao conjunto dos dependentes do segurado que falecer, aposentado ou não, a contar da data: <BR><BR>I - do óbito, quando requerida até trinta dias depois deste; <BR><BR>II - do requerimento, quando requerida após o prazo previsto no inciso anterior; <BR><BR>III - da decisão judicial, no caso de morte presumida."</DIR>
+<DIR>"Art. 75. O valor mensal da pensão por morte será de cem por cento do valor da aposentadoria que o segurado recebia ou daquela a que teria direito se estivesse aposentado por invalidez na data de seu falecimento, observado o disposto no art. 33 desta Lei."</DIR>
+<DIR>"Art. 86. O auxílio-acidente será concedido, como indenização, ao segurado quando, após consolidação das lesões decorrentes de acidente de qualquer natureza, resultar seqüelas que impliquem redução da capacidade para o trabalho que habitualmente exercia. <BR><BR>§ 1º O auxílio-acidente mensal corresponderá a cinqüenta por cento do salário-de-benefício e será devido, observado o disposto no § 5º, até a véspera do início de qualquer aposentadoria ou até a data do óbito do segurado. <BR><BR>§ 2º O auxílio-acidente será devido a partir do dia seguinte ao da cessação do auxílio-doença independentemente de qualquer remuneração ou rendimento auferido pelo acidentado, vedada sua acumulação com qualquer aposentadoria. <BR><BR>§ 3º O recebimento de salário ou concessão de outro benefício, exceto de aposentadoria, observado o disposto no § 5º, não prejudicará a continuidade do recebimento do auxílio-acidente. <BR><BR>§ 4º A perda da audição, em qualquer grau, somente proporcionará a concessão do auxílio-acidente, quando, além do reconhecimento de casualidade entre o trabalho e a doença, resultar, comprovadamente, na redução ou perda da capacidade para o trabalho que habitualmente exercia. <BR><BR>§ 5º (VETADO)"</DIR>
+<DIR>"Art. 94. Para efeito dos benefícios previstos no Regime Geral de Previdência Social, é assegurada a contagem recíproca do tempo de contribuição na atividade privada, rural e urbana, e do tempo de contribuição ou de serviço na administração pública, hipótese em que os diferentes sistemas de previdência social se compensarão financeiramente. <BR>..................................................................................................."</DIR>
+<DIR>"Art. 96. .................................................................................... <BR><BR>IV - o tempo de serviço anterior ou posterior à obrigatoriedade de filiação à Previdência Social só será contado mediante indenização da contribuição correspondente ao período respectivo, com acréscimo de juros moratórios de um por cento ao mês e multa de dez por cento."</DIR>
+<DIR>"Art. 102. A perda da qualidade de segurado importa em caducidade dos direitos inerentes a essa qualidade. <BR><BR>§ 1º A perda da qualidade de segurado não prejudica o direito à aposentadoria para cuja concessão tenham sido preenchidos todos os requisitos, segundo a legislação em vigor à época em que estes requisitos foram atendidos. <BR><BR>§ 2º Não será concedida pensão por morte aos dependentes do segurado que falecer após a perda desta qualidade, nos termos do art. 15 desta Lei, salvo se preenchidos os requisitos para obtenção da aposentadoria na forma do parágrafo anterior."</DIR>
+<DIR>"Art. 103. É de dez anos o prazo de decadência de todo e qualquer direito ou ação do segurado ou beneficiário para a revisão do ato de concessão de benefício, a contar do dia primeiro do mês seguinte ao do recebimento da primeira prestação ou, quando for o caso, do dia em que tomar conhecimento da decisão indeferitória definitiva no âmbito administrativo. <BR><BR><I>Parágrafo único. </I>Prescreve em cinco anos, a contar da data em que deveriam ter sido pagas, toda e qualquer ação para haver prestações vencidas ou quaisquer restituições ou diferenças devidas pela Previdência Social, salvo o direito dos menores, incapazes e ausentes, na forma do Código Civil."</DIR>
+<DIR>"Art. 122. Se mais vantajoso, fica assegurado o direito à aposentadoria, nas condições legalmente previstas na data do cumprimento de todos os requisitos necessários à obtenção do benefício, ao segurado que, tendo completado 35 anos de serviço, se homem, ou trinta anos, se mulher, optou por permanecer em atividade."</DIR>
+<DIR>"Art. 126. Das decisões do Instituto Nacional do Seguro Social - INSS nos processos de interesse dos beneficiários e dos contribuintes da Seguridade Social caberá recurso para o Conselho de Recursos da Previdência Social, conforme dispuser Regulamento."</DIR>
+<DIR>"Art. 130. Na execução contra o Instituto Nacional do Seguro Social - INSS, o prazo a que se refere o art. 730 do Código de Processo Civil é de trinta dias."</DIR>
+<DIR>"Art. 131. O Ministro da Previdência e Assistência Social poderá autorizar o INSS formalizar a desistência ou abster-se de propor ações e recursos em processos judiciais sempre que a ação versar matéria sobre a qual haja declaração de inconstitucionalidade proferida pelo Supremo Tribunal Federal - STF, súmula ou jurisprudência consolidada STF ou dos tribunais superiores. <BR><BR><I>Parágrafo único. </I>O Ministro da Previdência e Assistência Social disciplinará as hipóteses em que a administração previdenciária federal, relativamente aos créditos previdenciários baseados em dispositivo declarado inconstitucional por decisão definitiva do Supremo Tribunal Federal, possa:&nbsp;</DIR>
+<DIR><EM>a) </EM>abster-se de constituí-los; <BR><EM>b) </EM>retificar o seu valor ou declará-los extintos, de ofício, quando houverem sido constituídos anteriormente, ainda que inscritos em dívida ativa; <BR><EM>c) </EM>formular desistência de ações de execução fiscal já ajuizadas, bem como deixar de interpor recursos de decisões judiciais. <BR><BR><I>Parágrafo único. </I>(VETADO)"</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º Os arts. 144, 453, 464 e 465 da Consolidação das Leis do Trabalho (Decreto-Lei nº 5.452, de 1º de maio de 1943) passam a vigorar com a seguinte redação: <BR><BR></P>
+<DIR>"Art. 144. O abono de férias de que trata o artigo anterior, bem como o concedido em virtude de cláusula do contrato de trabalho, do regulamento da empresa, de convenção ou acordo coletivo, desde que não excedente de vinte dias do salário, não integrarão a remuneração do empregado para os efeitos da legislação do trabalho."<BR><BR>"Art. 453. .................................................................................. <BR><BR>§ 1º Na aposentadoria espontânea de empregados das empresas públicas e sociedades de economia mista é permitida sua readmissão desde que atendidos aos requisitos constantes do art. 37, inciso XVI, da Constituição, e condicionada à prestação de concurso público. <BR><BR>§ 2º O ato de concessão de benefício de aposentadoria a empregado que não tiver completado trinta e cinco anos de serviço, se homem, ou trinta, se mulher, importa em extinção do vínculo empregatício."<BR><BR>&nbsp;"Art. 464. ................................................................................... <BR><BR><I>Parágrafo único. </I>Terá força de recibo o comprovante de depósito em conta bancária, aberta para esse fim em nome de cada empregado, com o consentimento deste, em estabelecimento de crédito próximo ao local de trabalho."<BR>&nbsp;<BR>"Art. 465. O pagamento dos salários será efetuado em dia útil e no local do trabalho, dentro do horário do serviço ou imediatamente após o encerramento deste, salvo quando efetuado por depósito em conta bancária, observado o disposto no artigo anterior."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º Os arts. 3º e 9º da Lei nº 9.317, de 5 de dezembro de 1996, passam a vigorar com a seguinte redação: <BR><BR></P>
+<DIR>"Art. 3º. ...................................................................................... <BR><BR>§ 1º ............................................................................................. </DIR>
+<DIR><EM>f) </EM>contribuições para a Seguridade Social, a cargo da pessoa jurídica, de que tratam o art. 22 da Lei nº 8.212, de 24 de julho de 1991, o art. 25 da Lei nº 8.870, de 15 de abril de 1994, e a Lei Complementar nº 84, de 18 de janeiro de 1996. <BR>..................................................................................... "<BR><BR></DIR>
+<DIR>&nbsp;"Art. 9º. ....................................................................................... <BR><BR>§ 4º Compreende-se na atividade de construção de imóveis, de que trata o inciso V deste artigo, a execução de obra de construção civil, própria ou de terceiros, como a construção, demolição, reforma, ampliação de edificação ou outras benfeitorias agregadas ao solo ou subsolo."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º Os magistrados classistas temporários da Justiça do Trabalho e os magistrados da Justiça Eleitoral nomeados na forma dos incisos II do art. 119 e III do § 1º do art. 120 da Constituição Federal serão aposentados de acordo com as normas estabelecidas pela legislação previdenciária a que estavam submetidos antes da investidura na magistratura, mantida a referida vinculação previdenciária durante o exercício do mandato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O aposentado de qualquer regime previdenciário que exercer a magistratura nos termos deste artigo vincula-se, obrigatoriamente, ao Regime Geral de Previdência Social - RGPS, <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º A contribuição do empregador rural pessoa física e do segurado especial referidos, respectivamente, na alínea "<EM>a</EM>" do inciso V e no inciso VII do art. 12 da Lei nº 8.212, de 1991, para o Serviço Nacional de Aprendizagem Rural - SENAR, criado pela Lei nº 8.315, de 23 de dezembro de 1991, é de 0,1% incidente sobre a receita bruta proveniente da comercialização de sua produção rural. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º O § 3º do art. 25 da Lei nº 8.870, de 15 de abril de 1994, passa a vigorar com a seguinte redação: <BR></P>
+<DIR>"Art. 25. ..................................................................................... <BR><BR>§ 3º Para os efeitos deste artigo, será observado o disposto no § 3º do art. 25 da Lei nº 8.212, de 24 de julho de 1991, com a redação dada pela Lei nº 8.540, de 22 de dezembro de 1992."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º O art. 3º da Lei nº 7.070, de 20 de dezembro de 1982, passa a vigorar acrescido do seguinte parágrafo:</P>
+<DIR>"<I>Parágrafo único. </I>O benefício de que trata esta Lei é de natureza indenizatória, não prejudicando eventuais benefícios de natureza previdenciária, e não poderá ser reduzido em razão de eventual aquisição de capacidade laborativa ou de redução de incapacidade para o trabalho, ocorridas após a sua concessão."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º Os auxiliares locais de nacionalidade brasileira que prestam serviços no exterior, amparados pela Lei nº 8.745, de 9 de dezembro de 1993, terão sua situação regularizada junto ao Instituto Nacional do Seguro Social-INSS, no Regime Geral de Previdência Social-RGPS, mediante indenização das contribuições patronais e dos segurados, na forma como segue: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - para fatos geradores ocorridos até 31 de dezembro de 1993, serão consideradas as alíquotas a que se referem os arts. 20 e 22 da Lei nº 8.212, de 24 de julho de 1991 e o salário-de-contribuição vigentes no mês da regularização, para apuração dos valores a serem vertidos ao Instituto Nacional do Seguro Social - INSS; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - sobre o valor da contribuição apurado na forma do parágrafo anterior, serão aplicados juros de mora de um por cento ao mês. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A indenização a que se refere o <EM><I>caput</I></EM> retroagirá à data da efetiva admissão do auxiliar local, cabendo à respectiva entidade empregadora a despesa decorrente, inclusive a correspondente à contribuição do segurado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os débitos referentes aos fatos geradores ocorridos a partir de 1º de janeiro de 1994 obedecerão à legislação de regência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O disposto nesta Lei aplica-se, também, aos auxiliares locais de nacionalidade brasileira cujos contratos de trabalho se encontram rescindidos, no que se refere ao seu período de vigência, excluídos aqueles que tiverem auxílio financeiro para ingresso em previdência local ou privada, compensação pecuniária no ato do encerramento do seu contrato de trabalho ou que eram filiados ao regime previdenciário local. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O auxiliar local que tenha, comprovadamente, recebido alguma das importâncias a que se refere o parágrafo anterior, ainda que em atividade, somente terá regularizado o período para o qual não ocorreu o referido pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10. O Instituto Nacional do Seguro Social - INSS poderá concordar com valores divergentes, para pagamento de débito objeto de execução fiscal, quando a diferença entre os cálculos de atualização da dívida por ele elaborados ou levados a efeito pela contadoria do Juízo e os cálculos apresentados pelo executado for igual ou inferior a cinco por cento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O disposto neste artigo aplica-se somente a débitos cuja petição inicial da execução tenha sido protocolada em Juízo até 31 de março de 1997. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A extinção de processos de execução, em decorrência da aplicação do disposto neste artigo, não implicará condenação em honorários, custas e quaisquer outros ônus de sucumbência contra o exeqüente, oferecidos ou não embargos à execução, e acarretará a desistência de eventual recurso que tenha por razão a divergência de valores de atualização nos limites do percentual referido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11. A extinção do vínculo de que trata o § 1º do art. 453 da CLT não se opera para os empregados aposentados por tempo de serviço que permaneceram nos seus empregos até esta data, bem como para aqueles que foram dispensados entre 13 de outubro de 1996 e 30 de novembro de 1997, em razão da aposentadoria por tempo de serviço, desde que solicitem, expressamente, até 30 de janeiro de 1998, a suspensão da aposentadoria e, quando houver, a do pagamento feito por entidade fechada de previdência privada complementar patrocinada pela empresa empregadora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O disposto no <EM><I>caput</I></EM> deste artigo não se aplica aos que, em face do desligamento, receberam verbas rescisórias ou indenizatórias, ou quaisquer outras vantagens a título de incentivo à demissão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O retomo ao trabalho do segurado aposentado dar-se-á até 2 de fevereiro de 1998, não fazendo jus a qualquer indenização, ressarcimento ou contagem de tempo de serviço durante o período situado entre a data do desligamento e a data do eventual retorno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O pagamento da aposentadoria será restabelecido, a pedido do segurado, quando do seu afastamento definitivo da atividade, assegurando-se-lhe os reajustes concedidos aos benefícios de prestação continuada da Previdência Social no período da suspensão da aposentadoria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12. O Poder Executivo fará publicar no Diário Oficial da União, no prazo de trinta dias, texto consolidado das Leis nºs 8.212 e 8.213, ambas de 1991. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13. Ficam convalidados os atos praticados com base nas Medidas Provisórias nº 1.523, de 11 de outubro de 1996, 1.523-1, de 12 de novembro de 1996, 1.523-2, de 12 de dezembro de 1996, 1.523-3, de 9 de janeiro de 1997, 1.523-4, de 5 de fevereiro de 1997, 1.523-5, de 6 de março de 1997, 1.523-6, de 3 de abril de 1997,1.523-7, de 30 de abril de 1997, 1.523-8, de 28 de maio de 1997, 1.523-9, de 27 de junho de 1997, 1.523-10, de 25 de julho de 1997, 1.523-11, de 26 de agosto de 1997, 1.523-12, de 25 de setembro de 1997, 1.523-13, de 23 de outubro de 1997, e 1.596-14, de 10 de novembro de 1997. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14. Esta Lei entra em vigor na data de sua publicação e até que sejam exigíveis as contribuições instituídas ou modificadas por esta Lei, são mantidas, na forma da legislação anterior, as que por ela foram alteradas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15. Revogam-se as disposições em contrário, especialmente a Lei nº 3.529, de 13 de janeiro de 1959, a Lei nº 5.527, de 8 de novembro de 1968, a Lei nº 5.939, de 19 de novembro de 1973, a Lei nº 6.903, de 30 de abril de 1981, a Lei nº 7.850, de 23 de outubro de 1989, o § 2º do art. 38 e o art. 100 da Lei nº 8.212, de 24 de julho de 1991, o § 5º do art. 3º, o § 1º do art. 44, o parágrafo único do art. 71, os arts. 139, 140, 141, 148 e 152 da Lei nº 8.213, de 24 de julho de 1991, os arts. 3º e 4º da Lei nº 8.620, de 5 de janeiro de 1993, a Lei nº 8.641, de 31 de março de 1993, o § 4º do art. 25 da Lei nº 8.870, de 15 de abril de 1994. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>(VETADO) </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 10 de dezembro de 1997; 176º da Independência e 109º da República. </P>
+<P>FERNANDO HENRIQUE CARDOSO <BR>Reinhold Stephanes </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 11/12/1997
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 11/12/1997, Página 29426      
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1997, Página 8762 
+                                                        Vol. 12         
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,913 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 746, DE 29 DE DEZEMBRO DE 1900 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Fixa a despeza geral da Republica dos Estados Unidos do Brazil para o exercicio de 1901, e dá outras providencias. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 746, DE 29 DE DEZEMBRO DE 1900 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                    <li>
+                                        <a href="lei-746-29-dezembro-1900-586254-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 746, DE 29 DE DEZEMBRO DE 1900</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Fixa a despeza geral da Republica dos Estados Unidos do Brazil para o exercicio de 1901, e dá outras providencias. <BR>
+						</p>
+				
+						<div class="texto">
+							<P>O Presidente da Republica dos Estados Unidos do Brazil: <BR>Faço saber que o Congresso Nacional decreta e eu sancciono a lei seguinte: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 1º A despeza geral da Republica dos Estados Unidos do Brazil para o exercicio de 1901 é fixada em ouro, 37.509:984$913, papel, 244.514:800$507, assim distribuida pelos respectivos Ministerios, na fórma especificada nos artigos seguintes: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 2º O Presidente da Republica é autorizado a despender pelo Ministerio da Justiça e Negocios Inferiores, com os serviços designados nas seguintes verbas, a quantia de 16.094:204$596, a saber: </P>
+<P align=center>(Tabelas disponíveis no texto digitalizado da Coleção de Leis)</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 3º É o Poder Executivo autorizado: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; I. A rever os regulamentos do Archivo Publico, da Bibliotheca Nacional, do Instituto Benjamin Constant, do Instituto dos Surdos-Mudos e do Corpo de Bombeiros, reorganisando este como julgar necessario, sem augmento de despeza, e bem assim rever o regulamento annexo ao decreto n. 2818, de 25 de fevereiro de 1898. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; II. A rever o codigo que baixou com o decreto n. 1159, de 3 de dezembro de 1892, fazel-o comprehender as disposições communs a todos os estabelecimentos de ensino superior e secundario e rever ao mesmo tempo os regulamentos especiaes, restringindo-os ao que for peculiar aos institutos respectivos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Nessa revisão o Poder Executivo, além das alterações que porventura entender necessario fazer em bem dos interesses do ensino, observará o seguinte: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1º Os lentes cathedraticos ou substitutos e os professores que contarem 30 e 40 annos de serviços geraes não poderão ser jubilados com todo o ordenado ou com todos os vencimentos, segundo a hypothese, si não tiverem 20 annos no primeiro caso e no segundo 25, pelo menos, de serviço effectivo de magisterio. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 2º Sómente este serviço dará direito ás gratificações addicionaes, e estas só poderão ser concedidas a lentes cathedraticos, substitutos ou professores. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 3º As gratificações addicionaes serão: de 5 % para 10 annos de serviço, de 10 % para 15 annos, de 20 % para 20 annos, de 33 % para 25 annos e de 40 % para 30 annos. Esta ultima gratificação, porém, sómente será concedida aos cathedraticos, substitutos ou professores que nos ultimos cinco annos desse periodo houverem publicado obras consideradas por dous terços de votos da totalidade dos membros da congregação como de grande vantagem para o ensino. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; III. A vender o material que foi empregado na illuminação electrica da Escola Nacional de Bellas Artes, podendo applicar o producto da venda á compra de moveis, livros e modelos de esculptura para as aulas da mesma escola. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; IV. A mandar imprimir na Imprensa Nacional o texto e as estampas da monographia sobre palmeiras, do botanico brazileiro Dr. João Barbosa Rodrigues, mediante accordo com o mesmo, ficando autorizado a fazer as operações do credito necessarias para este effeito. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; V. A conceder á Escola Quinze de Novembro, fundada nesta Capital, o auxilio annual de 10:000$, para manutenção dos menores já alli admittidos, e a concorrer com a quantia de 800$ annuaes para a manutenção de cada menor que daqui por deante for admittido, até o maximo de 25. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; a) Para o effeito dessa subvenção, só poderão ser admittidos na escola: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1º, os menores viciosos do Districto Federal, orphãos, que absolutamente não disponham de recursos para prover á sua honesta subsistencia; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 2º, os menores que estiverem no caso do art. 30 do Codigo Penal. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; b) Nenhum menor poderá ser recebido no estabelecimento sem ordem do chefe de policia ou do juiz criminal, conforme a hypothese. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; c) O Poder Executivo fará para esse fim as operações de credito que forem necessarias. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; VI. A elevar a 60 o numero de alumnos gratuitos do Gymnasio Nacional. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; VII. A prorogar por um anno o prazo concedido ás Faculdades Livres de Direito, para constituirem o patrimonio determinado pelo art. 5º do decreto n. 314, de 30 de outubro de 1890, que reorganisou o ensino nas mesmas Faculdades, e a todos os institutos de ensino que tiverem a mesma obrigação. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; VIII. A confiar a administração do patrimonio do Hospicio Nacional de Alienados a um conselho não remunerado, expedindo, para esse fim as necessarias instrucções. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; IX. A rever a primeira das tabellas annexas ao decreto n. 596, de 19 de julho de 1890, e o decreto n. 2212, de 6 de janeiro de 1896, para o fim de elevar ao dobro os emolumentos de 1$ e 2$ que percebe o secretario da Junta Commercial da Capital Federal, pela sua assignatura nos termos dos livros sujeitos á rubrica, e pelos seus officios ou pareceres sobre matricula de commerciantes e mais actos em que deve ser ouvido. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; X. A reorganisar a Brigada Policial, podendo augmentar nos corpos existentes até 360 praças de infantaria e 40 de cavallaria, abrindo para esse fim o credito necessario, e dar-lhe novo regulamento. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XI. A substituir o material da illuminação electrica da Bibliotheca Nacional ou reforçar o da Brigada Policial, de modo a permittir-lhe fornecer a corrente para aquella repartição, abrindo para esse fim o credito necessario. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 4º O Governo despenderá a quantia de 120:000$ com a continuação das obras do Lazareto de Tamandaré. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 5º É concedida aos alumnos do Instituto Benjamin Constant a mesma vantagem de que gozam os alumnos do Instituto Nacional dos Surdos-Mudos, no que diz respeito á venda dos trabalhos por elles feitos nas respectivas officinas. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 6º É transferida do Ministerio da Fazenda para o da Justiça e Negocios Interiores a Junta Commercial da Capital Federal. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 7º O Presidente da Republica é autorizado a despender pelo Ministerio das Relações Exteriores com os serviços designados nas seguintes verbas, em papel 527:520$ e em ouro 969:500$, a saber: </P>
+<P align=center>(Tabelas disponíveis no texto digitalizado da Coleção de Leis)</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 8º O Presidente da Republica é autorizado a despender pelo Ministerio da Marinha, com os serviços designados nas seguintes verbas, a quantia de 23.200:337$754 em papel: </P>
+<P align=center>(Tabelas disponíveis no texto digitalizado da Coleção de Leis)</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 9º Fica o Poder Executivo autorizado: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; a) a rever os regulamentos das repartições do Ministerio da Marinha, sem augmento de despeza, creação ou suppressão de empregos, augmento ou diminuição de vencimentos; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; b) a vender o material reputado inutil, aproveitando o producto da venda nos reparos do material fluctuante; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; c) a desenvolver o serviço de soccorro naval com os recursos para esse fim destinados na lei da receita; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; d) a despender até a quantia de 50:000$ para pagamento das pensões a que tiverem direito os operarios dos extinctos arsenaes de marinha; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; e) a dotar, dentro das forças do orçamento, as escolas de aprendizes marinheiros com o material fluctuante necessario para dar aos aprendizes a instrucção pratica de grumetes; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; f) a modificar o regulamento da Contadoria da Marinha, no sentido de, pondo-o de accordo com o da Contabilidade Geral do Thesouro Federal, dar-lhe as mesmas vantagens que tem ou venha a ter a Contadoria da Guerra, dependendo a execução da approvação do Congresso; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; g) a applicar aos novos pharóes, que tenham de ser inaugurados dentro do exercicio, os creditos votados para pessoal e custeio dos que não estiverem montados e funccionando; </P>
+<P>&nbsp;&nbsp;&nbsp; h) a abrir o credito necessario para pagar aos operarios extraordinarios dispensados das officinas do Arsenal de Marinha da Capital Federal a differença proveniente da desclassificação que soffreram em seus salarios nos dias em que trabalharam durante o exercicio de 1898. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 10. O Governo mandará collocar o pharol de Salinas, que se acha depositado no Arsenal do Pará, entre Gurupy e Salinas, nas proximidades das praias Boiussucaga, Japerica e Agirutena, conforme julgar mais acertado. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 11. Na vigencia desta lei serão preferidos, em igualdade de circumstancias, a juizo do Governo, para os trabalhos dos arsenaes de marinha e obras deste Ministerio e para os cargos que vagarem naquelles estabelecimentos, os operarios e os empregados dos arsenaes que tiverem sido dispensados em virtude de lei. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 12. O Governo entender-se-ha com os Governos dos diversos Estados que tenham organisado ou estejam organisando, a expensas suas, o serviço de meteorologia, no sentido de serem as observações feitas de accordo com a direcção da Carta Maritima e á mesma communicadas diariamente. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 13. Continúa em vigor, no exercicio de 1901, o disposto no art. 16 da lei n. 652, de 23 de novembro de 1899. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 14. O Governo fará matricular no Collegio Militar, como alumnos gratuitos, annualmente, os cinco aprendizes marinheiros que mais se tenham distinguido nas diversas escolas da Republica, com preferencia para a matricula na Escola naval, quando tenham concluido o curso preparatorio. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 15. O Presidente da Republica é autorizado a despender, no exercicio de 1901, com os diversos serviços a cargo do Ministerio da Guerra, a quantia de 45.580:630$933, assim distribuida: </P>
+<P align=center>(Tabelas disponíveis no texto digitalizado da Coleção de Leis)</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 16. Fica o Governo autorizado:</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; I&nbsp;- A abrir o credito necessario para pagamento das gratificações a que teem direito o mestre e contra-mestre da officina de alfaiates do Arsenal de Guerra desta Capital, de accordo com o respectivo regulamento, durante o tempo em que esteve fechada a citada officina, no qual os serviços desses funccionarios foram aproveitados na Intendencia da Guerra. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; II - A mandar proceder, na vigencia desta lei, aos estudos necessarios á urgente construcção de uma ferro-via que ligue o Estado do Paraná ao de Matto Grosso, a qual será feita por praças do Exercito sob a direcção de engenheiros militares. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; III - A despender, na vigencia desta lei, pela rubrica 15ª, consignação 31 - Despezas diversas e eventuaes - sem augmento desta, até a quantia de 10:000$, para subvencionar os estabelecimentos de ensino que se encarregarem da educação das filhas de militares mortos em combate ou em consequencia de ferimentos recebidos em campanha. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A subvenção será proporcional ao numero de educandas confiadas a esses estabelecimentos, a juizo do Governo. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; IV - A mandar installar em logar conveniente, ouvida a direcção de saude do Exercito, uma ou mais enfermarias destinadas aos officiaes e praças affectados de tuberculose. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; V - A enviar officiaes competentes, como addidos militares, a paizes estrangeiros, não excedendo de tres, correndo a despeza pela rubrica 9ª - Soldos e gratificações - e 10ª - Etapas. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; VI - A rever, na vigencia desta lei e sem augmento de despeza, as tabellas de gratificações de exercicio e abono de ajuda de custo aos officiaes do Exercito, tornando-as mais equitativas e applicaveis aos officiaes do quadro e classes annexas da Armada, conforme dispõe o art. 85 da Constituição Federal e art. 3º, ns. 2 e 3, da lei n. 247, de 15 de dezembro de 1894. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 17. Aos officiaes que servirem nos Estados do Amazonas, Pará e Matto Grosso será abonado, na vigencia desta lei, mais um terço da etapa a que teem direito actualmente. </P>
+<P>&nbsp;&nbsp;&nbsp; Art. 18. Ficam substituidos como creditos especiaes, para os mesmos fins que foram votados, os saldos dos creditos concedidos pelos decretos ns. 141, de 5 de julho de 1893 e 1923, de 24 de dezembro de 1894. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 19º O Presidente da Republica é autorizado a despender, pelo Ministerio da Industria, Viação e Obras Publicas, a importancia de 12.859:014$422 em ouro e 61.818:446$039 em papel com os serviços designados nas seguintes verbas: </P>
+<P align=center>(Tabelas disponíveis no texto digitalizado da Coleção de Leis)</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 20. Ficam mantidas as autorizações concedidas ao Poder Executivo pelo art. 22, ns. I, II, VI, VII, VIII, IX, X, XII, XIV, XVI, XVIII e XIX, da lei n. 652, de 23 de novembro de 1899 e as disposições constantes dos arts. 23, 26, 27, 28, 29, 30, 33, 40, 41 e 42 da mesma lei. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Paragrapho unico. A autorização concedida em o n. VIII, do art. 22 da lei n. 652, de 23 de novembro de 1899, poderá ser exercida pelo Governo em relação a todas as outras estradas de ferro, além das mencionadas naquella disposição, que gozarem de garantias de juros da União, nos termos dos respectivos contractos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 21. Fica revogado o art. 27 da lei n. 560, de 31 de dezembro de 1898, na parte em que derogou o art. 346 do regulamento expedido com o decreto n. 2230, de 10 de fevereiro de 1896. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 22. Fica o Poder Executivo autorizado: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; I, a reorganizar os serviços de navegação que teem estado a cargo do Lloyd Brazileiro, distribuindo as respectivas subvenções, nos limites do credito consignado nesta lei; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; II, a contractar com a Companhia The Royal Mail Steam Packet Company o serviço de navegação entre os portos da Europa e o de Maceió, com a escala habitual dessa companhia, de modo a servir convenientemente á importação e exportação: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; III, a reformar, na vigencia desta lei, sem augmento de despeza, o regulamento approvado pelo decreto n. 1663, de 30 de janeiro de 1894, consolidando as disposições legislativas posteriores e introduzindo outras que a experiencia tenha aconselhado, tendo em vista principalmente a reorganisação dos serviços de contabilidade da Repartição dos Telegraphos; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; IV, a prolongar as linhas telegraphicas da cidade de Bomjardim á de Taquaretinga, no Estado de Pernambuco; e de Lages a Curitibanos e Campos Novos, de Tijucas a Nova Trento, de Lages a S. Joaquim da Costa da Serra, no Estado de Santa Catharina; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; V, a despender a quantia de 100:000$ com a construcção da linha telegraphica de Cuyabá a Corumbá; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; VI, a mandar imprimir na Imprensa Nacional o trabalho de consolidação das disposições referentes ao serviço postal, organisado pelo administrador dos Correios de Minas Geraes, Dr. Francisco Brant, depois de devidamente approvado o mesmo trabalho; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; VII, a modificar o traçado da Estrada de Ferro de S. Paulo ao Rio Grande, de accordo com o pedido feito pela mesma companhia e informações prestadas pelo Ministerio da Industria, Viação e Obras Publicas á Commissão de Obras Publicas da Camara, sem augmento de garantia de juros e respeitados os direitos de terceiros; </P>
+<P>&nbsp;&nbsp;&nbsp; VIII, a prorogar até 31 de dezembro de 1902 o prazo para a conclusão dos 100 primeiros kilometros da Estrada de Ferro de Uberaba a Coxim, de que é concessionario o Banco União de S. Paulo; </P>
+<P>&nbsp;&nbsp; IX, a adoptar o alvitre que julgar mais conveniente para concluir o prolongamento da Estrada de Ferro de Cacequy a Uruguayana e executar o ramal de Sant-anna do Livramento, não podendo dar garantia de juros e nem subvenção; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; X, a permittir desde já que a Companhia Viação Ferrea Fluvial de Tocantins e Araguaya cobre um pedagio para navegação do Alto Tocantins, do Araguaya e de seus affluentes, destinado este pedagio á amortização do capital empregado nas obras de melhoramentos dos rios e não podendo o periodo de amortização ser superior ao fixado na concessão primitiva (decreto n. 862, de 16 de outubro de 1890, para uso e gozo da estrada de ferro de que é cessionaria a mesma companhia Alcobaça á Praia da Rainha); </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XI, a mandar pagar á viuva e ao filho do Dr. Annibal Falcão a quantia de trinta contos de réis (30:000$) em remuneração de serviços prestados pelo mesmo finado, como arbitro do Governo da Republica, em diversos arbitramentos processados perante o Ministerio da Industria, Viação e Obras Publicas, fazendo para isso as necessarias operações de credito; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XII, a regularizar a acquisição, já contractada, das cachoeiras da Tijuca, Cascata e rio S. João, na serra da Tijuca, para o serviço do abastecimento de agua, e a abrir o credito necessario para esse fim; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XIII, a reorganisar a Inspectoria de Illuminação, sem onus para o Thesouro; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XIV, a executar as obras de melhoramento dos portos não incluidos na presente lei, onde ellas se tornarem necessarias, cobrando para este fim as taxas indicadas na lei da Receita, e a applicar o producto das que forem cobradas nos portos dotados com verba especial na presente lei ao desenvolvimento dos serviços de melhoramento respectivo; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XV, a abrir o credito preciso para a acquisição dos mananciaes necessarios ao abastecimento de agua ao districto da Gavea; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XVI, a despender a quantia de 30:660$ para pagamento dos engenheiros e conductores technicos da Inspectoria Geral das Obras Publicas da Capital Federal, das diarias de transporte fixada pelo decreto n. 364, de 26 de abril de 1890, correspondente ao exercicio de 1 de janeiro a 31 de dezembro de 1898, abrindo para tal fim o necessario credito; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XVII, a mandar executar as obras de canalização de agua para o logar denominado Vigario Geral, em Irajá, sem exceder ao credito consignado nesta lei para o serviço de abastecimento de agua da Capital Federal; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XVIII, a conceder, na vigencia desta lei, ao Museo Permanente de Agricultura e Industria Rural, organizado pela Sociedade Nacional de Agricultura, os seguintes favores: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; a) pagamento das despezas feitas com a acquisição, acondicionamento, transporte e despacho das collecções remettidas ao Museo pelos ministros e pelos consules; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; b) Transporte gratuito nas vias ferreas da União dos productos destinados ao mesmo Museo; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XIX, a estabelecer dous premios, que serão distribuidos, de dous em dous annos, aos que se occuparem com a creação do bicho de seda, sendo um do valor de 20:000$ ao que se occupar da cultura da seda produzida pelo bicho indigena, e outro do valor de 10:000$ ao productor da seda do bicho asiatico, acclimado em qualquer Estado da União; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XX, a estabelecer um premio até 5:000$ ao autor do melhor estudo scientifico sobre o bicho de seda indigena, na creação e mais questões que interessam á industria textil; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XXI, a abrir o credito de 1:643$740, em ouro, para pagar a gratificação vencida pelo escripturario da Delegacia do Thesouro em Londres, Dario Caetano da Silva, pelo serviço de tomada de contas das estradas de ferro; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XXII, a rever o regulamento da Ferro-via Central do Brazil, na vigencia desta lei, modificando-o de accordo com o desenvolvimento dos serviços a cargo da mesma estrada, sem augmento de pessoal e despeza; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XXIII, a considerar derogada, na vigencia da presente lei, a disposição do § 1º do art. 7º da lei n. 489, de 15 de dezembro de 1897, podendo tambem alterar equitativamente as taxas estatutidas na lei n. 2639, de 22 de steembro de 1875, a que se refere o dito § 1º, do art. 7º daquella lei; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XXIV, a modificar a concessão feita ao engenheiro Ayres Pompeu de Carvalho e Souza e José Augusto Vieira, em virtude da lei de 30 de dezembro de 1898, para a construcção de um ramal da Estrada de Ferro Central do Brazil, entre a estação de Sapopemba e a Ponta da Ribeira, na ilha do Governador, no sentido de poder o dito ramal terminar nesse ou em outro ponto qualquer da mesma ilha, que for julgado mais conveniente, a juizo do Governo; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XXV, a ceder á Inspecção Geral das Obras Publicas, para ser aproveitado nos serviços desta, o material da estrada de Ferro Central do Brazil de que esta não necessitar; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XXVI, a prorogar até 31 de dezembro de 1901 o prazo para a conclusão dos 100 primeiros kilometros da Estrada de Ferro de Catalão a Palmas, de que é concessionaria a Companhia Estrada de Ferro Alto Tocantins; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; XXVII, a preferir, para as vagas que occorrerem, na vigencia desta lei, os empregados da Repartição Geral dos Telegraphos, extinctos por força do orçamento, que os dispensou por não contarem dez annos de serviço. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 23. A fiscalização dos serviços que forem contractados na vigencia desta lei será organisada pelo Governo, não excedendo as respectivas despezas ás quotas a que para tal fim forem obrigados os contractantes. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 24. Fica extensiva, na vigencia desta lei, aos empregados do correio ambulante e carteiros e aos estafetas ambulantes do Telegrapho, residentes nos suburbios da Capital Federal, a concessão feita pelo art. 41 da lei n. 562, de 23 de novembro de 1899, de assignaturas nominaes intransferiveis, nos trens dos suburbios, com o abatimento de 75% sobre o preço das passagens. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 25. E' fixado em tres o numero de faltas justificadas de que trata o art. 39 da lei em vigor, para percepção da gratificação trimensal dos empregados da Estrada de Ferro Central do Brazil. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 26. Vigorará, durante o exercicio desta lei, a disposição do art. 11 da lei n. 490, de 16 de dezembro de 1897. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 27. Fica prorogado até 31 de dezembro de 1902 o prazo para iniciar a construcção das obras de melhoramento do porto de S. Luiz do Maranhão, de que é concessionaria a Companhia Geral de Melhoramentos do Maranhão. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 28. O Presidente da Republica é autorizado a despender, no exercicio de 1901, pelo Ministerio da Fazenda, em ouro 23.681:470$491 e em papel 97.293:661$185 com os serviços especificados nas seguintes verbas: </P>
+<P>&nbsp;</P>
+<P align=center>(Tabelas disponíveis no texto digitalizado da Coleção de Leis)</P>
+<P>&nbsp;</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 29. E' o Governo autorizado: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1º A abrir no exercicio de 1901 creditos supplementares ás verbas indicadas na tabella B, annexa, até o maximo de 8.000:000$000. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; As verbas - Soccorros publicos - e - Exercicios findos - poderá o Governo abrir creditos supplementares em qualquer mez do exercicio, comtanto que sua totalidade, computada com a dos demais creditos abertos, não exceda o maximo acima fixado, observada em relação á verba - Exercicios findos - a disposição da lei n. 3230, de 3 de setembro de 1884, art. 11. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Não se comprehendem, no maximo fixado por este artigo, os creditos que forem necessarios ás verbas ns. 5, 6, 7 e 8 do orçamento do Ministerio do Interior. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 2º A uniformisar as apolices da divida publica, de cada typo e de cada valor, podendo abrir o credito necessario para occorrer ás despezas com esse serviço. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 3º A fazer, por conta do fundo respectivo, o resgate do papel-moeda emittido em 1898, para emprestimo ao Banco da Republica, podendo o Thesouro receber em pagamento dessa divida apolices ouro, do emprestimo de 1889, pela cotação já estabelecida para acquisição desses titulos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 4º A liquidar os debitos dos bancos, provenientes de auxilios á lavoura. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 5º A cancellar todas as apolices existentes no Thesouro e a elle pertencentes e as que for adquirindo. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 6º A reorganisar o serviço de arrecadação e fiscalização dos fundos internos da União nos Estados, podendo encarregar dessa cobrança ás Collectorias estadoaes, de accordo com os respectivos Governos, aos agentes do Correio, a pessoa idonea devidamente afiançada, bem como crear agencias e recebedorias, e restabelecer as Collectorias federaes, nos logares em que qualquer dessas providencias for julgada mais conveniente para melhor assegurar a boa arrecadação das rendas publicas. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Será estabelecida em regulamento a gratificação que competirá aos encarregados desse serviço, constando de uma quota fixa e outra proporcional á arrecadação effectuada, bem como será fixada e regulada a fiança indispensavel ao exercicio do cargo. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; As despezas com esse serviço não deverão exceder ao maximo de 10 % da somma arrecadada em cada Estado, podendo no exercicio desta lei abrir o credito preciso para occorrer a essas despezas. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 7º A reformar, na vigencia desta lei, o quadro do pessoal das repartições de Fazenda, dando a estas a organisação que mais convenha ao regular andamento da gestão fiscal e do serviço de contabilidade, sem crear ou supprimir empregos, nem augmentar ou diminuir vencimentos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 8º A despender da quantia que tem de receber do Banco da Republica, em pagamento de sua divida, a importancia necessaria para adquirir propriedades necessarias ao serviço federal e para acquisição do terreno contiguo á Estação Maritima da Estrada de Ferro Central do Brazil, com as bemfeitorias e nas condições necessarias ao melhoramento dos serviços que actualmente se fazem naquella estação e do aproveitamento desta para outros fins de utilidade publica. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 9º A centralisar no Thesouro a distribuição e remessa de sellos dos impostos de consumo, abrindo para occorrer ás despezas com o accrescimo desse serviço no Thesouro o necessario credito, incluindo na proposta de orçamento para o futuro exercicio a verba precisa. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 10. A reformar a contabilidade publica, uniformisando-a em todas as repartições federaes e estabelecendo a unidade da gestão fiscal e especialisação dos creditos, afim de tornar uma realidade a fiscalização da receita e despeza. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 11. A conceder o premio por 50$ por tonelada aos navios que forem construidos na Republica e cuja arqueação seja superior a 10 toneladas, podendo abrir os creditos necessarios. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 12. A despender a quantia necessaria até 150:000$ para a construcção do novo edificio destinado á Alfandega de Paranaguá, no porto d-Agua. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 13. A despender, até a quantia de 10:000$, a importancia que for necessaria para a construcção de um pavimento inferior no edificio da Alfandega do Estado do Espirito Santo, para reparos do respectivo armazem e bem assim para levantamento dos passeios de cantaria na frente dos referidos edificio e armazem. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 14. A fazer demolir o velho e arruinado barracão onde outr-ora funccionou a Alfandega de Porto Alegre, sito no centro da praça Senador Florencio, e a entregar o respectivo terreno a Municipalidade daquella capital. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 15. A adquirir duas lanchas a vapor apropriadas ao serviço do porto do Recife, devendo depois dessa acquisição transferir para o serviço da Alfandega da Parahyba, em condições de funccionar perfeitamente, uma das lanchas actualmente ao serviço do referido porto do Recife. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 16. A pagar pela verba - Exercicio findos - a José Claudio da Silva a gratificação de 8:000$, a que tem direito pelo exercicio de syndico dos corretores, no exercicio de 1898, conforme a lei. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 17. A restituir á Camara Municipal de Itaguahy, Estado do Rio de Janeiro, a importancia de 21:824$, de direitos de importação pagos pela mesma Camara sobre material importado para canalisação de agua. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 18. A abrir o credito de nove contos de réis (9:000$) para pagamento a Boxwell William &amp; Comp., do aluguel de armazens para o serviço da Alfandega de Maceió, relativo ao 2º semestre de 1899. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 19. A mandar expedir novos titulos e pagar os juros vencidos aos portadores de apolices ao portador ou de cautelas e recibos provisorios de titulos dessa natureza, que dos mesmos forem desapossados por motivo extranho á sua vontade á disposição da lei, desde que sejam satisfeitas as condições exigidas nos arts. 2º, 3º e 4º do decreto n. 149 B, de 20 de junho de 1893; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 20. A dar, na vigencia desta lei, aos empregados nomeados para exercer em commissão logares de delegados fiscaes e inspectores da Alfandega, além dos vencimentos integraes de seus empregos effectivos, mais áquelles as gratificações e a estes as quotas fixadas nas respectivas tabellas. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 21. A mandar pagar a D. Filippa Peregrina Cavalcante Barreto, viuva do Dr. José Diniz Barreto, lente da Faculdade de Direito do Recife, a quantia de 4:200$, importancia da impressão do livro Pontos de Direito Romano e premio a que tem direito, de accordo com os arts. 38 e 39 do Codigo de Ensino. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 22. A restituir ao Estado do Espirito Santo a importancia dos impostos cobrados sobre as materias importadas para a Estrada de Ferro Sul do Espirito Santo. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 23. A dar novo regulamento á Imprensa Nacional e ao Diario Official, sem augmento de despeza e sem alteração no systema de trabalho existente, creando o quadro do pessoal permanente de cada officina ou secção, respeitados os actuaes funccionarios effectivos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 24. A designar nas Alfandegas da Republica, para o fim de emissão de certificados de depositos que offereçam as precisas garantias, os armazens que sejam necessarios para receber em deposito os generos nacionaes não sujeitos a deterioração. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; a) os certificados de depositos serão assignados pelo inspector da Alfandega e pelo fiel do respectivo armazem; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; b) nos mesmos certificados, a Junta dos Corretores fará a classificação das mercadorias e bem assim os seus valores pelas cotações do dia. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; I. Os depositos poderão tambem ser feitos nos armazens das docas e trapiches alfandegados, desde que fiquem sob a guarda dos empregados da Alfandega, devendo, nesse caso, os mesmos certificados ter a assignatura do inspector e do fiel do armazem. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; II. Os certificados de depositos serão nominativos e transferiveis por endosso. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; III. Nenhum genero ou mercadoria poderá ser retirado do deposito, sinão mediante o resgate do certificado. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; IV. O Governo, em regulamento especial, estabelecerá as taxas de entrada, sahida e armazenagem a pagar mensalmente. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 25. A usar da autorização da lei n. 653, de 23 de novembro de 1890, art. 22, n. VIII, que fica extensiva ás estradas de todas as emprezas que gozam da garantia de juros, fazendo para isso as necessarias operações do credito. As apolices para esse fim emittidas constituirão uma serie especial. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; a) As differenças entre as sommas devidas pelas actuaes garantias e as do juro e amortização de taes apolices, bem como as sommas provenientes do arrendamento ou da alienação das estradas, assim resgatadas, constituirão em Londres uma «Caixa de resgate» dessas apolices, e só poderão ser alienadas para apressar o referido resgate. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; A caixa terá tres directores - o delegado do Thesouro, o agente financeiro do Governo e um director de banco que tenha filiaes no Brazil. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; b) O Governo remetterá trimensalmente á Caixa todas as sommas que receber das estradas ou apolices da divida publica a que poderá reduzil-as, deduzidas as despezas da alinea d deste numero e as sommas ou titulos serão depositados no Banco da Inglaterra, de onde só serão retirados para os fins da alinea anterior. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; c) O Governo poderá alienar as estradas por sommas não inferiores ás que custaram; ou arrendal-as ás mesmas emprezas actuaes ou outras, como julgar mais conveniente á realização da operação principal do resgate e tendo em vista simultaneamente o desenvolvimento da rêde de viação nacional e as melhores garantias e vantagens na execução dos contractos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; d) Para fiscalização dessas estradas e das outras, ora arrendadas, o Governo expedirá novo regulamento, uniformisando a sua contabilidade e creando commissões de tres fiscaes, que as inspeccionem alternadamente. As despezas assim fixadas de uma vez, para essa fiscalização, bem como as da Caixa de Conversão, serão deduzidas das sommas que forem entregues a esta ultima. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; e) O Governo fica autorizado a, de accordo com os contractantes, rever os contractos de arrendamentos vigentes, afim de uniformisal-os ou consolidal-os com os que, porventura, fizer, comtanto que a quota dos arrendamentos actuaes não seja diminuida. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 26. A mandar pagar aos empregados das Alfandegas as quotas a que teem direito, de accordo com o art. 41 da lei n. 428, de 10 de dezembro de 1896, abrindo para este fim o necessario credito. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 27. A abrir o credito de 1:000$ para pagamento da ajuda de custo devida ao inspector da Alfandega de Santa Catharina, Augusto Rangel Alvim, transferido em 1897 da Alfandega de Porto Alegre para aquella. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 28. A isentar, na vigencia desta lei, do pagamento do imposto de importação o material destinado: ao desenvolvimento da luz electrica e ao estabelecimento da força electrica da cidade de Minas, no Estado de Minas Geraes, que for importado por conta da Prefeitura da mesma cidade; ao estabelecimento de luz electrica nas cidades de Jaguarão, no Estado do Rio Grande do Sul, da Cachoeira e S. Felix do Paraguassú, no Estado da Bahia, e á construcção de um mercado nos terrenos da praia de D. Manoel, na Capital Federal. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 29. A isentar, na vigencia desta lei, do pagamento do imposto de importação os livros destinados ás bibliothecas das Faculdades livres de ensino superior, officialmente reconhecidas. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 30. A fazer executar, na vigencia desta lei e emquanto não forem reguladas por lei especial, as operações cambiaes sobre praças estrangeiras, as seguintes disposições: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; a) Os documentos, contendo promessa de letra de cambio a entregar a prazo ou de letras a entregar até cinco dias, os quaes sómente podem ser passados por corretores, deverão mencionar para sua validade e acção judicial - o nome do comprador e do vendedor, os prazos da entrega e do vencimento das letras, as praças sobre que foram ou deverão ser saccadas, de modo que as letras a entregar a prazo sejam exclusivamente do saque do vendedor. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Nenhuma dessas declarações poderá ser substituida na liquidação da operação, que só póde ser effectuada pela entrega das letras vendidas ou compradas e nos termos e condições do contracto de compra e venda. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º O comprador terá quarenta e oito horas para receber do vendedor a letra saccada. Findo esse prazo, a letra será protestada e o comprador sujeito ao cumprimento do contracto e ás perdas e damnos que se verificarem. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º E' prohibido aos bancos e casas commerciaes que operarem em cambio comprarem as suas proprias letras. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 3º As letras de cambio antes do acceite não poderão ser objecto de penhor. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; b) Os documentos sobre compra e venda de metaes preciosos amoedados ou em barra, e que igualmente só poderão ser passados por corretores, deverão conter o nome do comprador e do vendedor, a qualidade da moeda ou do metal em barra, bem como o prazo da entrega, que não poderá exceder de cinco dias. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; c) As infracções das prescripções da presente lei, além da nullidade de pleno direito da operação, importam, por parte do corretor, na perda da metade da fiança e da suspensão do exercicio do cargo por tres mezes, e por parte dos que intervierem no contracto na multa de 20 % sobre o valor das letras de cambio, da moeda metallica ou do metal em barra, ficando solidariamente responsaveis o vendedor e o comprador. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º As penas e multas serão impostas pelo syndico da Camara Syndical ou pelos fiscaes do Governo, com recurso voluntario para o Ministro da Fazenda, devendo este ser interposto no prazo de quinze dias, contados da data da intimação. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para interposição do recurso, é necessario o prévio deposito da importancia da multa. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 3º O recurso interposto pelo corretor não tem effeito suspensivo. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; d) O prazo maximo para as operações de cambio é de 90 dias, sendo pago sobre ellas e sobre a compra e venda de moeda metallica e metaes preciosos em barra, o seguinte sello: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1$500 em cada £ 1.000 até 2.000, a prazo de 30 dias. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 3$000 em cada £ 1.000 até 2.000, a prazo de 60 dias. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 6$000 em cada £ 1.000 até 2.000, a prazo de 90 dias. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º As operações sobre letras de cambio até cinco dias de prazo e inferior a mil libras esterlinas, são isentas de sello; qualquer fracção menor de mil libras e de prazo superior a cinco dias, pagará, 1$ por cada 30 dias. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º O sello será pago pelo vendedor e comprador repartidamente. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; e) Os documentos sobre letras de cambio, moeda metallica e metaes preciosos serão lavrados pelos corretores em papel sellado, segundo as varias taxas a que estão sujeitos os contractos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Para este fim, o Thesouro venderá cadernetas de papel sellado, devendo o contracto ser lançado na metade da folha divisivel por uma serrilha, ficando na outra metade a reproducção do contracto. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; f) O Governo nomeará os fiscaes precisos para os estabelecimentos que negociarem em cambio sobre praças estrangeiras, cujas operações serão por aquelles acompanhadas, conforme lhes for determinado em regulamento especial, e fixará as quotas com que os estabelecimentos que negociarem em cambio sobre praças estrangeiras terão de concorrer para o serviço de fiscalização, e a fórma do respectivo pagamento. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; g) O Governo exercerá a fiscalização que julgar necessaria sobre as operações de cambio, moeda metallica e metaes preciosos, quer em relação aos bancos, associações e casas commerciaes, que operarem em cambio sobre praças estrangeiras, quer em relação aos corretores, para o que expedirá os necessarios regulamentos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 30. São transferidas ao Ministerio da Fazenda duas das tres lanchas a vapor da extincta Inspectoria de Colonisação, para serem empregadas nos serviços aduaneiros das Alfandegas de Pernambuco e Bahia. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 31. Não poderá o Governo levar á conta de qualquer rubrica do orçamento despezas que nella não estejam comprehendidas, segundo as tabellas explicativas da proposta e as alterações nellas feitas e autorizadas pelo Congresso. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 32. Todos os pagamentos de despezas de materiaes serão centralisados no Thesouro e Delegacias, com excepção daquelles que forem feitos pelas secretarias do Congresso, mordomia do Palacio do Governo e dos que perturbarem a marcha dos respectivos serviços, os quaes continuarão a ser effectuados pelas proprias repartições, depois de habilitadas, mediante registro prévio de distribuição de creditos, ouvido o Thesouro sobre a conveniencia de serem feitas as referidas despezas pelas contadorias respectivas. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Qualquer pagamento que não esteja nas condições estabelecidas não será attendido na tomada de contas dos respectivos funccionarios. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 33. Continúa em vigor o n. XIV do art. 22 da lei n. 652, de 23 de novembro de 1899 - sem as restricções nelles estabelecidas. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 34. Na vigencia desta lei, os vencimentos por substituição, entre os empregados de Fazenda, se regularão pela fórma estabelecida na decisão do Ministerio da Fazenda, n. 234, de 23 de abril de 1879. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 35. Na vigencia desta lei, as despezas com funeraes dos funccionarios publicos ficam sujeitas ao registro a posteriori do Tribunal de Contas, nos termos do art. 164 do regulamento que baixou com o decreto n. 2409, de 23 de dezembro de 1896. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 36. O Governo autorizará, na vigencia desta lei, aos consules brazileiros a inscripção official do - Contracto entre os accionistas constituintes do Anonymato Brazileiro - independente do pagamento dos sellos devidos por lei, desde que: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; a) seja elle lavrado para que tal associação se apresente, no Brazil, apta a funccionar, nos termos do - Contracto geral - constante da proposta de 20 de janeiro de 1897; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; b) tal associação assuma a responsabilidade do pagamento dos referidos sellos - accrescido com as multas maximas da lei, promptificando-se a effectual-o, no acto della assignar o - Contracto geral - com o Governo do Brazil. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 37. Na vigencia desta lei, as isenções de direitos de importação não comprehendem as despezas das capatazias e armazens. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 38. Ficam approvados os creditos abertos no exercicio de 1899, constantes da tabella A, annexa, na importancia de 31.509:308$777. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 39. Revogam-se as disposições em contrario. </P>
+<P>Capital Federal, 29 de dezembro de 1900. </P>
+<P>M. FERRAZ DE CAMPOS SALLES. <BR>Joaquim Murtinho. </P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 30/12/1900
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 30/12/1900, Página 5683 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

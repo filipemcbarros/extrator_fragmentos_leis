@@ -1,0 +1,909 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 14.673, DE 14 DE SETEMBRO DE 2023 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Altera a remuneração de servidores e de empregados públicos do Poder Executivo federal; e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 14.673, DE 14 DE SETEMBRO DE 2023 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-14673-14-setembro-2023-794704-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-14673-14-setembro-2023-794704-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-14673-14-setembro-2023-794704-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=2359126">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-14673-14-setembro-2023-794704-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 14.673, DE 14 DE SETEMBRO DE 2023</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Altera a remuneração de servidores e de empregados públicos do Poder Executivo federal; e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; O PRESIDENTE DA REPÚBLICA</STRONG> <BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: </P>
+<P><STRONG>Objeto e âmbito de aplicação</STRONG></P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 1º Esta Lei altera a remuneração de servidores e de empregados públicos do Poder Executivo federal. </P>
+<P><STRONG>Plano Especial de Cargos da Cultura</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 2º Os Anexos IV-A, V-B e V-C da Lei nº 11.233, de 22 de dezembro de 2005, passam a vigorar, respectivamente, na forma dos Anexos I, II e III desta Lei.</P>
+<P><STRONG>Plano de Carreira dos Cargos de Reforma e Desenvolvimento Agrário</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 3º Os Anexos II e V da Lei nº 11.090, de 7 de janeiro de 2005, passam a vigorar, respectivamente, na forma dos Anexos IV e V desta Lei. </P>
+<P><STRONG>Plano de Carreiras e Cargos do Instituto Nacional de Metrologia, Qualidade e Tecnologia (Inmetro)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 4º Os Anexos XI, XI-A, XI-B e XI-C da Lei nº 11.355, de 19 de outubro de 2006, passam a vigorar, respectivamente, na forma dos Anexos VI, VII, VIII e IX desta Lei. </P>
+<P><STRONG>Plano de Carreiras e Cargos do Instituto Nacional da Propriedade Industrial (Inpi)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 5º Os Anexos XVIII, XVIII-A, XVIII-B e XVIII-C da Lei nº 11.355, de 19 de outubro de 2006, passam a vigorar, respectivamente, na forma dos Anexos X, XI, XII e XIII desta Lei. </P>
+<P><STRONG>Plano de Carreiras e Cargos de Ciência, Tecnologia, Produção e Inovação em Saúde Pública da Fundação Oswaldo Cruz (Fiocruz)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 6º Os Anexos IX-A, IX-B, IX-C e IX-D da Lei nº 11.355, de 19 de outubro de 2006, passam a vigorar, respectivamente, na forma dos Anexos XIV, XV, XVI e XVII desta Lei. </P>
+<P><STRONG>Planos Especiais de Cargos das Agências Reguladoras</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 7º O Anexo III da Lei nº 10.882, de 9 de junho de 2004, passa a vigorar na forma do Anexo XVIII desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 8º&nbsp;Os Anexos XIV, XIV-C e XIV-D da Lei nº 11.357, de 19 de outubro de 2006, passam a vigorar, respectivamente, na forma dos Anexos XIX, XX e XXI desta Lei. </P>
+<P><STRONG>Carreiras das Agências Reguladoras</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 9º Os Anexos XXVIII e XXIX da Lei nº 13.326, de 29 de julho de 2016, passam a vigorar, respectivamente, na forma dos Anexos XXII e XXIII desta Lei. </P>
+<P><STRONG>Quadro de Pessoal da Advocacia-Geral da União</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 10. O Anexo I da Lei nº 10.480, de 2 de julho de 2002, passa a vigorar na forma do Anexo XXIV desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 11.&nbsp;O Anexo I da Lei nº 10.907, de 15 de julho de 2004, passa a vigorar na forma do Anexo XXV desta Lei. </P>
+<P><STRONG>Plano Geral de Cargos do Poder Executivo</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 12. Os Anexos III, V-A e V-B da Lei nº 11.357, de 19 de outubro de 2006, passam a vigorar, respectivamente, na forma dos Anexos XXVI, XXVII e XXVIII desta Lei.</P>
+<P><STRONG>Plano Especial de Cargos do Ministério da Fazenda</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 13. Os Anexos CXXXVII, CXXXVIII e CXL da Lei nº 11.907, de 2 de fevereiro de 2009, passam a vigorar, respectivamente, na forma dos Anexos XXIX, XXX e XXXI desta Lei. </P>
+<P><STRONG>Plano de Carreiras e Cargos do Hospital das Forças Armadas</STRONG></P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 14. Os Anexos LXII, LXIII e LXV da Lei nº 11.784, de 22 de setembro de 2008, passam a vigorar, respectivamente, na forma dos Anexos XXXII, XXXIII e XXXIV desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 15.&nbsp;O Anexo da Lei nº 10.225, de 15 de maio de 2001, passa a vigorar na forma do Anexo XXXV desta Lei. </P>
+<P><STRONG>Quadro de Pessoal da Imprensa Nacional</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 16. O Anexo XII da Lei nº 11.090, de 7 de janeiro de 2005, passa a vigorar na forma do Anexo XXXVI desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 17.&nbsp;O Anexo XLII da Lei nº 11.907, de 2 de fevereiro de 2009, passa a vigorar na forma do Anexo XXXVII desta Lei. </P>
+<P><STRONG>Plano Especial de Cargos da Agência Brasileira de Promoção Internacional do Turismo (Embratur)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 18. Os Anexos VI, VI-A e VI-B da Lei nº 11.356, de 19 de outubro de 2006, passam a vigorar, respectivamente, na forma dos Anexos XXXVIII, XXXIX e XL desta Lei. </P>
+<P><STRONG>Plano Especial de Cargos da Polícia Rodoviária Federal</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 19. Os Anexos V, V-B e V-C da Lei nº 11.095, de 13 de janeiro de 2005, passam a vigorar, respectivamente, na forma dos Anexos XLI, XLII e XLIII desta Lei. </P>
+<P><STRONG>Quadro de Pessoal da Fundação Nacional do Índio (Funai)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 20. Os Anexos LXXXII e LXXXIII da Lei nº 11.907, de 2 de fevereiro de 2009, passam a vigorar, respectivamente, na forma dos Anexos XLIV e XLV desta Lei. </P>
+<P><STRONG>Estrutura Remuneratória de Cargos Específicos</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 21. Os Anexos XIII e XIV da Lei nº 12.277, de 30 de junho de 2010, passam a vigorar, respectivamente, na forma dos Anexos XLVI e XLVII desta Lei. </P>
+<P><STRONG>Área de Auditoria do Sistema Único de Saúde</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 22. O Anexo XV da Lei nº 11.344, de 8 de setembro de 2006, passa a vigorar na forma do Anexo XLVIII desta Lei.</P>
+<P><STRONG>Servidores do Instituto Nacional de Meteorologia (Inmet) e Servidores da Comissão Executiva do Plano da Lavoura Cacaueira (Ceplac)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 23. Os Anexos I e II da Lei nº 12.702, de 7 de agosto de 2012, passam a vigorar, respectivamente, na forma dos Anexos XLIX e L desta Lei. </P>
+<P><STRONG>Carreira da Seguridade Social e do Trabalho</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 24. Os Anexos III-A e V da Lei nº 10.483, de 3 de julho de 2002, passam a vigorar, respectivamente, na forma dos Anexos LI e LII desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 25.&nbsp;A Lei nº 10.971, de 25 de novembro de 2004, passa a vigorar acrescida do seguinte art. 5º-A: <BR></P>
+<DIR>"Art. 5º-A.&nbsp;A partir de 1º de maio de 2023, a GESST passa a ter o valor de R$ 224,54 (duzentos e vinte e quatro reais e cinquenta e quatro centavos)."</DIR>
+<P><STRONG>Carreira Previdenciária</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 26. Os Anexos II-A e III da Lei nº 10.355, de 26 de dezembro de 2001, passam a vigorar, respectivamente, na forma dos Anexos LIII e LIV desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 27.&nbsp;A Lei nº 10.355, de 26 de dezembro de 2001, passa a vigorar acrescida do seguinte art. 3º-B: <BR></P>
+<DIR>"Art. 3º-B.&nbsp;A partir de 1º de maio de 2023, a GEP passa a ter o valor de R$ 259,42 (duzentos e cinquenta e nove reais e quarenta e dois centavos)."</DIR>
+<P><STRONG>Carreira da Previdência, da Saúde e do Trabalho</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 28. Os Anexos IV-A, IV-B e IV-C da Lei nº 11.355, de 19 de outubro de 2006, passam a vigorar, respectivamente, na forma dos Anexos LV, LVI e LVII desta Lei. </P>
+<P><STRONG>Gratificação Especial de Atividade de Combate e Controle de Endemias (Gecen) e Gratificação de Atividade de Combate e Controle de Endemias (Gacen)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 29. O Anexo XLIX-A da Lei nº 11.784, de 22 de setembro de 2008, passa a vigorar na forma do Anexo LVIII desta Lei. </P>
+<P><STRONG>Emprego Público de Agente de Combate às Endemias</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 30. O Anexo da Lei nº 11.350, de 5 de outubro de 2006, passa a vigorar na forma do Anexo LIX desta Lei. </P>
+<P><STRONG>Quadro em Extinção de Combate às Endemias</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 31. Os Anexos II e III da Lei nº 13.026, de 3 de setembro de 2014, passam a vigorar, respectivamente, na forma dos Anexos LX e LXI desta Lei. </P>
+<P><STRONG>Remuneração dos Empregados Beneficiados pela Lei nº 8.878, de 11 de maio de 1994</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 32. O Anexo XLVI da Lei nº 12.702, de 7 de agosto de 2012, passa a vigorar na forma do Anexo LXII desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 33.&nbsp;O Anexo CLXX da Lei nº 11.907, de 2 de fevereiro de 2009, passa a vigorar na forma do Anexo LXIII desta Lei. </P>
+<P><STRONG>Grupo Defesa Aérea e Controle de Tráfego Aéreo (Dacta)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 34. O Anexo II da Lei nº 10.551, de 13 de novembro de 2002, passa a vigorar na forma do Anexo LXIV desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 35.&nbsp;O Anexo IX da Lei nº 11.907, de 2 de fevereiro de 2009, passa a vigorar na forma do Anexo LXV desta Lei. </P>
+<P><STRONG>Plano de Carreiras para a Área de Ciência e Tecnologia</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 36. Os Anexos VIII-A e VIII-B da Lei nº 11.344, de 8 de setembro de 2006, passam a vigorar, respectivamente, na forma dos Anexos LXVI e LXVII desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 37.&nbsp;Os Anexos XIX e XX da Lei nº 11.907, de 2 de fevereiro de 2009, passam a vigorar, respectivamente, na forma dos Anexos LXVIII e LXIX desta Lei. </P>
+<P><STRONG>Plano de Carreiras e Cargos de Pesquisa e Investigação Biomédica em Saúde Pública dos Quadros de Pessoal do Instituto Evandro Chagas (IEC) e do Centro Nacional de Primatas (Cenp)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 38. Os Anexos CXX, CXXIII, CXXIV, CXXV e CXXVI da Lei nº 11.907, de 2 de fevereiro de 2009, passam a vigorar, respectivamente, na forma dos Anexos LXX, LXXI, LXXII, LXXIII e LXXIV desta Lei. </P>
+<P><STRONG>Quadro de Pessoal da Agência Nacional de Mineração (ANM)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 39. Os Anexos II, V, VI-A, VI-B, VI-C, VI-D e VII da Lei nº 11.046, de 27 de dezembro de 2004, passam a vigorar, respectivamente, na forma dos Anexos LXXV, LXXVI, LXXVII, LXXVIII, LXXIX, LXXX e LXXXI desta Lei. </P>
+<P><STRONG>Plano de Carreira dos Cargos de Tecnologia Militar</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 40. Os Anexos I, II e III da Lei nº 9.657, de 3 de junho de 1998, passam a vigorar, respectivamente, na forma dos Anexos LXXXII, LXXXIII e LXXXIV desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 41.&nbsp;O Anexo XXI da Lei nº 11.355, de 19 de outubro de 2006, passa a vigorar na forma do Anexo LXXXV desta Lei. </P>
+<P><STRONG>Plano de Carreiras e Cargos da Agência Brasileira de Inteligência (Abin)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 42. Os Anexos II, III, IV, V e VI da Lei nº 11.776, de 17 de setembro de 2008, passam a vigorar, respectivamente, na forma dos Anexos LXXXVI, LXXXVII, LXXXVIII, LXXXIX e XC desta Lei.</P>
+<P><STRONG>Carreira do Seguro Social</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 43. Os Anexos IV-A e VI-A da Lei nº 10.855, de 1º de abril de 2004, passam a vigorar, respectivamente, na forma dos Anexos XCI e XCII desta Lei. </P>
+<P><STRONG>Carreira de Auditor Fiscal Federal Agropecuário</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 44. O Anexo III da Lei nº 12.775, de 28 de dezembro de 2012, passa a vigorar na forma do Anexo XCIII desta Lei. </P>
+<P><STRONG>Cargos de Atividades Técnicas da Fiscalização Federal Agropecuária do Quadro de Pessoal Permanente do Ministério da Agricultura e Pecuária</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 45. O Anexo da Lei nº 10.484, de 3 de julho de 2002, passa a vigorar na forma do Anexo XCIV desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 46.&nbsp;O Anexo IX da Lei nº 11.090, de 7 de janeiro de 2005, passa a vigorar na forma do Anexo XCV desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 47.&nbsp;O Anexo XIV-A da Lei nº 11.344, de 8 de setembro de 2006, passa a vigorar na forma do Anexo XCVI desta Lei. </P>
+<P><STRONG>Plano de Carreira dos Cargos de Atividades Técnicas e Auxiliares de Fiscalização Federal Agropecuária (PCTAF)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 48. Os Anexos LXXVII e LXXVIII da Lei nº 13.324, de 29 de julho de 2016, passam a vigorar, respectivamente, na forma dos Anexos XCVII e XCVIII desta Lei. </P>
+<P><STRONG>Carreira de Especialista em Meio Ambiente e Plano Especial de Cargos do Ministério do Meio Ambiente e Mudança do Clima e do Instituto Brasileiro do Meio Ambiente e dos Recursos Naturais Renováveis (Ibama)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 49. Os Anexos I, II, III e IV da Lei nº 10.410, de 11 de janeiro de 2002, passam a vigorar, respectivamente, na forma dos Anexos XCIX, C, CI e CII desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 50.&nbsp;Os Anexos I e II da Lei nº 11.156, de 29 de julho de 2005, passam a vigorar, respectivamente, na forma dos Anexos CIII e CIV desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 51.&nbsp;Os Anexos VIII, X e X-A da Lei nº 11.357, de 19 de outubro de 2006, passam a vigorar, respectivamente, na forma dos Anexos CV, CVI e CVII desta Lei. </P>
+<P><STRONG>Cargos de Médico do Poder Executivo</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 52. Os Anexos XLV e XLVIII da Lei nº 12.702, de 7 de agosto de 2012, passam a vigorar, respectivamente, na forma dos Anexos CVIII e CIX desta Lei. </P>
+<P><STRONG>Gratificação de Incremento à Atividade de Administração do Patrimônio da União (Giapu)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 53. O Anexo VI da Lei nº 11.095, de 13 de janeiro de 2005, passa a vigorar na forma do Anexo CX desta Lei. </P>
+<P><STRONG>Plano de Carreira dos Cargos Técnico-Administrativos em Educação</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 54. O Anexo I-C da Lei nº 11.091, de 12 de janeiro de 2005, passa a vigorar na forma do Anexo CXI desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 55.&nbsp;O Anexo XLVII da Lei nº 12.702, de 7 de agosto de 2012, passa a vigorar na forma do Anexo CXII desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 56.&nbsp;O art. 43 da Lei nº 12.772, de 28 de dezembro de 2012, passa a vigorar com a seguinte redação:<BR></P>
+<DIR>"Art. 43.&nbsp;A parcela complementar de que tratam os §§ 2º e 3º do art. 15 da Lei nº 11.091, de 12 de janeiro de 2005, não será absorvida por força dos aumentos remuneratórios com efeitos financeiros no período de 2013 a 2023." (NR)</DIR>
+<P><STRONG>Carreiras e Planos Especiais de Cargos do Fundo Nacional de Desenvolvimento da Educação (FNDE) e do Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira (Inep)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 57. Os Anexos XVI-G, XVIII-C, XIX-D, XX-A, XX-B, XX-C, XX-D, XXI-F, XXIII-E, XXIVC,&nbsp;XXV-B, XXV-C, XXV-D e XXV-E da Lei nº 11.357, de 19 de outubro de 2006, passam a vigorar, respectivamente, na forma dos Anexos CXIII, CXIV, CXV, CXVI, CXVII, CXVIII, CXIX, CXX, CXXI, CXXII, CXXIII, CXXIV, CXXV e CXXVI desta Lei. </P>
+<P><STRONG>Carreiras Tributária e Aduaneira da Receita Federal do Brasil e de Auditoria-Fiscal do Trabalho</STRONG></P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 58. O Anexo IV da Lei nº 10.910, de 15 de julho de 2004, passa a vigorar na forma do Anexo CXXVII desta Lei. </P>
+<P><STRONG>Carreira de Diplomata</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 59. O Anexo VII da Lei nº 11.890, de 24 de dezembro de 2008, passa a vigorar na forma do Anexo CXXVIII desta Lei. </P>
+<P><STRONG>Carreiras de Oficial de Chancelaria e de Assistente de Chancelaria</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 60. Os Anexos I e II da Lei nº 12.775, de 28 de dezembro de 2012, passam a vigorar, respectivamente, na forma dos Anexos CXXIX e CXXX desta Lei. </P>
+<P><STRONG>Carreiras de Analista de Infraestrutura e Cargo Isolado de Especialista em Infraestrutura Sênior</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 61. Os Anexos II, III e IV da Lei nº 11.539, de 8 de novembro de 2007, passam a vigorar, respectivamente, na forma dos Anexos CXXXI, CXXXII e CXXXIII desta Lei. </P>
+<P><STRONG>Carreiras de Gestão Governamental</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 62. O Anexo IV da Lei nº 11.890, de 24 de dezembro de 2008, passa a vigorar na forma do Anexo CXXXIV desta Lei. </P>
+<P><STRONG>Plano de Carreiras e Cargos do Instituto de Pesquisa Econômica Aplicada (Ipea)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 63. Os Anexos XX, XXI e XXII da Lei nº 11.890, de 24 de dezembro de 2008, passam a vigorar, respectivamente, na forma dos Anexos CXXXV, CXXXVI e CXXXVII desta Lei. </P>
+<P><STRONG>Plano Especial de Cargos da Superintendência da Zona Franca de Manaus (Suframa)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 64. Os Anexos III, III-A e III-B da Lei nº 11.356, de 19 de outubro de 2006, passam a vigorar, respectivamente, na forma dos Anexos CXXXVIII, CXXXIX e CXL desta Lei. </P>
+<P><STRONG>Plano de Carreiras e Cargos da Superintendência de Seguros Privados (Susep)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 65. Os Anexos IX, X, X-A e XII da Lei nº 11.890, de 24 de dezembro de 2008, passam a vigorar, respectivamente, na forma dos Anexos CXLI, CXLII, CXLIII e CXLIV desta Lei. </P>
+<P><STRONG>Plano de Carreiras e Cargos da Comissão de Valores Mobiliários (CVM)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 66. Os Anexos XIV, XV, XV-A e XVII da Lei nº 11.890, de 24 de dezembro de 2008, passam a vigorar, respectivamente, na forma dos Anexos CXLV, CXLVI, CXLVII e CXLVIII desta Lei. </P>
+<P><STRONG>Carreira de Especialista do Banco Central do Brasil</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 67. O Anexo II-A da Lei nº 9.650, de 27 de maio de 1998, passa a vigorar na forma do Anexo CXLIX desta Lei. </P>
+<P><STRONG>Carreiras Jurídicas</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 68. O Anexo XXXV da Lei nº 13.327, de 29 de julho de 2016, passa a vigorar na forma do Anexo CL desta Lei. </P>
+<P><STRONG>Carreiras de Policial Federal e de Policial Rodoviário Federal</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 69. Os Anexos II e III da Lei nº 11.358, de 19 de outubro de 2006, passam a vigorar, respectivamente, na forma dos Anexos CLI e CLII desta Lei. </P>
+<P><STRONG>Carreira de Perito Federal Agrário</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 70. Os Anexos II e III da Lei nº 10.550, de 13 de novembro de 2002, passam a vigorar, respectivamente, na forma dos Anexos CLIII e CLIV desta Lei. Carreira de Desenvolvimento de Políticas Sociais </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 71. Os Anexos II e III da Lei nº 12.094, de 19 de novembro de 2009, passam a vigorar, respectivamente, na forma dos Anexos CLV e CLVI desta Lei. </P>
+<P><STRONG>Carreiras e Plano Especial de Cargos do Departamento Nacional de Infraestrutura de Transportes (Dnit)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 72. Os Anexos II, V, VII e VIII da Lei nº 11.171, de 2 de setembro de 2005, passam a vigorar, respectivamente, na forma dos Anexos CLVII, CLVIII, CLIX e CLX desta Lei. </P>
+<P><STRONG>Plano de Carreiras e Cargos da Fundação Instituto Brasileiro de Geografia e Estatística (IBGE)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 73. Os Anexos XV, XV-A, XV-B e XV-C da Lei nº 11.355, de 19 de outubro de 2006, passam a vigorar, respectivamente, na forma dos Anexos CLXI, CLXII, CLXIII e CLXIV desta Lei. </P>
+<P><STRONG>Carreiras de Agente Federal de Execução Penal, de Especialista Federal em Assistência à Execução Penal e de Técnico Federal de Apoio à Execução Penal</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 74. Os Anexos LXXXV, LXXXVII, LXXXIX e XC da Lei nº 11.907, de 2 de fevereiro de 2009, passam a vigorar, respectivamente, na forma dos Anexos CLXV, CLXVI, CLXVII e CLXVIII desta Lei. </P>
+<P><STRONG>Plano Especial de Cargos da Polícia Federal</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 75. Os Anexos II, IV e V da Lei nº 10.682, de 28 de maio de 2003, passam a vigorar, respectivamente, na forma dos Anexos CLXIX, CLXX e CLXXI desta Lei. </P>
+<P><STRONG>Plano de Carreiras e Cargos da Superintendência Nacional de Previdência Complementar (Previc)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 76. Os Anexos II e III da Lei nº 12.154, de 23 de dezembro de 2009, passam a vigorar, respectivamente, na forma dos Anexos CLXXII e CLXXIII desta Lei. </P>
+<P><STRONG>Plano de Carreiras e Cargos de Magistério Federal e Plano de Carreiras de Magistério do Ensino Básico Federal</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 77. Os Anexos III e IV da Lei nº 12.772, de 28 de dezembro de 2012, passam a vigorar, respectivamente, na forma dos Anexos CLXXIV e CLXXV desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 78.&nbsp;Os Anexos LXXVII-A, LXXXIII-A, LXXIX-A e LXXXV-A da Lei nº 11.784, de 22 de setembro de 2008, passam a vigorar, respectivamente, na forma dos Anexos CLXXVI, CLXXVII, CLXXVIII e CLXXIX desta Lei. </P>
+<P><STRONG>Carreira de Perito Médico Federal e Carreira de Supervisor Médico-Pericial</STRONG></P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 79. Os Anexos XV e XVI da Lei nº 11.907, de 2 de fevereiro de 2009, passam a vigorar, respectivamente, na forma dos Anexos CLXXX e CLXXXI desta Lei. </P>
+<P><STRONG>Plano de Classificação de Cargos</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 80. O Anexo I da Lei nº 10.971, de 25 de novembro de 2004, passa a vigorar na forma do Anexo CLXXXII desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 81.&nbsp;O Anexo XL da Lei nº 11.907, de 2 de fevereiro de 2009, passa a vigorar na forma do Anexo CLXXXIII desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 82.&nbsp;O Anexo IX da Lei nº 8.460, de 17 de setembro de 1992, passa a vigorar na forma do Anexo CLXXXIV desta Lei. </P>
+<P><STRONG>Cargo de Técnico de Planejamento P-1501 do Grupo P-1500</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 83. Os Anexos XXIII e XXIV da Lei nº 11.890, de 24 de dezembro de 2008, passam a vigorar, respectivamente, na forma dos Anexos CLXXXV e CLXXXVI desta Lei. </P>
+<P><STRONG>Gratificação Específica de Produção de Radioisótopos e Radiofármacos (GEPR) e Adicional por Plantão Hospitalar (APH)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 84. Os Anexos CLVIII e CLXVI da Lei nº 11.907, de 2 de fevereiro de 2009, passam a vigorar, respectivamente, na forma dos Anexos CLXXXVII e CLXXXVIII desta Lei. </P>
+<P><STRONG>Gratificação Temporária de Agências Reguladoras (Gtar)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 85. O Anexo VI da Lei nº 10.882, de 9 de junho de 2004, passa a vigorar na forma do Anexo CLXXXIX desta Lei. </P>
+<P><STRONG>Adicional por Participação em Missão no Exterior (APME)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 86. O Anexo I da Lei nº 12.277, de 30 de junho de 2010, passa a vigorar na forma do Anexo CXC desta Lei. </P>
+<P><STRONG>Carreira Policial Civil dos Extintos Territórios Federais do Acre, do Amapá, de Rondônia e de Roraima</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 87. O Anexo VI da Lei nº 11.358, de 19 de outubro de 2006, passa a vigorar na forma do Anexo CXCI desta Lei. </P>
+<P><STRONG>Carreira de Magistério dos Optantes pela Inclusão em Quadro em Extinção da União dos Ex-Territórios</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 88. O Anexo II da Lei nº 13.681, de 18 de junho de 2018, passa a vigorar na forma do Anexo CXCII desta Lei. </P>
+<P><STRONG>Plano de Classificação de Cargos dos Ex-Territórios Federais</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 89. Os Anexos IV e V da Lei nº 13.681, de 18 de junho de 2018, passam a vigorar, respectivamente, na forma dos Anexos CXCIII e CXCIV desta Lei. </P>
+<P><STRONG>Empregados de que trata o art. 13 da Lei nº 13.681, de 18 de junho de 2018</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 90. O Anexo VI da Lei nº 13.681, de 18 de junho de 2018, passa a vigorar na forma do Anexo CXCV desta Lei. </P>
+<P><STRONG>Cargos de Juiz-Presidente e Juiz do Tribunal Marítimo</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 91. Os Anexos II e III da Lei nº 11.319, de 6 de julho de 2006, passam a vigorar, respectivamente, na forma dos Anexos CXCVI e CXCVII desta Lei. </P>
+<P><STRONG>Empregados Reintegrados ao Quadro de Pessoal do Banco Central do Brasil</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 92. A remuneração do pessoal submetido ao regime jurídico previsto na Consolidação das Leis do Trabalho, aprovada pelo Decreto-Lei nº 5.452, de 1º de maio de 1943, e incluído no quadro de pessoal do Banco Central do Brasil entre 1998 e 2005 em decorrência de decisão judicial será a constante do Anexo CXCVIII desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>§ 1º Os empregados de que trata o <I>caput</I> deste artigo poderão optar, no prazo de 30 (trinta) dias, contado da data de entrada em vigor desta Lei, em caráter irretratável, pelo padrão remuneratório anterior.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>§ 2º Compete ao Banco Central do Brasil proceder às devidas anotações na Carteira de Trabalho e Previdência Social dos empregados que realizarem a opção de que trata o § 1º deste artigo. </P>
+<P><STRONG>Carreira de Perito Médico da Previdência Social</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 93. Os Anexos II, V e VI da Lei nº 10.876, de 2 de junho de 2004, passam a vigorar na forma do Anexo CXCIX desta Lei. </P>
+<P><STRONG>Cargos em Comissão, Funções de Confiança e Gratificações</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 94. Os Anexos I, II e III da Lei nº 11.526, de 4 de outubro de 2007, passam a vigorar, respectivamente, com as alterações constantes dos Anexos CC, CCI e CCII desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 95.&nbsp;Os Anexos VIII e IX da Lei nº 11.356, de 19 de outubro de 2006, passam a vigorar, respectivamente, na forma dos Anexos CCIII e CCIV desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 96.&nbsp;Os Anexos CLIX, CLX, CLXII e CLXIII da Lei nº 11.907, de 2 de fevereiro de 2009, passam a vigorar, respectivamente, na forma dos Anexos CCV, CCVI, CCVII e CCVIII desta Lei.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 97.&nbsp;O Anexo XX da Lei nº 13.328, de 29 de julho de 2016, passa a vigorar com a alteração constante do Anexo CCIX desta Lei. </P>
+<P><STRONG>Servidores e Empregados Públicos sem Tabela Remuneratória</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 98. Fica majorada em 9% (nove por cento) a remuneração dos servidores ocupantes de cargo efetivo e dos empregados públicos permanentes no âmbito da administração direta, autárquica e fundacional do Poder Executivo federal não contemplados pelas alterações constantes desta Lei e que não possuem remuneração baseada em tabela remuneratória de lei vigente.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG><EM>Parágrafo único. </EM>O aumento de que trata o <I>caput</I> deste artigo será deduzido das majorações remuneratórias ocorridas em 2023 por força de outras normas, de disposições contratuais ou de decisões judiciais. </P>
+<P><STRONG>Consignações em Folha de Pagamento</STRONG></P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 99. O <I>caput</I> do art. 3º da Lei nº 14.509, de 27 de dezembro de 2022, passa a vigorar acrescido do seguinte inciso VIII:<BR></P>
+<DIR>"Art. 3º&nbsp;...............................................................................................................<BR>................................................................................................................................ <BR><BR>VIII - anistiados políticos que recebam reparação econômica, de caráter indenizatório, em prestação mensal, permanente e continuada, de que trata a Lei nº 10.559, de 13 de novembro de 2002." (NR)</DIR>
+<P><STRONG>Programa de Enfrentamento à Fila da Previdência Social (PEFPS)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 100. O art. 18 da Medida Provisória nº 1.181, de 18 de julho de 2023, passa a vigorar com a seguinte redação: <BR></P>
+<DIR>"Art. 18.&nbsp;O PERF-INSS e o PERF-PMF serão pagos conforme a legislação orçamentária e administrativa em vigor. <BR><BR><I>Parágrafo único. </I>O INSS ficará responsável por descentralizar o crédito orçamentário para as atividades sujeitas ao PEFPS no limite das dotações orçamentárias." (NR)</DIR>
+<P><STRONG>Companhia de Desenvolvimento do Vale do São Francisco (Codevasf)</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 101. O <I>caput</I> do art. 5º da Lei nº 6.088, de 16 de julho de 1974, passa a vigorar com a seguinte redação: <BR></P>
+<DIR>"Art. 5º&nbsp;A Codevasf será administrada por um Diretor-Presidente e 4 (quatro) Diretores nomeados pelo Presidente da República.<BR>............................................................................................................................" (NR)</DIR>
+<P><STRONG>Aposentados e pensionistas do Poder Executivo federal</STRONG> </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 102. Aplica-se o disposto nesta Lei aos aposentados e pensionistas no âmbito da administração pública federal direta, autárquica e fundacional do Poder Executivo federal que tenham como critério de reajuste a paridade, nos termos das Emendas Constitucionais nºs 41, de 19 de dezembro de 2003, 47, de 5 de julho de 2005, e 103, de 12 de novembro de 2019.</P>
+<P><STRONG>Vigência </STRONG></P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 103. Esta Lei entra em vigor na data de sua publicação e produz efeitos financeiros a partir de 1º de maio de 2023.</P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Brasília, 14 de setembro de 2023; 202º da Independência e 135º da República </P>
+<P>LUIZ INÁCIO LULA DA SILVA <BR>Esther Dweck <BR>Flávio Dino de Castro e Costa <BR>Márcio Luiz de Albuquerque Oliveira <BR>Carlos Roberto Lupi <BR>Nísia Verônica Trindade Lima </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 15/09/2023
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 15/9/2023, Página 3 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

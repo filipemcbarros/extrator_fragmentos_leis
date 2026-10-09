@@ -1,0 +1,979 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 1.079, DE 10 DE ABRIL DE 1950 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Define os crimes de responsabilidade e regula o respectivo processo de julgamento. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 1.079, DE 10 DE ABRIL DE 1950 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-1079-10-abril-1950-363423-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-1079-10-abril-1950-363423-normaatualizada-pl.docx">formato docx</a>)
+                                                &nbsp;
+                                                    (<a href="lei-1079-10-abril-1950-363423-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=191426">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-1079-10-abril-1950-363423-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 1.079, DE 10 DE ABRIL DE 1950</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Define os crimes de responsabilidade e regula o respectivo processo de julgamento. <BR>
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA:&nbsp;<BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei:&nbsp;<STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>
+<P align=center><FONT size=+0><STRONG>PARTE PRIMEIRA<BR></STRONG><STRONG>Do Presidente da República e&nbsp;Ministros de Estado</STRONG></P>
+<P>&nbsp;</FONT>&nbsp;&nbsp;&nbsp; Art. 1º São crimes de responsabilidade os que esta lei especifica. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º Os crimes definidos nesta lei, ainda quando simplesmente tentados, são passíveis da pena de perda do cargo, com inabilitação, até cinco anos, para o exercício de qualquer função pública, imposta pelo Senado Federal nos processos contra o Presidente da República ou Ministros de Estado, contra os Ministros do Supremo Tribunal Federal ou contra o Procurador Geral da República. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º A imposição da pena referida no artigo anterior não exclui o processo e julgamento do acusado por crime comum, na justiça ordinária, nos têrmos das leis de processo penal. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º São crimes de responsabilidade os atos do Presidente da República que atentarem contra a Constituição Federal, e, especialmente, contra:&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - A existência da União; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - O livre exercício do Poder Legislativo, do Poder Judiciário e dos poderes constitucionais dos Estados; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - O exercício dos direitos políticos, individuais e sociais;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - A segurança interna do país;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - A probidade na administração;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - A lei orçamentária;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - A guarda e o legal emprêgo dos dinheiros públicos;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - O cumprimento das decisões judiciárias (Constituição, artigo 89). <BR></P>
+<P align=center><B>TÍTULO I</B></P>
+<P align=center><B><BR>CAPÍTULO I<BR></B><B>DOS CRIMES CONTRA A EXISTÊNCIA DA UNIÃO</B><BR><BR></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º São crimes de responsabilidade contra a existência política da União: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1 - entreter, direta ou indiretamente, inteligência com govêrno estrangeiro, provocando-o a fazer guerra ou cometer hostilidade contra a República, prometer-lhe assistência ou favor, ou dar-lhe qualquer auxílio nos preparativos ou planos de guerra contra a República; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 2 - tentar, diretamente e por fatos, submeter a União ou algum dos Estados ou Territórios a domínio estrangeiro, ou dela separar qualquer Estado ou porção do território nacional; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 3 - cometer ato de hostilidade contra nação estrangeira, expondo a República ao perigo da guerra, ou comprometendo-lhe a neutralidade; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 4 - revelar negócios políticos ou militares, que devam ser mantidos secretos a bem da defesa da segurança externa ou dos interesses da Nação; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 5 - auxiliar, por qualquer modo, nação inimiga a fazer a guerra ou a cometer hostilidade contra a República; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 6 - celebrar tratados, convenções ou ajustes que comprometam a dignidade da Nação; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 7 - violar a imunidade dos embaixadores ou ministros estrangeiros acreditados no país; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 8 - declarar a guerra, salvo os casos de invasão ou agressão estrangeira, ou fazer a paz, sem autorização do Congresso Nacional; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 9 - não empregar contra o inimigo os meios de defesa de que poderia dispor; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;10 - permitir o Presidente da República, durante as sessões legislativas e sem autorização do Congresso Nacional, que fôrças estrangeiras transitem pelo território do país, ou, por motivo de guerra, nêle permaneçam temporàriamente; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;11 - violar tratados legitimamente feitos com nações estrangeiras. <BR></P>
+<H3 align=center><FONT size=3>CAPÍTULO II<BR>DOS CRIMES CONTRA O LIVRE EXERCÍCIO DOS PODERES CONSTITUCIONAIS<BR></FONT></H3>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º São crimes de responsabilidade contra o livre exercício dos poderes legislativo e judiciário e dos poderes constitucionais dos Estados: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1 - tentar dissolver o Congresso Nacional, impedir a reunião ou tentar impedir por qualquer modo o funcionamento de qualquer de suas Câmaras; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 2 - usar de violência ou ameaça contra algum representante da Nação para afastá-lo da Câmara a que pertença ou para coagi-lo no modo de exercer o seu mandato bem como conseguir ou tentar conseguir o mesmo objetivo mediante subôrno ou outras formas de corrupção; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 3 - violar as imunidades asseguradas aos membros do Congresso Nacional, das Assembléias Legislativas dos Estados, da Câmara dos Vereadores do Distrito Federal e das Câmaras Municipais; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 4 - permitir que fôrça estrangeira transite pelo território do país ou nêle permaneça quando a isso se oponha o Congresso Nacional; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 5 - opor-se diretamente e por fatos ao livre exercício do Poder Judiciário, ou obstar, por meios violentos, ao efeito dos seus atos, mandados ou sentenças; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 6 - usar de violência ou ameaça, para constranger juiz, ou jurado, a proferir ou deixar de proferir despacho, sentença ou voto, ou a fazer ou deixar de fazer ato do seu ofício; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 7 - praticar contra os poderes estaduais ou municipais ato definido como crime neste artigo; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 8 - intervir em negócios peculiares aos Estados ou aos Municípios com desobediência às normas constitucionais. <BR></P>
+<H3 align=center><FONT size=3>CAPÍTULO III<BR>DOS CRIMES CONTRA O EXERCÍCIO DOS DIREITOS POLÍTICOS, INDIVIDUAIS E SOCIAIS<BR></FONT></H3>
+<P><BR></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º São crimes de responsabilidade contra o livre exercício dos direitos políticos, individuais e sociais: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1 - impedir por violência, ameaça ou corrupção, o livre exercício do voto; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 2 - obstar ao livre exercício das funções dos mesários eleitorais; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 3 - violar o escrutínio de seção eleitoral ou inquinar de nulidade o seu resultado pela subtração, desvio ou inutilização do respectivo material; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 4 - utilizar o poder federal para impedir a livre execução da lei eleitoral; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 5 - servir-se das autoridades sob sua subordinação imediata para praticar abuso do poder, ou tolerar que essas autoridades o pratiquem sem repressão sua; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 6 - subverter ou tentar subverter por meios violentos a ordem política e social; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 7 - incitar militares à desobediência à lei ou infração à disciplina; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 8 - provocar animosidade entre as classes armadas ou contra elas, ou delas contra as instituições civis; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 9 - violar patentemente qualquer direito ou garantia individual constante do art. 141 e bem assim os direitos sociais assegurados no artigo 157 da Constituição; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 10 - tomar ou autorizar durante o estado de sítio, medidas de repressão que excedam os limites estabelecidos na Constituição. <BR></P>
+<H3 align=center><FONT size=3>CAPÍTULO IV<BR>DOS CRIMES CONTRA A SEGURANÇA INTERNA DO PAÍS<BR></FONT></H3>
+<P><BR></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º São crimes contra a segurança interna do país: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1 - tentar mudar por violência a forma de govêrno da República; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 2 - tentar mudar por violência a Constituição Federal ou de algum dos Estados, ou lei da União, de Estado ou Município; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 3 - decretar o estado de sítio, estando reunido o Congresso Nacional, ou no recesso dêste, não havendo comoção interna grave nem fatos que evidenciem estar a mesma a irromper ou não ocorrendo guerra externa; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 4 - praticar ou concorrer para que se perpetre qualquer dos crimes contra a segurança interna, definidos na legislação penal; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 5 - não dar as providências de sua competência para impedir ou frustrar a execução dêsses crimes; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 6 - ausentar-se do país sem autorizacão do Congresso Nacional; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 7 - permitir, de forma expressa ou tácita, a infração de lei federal de ordem pública; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 8 - deixar de tomar, nos prazos fixados, as providências determinadas por lei ou tratado federal e necessárias à sua execução e cumprimento. <BR></P>
+<H3 align=center><FONT size=3>CAPÍTULO V<BR>DOS CRIMES CONTRA A PROBIDADE NA ADMINISTRAÇÃO<BR></FONT></H3>
+<P><BR></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º São crimes de responsabilidade contra a probidade na administração: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1 - omitir ou retardar dolosamente a publicação das leis e resoluções do Poder Legislativo ou dos atos do Poder Executivo; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 2 - não prestar ao Congresso Nacional dentro de sessenta dias após a abertura da sessão legislativa, as contas relativas ao exercício anterior; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 3 - não tornar efetiva a responsabilidade dos seus subordinados, quando manifesta em delitos funcionais ou na prática de atos contrários à Constituição; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 4 - expedir ordens ou fazer requisição de forma contrária às disposições expressas da Constituição; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 5 - infringir no provimento dos cargos públicos, as normas legais; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 6 - usar de violência ou ameaça contra funcionário público para coagi-lo a proceder ilegalmente, bem como utilizar-se de subôrno ou de qualquer outra forma de corrupção para o mesmo fim; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 7 - proceder de modo incompatível com a dignidade, a honra e o decôro do cargo. <BR></P>
+<H3 align=center><FONT size=3>CAPÍTULO VI<BR>DOS CRIMES CONTRA A LEI ORÇAMENTÁRIA<BR></FONT></H3>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10. São crimes de responsabilidade contra a lei orçamentária: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1 - Não apresentar ao Congresso Nacional a proposta do orçamento da República dentro dos primeiros dois meses de cada sessão legislativa; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 2 - Exceder ou transportar, sem autorização legal, as verbas do orçamento; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 3 - Realizar o estorno de verbas; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 4 - Infringir, patentemente, e de qualquer modo, dispositivo da Lei orçamentária. <BR></P>
+<H3 align=center><FONT size=3>CAPÍTULO VII<BR>DOS CRIMES CONTRA A GUARDA E LEGAL EMPRÊGO DOS DINHEIROS PÚBLICOS<BR></FONT></H3>
+<P><BR></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11. São crimes de responsabilidade contra a guarda e o legal emprêgo dos dinheiros públicos: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1 - ordenar despesas não autorizadas por lei ou sem observância das prescrições legais relativas às mesmas; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 2 - Abrir crédito sem fundamento em lei ou sem as formalidades legais; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 3 - Contrair empréstimo, emitir moeda corrente ou apólices, ou efetuar operação de crédito sem autorização legal; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 4 - alienar imóveis nacionais ou empenhar rendas públicas sem autorização em lei; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 5 - negligenciar a arrecadação das rendas, impostos e taxas, bem como a conservação do patrimônio nacional. <BR></P>
+<H3 align=center><FONT size=3>CAPÍTULO VIII<BR>DOS CRIMES CONTRA O CUMPRIMENTO DAS DECISÕES JUDICIÁRIAS<BR></FONT></H3>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12. São crimes de responsabilidade contra as decisões judiciárias: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1 - impedir, por qualquer meio, o efeito dos atos, mandados ou decisões do Poder Judiciário; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 2 - Recusar o cumprimento das decisões do Poder Judiciário no que depender do exercício das funções no Poder Executivo; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 3 - deixar de atender a requisição de intervenção federal do Supremo Tribunal Federal ou do Tribunal Superior Eleitoral; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 4 - Impedir ou frustrar pagamento determinado por sentença judiciária. <BR></P>
+<P align=center><B>TÍTULO II<BR></B><B>Dos Ministros de Estado<BR></P></B>
+<P><BR></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13. São crimes de responsabilidade dos Ministros de Estado: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1 - os atos definidos nesta lei, quando por êles praticados ou ordenados; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 2 - os atos previstos nesta lei que os Ministros assinarem com o Presidente da República ou por ordem dêste praticarem; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 3 - A falta de comparecimento sem justificação, perante a Câmara dos Deputados ou o Senado Federal, ou qualquer das suas comissões, quando uma ou outra casa do Congresso os convocar para, pessoalmente, prestarem informações acêrca de assunto prèviamente determinado; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 4 - Não prestarem dentro em trinta dias e sem motivo justo, a qualquer das Câmaras do Congresso Nacional, as informações que ela lhes solicitar por escrito, ou prestarem-nas com falsidade.&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <B></P>
+<P align=center>PARTE SEGUNDA<BR></B><B>Processo e julgamento</P></B>
+<P align=center><B>TÍTULO ÚNICO<BR></B><B>Do Presidente da República e Ministros de Estado<BR></P></B>
+<H3 align=center><FONT size=3>CAPÍTULO I<BR>DA DENÚNCIA<BR></FONT></H3>
+<P><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300"><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 14. É permitido a qualquer cidadão denunciar o Presidente da República ou Ministro de Estado, por crime de responsabilidade, perante a Câmara dos Deputados. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15. A denúncia só poderá ser recebida enquanto o denunciado não tiver, por qualquer motivo, deixado definitivamente o cargo. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16. A denúncia assinada pelo denunciante e com a firma reconhecida, deve ser acompanhada dos documentos que a comprovem, ou da declaração de impossibilidade de apresentá-los, com a indicação do local onde possam ser encontrados. Nos crimes de que haja prova testemunhal, a denúncia deverá conter o rol das testemunhas, em número de cinco, no mínimo. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300"><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 17. No processo de crime de responsabilidade, servirá de escrivão um funcionário da Secretaria da Câmara dos Deputados, ou do Senado, conforme se achar o mesmo em uma ou outra casa do Congresso Nacional. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18. As testemunhas arroladas no processo deverão comparecer para prestar o seu depoimento, e a Mesa da Câmara dos Deputados ou do Senado, por ordem de quem serão notificadas, tomará as providências legais que se tornarem necessárias para compeli-las a obediência. <BR></P>
+<H3 align=center><FONT size=3>CAPÍTULO II<BR>DA ACUSAÇÃO<BR></FONT></H3>
+<P>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300"><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 19. Recebida a denúncia, será lida no expediente da sessão seguinte e despachada a uma comissão especial eleita, da qual participem, observada a respectiva proporção, representantes de todos os partidos para opinar sôbre a mesma. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20. A comissão a que alude o artigo anterior se reunirá dentro de 48 horas e, depois de eleger seu Presidente e relator, emitirá parecer, dentro do prazo de dez dias, sôbre se a denúncia deve ser ou não julgada objeto de deliberação. Dentro dêsse período poderá a comissão proceder às diligências que julgar necessárias ao esclarecimento da denúncia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O parecer da comissão especial será lido no expediente da sessão da Câmara dos Deputados e publicado integralmente no <EM>Diário do Congresso Nacional</EM> e em avulsos, juntamente com a denúncia, devendo as publicações ser distribuídas a todos os deputados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Quarenta e oito horas após a publicação oficial do parecer da Comissão especial, será o mesmo incluído, em primeiro lugar, na ordem do dia da Câmara dos Deputados, para uma discussão única. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21. Cinco representantes de cada partido poderão falar, durante uma hora, sôbre o parecer, ressalvado ao relator da comissão especial o direito de responder a cada um. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22. Encerrada a discussão do parecer, e submetido o mesmo a votação nominal, será a denúncia, com os documentos que a instruam, arquivada, se não fôr considerada objeto de deliberação. No caso contrário, será remetida por cópia autêntica ao denunciado, que terá o prazo de vinte dias para contestá-la e indicar os meios de prova com que pretenda demonstrar a verdade do alegado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Findo esse prazo e com ou sem a contestação, a comissão especial determinará as diligências requeridas, ou que julgar convenientes, e realizará as sessões necessárias para a tomada do depoimento das testemunhas de ambas as partes, podendo ouvir o denunciante e o denunciado, que poderá assistir pessoalmente, ou por seu procurador, a tôdas as audiências e diligências realizadas pela comissão, interrogando e contestando as testemunhas e requerendo a reinquirição ou acareação das mesmas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Findas essas diligências, a comissão especial proferirá, no prazo de dez dias, parecer sôbre a procedência ou improcedência da denúncia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Publicado e distribuído esse parecer na forma do § 1º do art. 20, será o mesmo incluído na ordem do dia da sessão imediata para ser submetido a duas discussões, com o interregno de 48 horas entre uma e outra. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Nas discussões do parecer sôbre a procedência ou improcedência da denúncia, cada representante de partido poderá falar uma só vez e durante uma hora, ficando as questões de ordem subordinadas ao disposto no § 2º do art. 20. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23. Encerrada a discussão do parecer, será o mesmo submetido a votação nominal, não sendo permitidas, então, questões de ordem, nem encaminhamento de votação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Se da aprovação do parecer resultar a procedência da denúncia, considerar-se-á decretada a acusação pela Câmara dos Deputados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Decretada a acusação, será o denunciado intimado imediatamente pela Mesa da Câmara dos Deputados, por intermédio do 1º Secretário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Se o denunciado estiver ausente do Distrito Federal, a sua intimação será solicitada pela Mesa da Câmara dos Deputados, ao Presidente do Tribunal de Justiça do Estado em que êle se encontrar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A Câmara dos Deputados elegerá uma comissão de três membros para acompanhar o julgamento do acusado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º São efeitos imediatos ao decreto da acusação do Presidente da República, ou de Ministro de Estado, a suspensão do exercício das funções do acusado e da metade do subsídio ou do vencimento, até sentença final. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Conforme se trate da acusação de crime comum ou de responsabilidade, o processo será enviado ao Supremo Tribunal Federal ou ao Senado Federal. <BR></P>
+<H3 align=center><FONT size=3>CAPÍTULO III<BR>DO JULGAMENTO<BR></FONT></H3>
+<P>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300"><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 24. Recebido no Senado o decreto de acusação com o processo enviado pela Câmara dos Deputados e apresentado o libelo pela comissão acusadora, remeterá o Presidente cópia de tudo ao acusado, que, na mesma ocasião e nos têrmos dos parágrafos 2º e 3º do art. 23, será notificado para comparecer em dia prefixado perante o Senado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Ao Presidente do Supremo Tribunal Federal enviar-se-á o processo em original, com a comunicação do dia designado para o julgamento. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25. O acusado comparecerá, por si ou pelos seus advogados, podendo, ainda, oferecer novos meios de prova. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26. No caso de revelia, marcará o Presidente novo dia para o julgamento e nomeará para a defesa do acusado um advogado, a quem se facultará o exame de tôdas as peças de acusação. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27. No dia aprazado para o julgamento, presentes o acusado, seus advogados, ou o defensor nomeado a sua revelia, e a comissão acusadora, o Presidente do Supremo Tribunal Federal, abrindo a sessão, mandará ler o processo preparatório o libelo e os artigos de defesa; em seguida inquirirá as testemunhas, que deverão depor pùblicamente e fora da presença umas das outras. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28. Qualquer membro da Comissão acusadora ou do Senado, e bem assim o acusado ou seus advogados, poderão requerer que se façam às testemunhas perguntas que julgarem necessárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A Comissão acusadora, ou o acusado ou seus advogados, poderão contestar ou arguir as testemunhas, sem contudo interrompê-las e requerer a acareação. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29. Realizar-se-á a seguir o debate verbal entre a comissão acusadora e o acusado ou os seus advogados pelo prazo que o Presidente fixar e que não poderá exceder de duas horas. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30. Findos os debates orais e retiradas as partes, abrir-se-á discussão sôbre o objeto da acusação. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31. Encerrada a discussão, o Presidente do Supremo Tribunal Federal fará relatório resumido da denúncia e das provas da acusação e da defesa e submeterá a votação nominal dos senadores o julgamento. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32. Se o julgamento fôr absolutório produzirá, desde logo, todos os efeitos a favor do acusado. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33. No caso de condenação, o Senado por iniciativa do Presidente fixará o prazo de inabilitação do condenado para o exercício de qualquer função pública; e no caso de haver crime comum deliberará ainda sôbre se o Presidente o deverá submeter à justiça ordinária, independentemente da ação de qualquer interessado. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34. Proferida a sentença condenatória, o acusado estará, <EM>ipso facto</EM>, destituído do cargo. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35. A resolução do Senado constará de sentença que será lavrada, nos autos do processo, pelo Presidente do Supremo Tribunal Federal, assinada pelos senadores que funcionarem como juízes, transcrita na ata da sessão e, dentro desta, publicada no<EM> Diário Oficial</EM> e no<EM> Diário do Congresso Nacional</EM>. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36. Não pode interferir, em nenhuma fase do processo de responsabilidade do Presidente da República ou dos Ministros de Estado, o deputado ou senador: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=5></TD>
+<TD vAlign=UP width=30 align=right><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a)</I></TD>
+<TD>que tiver parentesco consanguíneo ou afim, com o acusado, em linha reta; em linha colateral, os irmãos cunhados, enquanto durar o cunhadio, e os primos co-irmãos; </TD></TR></TBODY></TABLE></TD></TR></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>que, como testemunha do processo, tiver deposto de ciência própria. <BR></TD></TR></TBODY></TABLE>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37. O Congresso Nacional deverá ser convocado, extraordinàriamente, pelo têrço de uma de suas câmaras, caso a sessão legislativa se encerre sem que se tenha ultimado o julgamento do Presidente da República ou de Ministro de Estado, bem como no caso de ser necessário o início imediato do processo. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38. No processo e julgamento do Presidente da República e dos Ministros de Estado, serão subsidiários desta lei, naquilo em que lhes forem aplicáveis, assim os regimentos internos da Câmara dos Deputados e do Senado Federal, como o Código de Processo Penal. <BR></P>
+<H3 align=center><B>
+<P align=center><FONT size=3>PARTE TERCEIRA</FONT> </P>
+<P align=center><BR><FONT size=3>TÍTULO I</FONT></P></B></H3>
+<H3 align=center><FONT size=3>CAPÍTULO I<BR>DOS MINISTROS DO SUPREMO TRIBUNAL FEDERAL<BR></FONT></H3>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39. São crimes de responsabilidade dos Ministros do Supremo Tribunal Federal: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1 - alterar, por qualquer forma, exceto por via de recurso, a decisão ou voto já proferido em sessão do Tribunal; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 2 - proferir julgamento, quando, por lei, seja suspeito na causa; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 3 - exercer atividade político-partidária; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 4 - ser patentemente desidioso no cumprimento dos deveres do cargo; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 5 - proceder de modo incompatível com a honra, dignidade e decôro de suas funções. <BR></P>
+<H3 align=center><FONT size=3>CAPÍTULO II<BR>DO PROCURADOR GERAL DA REPÚBLICA<BR></FONT></H3>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40. São crimes de responsabilidade do Procurador Geral da República: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 1 - emitir parecer, quando, por lei, seja suspeito na causa; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 2 - recusar-se à prática de ato que lhe incumba; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 3 - ser patentemente desidioso no cumprimento de suas atribuições; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; 4 - proceder de modo incompatível com a dignidade e o decôro do cargo. <BR></P>
+<P align=center><B>TÍTULO II<BR></B><B>Do processo e julgamento<BR></P></B>
+<H3 align=center><FONT size=3>CAPÍTULO I<BR>DA DENÚNCIA<BR></FONT></H3>
+<P>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300"><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 41. É permitido a todo cidadão denunciar, perante o Senado Federal, os Ministros do Supremo Tribunal Federal e o Procurador Geral da República, pelos crimes de responsabilidade que cometerem (artigos 39 e 40). <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42. A denúncia só poderá ser recebida se o denunciado não tiver, por qualquer motivo, deixado definitivamente o cargo. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43. A denúncia, assinada pelo denunciante com a firma reconhecida, deve ser acompanhada dos documentos que a comprovem ou da declaração de impossibilidade de apresentá-los, com a indicação do local onde possam ser encontrados. Nos crimes de que haja prova testemunhal, a denúncia deverá conter o rol das testemunhas, em número de cinco, no mínimo. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44. Recebida a denúncia pela Mesa do Senado, será lida no expediente da sessão seguinte e despachada a uma comissão especial, eleita para opinar sôbre a mesma. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45. A comissão a que alude o artigo anterior, reunir-se-á dentro de 48 horas e, depois de eleger o seu presidente e relator, emitirá parecer no prazo de 10 dias sôbre se a denúncia deve ser, ou não, julgada objeto de deliberação. Dentro dêsse período poderá a comissão proceder às diligências que julgar necessárias. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46. O parecer da comissão, com a denúncia e os documentos que a instruírem, será lido no expediente de sessão do Senado, publicado no<EM> Diário do Congresso Nacional</EM> e em avulsos, que deverão ser distribuídos entre os senadores, e dado para ordem do dia da sessão seguinte. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47. O parecer será submetido a uma só discussão, e a votação nominal considerando-se aprovado se reunir a maioria simples de votos. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48. Se o Senado resolver que a denúncia não deve constituir objeto de deliberação, serão os papéis arquivados. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49. Se a denúncia fôr considerada objeto de deliberação, a Mesa remeterá cópia de tudo ao denunciado, para responder à acusação no prazo de 10 dias. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50. Se o denunciado estiver fora do Distrito Federal, a cópia lhe será entregue pelo Presidente do Tribunal de Justiça do Estado em que se achar. Caso se ache fora do país ou em lugar incerto e não sabido, o que será verificado pelo 1º Secretário do Senado, a intimação far-se-á por edital, publicado no <EM>Diário do Congresso Nacional</EM>, com a antecedência de 60 dias, aos quais se acrescerá, em comparecendo o denunciado, o prazo do art. 49. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51. Findo o prazo para a resposta do denunciado, seja esta recebida, ou não, a comissão dará parecer, dentro de dez dias, sôbre a procedência ou improcedência da acusação. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52. Perante a comissão, o denunciante e o denunciado poderão comparecer pessoalmente ou por procurador, assistir a todos os atos e diligências por ela praticados, inquirir, reinquirir, contestar testemunhas e requerer a sua acareação. Para êsse efeito, a comissão dará aos interessados conhecimento das suas reuniões e das diligências a que deva proceder, com a indicação de lugar, dia e hora. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53. Findas as diligências, a comissão emitirá sôbre elas o seu parecer, que será publicado e distribuído, com tôdas as peças que o instruírem, e dado para ordem do dia 48 horas, no mínimo, depois da distribuição. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54. Êsse parecer terá uma só discussão e considerar-se-á aprovado se, em votação nominal, reunir a maioria simples dos votos. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55. Se o Senado entender que não procede a acusação, serão os papéis arquivados. Caso decida o contrário, a Mesa dará imediato conhecimento dessa decisão ao Supremo Tribunal Federal, ao Presidente da República, ao denunciante e ao denunciado.<BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56. Se o denunciado não estiver no Distrito Federal, a decisão ser-lhe-á comunicada a requisição da Mesa, pelo Presidente do Tribunal de Justiça do Estado onde se achar. Se estiver fora do país ou em lugar incerto e não sabido, o que será verificado pelo 1º Secretário do Senado, far-se-á a intimação mediante edital pelo <I>Diário do Congresso Nacional</I>, com a antecedência de 60 dias.&nbsp;<BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57. A decisão produzirá desde a data da sua intimação os seguintes efeitos contra o denunciado: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=5></TD>
+<TD vAlign=UP width=30 align=right><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a)</I></TD>
+<TD>ficar suspenso do exercício das suas funções até sentença final; </TD></TR></TBODY></TABLE></TD></TR></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>ficar sujeito a acusação criminal; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>perder, até sentença final, um têrço dos vencimentos, que lhe será pago no caso de absolvição. <BR></TD></TR></TBODY></TABLE></P>
+<H3 align=center><FONT size=3>CAPÍTULO II<BR>DA ACUSAÇÃO E DA DEFESA<BR></FONT></H3>
+<P>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300"><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 58. Intimado o denunciante ou o seu procurador da decisão a que aludem os três últimos artigos, ser-lhe-á dada vista do processo, na Secretaria do Senado, para, dentro de 48 horas, oferecer o libelo acusatório e o rol das testemunhas. Em seguida abrir-se-á vista ao denunciado ou ao seu defensor, pelo mesmo prazo para oferecer a contrariedade e o rol das testemunhas. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59. Decorridos êsses prazos, com o libelo e a contrariedade ou sem êles, serão os autos remetidos, em original, ao Presidente do Supremo Tribunal Federal, ou ao seu substituto legal, quando seja êle o denunciado, comunicando-se-lhe o dia designado para o julgamento e convidando-o para presidir a sessão. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60. O denunciante e o acusado serão notificados pela forma estabelecida no art. 56, para assistirem ao julgamento, devendo as testemunhas ser, por um magistrado, intimadas a comparecer a requisição da Mesa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Entre a notificação e o julgamento deverá mediar o prazo mínimo de 10 dias. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61. No dia e hora marcados para o julgamento, o Senado reunir-se-á, sob a presidência do Presidente do Supremo Tribunal Federal ou do seu substituto legal. Verificada a&nbsp;presença de número legal de senadores, será aberta a sessão e feita a chamada das partes, acusador e acusado, que poderão comparecer pessoalmente ou pelos seus procuradores. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62. A revelia do acusador não importará transferência do julgamento, nem perempção da acusação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A revelia do acusado determinará o adiamento do julgamento, para o qual o Presidente designará novo dia, nomeando um advogado para defender o revel. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Ao defensor nomeado será facultado o exame de tôdas as peças do processo. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63. No dia definitivamente aprazado para o julgamento, verificado o número legal de senadores será aberta a sessão e facultado o ingresso às partes ou aos seus procuradores. Serão juízes todos os senadores presentes, com exceção dos impedidos nos têrmos do art. 36. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O impedimento poderá ser oposto pelo acusador ou pelo acusado e invocado por qualquer senador. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64. Constituído o Senado em Tribunal de julgamento, o Presidente mandará ler o processo e, em seguida, inquirirá publicamente as testemunhas, fora da presença uma das outras. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65. O acusador e o acusado, ou os seus procuradores, poderão reinquirir as testemunhas, contestá-Ias sem interrompê-las e requerer a sua acareação. Qualquer senador poderá requerer sejam feitas as perguntas que julgar necessárias. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66. Finda a inquirição haverá debate oral, facultadas a réplica e a tréplica entre o acusador e o acusado, pelo prazo que o Presidente determinar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Ultimado o debate, retirar-se-ão as partes do recinto da sessão e abrir-se-á uma discussão única entre os senadores sôbre o objeto da acusação. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67. Encerrada a discussão, fará o Presidente um relatório resumido dos fundamentos da acusação e da defesa, bem como das respectivas provas, submetendo em seguida o caso a julgamento. <BR></P>
+<H3 align=center><FONT size=3>CAPÍTULO III<BR>DA SENTENÇA<BR></FONT></H3>
+<P>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300"><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 68. O julgamento será feito, em votação nominal pelos senadores desimpedidos que responderão "sim" ou "não" à seguinte pergunta enunciada pelo Presidente: "Cometeu o acusado F o crime que lhe é imputado e deve ser condenado à perda do seu cargo?" <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se a resposta afirmativa obtiver, pelo menos, dois terços dos votos dos senadores presentes, o Presidente fará nova consulta ao plenário sôbre o tempo não excedente de cinco anos, durante o qual o condenado deverá ficar inabilitado para o exercício de qualquer função pública. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69. De acôrdo com a decisão do Senado, o Presidente lavrará nos autos, a sentença que será assinada por êle e pelos senadores, que tiverem tomado parte no julgamento, e transcrita na ata. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70. No caso de condenação, fica o acusado desde logo destituído do seu cargo. Se a sentença fôr absolutória, produzirá a imediata reabilitação do acusado, que voltará ao exercício do cargo, com direito à parte dos vencimentos de que tenha sido privado. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71. Da sentença, dar-se-á imediato conhecimento ao Presidente da República, ao Supremo Tribunal Federal e ao acusado. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72. Se no dia do encerramento do Congresso Nacional não estiver concluído o processo ou julgamento de Ministro do Supremo Tribunal Federal ou do Procurador Geral da República, deverá êle ser convocado extraordináriamente pelo têrço do Senado Federal. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73. No processo e julgamento de Ministro do Supremo Tribunal, ou do Procurador Geral da República, serão subsidiários desta lei, naquilo em que lhes forem aplicáveis, o Regimento Interno do Senado Federal e o Código de Processo Penal. </P>
+<H3 align=center><B>
+<P align=center><FONT size=3>PARTE QUARTA</FONT> </P>
+<P align=center><FONT size=3>TÍTULO ÚNICO</FONT> </P></B></H3>
+<H3 align=center><FONT size=3>CAPÍTULO I<BR>DOS GOVERNADORES E SECRETÁRIOS DOS ESTADOS<BR></FONT></H3>
+<P>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300"><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 74. Constituem crimes de responsabilidade dos governadores dos Estados ou dos seus Secretários, quando por êles praticados, os atos definidos como crimes nesta Lei. <BR></P>
+<H3 align=center><FONT size=3>CAPÍTULO II<BR>DA DENÚNCIA, ACUSAÇÃO E JULGAMENTO<BR></FONT></H3>
+<P>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300"><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 75. É permitido a todo cidadão denunciar o Governador perante a Assembléia Legislativa, por crime de responsabilidade.&nbsp;</P>
+<P>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76. A denúncia, assinada pelo denunciante e com a firma reconhecida, deve ser acompanhada dos documentos que a comprovem, ou da declaração de impossibilidade de apresentá-los, com a indicação do local em que possam ser encontrados. Nos crimes de que houver prova testemunhal, conterá o ról das testemunhas, em número de cinco pelo menos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Não será recebida a denúncia depois que o Governador, por qualquer motivo, houver deixado definìtivamente o cargo. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77. Apresentada a denúncia e julgada objeto de deliberação, se a Assembléia Legislativa, por maioria absoluta, decretar a procedência na acusação, será o Governador imediatamente suspenso de suas funções. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78. O Governador será julgado nos crimes de responsabilidade, pela forma que determinar a Constituição do Estado e não poderá ser condenado, senão à perda do cargo, com inabilitação até cinco anos, para o exercício de qualquer função pública, sem prejuízo da ação da justiça comum. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Quando o tribunal de julgamento fôr de jurisdição mista, serão iguais, pelo número, os representantes dos órgãos que o integrarem, excluído o Presidente, que será o Presidente do Tribunal de Justiça. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Em qualquer hipótese, só poderá ser decretada a condenação pelo voto de dois têrços dos membros de que se compuser o tribunal de julgamento.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Nos Estados, onde as Constituições não determinarem o processo nos crimes de responsabilidade dos Governadores, aplicar-se-á o disposto nesta lei, devendo, porém, o julgamento ser proferido por um tribunal composto de cinco membros do Legislativo e de cinco desembargadores, sob a presidência do Presidente do Tribunal de Justiça local, que terá direito de voto no caso de empate. A escolha desse Tribunal será feita - a dos membros do legislativo, mediante eleição pela Assembléia: a dos desembargadores, mediante sorteio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Esses atos deverão ser executados dentro em cinco dias contados da data em que a Assembléia enviar ao Presidente do Tribunal de Justiça os autos do processo, depois de decretada a procedência da acusação. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 79. No processo e julgamento do Governador serão subsidiários desta Lei naquilo em que lhe forem aplicáveis, assim o regimento interno da Assembléia Legislativa e do Tribunal de Justiça, como o Código de Processo Penal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Os Secretários de Estado, nos crimes conexos com os dos governadores, serão sujeitos ao mesmo processo e julgamento. </P>
+<P align=center><BR><B>Disposições Gerais</B></P><STRONG></STRONG>
+<P>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300"><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 80. Nos crimes de responsabilidade do Presidente da República e dos Ministros de Estado, a Câmara dos Deputados é tribunal de pronúncia e o Senado Federal, tribunal de julgamento; nos crimes de responsabilidade dos Ministros do Supremo Tribunal Federal e do Procurador Geral da República, o Senado Federal é, simultâneamente, tribunal de pronúncia e julgamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O Senado Federal, na apuração e julgamento dos crimes de responsabilidade, funciona sob a presidência do Presidente do Supremo Tribunal, e só proferirá sentença condenatória pelo voto de dois têrços dos seus membros. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300"><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 81. A declaração de procedência da acusação nos crimes de responsabilidade só poderá ser decretada pela maioria absoluta da Câmara que a proferir.&nbsp;<BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 82. Não poderá exceder de cento e vinte dias, contados da data da declaração da procedência da acusação, o prazo para o processo e julgamento dos crimes definidos nesta Lei. <BR><BR>
+<META name=GENERATOR content="MSHTML 5.50.4807.2300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 83. Esta Lei entrará em vigor na data da sua publicação, revogadas as disposições em contrário. </P>
+<P>Rio de Janeiro, 10 de abril de 1950; 129º da Independência e 62º da República. </P>
+<P>EURICO G. DUTRA <BR>Honório Monteiro <BR>Sylvio de Noronha <BR>Canrobert P. da Costa <BR>Raul Fernandes <BR>Guilherme da Silveira <BR>João Valdetaro de Amorim e Mello <BR>Daniel de Carvalho <BR>Clemente Mariani <BR>Armando Trompowsky </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 12/04/1950
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 12/4/1950, Página 5425 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1950, Página 33 
+                                                        Vol. 3          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

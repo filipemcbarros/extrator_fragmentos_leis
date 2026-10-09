@@ -1,0 +1,973 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 5.546, DE 29 DE NOVEMBRO DE 1968 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Estima a Receita e fixa a Despesa da União para o Exercício financeiro de 1969. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- CSS do portal-tema: necessário para o botão de compartilhamento -->
+<link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 5.546, DE 29 DE NOVEMBRO DE 1968 - Publicação Original</h2>
+
+			<div class="g-contexto-compartilhamento g-contexto-compartilhamento--extendido g-impressao">
+				<!-- Elemento propositalmente vazio, preenchido pelo JS de compartilhamento do portal -->
+			</div>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=193480">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-5546-29-novembro-1968-359229-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 5.546, DE 29 DE NOVEMBRO DE 1968</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Estima a Receita e fixa a Despesa da União para o Exercício financeiro de 1969. 
+						</p>
+				
+						<div class="texto">
+							<P><FONT face=tim>O PRESIDENTE DA REPÚBLICA, <BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei: <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º.</STRONG> O Orçamento Geral da União para o exercício de 1969, discriminado pelos Anexos integrantes desta Lei, e elaborado de acôrdo com o Título I, Capítulo VI, Seção IV, da Constituição, estima a Receita em NCr$ 14.229.266.800,00 (quatorze bilhões, duzentos e vinte e nove milhões, duzentos e sessenta e seis mil e oitocentos cruzeiros novos), e fixa a Despesa em igual importância. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º.</STRONG> Será a Receita realizada mediante a arrecadação dos tributos, rendas, suprimentos de fundos e outras Receitas Correntes e de Capital, na forma da legislação em vigor e das especificações do Anexo 1, de acôrdo com o seguinte desdobramento: </FONT></P>
+<TABLE width=584>
+<TBODY>
+<TR vAlign=top>
+<TD width="75%"><FONT face=tim>1. RECEITA</FONT></TD>
+<TD width="24%"><FONT face=tim>&nbsp;</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>&nbsp;</FONT></TD>
+<TD><FONT face=tim>NCr$</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>1.1 - Receita do Tesouro Nacional</FONT></TD>
+<TD><FONT face=tim>&nbsp;</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Receitas Correntes .......................................................................</FONT></TD>
+<TD><FONT face=tim>13.057.864.440,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Receita Tributária ......................................................................</FONT></TD>
+<TD><FONT face=tim>12.485.925.220,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Receita Patrimonial ..................................................................</FONT></TD>
+<TD><FONT face=tim>11.670.200,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Receita Industrial ......................................................................</FONT></TD>
+<TD><FONT face=tim>104.698.520,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Transferências Correntes ...........................................................</FONT></TD>
+<TD><FONT face=tim>300,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Receitas Diversas ....................................................................</FONT></TD>
+<TD><FONT face=tim>455.570.200,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Receitas de Capital .......................................................................</FONT></TD>
+<TD><FONT face=tim>1.171.402.360,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Total ......................................................................................................</FONT></TD>
+<TD><U><BR><FONT face=tim>14.229.266.800,00<BR><BR></FONT></U></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>1.2 - RECEITA DOS ÓRGÃOS DA ADMINISTRAÇÃO INDIRETA <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (exclusive transferências do Tesouro Nacional)</FONT></TD>
+<TD><U><FONT face=tim></FONT></U></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Receitas Correntes ........................................................................</FONT></TD>
+<TD><FONT face=tim>1.594.467.300,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Receitas de Capital .......................................................................</FONT></TD>
+<TD><FONT face=tim>508.964.000,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>Total ......................................................................................................</FONT></TD>
+<TD><FONT face=tim>2.103.431.300,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>Total Geral ............................................................................................</FONT></TD>
+<TD><U><FONT face=tim>16.332.698.100,00</FONT></U></TD></TR></TBODY></TABLE>
+<P><FONT face=tim><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º.</STRONG> A receita da União é revigorada e arrecadada segundo as disposições constantes da Legislação da Receita, da Lei nº 5.172, de 25 de outubro de 1966, e da Legislação complementar, supletiva e regulamentar. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º.</STRONG> A Despesa será realizada segundo a discriminação do Anexo 2, que apresenta a programação setorial do Govêrno, e dos Anexos 3 a 5, que detalham a composição da Despesa pelos Podêres da União, conforme o seguinte desdobramento: </FONT></P>
+<P>
+<TABLE width=584>
+<TBODY>
+<TR vAlign=top>
+<TD width="75%"><FONT face=tim>&nbsp;</FONT></TD>
+<TD width="24%"><FONT face=tim>NCr$</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>2 - DESPESAS POR PROGRAMAS</FONT></TD>
+<TD><FONT face=tim>&nbsp;<BR><BR></FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>01 Administração ...................................................................................</FONT></TD>
+<TD><FONT face=tim>1.820.110.600,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>02 Agropecuária ....................................................................................</FONT></TD>
+<TD><FONT face=tim>386.607.900,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>03 Assistência e Previdência .................................................................</FONT></TD>
+<TD><FONT face=tim>1.340.699.000,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>04 Colonização e Reforma Agrária .........................................................</FONT></TD>
+<TD><FONT face=tim>43.558.000,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>05 Comércio .........................................................................................</FONT></TD>
+<TD><FONT face=tim>18.278.000,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>06 Comunicações ..................................................................................</FONT></TD>
+<TD><FONT face=tim>425.229.600,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>07 Defesa e Segurança .........................................................................</FONT></TD>
+<TD><FONT face=tim>2.048.416.600,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>08 Educação .........................................................................................</FONT></TD>
+<TD><FONT face=tim>1.241.336.400,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>09 Energia .............................................................................................</FONT></TD>
+<TD><FONT face=tim>664.928.500,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>10 Habitação e Planejamento Urbano ....................................................</FONT></TD>
+<TD><FONT face=tim>137.012.500,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>11 Indústria ...........................................................................................</FONT></TD>
+<TD><FONT face=tim>232.181.500,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>12 Política Exterior ................................................................................</FONT></TD>
+<TD><FONT face=tim>136.108.200,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>13 Recursos Naturais ............................................................................</FONT></TD>
+<TD><FONT face=tim>81.113.400,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>14 Saúde e Saneamento .......................................................................</FONT></TD>
+<TD><FONT face=tim>649.510.600,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>15 Transporte ........................................................................................</FONT></TD>
+<TD><FONT face=tim>2.161.975.300,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>16 Programação a cargo dos Estados e Municípios ...............................</FONT></TD>
+<TD><FONT face=tim>2.842.200.000,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>17 Programação a cargo dos Órgãos da Administração Indireta ............</FONT></TD>
+<TD><U><FONT face=tim>2.103.431.300,00</FONT></U></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>Total ......................................................................................................</FONT></TD>
+<TD><FONT face=tim>16.332.698.100,00<BR><BR></FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>3 - PODER LEGISLATIVO E ÓRGÃOS AUXILIARES</FONT></TD>
+<TD><FONT face=tim>&nbsp;</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>01 Câmara dos Deputados ....................................................................</FONT></TD>
+<TD><FONT face=tim>106.025.000,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>02 Senado Federal ................................................................................</FONT></TD>
+<TD><FONT face=tim>71.359.000,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>03 Tribunal de Contas ...........................................................................</FONT></TD>
+<TD><FONT face=tim>15.955.700,00<BR><BR></FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>4 - PODER JUDICIÁRIO </FONT></TD>
+<TD><FONT face=tim>&nbsp;</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>01 Supremo Tribunal Federal ................................................................</FONT></TD>
+<TD><FONT face=tim>10.759.900,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>02 Tribunal Federal de Recursos ...........................................................</FONT></TD>
+<TD><FONT face=tim>12.354,000,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>03 Justiça Militar ....................................................................................</FONT></TD>
+<TD><FONT face=tim>13.492.600,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>04 Justiça Eleitoral .................................................................................</FONT></TD>
+<TD><FONT face=tim>46.502.900,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>05 Justiça do Trabalho ...........................................................................</FONT></TD>
+<TD><FONT face=tim>62.775.000,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>06 Justiça Federal de 1ª Instância .........................................................</FONT></TD>
+<TD><FONT face=tim>13.151.800,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>07 Justiça do Distrito Federal e dos Territórios .......................................</FONT></TD>
+<TD><FONT face=tim>12.243.500,00<BR><BR></FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>5 - PODER EXECUTIVO</FONT></TD>
+<TD><FONT face=tim>&nbsp;</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>01 Presidência da República .................................................................</FONT></TD>
+<TD><FONT face=tim>92.126.300,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>02 Ministério da Aeronáutica .................................................................</FONT></TD>
+<TD><FONT face=tim>807.106.900,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>03 Ministério da Agricultura ...................................................................</FONT></TD>
+<TD><FONT face=tim>329.679.700,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>04 Ministério das Comunicações ...........................................................</FONT></TD>
+<TD><FONT face=tim>412.792.000,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>05 Ministério da Educação e Cultura .....................................................</FONT></TD>
+<TD><FONT face=tim>1.236.645.300,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>06 Ministério do Exército .......................................................................</FONT></TD>
+<TD><FONT face=tim>1.290.867.300,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>07 Ministério da Fazenda .......................................................................</FONT></TD>
+<TD><FONT face=tim>3.114.623.300,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>08 Ministério da Indústria e do Comércio ...............................................</FONT></TD>
+<TD><FONT face=tim>30.000.000,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>09 Ministério do Interior ......................................................................</FONT></TD>
+<TD><FONT face=tim>701.908.500,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>10 Ministério da Justiça .........................................................................</FONT></TD>
+<TD><FONT face=tim>113.232.700,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>11 Ministério da Marinha .......................................................................</FONT></TD>
+<TD><FONT face=tim>662.800.000,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>12 Ministério das Minas e Energia .........................................................</FONT></TD>
+<TD><FONT face=tim>794.959.700,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>13 Ministério do Planejamento e Coordenação Geral .............................</FONT></TD>
+<TD><FONT face=tim>754.823.400,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>14 Ministério das Relações Exteriores ....................................................</FONT></TD>
+<TD><FONT face=tim>151.514.400,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>15 Ministério da Saúde ..........................................................................</FONT></TD>
+<TD><FONT face=tim>368.378.500,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>16 Ministério do Trabalho e Previdência Social ......................................</FONT></TD>
+<TD><FONT face=tim>126.150.400,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>17 Ministério dos Transportes ................................................................</FONT></TD>
+<TD><FONT face=tim>2.877.039.000,00<BR><BR></FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>DESPESAS DOS ÓRGÃOS DA ADMINISTRAÇÃO INDIRETA</FONT></TD>
+<TD><FONT face=tim>&nbsp;</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>(Receitas Próprias) ................................................................................</FONT></TD>
+<TD><FONT face=tim>2.103.431.300,00</FONT></TD></TR>
+<TR vAlign=top>
+<TD><FONT face=tim>Total ......................................................................................................</FONT></TD>
+<TD><U><FONT face=tim>16.332.698.100,00</FONT></U></TD></TR></TBODY></TABLE><BR><FONT face=tim><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º.</STRONG> A aplicação dos recursos descriminados no artigo anterior far-se-á de acôdo com os Programas estabelecidos para as unidades orçamentárias e para as entidades de Administração Indireta. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º.</STRONG> As despesas de capital para o exercício financeiro de 1969 incorporam os recursos de natureza orçamentária constantes do Orçamento Plurianual de Investimentos aprovado pela Lei nº 5.450, de 5 de junho de 1968, com as modificações decorrentes da aplicação do disposto no art. 5º da referida Lei. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º.</STRONG> Os Órgãos de Administração Geral poderão, quando necessário, movimentar dotações atribuídas às unidades orçamentárias, conforme dispõe o art. 66 e seu parágrafo único, da Lei nº 4.320, de 17 de março de 1964. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º.</STRONG> O Poder Executivo tomará as medidas necessárias para manter os dispêndios compatíveis com o comportamento da Receita, a fim de se obter, na execução, o equilíbrio orçamentário preconizado pela Constituição. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º.</STRONG> Fica o Tesouro Nacional autorizado a realizar operações de crédito nos limites previstos no art. 69 da Constituição e colocar letras e outros títulos de sua responsabilidade até o limite de NCr$1.170.000.000,00 (um bilhão, cento e setenta milhões de cruzeiros novos), para realização do equilíbrio orçamentário, nos têrmos do itens I e II do art. 63 da Constituição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo Único. </I>Inclui-se no montante autorizado neste artigo a colocação dos referidos títulos junto ao Banco Central do Brasil, de acôrdo com o que preceituam os §§ 1º e 2º do art. 49 da Lei nº 4.595, de 31 de dezembro de 1964, bem como o § 2º do art. 7º do Decreto-Lei nº 96, de 30 de dezembro de 1966. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.</STRONG> Fica o Poder Executivo autorizado a abrir créditos suplementares no decorrer do exercício de 1969, até o limite 20% (vinte por centro) da Receita Tributária, na forma do artigo 7º e do item III, parágrafo 1º do artigo 43 da Lei nº 4.320 de 17 de março de 1964, inclusive para atender prioritàriamente ao aumento do funcionalismo. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.</STRONG> Revogam-se as disposições em contrário. </FONT></P>
+<P><FONT face=tim>Brasília, 29 de novembro de 1968; 147º da Independência e 80º da República. </FONT></P>
+<P><FONT face=tim>A. COSTA E SILVA <BR>Luís Antônio da Gama e Silva <BR>Augusto Hamann Rademaker Grünewald <BR>Aurélio de Lyra Tavares <BR>José de Magalhães Pinto <BR>Antônio Delfim Netto <BR>Mário David Andreazza <BR>Raymundo Bruno Marussig <BR>Tarso Dutra <BR>Jarbas G. Passarinho <BR>Márcio de Souza e Mello <BR>Leonel Miranda <BR>Henrique Brandão Cavalcanti <BR>Edmundo de Macedo Soares <BR>Hélio Beltrão <BR>Afonso A. Lima <BR>Carlos F. de Simas</FONT></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 - Suplemento de 20/12/1968
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1 - Suplemento
+                                                         - 20/12/1968, Página 1          
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 20/12/1968, Página 11017      
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1968, Página 160 
+                                                        Vol. 7          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+
+<!-- JS do portal-tema: necessário para o botão de compartilhamento -->
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/vendor-bundle.js"></script>
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/camara-bundle.js"></script>
+
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

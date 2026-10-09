@@ -1,0 +1,954 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 23, DE 11 DE FEVEREIRO DE 1935 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Revigora as disposições constantes do art. 1º e seus parágrafos, do Decreto nº 22.106, de 18 de novembro de 19321, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 23, DE 11 DE FEVEREIRO DE 1935 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                            <li>  	
+                                                <a href="lei-23-11-fevereiro-1935-397998-retificacao-77247-pl.html">Retificação</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-23-11-fevereiro-1935-397998-retificacao-77248-pl.html">Retificação</a>
+                                            </li>
+                                    <li>
+                                        <a href="lei-23-11-fevereiro-1935-397998-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 23, DE 11 DE FEVEREIRO DE 1935</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Revigora as disposições constantes do art. 1º e seus parágrafos, do Decreto nº 22.106, de 18 de novembro de 19321, e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							<P>O PRESIDENTE DA REPUBLICA dos Estados Unidos do Brasil: <BR>Faço saber que o PODER LEGISLATIVO decreta e eu sancciono a seguinte lei:&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Ficam revigoradas, para admissão no corrente anno lectivo de 1935 aos cursos seriados do ensino superior, as disposições constantes do art. 1º, e seus paragraphos, do decreto n. 22.106, de 18 de novembro de 1932. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; <EM>Paragrapho unico.</EM> As taxas do exames e de certificados, bem como a applicação da importancia arrecadada, deverão obedecer ao disposto no art. 8º, e respectivos paragraphos do decreto anteriormente citado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;A presente lei entrará em execução na data da sua publicação, revogadas as disposições em contrario. </P>
+<P>Rio de Janeiro, 11 de fevereiro de 1935, 114º da Independência e 47º da Republica. </P>
+<P>GETULIO VARGAS<BR>Gustavo Capanema</P>
+<P align=center>_______</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Ministro de Estado da Educação e Saude Publica, em nome do Presidente da Republica:</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Usando de atribuição que lhe confere o art. 60, letra b, da Constituição, resolve approvar as instrucções annexas a esta Portaria, assignadas pelo director geral da Educação, para serem observadas na execução da lei n. 23, de 11 de fevereiro de 1935.</P>
+<P>Rio de Janeiro, 18 de fevereiro de 1935, 114º da Independência e 47º da Republica.</P>
+<P>Gustavo Capanema</P>
+<P align=center>_______</P>
+<P align=center><STRONG>Instrucções para execução da lei n. 23, de 11 de fevereiro de 1935</STRONG> </P>
+<P align=left>&nbsp;&nbsp;&nbsp;&nbsp; Art. 1º Nos termos do art. 1º do decreto n. 22.106, de 18 de novembro de 1932, revigorado pela lei n. 23, de 11 de fevereiro de 4935, para admissão aos cursos superiores no corrente anno lectivo de 1935, será permittido aos estudantes que possuam seis ou mais certificados de exames preparatorios, obtidos sob o regimen de exames parcellados, prestarem os que lhes faltam, immediatamente antes dos exames vestibulares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os exames serão prestados no instituto de ensino superior federal, equiparado ou sob inspecção no qual o candidato pretender matricula. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para este fim, deverão ser abertas immediatamente inscripções aos exames de preparatorios e exames vestibulares, exclusivamente para os candidatos no caso previsto na referida lei n. 23, devendo encerrar-se o prazo destas inscripções até 28 do corrente mez de fevereiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As provas dos exames do preparatorios e dos exames vestibulares subsequentes deverão estar terminadas antes de 15 de março proximo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º A inscripção nos exames de que trata este artigo será feita mediante requerimento firmado pelo candidato ou seu representante legal, sobre estampilha federal de 2$000 e sello de educação, e deverá trazer appensa uma photographia para identificação do examinando, quando chamado a provas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º O candidato deverá instruir o requerimento de inscripção com os seguintes documentos:</P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>certificados dos preparatorios obtidos sob o regimende exames parcellados; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>recibo de pagamento das taxas de exames. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Para cada exame, em que requerer inscripção, o candidato deverá apôr uma estampilha federal de 5$000, que será inutilizada pelo director ou pelo inspector, conforme o regimes de reconhecimento official do instituto de ensino. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º Não será chamado a provas o candidato cujos documentos não satisfaçam a todas as exigencias legaes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º Nos institutos de ensino superior sob inspecção, o processo de inscripção de cada candidato deverá ser submettido ao visto do respectivo inspector. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 9º A reprovação em qualquer dos exames de preparatorios prejudicará automaticamente a inscripção no exame vestibular. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Os preparatarios a que se refere a lei n. 23, de 11 do corrente, deverão ser obtidos parcelladamente e constarão das disciplinas seguintes : Portuguez, Francez, Latim, Inglez ou Allemão, Arithmetica Algebra, Geometria e Trigonometria, Geographia Geral, Chorographia do Brasil e Cosmographia, Historia Universal e Historia do Brasil, Physica e Ohimica e Historia Natural. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Os exames de preparatorios discriminados no artigo anterior versarão, para cada disciplina, sobre a materia constante dos programmas que vigoraram em 1929 para o Colegio Pedro II, não sendo permittido, sob pretexto algum, arguir-se o candidato fóra dos referidos programmas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Nos institutos de ensino superior federais ou estaduaes, a ordem e o horario dos exames serão determinados pelo respectivo director; nos institutos de ensino superior sob inspecção, caberá ao respectivo inspector a referida attribuição, ouvido o director. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Em qualquer caso, não haverá mais de duas provas por dia para o mesmo candidato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As chamadas para exames deverão ser feitas com antecedencia e publicidade convenientes, observando-se rigorosamente a ordem alphabetica dos nomes dos candidatos inscriptos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O candidato, que faltar n qualquer prova, sómente será admíttido á segunda chamada si provar perante o director ou nos institutos de ensino sob inspecção, a juizo do inspector, justo impedimento em responder á primeira chamada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;Os exames de preparatorios comprehenderão prova escripta e prova oral, salvo os de Physica e Chimica e de Historia Natural em que haverá prova escripta e prova pratico-oral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os exames de sciencias versarão sobre pontos escolhidos no momento, mediante sorteio, de uma lista de pontos numerados de 1 a 20, excluindo-se, entretanto, na prova oral de cada disciplina o ponto sorteado para a prova escripta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Nas provas escriptas de linguas ou sciencias, o ponto será commum., para toda a turma; nas provas oraes ou pratico-oraes será, sorteado um ponto para cada examinando. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Nas provas escriptas de linguas estrangeiras as phrases destinadas á, traducção ou á versão serão escolhidas no momento do paginas diversas do livro indicado por sorteio prévio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Nas provas oraes de linguas, os trechos, que deverão constituir os pontos de exame, serão caracterizados pela pagina do livro sorteado e pelas respectivas palavras inicial e final. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;As provas escriptas constarão do desenvolvimento de proposições formuladas pela banca examinadora sobre o ponto sorteado no memento, obedecendo às discriminações constantes dos seguintes paragraphos : <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A prova de Portuguez constará, de tres partes: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>uma redacção em qualquer genero literario, sem subsidio ministrado pela banca examinadora; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>uma dissertação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>duas questões grammaticaes. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para a prova de Francez serão exigidas: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>traducção de 12 phrases extrabidas de Les Martyres, de Chateaubriand, ou de Morceaux choisis (4ª 5ª e 6ª classes, parte de prosa), de A. Cahen; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>versão de 12 phrases de Contos Patrios, de Olavo Bilac e Coelho Netto, ou do Methodo francez (Applic. II, lições de 9 a 17, 2º anno), de Monat e Ruch. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A prova de Inglez constará de: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>traducção, com auxilio do diccionario, de 12 phrases escolhidas de The Royal Readers (n. 5 prosa) ou de The Littic Londomer, de R. Kron; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>versão, com auxilio ds diccionario, de 12 phrases extrahidas do Livro de Composição, de Olavo Bilac e M. Bomfim, ou do livros de Patrios, de Olavo Bilac e Coelho Netto. </TD></TR></TBODY></TABLE>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O ponto para a prova de Allemão será formulado de accôrdo com o criterio indicado para a de Inglez, devendo ser escolhidas as phrases para a traducção em Heimatlos, de Hektor Malot, ou em Der Kleine Deutsche, de R. Kron. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Para a prova de Latim será exigida a traducção, com auxilio de deccionario, de 20 linhas da Eneida, de Virgilio, ou das Odes, de Horacio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º As provas de Arithmetica, de Algebra e de Geometria e Trigonometria comprehenderão a resolução de tres questões praticas, de natureza diversa, formuladas no momento sobre o ponto escolhido, mediante sorteio, e observadas ainda as seguintes determinações: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I, as questões sobre medidas, serão indicadas as relações entre as unidades do systema antigo, bem, como entre essas e as do systema metrico decimal; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II, na prova de Ceometria e Trigonometria uma das questões versara sobre geometria plana, outra sobre geometria no espaço e a terceira sobre trigonometria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º A prova de Geographia Geral, Chorographia do Brasil e Cosmographia consistirá no desenvolvimento do ponto indicado mediante sorteio, e organizado de modo a camprehender: </P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>um thema de Geographia Geral; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>assumpto para dissertação sobre o Brasil; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>uma questão de Cosmographia. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º A prova de Historia Universal e Historia do Brasil versará sobre a materia constante do ponto sorteado, que deverá, comportar themas para a explanação das seguintes partes: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>dissertação sohre acontecimentos da Historia Universal; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>commentario de um episodio da Historia do Brasil. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 9º Para a prova de Physica e Chimica o ponto indicado, mediante sorteio, deverá comprehender assumptos que permittam o seguinte desenvolvimento: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>dissertação sobre um thema geral de physica ou chimica; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>deseripcão de uma experiencia de chimica; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>descripção de uma experiencia de physica. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 10 A prova de Historia Natural versará sobre a materia incluida no ponto sorteado, formulando-se no momento as seguintes questões: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>um thema para dissertação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>duas ou mais questões sobre assumptos diversos do thema para dissertação. </TD></TR></TBODY></TABLE>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;As provas escriptas serão procedidas a portas fechadas, impedida qualquer communicação dos examinandos com pessoas estranhas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1 º O numero dos examinandos, admittidos á prova, dependerá do local em que possa ser realizada com o necessario conforto e a devida fiscalização, devendo-se, sempre que possivel, fazer a chamada, para cada disciplina, de todos os candidatos inscriptos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Sorteado o ponto, depois de feita a chamada, será concedido o prazo improrogavel de duas horas para a execução da prova, a contar do momento do sorteio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Nenhum candidato, a partir desse momento, poderá retirar-se da sala antes de entregar a respectiva prova, salvo necessidade inadiavel, em que lhe será permittido ausentarse, momentaneamente, acompanhado de pessôa designada pela presidente da banca examinadora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Os examinandos não poderão usar, durante a realização das provas escriptas, de apontamentos ou subsidios de qualquer genero, salvo livros de texto, taboas de logarithmos. formularios ou diccionarios expressamente permittidos pela banca examinadora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Será absolutamente vedado fazer rascunhos em papel diverso do que tenha sido fornecido para a prova escripta. Os desenvolvimentos de calculo, quando necessarios, deverão ser feitos na propria prova. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Ao examinando, que durante a prova servir-se de meios fraudulentos, ou não se houver com o devida respeito, será, applicada a pena do exclusão do exame. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º A prova escripta, feita em papel rubricado pelos examinadores, sob pena de nullidade, não será assignada pelo examinando. Cada candidato receberá, além do papel para a prova, meia folha solta, igualmente rubricada, na qual lançara seu nome por extenso e que será restituida dentro da prova. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º Recolhidas todas as provas, procederá a banca examinadora a sua numeração e a da respectiva folha de assignatura, acondicionando-as em envoltorios distinctos, que serão fechados e rubricados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;As provas oraes serão publicas, terão a duração maxima de 15 minutos, para cada candidato, e versarão sobre ponto sorteado, de accordo com o disposto na art. 3, de uma lista organizada de modo a attender ás determinações constantes dos seguintes paragraphos : <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A prova de Portuguez constará de leitura, interpretação e analyse syntatica e etymologica de um trecho sorteado da Selecta Classica, de João Ribeiro, ou dos Lusiadas, de Camões, ou do Ceu, Terra e Mar de Alberto do Oliveira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A prova de linguas estrangeiras comprehenderá leitura, traducção com auxilio do diccionario e questões grammaticaes, escolhendo-se trechos mediante sorteio, de um dos livros abaixo indicados : <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Para a prova de Francez - Lectures choisis de Chateambriand, de René Nollet, ou Zables, de La Fontaine. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - para a prova de Inglez - The Royal Readers, n. 6, ou Methodo de Inglez (2º volume), de Albino Ferreira. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Para a prova de Allemão - Leituras allemães, de Appell, ou Reimatlos, de Hektor Nalot. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Para a prova de Latim - Orationes, de Cicero, ou Aeneis de Virgilio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As provas oraes de Arithmetica, de Algebra e de Geometria e Trigonometria constarão do desenvolvimento de uma proposição theorica e da resolução de uma questão pratica, escolhidos dentro do ponto sorteado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º A prova de Geographia Geral, Chorographia do Brasil e Cosmographia e a de Historia Universal e Historia do Brasil versarão, respectivamente, sobre os themas enunciados no ponto, que será subdividido em tres partes, devendo o candidato responder á arguição, pelo menos, de duas dellas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;As provas pratico-oraes de Physica e Chimica e de Historia Natural serão tambem publicas e constarão, conforme a disciplina, da execução de uma experiencia, preparação ou classificação de uma especie natural, constante dos programmas officiaes de trabalhos praticos e, a seguir, de arguição, que comprehenderá tres questões, uma das quaes indicada para dissertação. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; <EM>Paragrapho unico.</EM> O prazo a ser concedido ao candidato, para a execução da parte pratica do ponto sorteado, será fixada pela banca examinadora, de accordo com a technica ou as operações exigidas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;O julgamento das provas escriptas e oraes ou pratico-oraes será feita logo após a respectiva realização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Serão consideradas nullas as provas escriptas assignadas e as que trouxerem qualquer signal que prejudique seu julgamento secreto, bem como as provas dos candidatos que anda escreveram ou só escreveram sobre materia estranha ao ponto sorteado e, ainda, dos que forem encontrados a consultar apontamentos ou livros não autorizados pela banca examinadora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Nas provas escriptas admittidas a julgamento, excluida de apreciação a parte estranha ao ponto e assignalados os principaes erros, os membros da banca examinadora lançarão a tinta, por extenso, a nota que cada um lhes attribue. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As notas assim conferidas ás provas, em numeros inteiros e graduadas de 0 (zero) a 10 (dez), depois de identificados os respectivos autores, não poderão ser alteradas nem rectificadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º A nota final de qualquer prova, escripta, oral ou pratico-oral, será a média arithmetica, conservadas as fracções, das notas que lhe forem attribuidas pelos examinadores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Será facultado ao director ou ao inspector impugnar os julgamentos que não pareçam justos, bem como annullar qualquer prova que não se tenha processado com observancia destas Instrucções, communicando immediatamente a occurrencia á autoridade federal a que estiver subordinado, para decisão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º A nota do exame de preparatorio será a média das notas de prova escripta e prova oral, ou pratico-oral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Os resultados do julgamento das provas escriptas e oraes, ou pratico-oraes, serão registrados em boletins, lavrados em tres vias e subscriptos pelos membros das respectivas bancas examinadoras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Nos institutos sob o regimen de inspecção, os boletins, para que sejam validos, deverão trazer o visto do respectivo inspector. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os boletins deverão conter, para cada prova, as seguintes indicações:</P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>nomes, por extenso e em ordem alphabetica, dos candidatos ; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>notas conferidas pelos membros da banca examinadora; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>média das notas, conservadas as fracções, acaso obtidas. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Uma das vias do boletim será affixada na portaria do instituto em que se tenha processado a prova, entregue a outra á rescpectiva Secretaria e remettida a terceira á Directoria Nacional de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Serão considerados approvados os candidatos que obtiverem, em cada disciplina, nota igual ou superior a tres e meio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os resultados apurados nos boletins serão consignados em uma acta, lavrada pelo secretario, da qual immediatamente será remettida cópia authenticada á Directoria Nacional de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A acta, que será, lavrada em livro proprio, sem deixar linhas em branco, sem emendas nem razuras, deverá ser subscripta pelo director, e, ainda, pelo inspector nos institutos de ensino sob o regimen de inspecção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º No resultado dos exames se incluirão tambem como reprovados da candidatos: 
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>que desistirem da prova escripta, oral ou pratica, de pois de sorteado o ponto; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>que não comparecerem á prova oral, ou pratico-oral, depois de feita a escripta; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>que tiverem annullada a prova escripta; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>que forem excluidos por motivo disciplinar. </TD></TR></TBODY></TABLE>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Não serão chamados á prova oral, ou pratico-oral, os candidatos que não comparecerem á prova escripta, ou incorrerem no disposto nas alineas c e d do paragrapho anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Sempre que possivel, será dada publicidade na imprensa local, dos resultados dos exames dos candidatos approvados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;A primeira via dos certificados dos exames de preparatorios será expedida e firmada sobre estampilha federal de 1$000 e sello de educação, pelo director do instituto, quando federal ou equiparado, e nos demais, pelos respectivos inspectores. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <EM>Paragrapho unico.</EM> A segunda via dos referidos rertificados sómente poderá ser expedida pela Directoria Nacional de Educação, mediante requerimento do interessado, justificando o pedido, e pagas as devidas taxas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;As bancas para os exames de preparatorios, a serem prestados nos institutos do ensino superior, serão constituidos por tres membros, designados pelos respectivos directores, dentre os docentes do instituto em que devam ser realizados taes exames. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Nos institutos de ensino superior, sob o regimen de inspecção, as bancas examinadoras sómente poderão funccionar com a presença do respectivo inspecto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Caso não seja possivel a constituição das bancas nos termos deste artigo, sómente poderão ser convidados, para membros das mesmas bancas, professores devidamente registrados na Directoria Nacional de Educação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Nenhum candidato poderá, inscrever-se na mesma época, nos exames de que trata a lei n. 23, de 11 de fevereiro corrente, em mais de um instituto de ensino, sob pena de nullidade dos exames assim prestados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;O candidato, que permittir que outrem por elle preste exame, terá nullo este e todos os mais que porventura houver prestado, além de ficar privado, pelo prazo de dois annos, de inscrever-se em exames ou matricular-se em qualquer estabelecimento de ensino official ou officialmente reconhecido; e aquelle que prestar exarne em nome de outro, além de incorrer na mesma pena, si fôr estudante, ficará ainda sujeito ás punições da Consolidação das Leis Penaes, para que será o facto levado ao conhecimento das autoridades competentes. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; <EM>Paragrapho unico.</EM> O examinando é obrigado a provar a sua indentidade, nos actos de exame, sempre que solicitado pelo inspector ou por qualquer membro da banca examinadora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;As taxas de certificado e de exames serão arrecadadas nos institutos em que se devam realizar; sob nenhum pretexto, poderão ser cobradas taxas diversas ou mais elevadas do que as estipuladas na tabella annexa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Do resultado das taxas de exames serão deduzidos 20 % para o patrimonio do instituto e, ainda, havendo serviço de inspecção, 10 % para gratificação do inspector respectivo, destinando-se o restaste á remuneração dos membros das bancas examinadoras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A perecentagem destinada á gratificação do inspector, aos termos do paragrapho anterior, deverá ser depositada na Thesouraria Geral do Ministerio da Educação o Saude Publica, por occasião da remessa da lista dos candidatos inscriptos nos exames referidos nestas instrucções. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A lista dos candidatos inscriptos, a que a refere o paragrapho anterior, depois de submettida ao inspector, não poderá, em caso algum ser alterada com accrescimo de novos nomes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º As taxas de exames, recolhidos ás thesourarias dos institutos do ensino, sob nenhum pretexto, serão restituidas aos candidatos inscriptos. </P>
+<P align=center><STRONG>TABELLAS DE TAXAS</STRONG> </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 1. De exames, a serem pagas ao instituto de ensino superior:</P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>escripto......................................................................................................................... 5$000 </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>oral................................................................................................................................ 5$000 </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>
+<P>pratico-oral.................................................................................................................. 10$000 </P>
+<P>2. De certificado expedido por instituto de ensino superior, federal ou equiparado ........ 10$000 </P>
+<P>3. De certificado expedido por inspector: </P></TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a ser recolhida pelo instituto á Thesouraria Geral do Ministerio da Educação e Saude Publica......................................................................................................................... 10$000 </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>
+<P>paga ao inatituto do ensino superior.............................................................................. 10$000 </P>
+<P>4. De segunda via de certificado de exames parcellados, expedida pela Directoria Nacional de Educação.................................................................................................................... 15$000</P></TD></TR></TBODY></TABLE>
+<P>Rio de Janeiro, 18 de fevereiro de 1935&nbsp;</P>
+<P>Theodoro Ramos </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 20/02/1935
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 20/2/1935, Página 3722          
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1935, Página 16 
+                                                        Vol. 2          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

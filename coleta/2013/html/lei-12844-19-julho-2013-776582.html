@@ -1,0 +1,904 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 12.844, DE 19 DE JULHO DE 2013 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Amplia o valor do Benefício Garantia-Safra para a safra de 2011/2012; amplia o Auxílio Emergencial Financeiro, de que trata a Lei nº 10.954, de 29 de setembro de 2004, relativo aos desastres ocorridos em 2012; autoriza a distribuição de milho para venda a pequenos criadores, nos termos que especifica; institui medidas de estímulo à liquidação ou regularização de dívidas originárias de operações de crédito rural; altera as Leis nºs 10.865, de 30 de abril de 2004, e 12.546, de 14 de dezembro de 2011, para prorrogar o Regime Especial de Reintegração de Valores Tributários para as Empresas Exportadoras - REINTEGRA e para alterar o regime de desoneração da folha de pagamentos, 11.774, de 17 de setembro de 2008, 10.931, de 2 de agosto de 2004, 12.431, de 24 de junho de 2011, 12.249, de 11 de junho de 2010, 9.430, de 27 de dezembro de 1996, 10.522, de 19 de julho de 2002, 8.218, de 29 de agosto de 1991, 10.833, de 29 de dezembro de 2003, 9.393, de 19 de dezembro de 1996, 12.783, de 11 de janeiro de 2013, 12.715, de 17 de setembro de 2012, 11.727, de 23 de junho de 2008, 12.468, de 26 de agosto de 2011, 10.150, de 21 de dezembro de 2000, 12.512, de 14 de outubro de 2011, 9.718, de 27 de novembro de 1998, 10.925, de 23 de julho de 2004, 11.775, de 17 de setembro de 2008, e 12.716, de 21 de setembro de 2012, a Medida Provisória nº 2.158-35, de 24 de agosto de 2001, e o Decreto nº 70.235, de 6 de março de 1972; dispõe sobre a comprovação de regularidade fiscal pelo contribuinte; regula a compra, venda e transporte de ouro; e dá outras providências." />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 12.844, DE 19 DE JULHO DE 2013 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-12844-19-julho-2013-776582-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-12844-19-julho-2013-776582-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-12844-19-julho-2013-776582-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-12844-19-julho-2013-776582-veto-140543-pl.html">Veto</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=570604">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-12844-19-julho-2013-776582-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 12.844, DE 19 DE JULHO DE 2013</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Amplia o valor do Benefício Garantia-Safra para a safra de 2011/2012; amplia o Auxílio Emergencial Financeiro, de que trata a Lei nº 10.954, de 29 de setembro de 2004, relativo aos desastres ocorridos em 2012; autoriza a distribuição de milho para venda a pequenos criadores, nos termos que especifica; institui medidas de estímulo à liquidação ou regularização de dívidas originárias de operações de crédito rural; altera as Leis nºs 10.865, de 30 de abril de 2004, e 12.546, de 14 de dezembro de 2011, para prorrogar o Regime Especial de Reintegração de Valores Tributários para as Empresas Exportadoras - REINTEGRA e para alterar o regime de desoneração da folha de pagamentos, 11.774, de 17 de setembro de 2008, 10.931, de 2 de agosto de 2004, 12.431, de 24 de junho de 2011, 12.249, de 11 de junho de 2010, 9.430, de 27 de dezembro de 1996, 10.522, de 19 de julho de 2002, 8.218, de 29 de agosto de 1991, 10.833, de 29 de dezembro de 2003, 9.393, de 19 de dezembro de 1996, 12.783, de 11 de janeiro de 2013, 12.715, de 17 de setembro de 2012, 11.727, de 23 de junho de 2008, 12.468, de 26 de agosto de 2011, 10.150, de 21 de dezembro de 2000, 12.512, de 14 de outubro de 2011, 9.718, de 27 de novembro de 1998, 10.925, de 23 de julho de 2004, 11.775, de 17 de setembro de 2008, e 12.716, de 21 de setembro de 2012, a Medida Provisória nº 2.158-35, de 24 de agosto de 2001, e o Decreto nº 70.235, de 6 de março de 1972; dispõe sobre a comprovação de regularidade fiscal pelo contribuinte; regula a compra, venda e transporte de ouro; e dá outras providências.
+						</p>
+				
+						<div class="texto">
+							&nbsp;<STRONG>&nbsp;&nbsp;&nbsp; A PRESIDENTA DA REPÚBLICA</STRONG> <BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Excepcionalmente, para a safra 2011/2012, fica o Fundo Garantia-Safra autorizado a pagar adicional ao Benefício Garantia-Safra instituído pelo art. 1º da Lei nº 10.420, de 10 de abril de 2002, no valor de até R$ 560,00 (quinhentos e sessenta reais) por família, aos agricultores familiares que aderiram ao Fundo Garantia-Safra e tiveram perda de safra em razão de estiagem, nos termos do art. 8º da Lei nº 10.420, de 10 de abril de 2002, suplementar ao adicional autorizado pelo art. 1º da Lei nº 12.806, de 7 de maio de 2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O pagamento do adicional ao Benefício, autorizado na forma do <I>caput</I> será feito em até 4 (quatro) parcelas mensais de R$ 140,00 (cento e quarenta reais) subsequentes ao pagamento das parcelas adicionais autorizadas na Lei nº 12.806, de 7 de maio de 2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Fica vedado o pagamento aos agricultores familiares de parcelas do adicional ao Benefício Garantia-Safra coincidentes com os meses de recebimento do Benefício Garantia-Safra relativo à safra 2012/2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Fica a União autorizada a aportar ao Fundo Garantia- Safra os recursos necessários ao desembolso integral do adicional estabelecido no art. 1º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Não se aplica o disposto nos §§ 2º e 3º do art. 6º da Lei nº 10.420, de 10 de abril de 2002, ao aporte referido no <I>caput</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Fica autorizada, excepcionalmente, para desastres ocorridos no ano de 2012, a ampliação do valor do Auxílio Emergencial Financeiro instituído pelo art. 1º da Lei nº 10.954, de 29 de setembro de 2004, em até R$ 800,00 (oitocentos reais) por família, para além da ampliação criada pelo art. 4º da Lei nº 12.806, de 7 de maio de 2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Fica a Companhia Nacional de Abastecimento - CONAB autorizada a doar milho aos governos estaduais, no ano de 2013, inclusive o adquirido nos termos do art. 6º da Lei nº 12.806, de 7 de maio de 2013, quando destinados à venda a pequenos criadores de aves, suínos, bovinos, caprinos e ovinos, localizados em Municípios da área de atuação da Superintendência do Desenvolvimento do Nordeste - SUDENE em situação de emergência ou em estado de calamidade pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A situação de emergência ou estado de calamidade pública deverá ser reconhecida pelo Poder Executivo federal, nos termos dos §§ 1º e 2º do art. 3º da Lei nº 12.340, de 1º de dezembro de 2010, e de sua regulamentação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;A venda referida no <I>caput</I> do art. 4º será feita pelo Governo do Estado onde se localiza o Município em situação de emergência ou estado de calamidade pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A venda deverá ser feita nos exatos limites e condições estabelecidos pelo Poder Executivo federal definidos ao amparo do inciso III do <I>caput</I> do art. 7º da Lei nº 12.806, de 7 de maio de 2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A entrega do milho será feita no porto de destino designado pelo Estado donatário, ficando a seu cargo os custos de remoção, ensacamento, distribuição e outros necessários ao cumprimento da destinação prevista no art. 4º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Até 50% (cinquenta por cento) dos recursos recebidos com a venda do milho doado poderá ser destinado ao pagamento dos custos de que trata o § 2º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A diferença entre o arrecadado nos termos do § 1º e os custos referidos nos §§ 2º e 3º será alocada em ações de apoio aos pequenos criadores, com insumos complementares ao milho na alimentação animal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Para as doações de que trata o art. 4º, o Conselho Interministerial de Estoques Públicos de Alimentos, criado pelo Decreto nº 7.920, de 15 de fevereiro de 2013, definirá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - quantidade de milho a ser doado;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - condições de transferência ao Estado;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - forma de entrega; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - limite quantitativo por criador; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - forma de prestação de contas; e<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - outras disposições necessárias a sua implementação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;As doações de que trata o art. 4º somente poderão ser efetivadas após celebração de termo de compromisso entre o Ministro de Estado da Agricultura, Pecuária e Abastecimento e o Governador do Estado correspondente, contemplados os elementos definidos nos termos dos §§ 1º e 4º do art. 5º e do art. 6º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;É autorizada a concessão de rebate para liquidação, até 31 de dezembro de 2014, das operações de crédito rural de valor originalmente contratado até R$ 100.000,00 (cem mil reais), referentes a uma ou mais operações do mesmo mutuário, com recursos de fontes públicas, relativas a empreendimentos localizados na área de abrangência da Superintendência de Desenvolvimento do Nordeste - SUDENE, contratadas até 31 de dezembro de 2006, observadas ainda as seguintes condições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - operações com valor originalmente contratado de até R$ 15.000,00 (quinze mil reais) em uma ou mais operações do mesmo mutuário:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>rebate de 85% (oitenta e cinco por cento) sobre o saldo devedor atualizado, para a liquidação das dívidas relativas a empreendimentos localizados nas regiões do semiárido, do norte do Espírito Santo e dos Municípios do norte de Minas Gerais, do Vale do Jequitinhonha e do Vale do Mucuri, compreendidos na área de atuação da Superintendência de Desenvolvimento do Nordeste - SUDENE; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>(VETADO); </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - operações com valor originalmente contratado acima de R$ 15.000,00 (quinze mil reais) e até R$ 35.000,00 (trinta e cinco mil reais) em uma ou mais operações do mesmo mutuário: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>para a parcela do saldo devedor atualizado correspondente ao valor originalmente contratado de até R$ 15.000,00 (quinze mil reais): aplica-se o disposto no inciso I do <I>caput</I> deste artigo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>
+<P>para a parcela do saldo devedor atualizado correspondente ao valor originalmente contratado excedente a R$ 15.000,00 (quinze mil reais) e até o limite de R$ 35.000,00 (trinta e cinco mil reais): </P>
+<P>1. rebate de 75% (setenta e cinco por cento), para a liquidação das dívidas relativas a empreendimentos localizados nas regiões do semiárido, do norte do Espírito Santo e dos Municípios do norte de Minas Gerais, do Vale do Jequitinhonha e do Vale do Mucuri, compreendidos na área de atuação da Superintendência de Desenvolvimento do Nordeste - SUDENE; <BR>2. (VETADO); </P></TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - operações com valor originalmente contratado acima de R$ 35.000,00 (trinta e cinco mil reais) e até R$ 100.000,00 (cem mil reais) em uma ou mais operações do mesmo mutuário:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>para a parcela do saldo devedor atualizado correspondente ao valor originalmente contratado de até R$ 35.000,00 (trinta e cinco mil reais), aplica-se o disposto nos incisos I e II do <I>caput</I> deste artigo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>
+<P>para a parcela do saldo devedor atualizado correspondente ao valor originalmente contratado excedente a R$ 35.000,00 (trinta e cinco mil reais) e até o limite de R$ 100.000,00 (cem mil reais); </P>
+<P>1. rebate de 50% (cinquenta por cento) para a liquidação das dívidas relativas a empreendimentos localizados nas regiões do semiárido, do norte do Espírito Santo e dos Municípios do norte de Minas Gerais, do Vale do Jequitinhonha e do Vale do Mucuri, compreendidos na área de atuação da Superintendência de Desenvolvimento do Nordeste - SUDENE; <BR>2. (VETADO). </P></TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os encargos financeiros aplicáveis às operações de crédito rural em situação de adimplência serão fixados pelo Conselho Monetário Nacional, nos termos do <I>caput</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O disposto neste artigo aplica-se também às seguintes operações originárias de crédito rural, observada a abrangência de que trata o <I>caput</I>: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - renegociadas ao amparo dos §§ 3º e 6º do art. 5º, da Lei nº 9.138, de 29 de novembro de 1995;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - renegociadas ao amparo das Resoluções nºs 2.238, de 31 de janeiro de 1996, e 2.471, de 26 de fevereiro de 1998, do Conselho Monetário Nacional;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - desoneradas de risco pela União por força da Medida Provisória nº 2.196-3, de 24 de agosto de 2001; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - renegociadas ao amparo da Lei nº 10.437, de 25 de abril de 2002; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - renegociadas ao amparo da Lei nº 11.322, de 13 de julho de 2006; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - contratadas no âmbito do Programa de Recuperação da Lavoura Cacaueira Baiana; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - contratadas no âmbito do Programa Nacional de Valorização e Utilização de Várzeas Irrigáveis - PROVÁRZEAS;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - contratadas no âmbito do Programa de Financiamento de Equipamentos de Irrigação - PROFIR; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - contratadas no âmbito do Programa de Cooperação Nipo- Brasileira para o Desenvolvimento dos Cerrados - PRODECER;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - lastreadas em recursos repassados pelo Banco Nacional de Desenvolvimento Econômico e Social - BNDES no âmbito da Finame Agrícola Especial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - lastreadas em recursos repassados pelo BNDES no âmbito do Programa de Modernização da Frota de Tratores Agrícolas e Implementos Associados e Colheitadeiras - MODERFROTA; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XII - contratadas no âmbito do Programa de Desenvolvimento Cooperativo para Agregação de Valor à Produção Agropecuária - PRODECOOP; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIII - contratadas no âmbito do Programa de Geração de Emprego e Renda Rural - PROGER Rural; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIV - (VETADO); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XV - (VETADO); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVI - (VETADO); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVII - outras definidas pelo Conselho Monetário Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Caso o recálculo da dívida de que trata o § 1º deste artigo resulte em saldo devedor 0 (zero) ou menor que 0 (zero), a operação será considerada liquidada, não havendo, em hipótese alguma, devolução de valores a mutuários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º Para fins de enquadramento nas disposições deste artigo, os saldos devedores das operações de crédito rural contratadas com cooperativas, associações e condomínios de produtores rurais, inclusive as operações efetuadas na modalidade grupal ou coletiva, serão apurados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - por cédula-filha ou instrumento de crédito individual firmado por beneficiário final do crédito; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - no caso de crédito rural grupal ou coletivo, pelo resultado da divisão do valor originalmente contratado pelo número de mutuários constantes da cédula de crédito;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - no caso de operação que não tenha envolvido repasse de recursos a cooperados ou associados, pelo resultado da divisão dos saldos devedores pelo número total de cooperados ou associados ativos da entidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º É o Fundo Constitucional de Financiamento do Nordeste - FNE autorizado a assumir os ônus decorrentes das disposições deste artigo referentes às operações lastreadas em seus recursos e às operações lastreadas em recursos mistos do FNE com outras fontes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 10. É a União autorizada a assumir os ônus decorrentes das disposições deste artigo referentes às operações efetuadas com outras fontes, inclusive no âmbito do Programa Nacional de Fortalecimento da Agricultura Familiar - PRONAF, e às demais operações efetuadas com risco da União ou desoneradas de risco pela União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 11. É o Poder Executivo autorizado a definir a metodologia e as demais condições para ressarcir às instituições financeiras públicas federais dos custos da repactuação e dos rebates definidos neste artigo para as operações ou parcelas das operações efetuadas com risco da instituição financeira, observado o disposto nos §§ 9º e 10 deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 12. Ficam suspensos o encaminhamento para cobrança judicial, as execuções judiciais e os respectivos prazos processuais referentes às operações enquadráveis neste artigo até a data limite para concessão de rebate definida no <I>caput</I>, desde que o mutuário formalize interesse em liquidar a operação perante a instituição financeira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 13. O prazo de prescrição das dívidas de que trata o <I>caput</I> fica suspenso a partir da data de publicação desta Lei até 31 de dezembro de 2014. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 14. As operações de risco da União enquadradas neste artigo não devem ser encaminhadas para inscrição em Dívida Ativa da União até 31 de dezembro de 2014. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 15. (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 16. (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 17. (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Fica o Poder Executivo autorizado a instituir linha de crédito rural com recursos dos Fundos Constitucionais de Financiamento do Nordeste - FNE e do Norte - FNO para liquidação, até 31 de dezembro de 2014, de operações de crédito rural de custeio e de investimento com risco compartilhado ou integral do Tesouro Nacional, do FNE, do FNO ou das instituições financeiras oficiais federais, independentemente da fonte de recursos, contratadas até 31 de dezembro de 2006, no valor original de até R$ 200.000,00 (duzentos mil reais), em uma ou mais operações do mesmo mutuário, que estiverem em situação de inadimplência em 30 de junho de 2012, observadas as seguintes condições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - forma de apuração do valor do crédito: observando-se o limite de que trata o <I>caput</I> deste artigo, equivalente ao somatório dos saldos devedores das operações a serem liquidadas com a nova operação, retirando-se encargos de inadimplemento e multas e aplicando-se os encargos de normalidade, sem bônus e sem rebate, calculados até a data da liquidação com a contratação da nova operação;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - bônus adicional: além dos bônus definidos de acordo com o disposto no § 6º do art. 1º da Lei nº 10.177, de 12 de janeiro de 2001, as operações contratadas com base na linha de crédito de que trata o <I>caput</I> no valor de até R$ 35.000,00 (trinta e cinco mil reais) fazem jus aos seguintes rebates sobre o principal de cada parcela da nova operação paga até a respectiva data de vencimento: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>15% (quinze por cento) quando as atividades forem desenvolvidas em Municípios localizados no semiárido da área de abrangência da Superintendência de Desenvolvimento do Nordeste - SUDENE; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>10% (dez por cento) quando as atividades forem desenvolvidas nos demais Municípios da região Norte e da área de abrangência da Sudene; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - garantias: as admitidas para o crédito rural, podendo ser mantidas as mesmas garantias constituídas nos financiamentos que serão liquidados com a contratação da nova operação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - risco da operação: a mesma posição de risco das operações a serem liquidadas com a linha de crédito de que trata este artigo, exceto as operações contratadas com risco do Tesouro Nacional que terão o risco transferido para o respectivo Fundo;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - prazo: de até 10 (dez) anos para o pagamento do saldo devedor, estabelecendo-se novo cronograma de amortização, de acordo com a capacidade de pagamento do mutuário;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - carência: de no mínimo 3 (três) anos, de acordo com a capacidade de pagamento do mutuário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - encargos financeiros:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>
+<P>agricultores familiares enquadrados no Programa Nacional de Fortalecimento da Agricultura Familiar - PRONAF: </P>
+<P>1. beneficiários dos Grupos A e B: taxa efetiva de juros de 0,5% a.a. (cinco décimos por cento ao ano); <BR>2. demais agricultores do Pronaf: <BR>2.1. para as operações de valor até R$ 10.000,00 (dez mil reais): taxa efetiva de juros de 1,0% a.a. (um por cento ao ano); <BR>2.2. para as operações de valor acima de R$ 10.000,00 (dez mil reais): taxa efetiva de juros de 2,0% a.a. (dois por cento ao ano); </P></TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>demais produtores rurais, suas cooperativas e associações: taxa efetiva de juros de 3,5% a.a (três inteiros e cinco décimos por cento ao ano). </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As parcelas vencidas das operações renegociadas com base nos §§ 3º ou 6º do art. 5º da Lei nº 9.138, de 29 de novembro de 1995, repactuadas ou não nos termos da Lei nº 10.437, de 25 de abril de 2002, da Lei nº 11.322, de 13 de julho de 2006, ou da Lei nº 11.775, de 17 de setembro de 2008, exceto as cedidas à União ao amparo da Medida Provisória nº 2.196-3, de 24 de agosto de 2001, poderão ser enquadradas na linha de crédito de que trata o <I>caput</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Quando a garantia exigir o registro em cartório do instrumento contratual da linha de crédito de que trata o <I>caput</I> deste artigo, admite-se a utilização de recursos do FNE ou do FNO para financiar as respectivas despesas no âmbito da nova operação de que trata este artigo, com base no respectivo protocolo do pedido de assentamento e limitada a 10% (dez por cento) do valor total da operação de crédito a ser contratada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Fica autorizada, até 31 de dezembro de 2014, a suspensão das execuções judiciais e dos respectivos prazos processuais referentes às operações de crédito rural enquadráveis neste artigo, desde que o mutuário formalize à instituição financeira o interesse em liquidar a operação, cabendo à instituição financeira comunicar à justiça a referida formalização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O prazo de prescrição das dívidas de que trata este artigo fica suspenso a partir da data de publicação desta Lei até a data limite para contratação da linha de crédito de que trata este artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º A adesão à contratação da operação de que trata este artigo para as dívidas que estejam em cobrança judicial importa em extinção dos correspondentes processos, devendo o mutuário desistir de quaisquer outras ações judiciais que tenham por objeto discutir a operação a ser liquidada com os recursos de que trata este artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Admite-se o financiamento das despesas com honorários advocatícios e demais despesas processuais com os recursos da linha de crédito de que trata este artigo, limitado a 4% (quatro por cento) do valor total a ser contratado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º O mutuário que vier a inadimplir na linha de crédito de que trata este artigo ficará impedido de tomar novos financiamentos em bancos oficiais, enquanto não for regularizada a situação da respectiva dívida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º Para fins da concessão da linha de crédito de que trata este artigo, os saldos devedores das operações de crédito rural contratadas com cooperativas, associações e condomínios de produtores rurais, inclusive as operações efetuadas na modalidade grupal ou coletiva, serão apurados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - por cédula-filha ou instrumento de crédito individual firmado por beneficiário final do crédito; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - no caso de crédito rural grupal ou coletivo, pelo resultado da divisão do valor originalmente contratado pelo número de mutuários constantes da cédula de crédito;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - no caso de operação que não tenha envolvido repasse de recursos a cooperados ou associados, pelo resultado da divisão dos saldos devedores pelo número total de cooperados ou associados ativos da entidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º Os custos decorrentes do ajuste dos saldos devedores previsto no inciso I do <I>caput</I> deste artigo relativo às operações com risco integral das instituições financeiras oficiais serão assumidos pelas instituições financeiras oficiais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 10. Os custos referentes ao ajuste de que trata o inciso I do <I>caput</I> nas operações com risco parcial ou integral do Tesouro Nacional, do FNE ou do FNO podem ser suportados pelas respectivas fontes, respeitada a proporção do risco de cada um no total das operações liquidadas com base neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 11. Admite-se a liquidação das operações passíveis de enquadramento neste artigo, pelo saldo devedor apurado na forma do inciso I do <I>caput</I>, vedada a faculdade prevista no § 6º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 12. A exigência de honorários advocatícios ou de despesas com registro em cartório do instrumento contratual da linha de crédito não impedem a renegociação de que trata o <I>caput</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Fica autorizada a renegociação das operações de crédito rural que estavam inadimplentes em dezembro de 2011, contratadas a partir de 2007, nas condições estabelecidas por resolução do Conselho Monetário Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Fica o Conselho Monetário Nacional autorizado a definir normas complementares para a operacionalização do disposto nos arts. 1º a 10 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;A Lei nº 10.865, de 30 de abril de 2004, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 8º&nbsp;........................................................................................... <BR>......................................................................................................... <BR><BR>§ 21. As alíquotas da Cofins-Importação de que trata este artigo ficam acrescidas de um ponto percentual na hipótese de importação dos bens classificados na Tipi, aprovada pelo Decreto nº 7.660, de 23 de dezembro de 2011, relacionados no Anexo I da Lei nº 12.546, de 14 de dezembro de 2011. <BR>.............................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;A Lei nº 12.546, de 14 de dezembro de 2011, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 2º&nbsp;.......................................................................................... <BR>......................................................................................................... <BR><BR>§ 12. Não serão computados na apuração da base de cálculo da Contribuição para o PIS/Pasep e da Cofins os valores ressarcidos no âmbito do Reintegra." (NR)</DIR>
+<DIR>"Art. 3º&nbsp;O Reintegra aplicar-se-á às exportações realizadas: <BR><BR>I - de 4 de junho de 2013 até 31 de dezembro de 2013; e<BR><BR>II - (VETADO)." (NR)</DIR>
+<DIR>"Art. 5º&nbsp;.......................................................................................... <BR><BR>§ 1º ................................................................................................ <BR>......................................................................................................... <BR><BR>II - poderá ser usufruída até 31 de dezembro de 2017; e <BR>...................................................................................." (NR)</DIR>
+<DIR>"Art. 7º&nbsp;............................................................................................ <BR>.......................................................................................................... <BR><BR>IV - as empresas do setor de construção civil, enquadradas nos grupos 412, 432, 433 e 439 da CNAE 2.0;<BR><BR>V - as empresas de transporte ferroviário de passageiros, enquadradas nas subclasses 4912-4/01 e 4912-4/02 da CNAE 2.0;<BR><BR>VI - as empresas de transporte metroferroviário de passageiros, enquadradas na subclasse 4912-4/03 da CNAE 2.0; <BR><BR>VII - as empresas de construção de obras de infraestrutura, enquadradas nos grupos 421, 422, 429 e 431 da CNAE 2.0. <BR>......................................................................................................... <BR><BR>§ 7º As empresas relacionadas no inciso IV do <I>caput</I> poderão antecipar para 4 de junho de 2013 sua inclusão na tributação substitutiva prevista neste artigo. <BR><BR>§ 8º A antecipação de que trata o § 7º será exercida de forma irretratável mediante o recolhimento, até o prazo de vencimento, da contribuição substitutiva prevista no <I>caput</I>, relativa a junho de 2013. <BR><BR>§ 9º Serão aplicadas às empresas referidas no inciso IV do <I>caput</I> as seguintes regras: <BR><BR>I - para as obras matriculadas no Cadastro Específico do INSS - CEI até o dia 31 de março de 2013, o recolhimento da contribuição previdenciária deverá ocorrer na forma dos incisos I e III do <I>caput</I> do art. 22 da Lei nº 8.212, de 24 de julho de 1991, até o seu término;<BR><BR>II - para as obras matriculadas no Cadastro Específico do INSS - CEI no período compreendido entre 1º de abril de 2013 e 31 de maio de 2013, o recolhimento da contribuição previdenciária deverá ocorrer na forma do <I>caput</I>, até o seu término; <BR><BR>III - para as obras matriculadas no Cadastro Específico do INSS - CEI no período compreendido entre 1º de junho de 2013 até o último dia do terceiro mês subsequente ao da publicação desta Lei, o recolhimento da contribuição previdenciária poderá ocorrer, tanto na forma do <I>caput</I>, como na forma dos incisos I e III do <I>caput</I> do art. 22 da Lei nº 8.212, de 24 de julho de 1991; <BR><BR>IV - para as obras matriculadas no Cadastro Específico do INSS - CEI após o primeiro dia do quarto mês subsequente ao da publicação desta Lei, o recolhimento da contribuição previdenciária deverá ocorrer na forma do <I>caput</I>, até o seu término;<BR><BR>V - no cálculo da contribuição incidente sobre a receita bruta, serão excluídas da base de cálculo, observado o disposto no art. 9º, as receitas provenientes das obras cujo recolhimento da contribuição tenha ocorrido na forma dos incisos I e III do <I>caput</I> do art. 22 da Lei nº 8.212, de 24 de julho de 1991. <BR><BR>§ 10. A opção a que se refere o inciso III do § 9º será exercida de forma irretratável mediante o recolhimento, até o prazo de vencimento, da contribuição previdenciária na sistemática escolhida, relativa a junho de 2013 e será aplicada até o término da obra. <BR><BR>§ 11. (VETADO). <BR><BR>§ 12. (VETADO)." (NR)</DIR>
+<DIR>"Art. 8º&nbsp;Até 31 de dezembro de 2014, contribuirão sobre o valor da receita bruta, excluídas as vendas canceladas e os descontos incondicionais concedidos, à alíquota de 1% (um por cento), em substituição às contribuições previstas nos incisos I e III do art. 22 da Lei nº 8.212, de 24 de julho de 1991, as empresas que fabricam os produtos classificados na Tipi, aprovada pelo Decreto nº 7.660, de 23 de dezembro de 2011, nos códigos referidos no Anexo I. ......................................................................................................... <BR><BR>§ 1º ................................................................................................. <BR>......................................................................................................... <BR><BR>II - ................................................................................................... <BR>.........................................................................................................<BR></DIR>
+<DIR>&nbsp;<EM>c) </EM>às empresas aéreas internacionais de bandeira estrangeira de países que estabeleçam, em regime de reciprocidade de tratamento, isenção tributária às receitas geradas por empresas aéreas brasileiras. <BR>...........................................................................................................<BR><BR>§ 3º ................................................................................................. <BR>........................................................................................................ <BR><BR>XI - de manutenção e reparação de embarcações;<BR><BR>XII - de varejo que exercem as atividades listadas no Anexo II desta Lei; <BR><BR>XIII - que realizam operações de carga, descarga e armazenagem de contêineres em portos organizados, enquadradas nas classes 5212-5 e 5231-1 da CNAE 2.0;<BR><BR>XIV - de transporte rodoviário de cargas, enquadradas na classe 4930-2 da CNAE 2.0; <BR><BR>XV - de transporte ferroviário de cargas, enquadradas na classe 4911-6 da CNAE 2.0; e <BR><BR>XVI - jornalísticas e de radiodifusão sonora e de sons e imagens de que trata a Lei nº 10.610, de 20 de dezembro de 2002, enquadradas nas classes 1811-3, 5811-5, 5812-3, 5813-1,5822-1, 5823-9, 6010-1, 6021-7 e 6319-4 da CNAE 2.0. <BR><BR>§ 4º A partir de 1º de janeiro de 2013, ficam incluídos no Anexo I referido no <I>caput</I> os produtos classificados nos seguintes códigos da Tipi: <BR>......................................................................................................... <BR><BR>§ 5º No caso de contratação de empresas para a execução dos serviços referidos no § 3º, mediante cessão de mão de obra, na forma definida pelo art. 31 da Lei nº 8.212, de 24 de julho de 1991, a empresa contratante deverá reter 3,5% (três inteiros e cinco décimos por cento) do valor bruto da nota fiscal ou fatura de prestação de serviços. <BR><BR>§ 6º As empresas relacionadas na alínea <EM>c</EM> do inciso II do § 1º poderão antecipar para 1º de junho de 2013 sua exclusão da tributação substitutiva prevista no <I>caput</I>. <BR><BR>§ 7º A antecipação de que trata o § 6º será exercida de forma irretratável mediante o recolhimento, até o prazo de vencimento, da contribuição previdenciária prevista nos incisos I e III do <I>caput</I> do art. 22 da Lei nº 8.212, de 24 de julho de 1991, relativa a junho de 2013. <BR><BR>§ 8º As empresas relacionadas nos incisos XI e XII do § 3º poderão antecipar para 4 de junho de 2013 sua inclusão na tributação substitutiva prevista neste artigo. <BR><BR>§ 9º A antecipação de que trata o § 8º será exercida de forma irretratável mediante o recolhimento, até o prazo de vencimento, da contribuição substitutiva prevista no <I>caput</I>, relativa a junho de 2013. <BR><BR>§ 10. (VETADO)" (NR)</DIR>
+<DIR>"Art. 9º&nbsp;.............................................................................................&nbsp;<BR>.......................................................................................................... <BR><BR>II - exclui-se da base de cálculo das contribuições a receita bruta: </DIR>
+<DIR><EM>a) </EM>de exportações; e <BR><EM>b) </EM>decorrente de transporte internacional de carga; <BR>......................................................................................................... <BR><BR>VII - para os fins da contribuição prevista no <I>caput</I> dos arts. 7º e 8º, considera-se empresa a sociedade empresária, a sociedade simples, a cooperativa, a empresa individual de responsabilidade limitada e o empresário a que se refere o art. 966 da Lei nº 10.406, de 10 de janeiro de 2002 - Código Civil, devidamente registrados no Registro de Empresas Mercantis ou no Registro Civil de Pessoas Jurídicas, conforme o caso;<BR><BR>VIII - para as sociedades cooperativas, a metodologia adotada para a contribuição sobre a receita bruta, em substituição às contribuições previstas nos incisos I e III do art. 22 da Lei nº 8.212, de 24 de julho de 1991, limita-se ao art. 8º e somente às atividades abrangidas pelos códigos referidos no Anexo I. <BR>.......................................................................................................... <BR><BR>§ 9º As empresas para as quais a substituição da contribuição previdenciária sobre a folha de pagamento pela contribuição sobre a receita bruta estiver vinculada ao seu enquadramento no CNAE deverão considerar apenas o CNAE relativo a sua atividade principal, assim considerada aquela de maior receita auferida ou esperada, não lhes sendo aplicado o disposto no § 1º. <BR><BR>§ 10. Para fins do disposto no § 9º, a base de cálculo da contribuição a que se referem o <I>caput</I> do art. 7º e o <I>caput</I> do art. 8º será a receita bruta da empresa relativa a todas as suas atividades."(NR) <BR><BR></DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;O Anexo Único da Lei nº 12.546, de 14 de dezembro de 2011, passa a ser denominado Anexo I e passa a vigorar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - acrescido dos produtos classificados nos códigos da Tabela de Incidência do Imposto sobre Produtos Industrializados - TIPI, aprovada pelo Decreto nº 7.660, de 23 de dezembro de 2011, constantes do Anexo I desta Lei;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - (VETADO); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - acrescido dos produtos classificados nos códigos 9404.10.00 e 9619.00.00 da Tipi;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - subtraído dos produtos classificados no Capítulo 93 e nos códigos 1301.90.90, 7310.21.90, 7323.99.00, 7507.20.00, 7612.10.00, 7612.90.11, 8309.10.00, 8526.10.00, 8526.92.00, 9023.00.00, 9603.10.00, 9603.29.00, 9603.30.00, 9603.40.10, 9603.40.90, 9603.50.00 e 9603.90.00 da Tipi; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - subtraído dos produtos classificados nos códigos 7403.21.00, 7407.21.10, 7407.21.20, 7409.21.00, 7411.10.10, 7411.21.10 e 74.12 da Tipi.<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - subtraído dos produtos classificados nos códigos 3006.30.11, 3006.30.19, 7207.11.10, 7208.52.00, 7208.54.00, 7214.10.90, 7214.99.10, 7228.30.00, 7228.50.00, 8471.30, 9022.14.13 e 9022.30.00 da Tipi. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As empresas de que tratam o inciso I poderão antecipar para 4 de junho de 2013 sua inclusão na tributação substitutiva prevista no art. 8º da Lei nº 12.546, de 14 de dezembro de 2011. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A antecipação de que trata o § 1º será exercida de forma irretratável mediante o recolhimento, até o prazo de vencimento, da contribuição substitutiva prevista no <I>caput</I>, relativa a junho de 2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º As empresas que fabricam os produtos relacionados no inciso V do <I>caput</I> poderão antecipar para 1º de abril de 2013 sua exclusão da tributação substitutiva prevista no art. 8º da Lei nº 12.546, de 14 de dezembro de 2011. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A antecipação de que trata o § 3º será exercida de forma irretratável mediante o recolhimento, até o prazo de vencimento, da contribuição previdenciária prevista nos incisos I e III do <I>caput</I> do art. 22 da Lei nº 8.212, de 24 de julho de 1991, relativa a abril de 2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;A Lei nº 11.774, de 17 de setembro de 2008, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 14.&nbsp;.......................................................................................... <BR>.......................................................................................................... <BR><BR>§ 4º ................................................................................................. <BR>......................................................................................................... <BR><BR>VII - suporte técnico em informática, inclusive instalação, configuração e manutenção de programas de computação e bancos de dados, bem como serviços de suporte técnico em equipamentos de informática em geral; e <BR>.............................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;A Lei nº 10.931, de 2 de agosto de 2004, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 4º&nbsp;Para cada incorporação submetida ao regime especial de tributação, a incorporadora ficará sujeita ao pagamento equivalente a 4% (quatro por cento) da receita mensal recebida, o qual corresponderá ao pagamento mensal unificado do seguinte imposto e contribuições: <BR>.............................................................................................." (NR)</DIR>
+<DIR>"Art. 8º&nbsp;Para fins de repartição de receita tributária e do disposto no § 2º do art. 4º, o percentual de 4% (quatro por cento) de que trata o <I>caput</I> do art. 4º será considerado: <BR><BR>I - 1,71% (um inteiro e setenta e um centésimos por cento) como Cofins;<BR><BR>II - 0,37% (trinta e sete centésimos por cento) como Contribuição para o PIS/Pasep; <BR><BR>III - 1,26% (um inteiro e vinte e seis centésimos por cento) como IRPJ; e <BR><BR>IV - 0,66% (sessenta e seis centésimos por cento) como CSLL. <BR>.............................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Os arts. 1º, 2º e 3º da Lei nº 12.431, de 24 de junho de 2011, passam a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 1º&nbsp;Fica reduzida a 0 (zero) a alíquota do imposto sobre a renda incidente sobre os rendimentos definidos nos termos da alínea <EM>a</EM> do § 2º do art. 81 da Lei nº 8.981, de 20 de janeiro de 1995, quando pagos, creditados, entregues ou remetidos a beneficiário residente ou domiciliado no exterior, exceto em país que não tribute a renda ou que a tribute à alíquota máxima inferior a 20% (vinte por cento), produzidos por: <BR><BR>I - títulos ou valores mobiliários adquiridos a partir de 1º de janeiro de 2011, objeto de distribuição pública, de emissão de pessoas jurídicas de direito privado não classificadas como instituições financeiras; ou <BR><BR>II - fundos de investimento em direitos creditórios constituídos sob a forma de condomínio fechado, regulamentados pela Comissão de Valores Mobiliários - CVM, cujo originador ou cedente da carteira de direitos creditórios não seja instituição financeira. <BR><BR>§ 1º Para fins do disposto no inciso I do <I>caput</I>, os títulos ou valores mobiliários deverão ser remunerados por taxa de juros pré-fixada, vinculada a índice de preço ou à Taxa Referencial - TR, vedada a pactuação total ou parcial de taxa de juros pósfixada, e ainda, cumulativamente, apresentar: <BR><BR>I - prazo médio ponderado superior a 4 (quatro) anos;<BR><BR>II - vedação à recompra do título ou valor mobiliário pelo emissor ou parte a ele relacionada nos 2 (dois) primeiros anos após a sua emissão e à liquidação antecipada por meio de resgate ou pré-pagamento, salvo na forma a ser regulamentada pelo Conselho Monetário Nacional; <BR><BR>III - inexistência de compromisso de revenda assumido pelo comprador; <BR><BR>IV - prazo de pagamento periódico de rendimentos, se existente, com intervalos de, no mínimo, 180 (cento e oitenta) dias; <BR><BR>V - comprovação de que o título ou valor mobiliário esteja registrado em sistema de registro devidamente autorizado pelo Banco Central do Brasil ou pela CVM, nas suas respectivas áreas de competência; e <BR><BR>VI - procedimento simplificado que demonstre o compromisso de alocar os recursos captados no pagamento futuro ou no reembolso de gastos, despesas ou dívidas relacionados aos projetos de investimento, inclusive os voltados à pesquisa, desenvolvimento e inovação. <BR><BR>§ 1º-A. Para fins do disposto no inciso II do <I>caput</I>, a rentabilidade esperada das cotas de emissão dos fundos de investimento em direitos creditórios deverá ser referenciada em taxa de juros pré-fixada, vinculada a índice de preço ou à TR, observados, cumulativamente, os seguintes requisitos: <BR><BR>I - o fundo deve possuir prazo de duração mínimo de 6 (seis) anos; <BR><BR>II - vedação ao pagamento total ou parcial do principal das cotas nos 2 (dois) primeiros anos a partir da data de encerramento da oferta pública de distribuição de cotas constitutivas do patrimônio inicial do fundo, exceto nas hipóteses de liquidação antecipada do fundo, previstas em seu regulamento; <BR><BR>III - vedação à aquisição de cotas pelo originador ou cedente ou por partes a eles relacionadas, exceto quando se tratar de cotas cuja classe subordine-se às demais para efeito de amortização e resgate; <BR><BR>IV - prazo de amortização parcial de cotas, inclusive as provenientes de rendimentos incorporados, caso existente, com intervalos de, no mínimo, 180 (cento e oitenta) dias; <BR><BR>V - comprovação de que as cotas estejam admitidas a negociação em mercado organizado de valores mobiliários ou registrados em sistema de registro devidamente autorizado pelo Banco Central do Brasil ou pela CVM, nas suas respectivas áreas de competência; <BR><BR>VI - procedimento simplificado que demonstre o objetivo de alocar os recursos obtidos com a operação em projetos de investimento, inclusive os voltados à pesquisa, ao desenvolvimento e à inovação; e<BR><BR>VII - presença obrigatória no contrato de cessão, no regulamento e no prospecto, se houver, na forma a ser regulamentada pela CVM: </DIR>
+<DIR><EM>a) </EM>do objetivo do projeto ou projetos beneficiados;<BR><EM>b) </EM>do prazo estimado para início e encerramento ou, para os projetos em andamento, a descrição da fase em que se encontram e a estimativa do seu encerramento; <BR><EM>c) </EM>do volume estimado dos recursos financeiros necessários para a realização do projeto ou projetos não iniciados ou para a conclusão dos já iniciados; e <BR><EM>d) </EM>do percentual que se estima captar com a venda dos direitos creditórios, frente às necessidades de recursos financeiros dos projetos beneficiados; <BR><BR>VIII - percentual mínimo de 85% (oitenta e cinco por cento) de patrimônio líquido representado por direitos creditórios, e a parcela restante por títulos públicos federais, operações compromissadas lastreadas em títulos públicos federais ou cotas de fundos de investimento que invistam em títulos públicos federais. <BR><BR>§ 1º-B. Para fins do disposto no inciso I do <I>caput</I>, os certificados de recebíveis imobiliários deverão ser remunerados por taxa de juros pré-fixada, vinculada a índice de preço ou à TR, vedada a pactuação total ou parcial de taxa de juros pós-fixada, e ainda, cumulativamente, apresentar os seguintes requisitos: <BR><BR>I - prazo médio ponderado superior a 4 (quatro) anos, na data de sua emissão;<BR><BR>II - vedação à recompra dos certificados de recebíveis imobiliários pelo emissor ou parte a ele relacionada e o cedente ou originador nos 2 (dois) primeiros anos após a sua emissão e à liquidação antecipada por meio de resgate ou pré-pagamento, salvo na forma a ser regulamentada pelo Conselho Monetário Nacional;<BR><BR>III - inexistência de compromisso de revenda assumido pelo comprador; <BR><BR>IV - prazo de pagamento periódico de rendimentos, se existente, com intervalos de, no mínimo, 180 (cento e oitenta) dias; <BR><BR>V - comprovação de que os certificados de recebíveis imobiliários estejam registrados em sistema de registro, devidamente autorizado pelo Banco Central do Brasil ou pela CVM, nas respectivas áreas de competência; e <BR><BR>VI - procedimento simplificado que demonstre o compromisso de alocar os recursos captados no pagamento futuro ou no reembolso de gastos, despesas ou dívidas relacionados a projetos de investimento, inclusive os voltados à pesquisa, ao desenvolvimento e à inovação. <BR><BR>§ 1º-C. O procedimento simplificado previsto nos incisos VI dos §§ 1º, 1º-A e 1º-B deve demonstrar que os gastos, despesas ou dívidas passíveis de reembolso ocorreram em prazo igual ou inferior a 24 (vinte e quatro) meses da data de encerramento da oferta pública. <BR><BR>§ 1º-D. Para fins do disposto neste artigo, os fundos de investimento em direitos creditórios e os certificados de recebíveis imobiliários podem ser constituídos para adquirir recebíveis de um único cedente ou devedor ou de empresas pertencentes ao mesmo grupo econômico. <BR><BR>§ 2º O Conselho Monetário Nacional definirá a fórmula de cômputo do prazo médio a que se refere o inciso I dos §§ 1º e 1º- B, e o procedimento simplificado a que se referem os incisos VI dos §§ 1º, 1º-A e 1º-B. .......................................................................................................... <BR><BR>§ 4º ................................................................................................. <BR>.......................................................................................................... <BR><BR>II - às cotas de fundos de investimento exclusivos para investidores não residentes que possuam no mínimo 85% (oitenta e cinco por cento) do valor do patrimônio líquido do fundo aplicado em títulos de que trata o inciso I do <I>caput</I>. <BR><BR>§ 4º-A. O percentual mínimo a que se refere o inciso II do § 4º poderá ser de, no mínimo, 67% (sessenta e sete por cento) do valor do patrimônio líquido do fundo aplicado em títulos de que trata o inciso I do <I>caput</I> no prazo de 2 (dois) anos, contado da data da primeira integralização de cotas. <BR>......................................................................................................... <BR><BR>§ 8º ................................................................................................ <BR>......................................................................................................... <BR><BR>II - o cedente, no caso de certificados de recebíveis imobiliários e de cotas de fundo de investimento em direitos creditórios. <BR>......................................................................................................... <BR><BR>§ 10. Sem prejuízo do disposto no <I>caput</I>, os fundos soberanos de qualquer país fazem jus à alíquota reduzida atribuída aos beneficiários residentes ou domiciliados no exterior. <BR><BR>§ 11. Para fins do disposto no § 10, classificam-se como fundos soberanos os veículos de investimento no exterior cujo patrimônio seja composto por recursos provenientes exclusivamente da poupança soberana do país respectivo e que, adicionalmente, cumpram os seguintes requisitos: <BR><BR>I - apresentem, em ambiente de acesso público, uma política de propósitos e de investimento definida; <BR><BR>II - apresentem, em ambiente de acesso público e em periodicidade, no mínimo, anual, suas fontes de recursos; e <BR><BR>III - disponibilizem, em ambiente de acesso público, as regras de resgate dos recursos por parte do governo." (NR)</DIR>
+<DIR>"Art. 2º&nbsp;No caso de debêntures emitidas por sociedade de propósito específico, constituída sob a forma de sociedade por ações, dos certificados de recebíveis imobiliários e de cotas de emissão de fundo de investimento em direitos creditórios, constituídos sob a forma de condomínio fechado, relacionados à captação de recursos com vistas em implementar projetos de investimento na área de infraestrutura, ou de produção econômica intensiva em pesquisa, desenvolvimento e inovação, considerados como prioritários na forma regulamentada pelo Poder Executivo federal, os rendimentos auferidos por pessoas físicas ou jurídicas residentes ou domiciliadas no País sujeitam-se à incidência do imposto sobre a renda, exclusivamente na fonte, às seguintes alíquotas: <BR>........................................................................................................ <BR><BR>§ 1º O disposto neste artigo aplica-se somente aos ativos que atendam ao disposto nos §§ 1º, 1º-A, 1º-B, 1º-C e 2º do art. 1º, emitidos entre a data da publicação da regulamentação mencionada no § 2º do art. 1º e a data de 31 de dezembro de 2015. <BR><BR>§ 1º-A. As debêntures objeto de distribuição pública, emitidas por concessionária, permissionária, autorizatária ou arrendatária, constituídas sob a forma de sociedade por ações, para captar recursos com vistas em implementar projetos de investimento na área de infraestrutura ou de produção econômica intensiva em pesquisa, desenvolvimento e inovação, considerados como prioritários na forma regulamentada pelo Poder Executivo federal também fazem jus aos benefícios dispostos no <I>caput</I>, respeitado o disposto no § 1º. <BR>......................................................................................................... <BR><BR>§ 5º Ficam sujeitos à multa equivalente a 20% (vinte por cento) do valor captado na forma deste artigo não alocado no projeto de investimento, a ser aplicada pela Secretaria da Receita Federal do Brasil do Ministério da Fazenda: <BR><BR>I - o emissor dos títulos e valores mobiliários; ou<BR><BR>II - o cedente, no caso de certificados de recebíveis imobiliários e fundos de investimento em direitos creditórios. <BR>.............................................................................................." (NR)</DIR>
+<DIR>"Art. 3º&nbsp;........................................................................................... <BR>......................................................................................................... <BR><BR>§ 1º-A. O percentual mínimo a que se refere o <I>caput</I> poderá ser de, no mínimo, 67% (sessenta e sete por cento) do valor do patrimônio líquido do fundo aplicado nos ativos no prazo de 2 (dois) anos contado da data da primeira integralização de cotas. ......................................................................................................... <BR><BR>§ 2º-A. Para fins do disposto neste artigo, consideram-se rendimentos quaisquer valores que constituam remuneração do capital aplicado, inclusive ganho de capital auferido na alienação de cotas. <BR><BR>§ 2º-B. Não se aplica ao fundo de investimento de que trata o <I>caput</I> e ao fundo de investimento em cota de fundo de investimento de que trata o § 1º a incidência do imposto de renda na fonte prevista no art. 3º da Lei nº 10.892, de 13 de julho de 2004. <BR>&nbsp;.......................................................................................................... <BR><BR>§ 4º O fundo de investimento de que trata o <I>caput</I> e o fundo de investimento em cota de fundo de investimento de que trata o § 1º terão prazo de até 180 (cento e oitenta) dias contados da data da primeira integralização de cotas para enquadrar-se ao disposto no § 1º-A. <BR><BR>§ 5º Sem prejuízo do prazo previsto no § 4º, não se aplica o disposto no § 1º se, em um mesmo ano-calendário, a carteira do fundo de investimento não cumprir as condições estabelecidas neste artigo por mais de 3 (três) vezes ou por mais de 90 (noventa) dias, hipótese em que os rendimentos produzidos a partir do dia imediatamente após a alteração da condição serão tributados na forma do § 6º. <BR><BR>§ 5º-A. Ocorrida a hipótese prevista no § 5º e após cumpridas as condições estabelecidas neste artigo, admitir-se-á o retorno ao enquadramento anterior a partir do 1º (primeiro) dia do ano-calendário subsequente. <BR>.............................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;A comprovação de regularidade quanto à quitação de tributos federais e demais créditos inscritos em Dívida Ativa da União, para fins de reconhecimento de incentivos ou benefícios fiscais, é feita mediante Certidão Negativa de Débitos - CND ou de Certidão Positiva de Débito com Efeitos de Negativa - CPD-EN válida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A comprovação da existência de Certidão Negativa de Débitos - CND ou de Certidão Positiva de Débito com Efeitos de Negativa - CPD-EN válida deve ser feita pela autoridade administrativa responsável pelo reconhecimento do incentivo ou benefício fiscal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;A Lei nº 12.249, de 11 de junho de 2010, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 60.&nbsp;Ficam isentos do Imposto de Renda na fonte, de 1º de janeiro de 2011 até 31 de dezembro de 2015, os valores pagos, creditados, entregues, empregados ou remetidos para pessoa física ou jurídica residente ou domiciliada no exterior, destinados à cobertura de gastos pessoais, no exterior, de pessoas físicas residentes no País, em viagens de turismo, negócios, serviço, treinamento ou missões oficiais, até o limite global de R$ 20.000,00 (vinte mil reais) ao mês, nos termos, limites e condições estabelecidos pelo Poder Executivo. <BR><BR>§ 1º O limite global previsto no <I>caput</I> não se aplica em relação às operadoras e agências de viagem. <BR><BR>§ 2º Salvo se atendidas as condições previstas no art. 26, o disposto no <I>caput</I> não se aplica ao caso de beneficiário residente ou domiciliado em país ou dependência com tributação favorecida ou pessoa física ou jurídica submetida a regime fiscal privilegiado, de que tratam os arts. 24 e 24-A da Lei nº 9.430, de 27 de dezembro de 1996. <BR><BR>§ 3º As operadoras e agências de viagem, na hipótese de cumprimento da ressalva constante do § 2º, sujeitam-se ao limite de R$ 10.000,00 (dez mil reais) ao mês por passageiro, obedecida a regulamentação do Poder Executivo, quanto a limites, quantidade de passageiros e condições para utilização da isenção, conforme o tipo de gasto custeado. <BR><BR>§ 4º Para fins de cumprimento das condições de isenção de que trata este artigo, as operadoras e agências de viagem deverão ser cadastradas no Ministério do Turismo e suas operações devem ser realizadas por intermédio de instituição financeira domiciliada no País." (NR)</DIR>
+<DIR>"Art. 69.&nbsp;(VETADO)."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;Os arts. 6º, 73 e 74 da Lei nº 9.430, de 27 de dezembro de 1996, passam a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 6º&nbsp;.................................................................................... <BR><BR>§ 1º O saldo do imposto apurado em 31 de dezembro receberá o seguinte tratamento: <BR><BR>I - se positivo, será pago em quota única, até o último dia útil do mês de março do ano subsequente, observado o disposto no § 2º; ou <BR><BR>II - se negativo, poderá ser objeto de restituição ou de compensação nos termos do art. 74.<BR>..............................................................................................." (NR)</DIR>
+<DIR>"Art. 73.&nbsp;A restituição e o ressarcimento de tributos administrados pela Secretaria da Receita Federal do Brasil ou a restituição de pagamentos efetuados mediante DARF e GPS cuja receita não seja administrada pela Secretaria da Receita Federal do Brasil será efetuada depois de verificada a ausência de débitos em nome do sujeito passivo credor perante a Fazenda Nacional. <BR><BR>I - (revogado); <BR><BR>II - (revogado). <BR><BR><I>Parágrafo único. </I>Existindo débitos, não parcelados ou parcelados sem garantia, inclusive inscritos em Dívida Ativa da União, os créditos serão utilizados para quitação desses débitos, observado o seguinte: <BR><BR>I - o valor bruto da restituição ou do ressarcimento será debitado à conta do tributo a que se referir; <BR><BR>II - a parcela utilizada para a quitação de débitos do contribuinte ou responsável será creditada à conta do respectivo tributo." (NR)</DIR>
+<DIR>"Art. 74.&nbsp;.......................................................................................... <BR>.......................................................................................................... <BR><BR>§ 18. No caso de apresentação de manifestação de inconformidade contra a não homologação da compensação, fica suspensa a exigibilidade da multa de ofício de que trata o § 17, ainda que não impugnada essa exigência, enquadrando-se no disposto no inciso III do art. 151 da Lei nº 5.172, de 25 de outubro de 1966 - Código Tributário Nacional." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;O art. 19 da Lei nº 10.522, de 19 de julho de 2002, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 19.&nbsp;.......................................................................................... <BR>.......................................................................................................... <BR><BR>II - matérias que, em virtude de jurisprudência pacífica do Supremo Tribunal Federal, do Superior Tribunal de Justiça, do Tribunal Superior do Trabalho e do Tribunal Superior Eleitoral, sejam objeto de ato declaratório do Procurador-Geral da Fazenda Nacional, aprovado pelo Ministro de Estado da Fazenda; <BR>.........................................................................................................<BR><BR>IV - matérias decididas de modo desfavorável à Fazenda Nacional pelo Supremo Tribunal Federal, em sede de julgamento realizado nos termos do art. 543-B da Lei nº 5.869, de 11 de janeiro de 1973 - Código de Processo Civil; <BR><BR>V - matérias decididas de modo desfavorável à Fazenda Nacional pelo Superior Tribunal de Justiça, em sede de julgamento realizado nos termos dos art. 543-C da Lei nº 5.869, de 11 de janeiro de 1973 - Código de Processo Civil, com exceção daquelas que ainda possam ser objeto de apreciação pelo Supremo Tribunal Federal. <BR><BR>§ 1º Nas matérias de que trata este artigo, o Procurador da Fazenda Nacional que atuar no feito deverá, expressamente: <BR><BR>I - reconhecer a procedência do pedido, quando citado para apresentar resposta, inclusive em embargos à execução fiscal e exceções de pré-executividade, hipóteses em que não haverá condenação em honorários; ou <BR><BR>II - manifestar o seu desinteresse em recorrer, quando intimado da decisão judicial. <BR>......................................................................................................... <BR><BR>§ 4º A Secretaria da Receita Federal do Brasil não constituirá os créditos tributários relativos às matérias de que tratam os incisos II, IV e V do <I>caput</I>, após manifestação da Procuradoria- Geral da Fazenda Nacional nos casos dos incisos IV e V do <I>caput</I>. <BR><BR>§ 5º As unidades da Secretaria da Receita Federal do Brasil deverão reproduzir, em suas decisões sobre as matérias a que se refere o <I>caput</I>, o entendimento adotado nas decisões definitivas de mérito, que versem sobre essas matérias, após manifestação da Procuradoria-Geral da Fazenda Nacional nos casos dos incisos IV e V do <I>caput</I>.<BR>.......................................................................................................... <BR><BR>§ 7º Na hipótese de créditos tributários já constituídos, a autoridade lançadora deverá rever de ofício o lançamento, para efeito de alterar total ou parcialmente o crédito tributário, conforme o caso, após manifestação da Procuradoria-Geral da Fazenda Nacional nos casos dos incisos IV e V do <I>caput</I>." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;O art. 6º da Lei nº 8.218, de 29 de agosto de 1991, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 6º&nbsp;........................................................................................... <BR>......................................................................................................... <BR><BR>§ 3º O disposto no <I>caput</I> aplica-se também às penalidades aplicadas isoladamente." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;O art. 62 da Lei nº 10.833, de 29 de dezembro de 2003, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 62.&nbsp;................................................................................... <BR><BR>I - instalações portuárias previstas no inciso III do art. 2º da Lei nº 12.815, de 5 de junho de 2013;<BR><BR>II - bens destinados à pesquisa e lavra de jazidas de petróleo e gás natural em construção ou conversão no País, contratados por empresas sediadas no exterior e relacionados em ato do Poder Executivo. <BR><BR><I>Parágrafo único. </I>No caso do inciso II, o beneficiário do regime será o contratado pela empresa sediada no exterior e o regime poderá ser operado também em estaleiros navais ou em outras instalações industriais, destinadas à construção dos bens de que trata aquele inciso." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;A alínea <EM>a</EM> do inciso II do § 1º do art. 10 da Lei nº 9.393, de 19 de dezembro de 1996, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 10.&nbsp;.................................................................................. <BR><BR>§ 1º ................................................................................................. <BR>......................................................................................................... <BR><BR>II - ...........................................................................................<BR><BR>&nbsp;<EM>a) </EM>de preservação permanente e de reserva legal, previstas na Lei nº 12.651, de 25 de maio de 2012;<BR>..................................................................................................." (NR)</DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;A alteração promovida pelo art. 24 aplica-se aos fatos geradores ocorridos a partir de 1º de janeiro de 2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;A Lei nº 12.783, de 11 de janeiro de 2013, passa a vigorar com as seguintes alterações: </P>
+<DIR>"Art. 8º&nbsp;.......................................................................................... <BR>......................................................................................................... <BR><BR>§ 4º Ficam reduzidas a zero as alíquotas da Contribuição para o PIS/Pasep e da Contribuição para o Financiamento da Seguridade Social - COFINS incidentes sobre as indenizações a que se referem o § 2º. <BR><BR>§ 5º (VETADO)." (NR)</DIR>
+<DIR>"Art. 15. ......................................................................................... <BR>.........................................................................................................</DIR>
+<DIR>§ 9º Ficam reduzidas a 0 (zero) as alíquotas da Contribuição para o PIS/Pasep e da Contribuição para o Financiamento da Seguridade Social - COFINS incidentes sobre as indenizações a que se referem os §§ 1º e 2º." (NR)&nbsp;<BR><BR></DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 27.&nbsp;A Lei nº 12.783, de 11 de janeiro de 2013, passa a vigorar acrescida do seguinte art. 26-A:</P>
+<DIR>"Art. 26-A.&nbsp;As reduções de que tratam o § 4º do art. 8º e § 9º do art. 15 desta Lei, constantes dos arts. 21 da Medida Provisória nº 612, de 4 de abril de 2013, serão aplicadas às indenizações cujas obrigações de pagamento sejam assumidas pelo poder concedente em até 5 (cinco) anos após a data de publicação desta Lei, alcançadas, inclusive, as parcelas dessas indenizações pagas depois do prazo." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;A Lei nº 12.715, de 17 de setembro de 2012, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 4º&nbsp;......................................................................................... <BR>........................................................................................................ <BR><BR>§ 6º .......................................................................................... <BR><BR>I - ................................................................................................... <BR>.........................................................................................................</DIR>
+<DIR><EM>e) </EM>ficam limitadas a 1% (um por cento) do imposto sobre a renda devido com relação ao programa de que trata o art. 1º, e a 1% (um por cento) do imposto sobre a renda devido com relação ao programa de que trata o art. 3º; e&nbsp;<BR><BR>II - ................................................................................................... <BR>.........................................................................................................</DIR>
+<DIR>&nbsp;<EM>d) </EM>ficam limitadas a 1% (um por cento) do imposto sobre a renda devido em cada período de apuração trimestral ou anual com relação ao programa de que trata o art. 1º, e a 1% (um por cento) do imposto sobre a renda devido em cada período de apuração trimestral ou anual com relação ao programa de que trata o art. 3º, observado em ambas as hipóteses o disposto no § 4º do art. 3º da Lei nº 9.249, de 26 de dezembro de 1995.<BR>.........................................................................................................."(NR) <BR></DIR>
+<DIR>"Art. 40.&nbsp;...................................................................................... <BR>..................................................................................................... <BR><BR>§ 3º A habilitação ao Inovar-Auto será concedida em ato do Ministro de Estado do Desenvolvimento, Indústria e Comércio Exterior. <BR><BR>§ 4º ................................................................................................ <BR>......................................................................................................... <BR><BR>II - assumir o compromisso de atingir níveis mínimos de eficiência energética, conforme regulamento. <BR>.............................................................................................." (NR)</DIR>
+<DIR>"Art. 42.&nbsp;................................................................................... <BR><BR>I - o descumprimento dos requisitos estabelecidos por esta Lei ou pelos atos complementares do Poder Executivo, exceto quanto ao compromisso de que trata o inciso II do § 4º do art. 40; ou <BR>............................................................................................." (NR)</DIR>
+<DIR>"Art. 43.&nbsp;Fica sujeita à multa de: <BR><BR>I - 10% (dez por cento) do valor do crédito presumido apurado a empresa que descumprir obrigação acessória relativa ao Inovar-Auto estabelecida nesta Lei ou em ato específico da Secretaria da Receita Federal do Brasil do Ministério da Fazenda;<BR><BR>II - R$ 50,00 (cinquenta reais) para até o primeiro centésimo, inclusive, maior que o consumo energético correspondente à meta de eficiência energética, expressa em megajoules por quilômetro, estabelecida para a empresa habilitada; <BR><BR>III - R$ 90,00 (noventa reais) a partir do primeiro centésimo, exclusive, até o segundo centésimo, inclusive, maior que o consumo energético correspondente à meta de eficiência energética, expressa em megajoules por quilômetro, estabelecida para a empresa habilitada;<BR><BR>IV - R$ 270,00 (duzentos e setenta reais) a partir do segundo centésimo, exclusive, até o terceiro centésimo, inclusive, maior que o consumo energético correspondente à meta de eficiência energética, expressa em megajoules por quilômetro, estabelecida para a empresa habilitada; e<BR><BR>V - R$ 360,00 (trezentos e sessenta reais) a partir do terceiro centésimo, exclusive, para cada centésimo maior que o consumo energético correspondente à meta de eficiência energética, expressa em megajoules por quilômetro, estabelecida para a empresa habilitada. <BR><BR>§ 1º O percentual de que trata o inciso I do <I>caput</I> deverá ser aplicado sobre o valor do crédito presumido referente ao mês anterior ao da verificação da infração. <BR><BR>§ 2º Os valores de que tratam os incisos II, III, IV e V do <I>caput</I> deverão ser multiplicados pelo número de veículos comercializados pela empresa infratora a partir de 4 de abril de 2013 ou a partir da primeira habilitação ao Inovar-Auto, se esta for posterior a 4 de abril de 2013." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;O art. 11 da Lei nº 11.727, de 23 de junho de 2008, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 11.&nbsp;Fica suspenso o pagamento da Contribuição para o PIS/Pasep e da Cofins na venda de cana-de-açúcar, classificada na posição 12.12 da Nomenclatura Comum do Mercosul - NCM. <BR>.............................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;O art. 23 do Decreto nº 70.235, de 6 de março de 1972, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 23.&nbsp;......................................................................................... <BR>......................................................................................................... <BR><BR>§ 2º ................................................................................................ <BR>......................................................................................................... <BR><BR>III - se por meio eletrônico: </DIR>
+<DIR><EM>a) </EM>15 (quinze) dias contados da data registrada no comprovante de entrega no domicílio tributário do sujeito passivo;<BR><EM>b) </EM>na data em que o sujeito passivo efetuar consulta no endereço eletrônico a ele atribuído pela administração tributária, se ocorrida antes do prazo previsto na alíne <EM>a</EM>; ou<BR>c) na data registrada no meio magnético ou equivalente utilizado pelo sujeito passivo;<BR>......................................................................................................" (NR)<BR></DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;(VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; Art. 35.&nbsp;A Lei nº 12.512, de 14 de outubro de 2011, passa a vigorar com as seguintes alterações:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</P>
+<DIR>"Art. 13.&nbsp;................................................................................... <BR><BR>§ 1º A transferência dos recursos de que trata o <I>caput</I> ocorrerá, no mínimo, em 2 (duas) parcelas e no período máximo de 2 (dois) anos, na forma do regulamento. <BR>.............................................................................................. <BR><BR>§ 4º À família beneficiada pelo disposto no <I>caput</I> não se aplica o benefício do <I>caput</I> do art. 13-A." (NR)</DIR>
+<DIR>"Art. 13-A.&nbsp;Para beneficiários localizados na Região do Semiárido, fica a União autorizada a transferir, diretamente ao responsável pela família beneficiária do Programa de Fomento às Atividades Produtivas Rurais, recursos financeiros no valor de até R$ 3.000,00 (três mil reais) por família, para utilização de técnicas de convivência com o Semiárido, na forma indicada por assistência técnica. <BR><BR>§ 1º Incluem-se no Programa, na forma do <I>caput</I>, além das famílias em situação de extrema pobreza, nos termos do inciso I do <I>caput</I> do art. 11, aquelas em situação de pobreza, conforme disposto no § 6º do art. 2º da Lei nº 10.836, de 9 de janeiro de 2004. <BR><BR>§ 2º Aplica-se o disposto nos §§ 1º, 2º e 3º do art. 13 às transferências do benefício de que trata o <I>caput</I>. <BR><BR>§ 3º À família beneficiada pelo disposto no <I>caput</I> não se aplica o benefício do <I>caput</I> do art. 13. <BR><BR>§ 4º A transferência de recursos fica condicionada à disponibilidade orçamentária e financeira prevista para o Programa. <BR><BR>§ 5º O regulamento poderá estabelecer critérios adicionais para o recebimento do benefício de que trata o <I>caput</I> e demais condições para o seu pagamento."</DIR>
+<DIR>"Art. 31.&nbsp;Os recursos de que tratam os arts. 6º, 13 e 13-A poderão ser majorados pelo Poder Executivo em razão da dinâmica socioeconômica do País e de estudos técnicos sobre o tema, observada a dotação orçamentária disponível." (NR)</DIR>
+<P>&nbsp;&nbsp;Art. 36.&nbsp;A Lei nº 9.718, de 27 de novembro de 1998, passa a vigorar com as seguintes alterações: </P>
+<DIR>"Art. 3º&nbsp;............................................................................................ <BR>.......................................................................................................... <BR><BR>§ 10. Em substituição à remuneração por meio do pagamento de tarifas, as pessoas jurídicas que prestem serviços de arrecadação de receitas federais poderão excluir da base de cálculo da Cofins o valor a elas devido em cada período de apuração como remuneração por esses serviços, dividido pela alíquota referida no art. 18 da Lei nº 10.684, de 30 de maio de 2003. <BR><BR>§ 11. Caso não seja possível fazer a exclusão de que trata o § 10 na base de cálculo da Cofins referente ao período em que auferida remuneração, o montante excedente poderá ser excluído da base de cálculo da Cofins dos períodos subsequentes. <BR><BR>§ 12. A Secretaria da Receita Federal do Brasil do Ministério da Fazenda disciplinará o disposto nos §§ 10 e 11, inclusive quanto à definição do valor devido como remuneração dos serviços de arrecadação de receitas federais." (NR)</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;Fica permitida a compra, venda e transporte de ouro produzido em áreas de garimpo autorizadas pelo Poder Público federal, nos termos desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;O transporte do ouro, dentro da circunscrição da região aurífera produtora, até 1 (uma) instituição legalmente autorizada a realizar a compra, será acompanhado por cópia do respectivo título autorizativo de lavra, não se exigindo outro documento.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º O transporte de ouro referido no <I>caput</I> poderá ser feito também pelo garimpeiro, em qualquer modalidade de trabalho prevista no art. 4º da Lei nº 11.685, de 2 de junho de 2008, pelos seus parceiros, pelos membros da cadeia produtiva, e pelos seus respectivos mandatários, desde que acompanhado por documento autorizativo de transporte emitido pelo titular do direito minerário que identificará o nome do portador, o número do título autorizativo, sua localização e o período de validade da autorização de transporte.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º O transporte referido neste artigo está circunscrito à região aurífera produtora, desde a área de produção até uma instituição legalmente autorizada a realizar a compra, de modo que o documento autorizativo terá validade para todos os transportes de ouro realizados pelo mesmo portador.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 3º Entende-se por membros da cadeia produtiva todos os agentes que atuam em atividades auxiliares do garimpo, tais como piloto de avião, comerciantes de suprimentos ao garimpo, fornecedores de óleo combustível, equipamentos e outros agentes.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 4º Entende-se por parceiro todas as pessoas físicas que atuam na extração do ouro com autorização do titular do direito minerário e que tenham acordo com este na participação no resultado da extração mineral.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 5º Entende-se por região aurífera produtora a região geográfica coberta pela província geológica caracterizada por uma mesma mineralização de ouro em depósitos do tipo primário e secundário, aluvionar, eluvionar e coluvionar, e onde estão localizadas as frentes de lavra. </P>
+<P align=left>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;A prova da regularidade da primeira aquisição de ouro produzido sob qualquer regime de aproveitamento será feita com base em: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - nota fiscal emitida por cooperativa ou, no caso de pessoa física, recibo de venda e declaração de origem do ouro emitido pelo vendedor identificando a área de lavra, o Estado ou Distrito Federal e o Município de origem do ouro, o número do processo administrativo no órgão gestor de recursos minerais e o número do título autorizativo de extração; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - nota fiscal de aquisição emitida pela instituição autorizada pelo Banco Central do Brasil a realizar a compra do ouro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para os efeitos deste artigo, a instituição legalmente autorizada a realizar a compra de ouro deverá cadastrar os dados de identificação do vendedor, tais como nome, número de inscrição no Cadastro de Pessoa Física do Ministério da Fazenda - CPF ou Cadastro Nacional da Pessoa Jurídica do Ministério da Fazenda - CNPJ, e o número de registro no órgão de registro do comércio da sede do vendedor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O cadastro, a declaração de origem do ouro e a cópia da Carteira de Identidade - RG do vendedor deverão ser arquivados na sede da instituição legalmente autorizada a realizar a compra do ouro, para fiscalização do órgão gestor de recursos minerais e da Secretaria da Receita Federal do Brasil, pelo período de 10 (dez) anos, contados da compra e venda do ouro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º É de responsabilidade do vendedor a veracidade das informações por ele prestadas no ato da compra e venda do ouro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Presumem-se a legalidade do ouro adquirido e a boa-fé da pessoa jurídica adquirente quando as informações mencionadas neste artigo, prestadas pelo vendedor, estiverem devidamente arquivadas na sede da instituição legalmente autorizada a realizar a compra de ouro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;A prova da regularidade da posse e do transporte de ouro para qualquer destino, após a primeira aquisição, será feita mediante a apresentação da respectiva nota fiscal, conforme o disposto no § 1º no art. 3º da Lei nº 7.766, de 11 de maio de 1989. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Portaria do Diretor-Geral do órgão gestor de recursos minerais a ser expedida no prazo de 180 (cento e oitenta) dias da publicação desta Lei disciplinará os documentos comprobatórios e modelos de recibos e do cadastro previstos a que se referem, respectivamente, os incisos I e II do <I>caput</I> e o § 1º do art. 39 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para fins do disposto no art. 39 desta Lei, até a entrada em vigor da Portaria do órgão gestor de recursos minerais, serão consideradas regulares as aquisições de ouro, já efetuadas por instituição legalmente autorizada a realizar a compra do ouro, anteriores à publicação desta Lei, documentadas ou não por meio dos recibos em modelos disponíveis no comércio em geral, desde que haja a adequada identificação dos respectivos vendedores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Quando se tratar de ouro transportado, dentro da região aurífera produtora, pelos garimpeiros, em qualquer modalidade de trabalho prevista no art. 4º da Lei nº 11.685, de 2 de junho de 2008, pelos parceiros, pelos membros da cadeia produtiva e pelos seus respectivos mandatários, a prova da regularidade de que trata o <I>caput</I> dar-se-á por meio de documento autorizativo de transporte emitido pelo titular do direito minerário nos termos do § 1º do art. 38 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;O garimpeiro, em qualquer modalidade de trabalho prevista no art. 4º da Lei nº 11.685, de 2 de junho de 2008, os seus parceiros, os membros da cadeia produtiva e os respectivos mandatários com poderes especiais têm direito à comercialização do ouro diretamente com instituição legalmente autorizada a realizar a compra. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Até que seja expedida a Portaria mencionada no § 1º do art. 40 desta Lei, ou por 12 (doze) meses após a data de publicação desta Lei, o que ocorrer primeiro, é reconhecida a regularidade da aquisição de ouro por instituição legalmente autorizada a realizar a compra, e seus mandatários, desde que regularmente identificados os respectivos vendedores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;Esta Lei entra em vigor: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - na data de sua publicação, com efeitos retroativos a 4 de junho de 2013, em relação ao art. 13, nas partes em que altera o art. 3º da Lei nº 12.546, de 14 de dezembro de 2011, em que inclui a alínea <EM>c</EM> no inciso II do § 1º do art. 8º da Lei nº 12.546, de 14 de dezembro de 2011, e na parte em que altera o inciso II do <I>caput</I> do art. 9º da Lei nº 12.546, de 14 de dezembro de 2011, e em relação aos arts. 16, 17 e 35 desta Lei;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; II - a partir do primeiro dia do quarto mês subsequente ao de sua publicação, em relação: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>ao art. 13, na parte em que inclui o inciso IV no <I>caput</I> do art. 7º e os incisos XI e XII no § 3º do art. 8º da Lei nº 12.546, de 14 de dezembro de 2011; e que altera o <I>caput</I> e o § 4º do art. 8º da Lei nº 12.546, de 14 de dezembro de 2011; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>ao inciso I do art. 14 desta Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>ao art. 15 desta Lei; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp; III - a partir do primeiro dia do quarto mês subsequente ao da publicação da Medida Provisória nº 612, de 4 de abril de 2013, em relação ao art. 12 e aos incisos III e IV do art. 14;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; IV - a partir de 1º de janeiro de 2014 em relação:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>aos incisos V, VI e VII do <I>caput</I> do art. 7º da Lei nº 12.546, de 14 de dezembro de 2011, acrescentados pelo art. 13 desta Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>aos incisos XIII, XIV, XV e XVI do § 3º e ao § 10, do art. 8º da Lei nº 12.546, de 14 de dezembro de 2011, acrescentados pelo art. 13 desta Lei; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>ao inciso II do art. 14 desta Lei; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp; V - na data de sua publicação para os demais dispositivos, produzindo efeitos quanto ao art. 27 a partir da entrada em vigor da Lei nº 12.783, de 11 de janeiro de 2013.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;Ficam revogados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o art. 5º da Lei nº 12.716, de 21 de setembro de 2012;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os incisos VIII a XI do <I>caput</I> do art. 7º e os incisos XVII a XX do § 3º do art. 8º, ambos da Lei nº 12.546, de 14 de dezembro de 2011. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 19 de julho de 2013; 192º da Independência e 125º da República. </P>
+<P>DILMA ROUSSEFF <BR>José Eduardo Cardozo <BR>Guido Mantega <BR>César Borges <BR>Paulo Roberto dos Santos Pinto <BR>Fernando Damata Pimentel <BR>Edison Lobão <BR>Miriam Belchior <BR>Paulo Bernardo Silva <BR>Luís Inácio Lucena Adams </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 - Edição Extra de 19/07/2013
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1 - Edição Extra
+                                                         - 19/7/2013, Página 1 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,918 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>Lei nº 6.435, de 15 de Julho de 1977 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre as entidades de previdência privada, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - Lei nº 6.435, de 15 de Julho de 1977 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                            <li>  	
+                                                <a href="lei-6435-15-julho-1977-366382-veto-36487-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-6435-15-julho-1977-366382-retificacao-36523-pl.html">Retificação</a>
+                                            </li>
+                                    <li>
+                                        <a href="lei-6435-15-julho-1977-366382-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>Lei nº 6.435, de 15 de Julho de 1977</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							<META name=GENERATOR content="MSHTML 5.50.4807.2300">Dispõe sobre as entidades de previdência privada, e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA, <BR>Faço saber que o Congresso Nacional, decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Introdução </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Entidades de previdência privada, para os efeitos da presente Lei, são as que têm por objeto instituir planos privados de concessão de pecúlios ou de rendas, de benefícios complementares ou assemelhados aos da Previdência Social, mediante contribuição de seus participantes, dos respectivos empregadores ou de ambos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para os efeitos desta Lei, considera-se participante o associado, segurado ou beneficiário incluído nos planos a que se refere este artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;A constituição, organização e funcionamento de entidades de previdência privada dependem de prévia autorização do Governo Federal, ficando subordinadas às disposições da presente Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;A ação do poder público será exercida com o objetivo de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - proteger os interesses dos participantes dos planos de benefícios; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - determinar padrões mínimos adequados de segurança econômico-financeira, para preservação da liquidez e da solvência dos planos de benefícios, isoladamente, e da entidade de previdência privada, em seu conjunto; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - disciplinar a expansão dos planos de benefícios, propiciando condições para sua integração no processo econômico e social do País; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - coordenar as atividades reguladas por esta Lei com as políticas de desenvolvimento social e econômico-financeira do Governo Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Para os efeitos da presente Lei, as entidades de previdência privada são classificadas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - de acordo com a relação entre a entidade e os participantes dos planos de benefícios, em: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>fechadas, quando acessíveis exclusivamente aos empregados de uma só empresa ou de um grupo de empresas, as quais, para os efeitos desta Lei, serão denominadas patrocinadoras; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>abertas, as demais. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - de acordo com seus objetivos, em: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>entidades de fins lucrativos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>entidades sem fins lucrativos.&nbsp; </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1° As entidades fechadas não poderão ter fins lucrativos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para os efeitos desta Lei, são equiparáveis aos empregados de empresas patrocinadoras os seus gerentes, os diretores e conselheiros ocupantes de cargos eletivos, bem como os empregados e respectivos dirigentes de fundações ou outras entidades de natureza autônoma, organizadas pelas patrocinadoras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O disposto no parágrafo anterior não se aplica aos diretores e conselheiros das empresas públicas, sociedades de economia mista e fundações vinculadas à Administração Pública. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 4º Às empresas equiparam-se entidades sem fins lucrativos, assistenciais, educacionais ou religiosas, podendo os planos destas incluir os seus empregados e os religiosos que as servem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;As entidades de previdência privada serão organizadas como: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - sociedades anônimas, quando tiverem fins lucrativos; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - sociedades civis ou fundações, quando sem fins lucrativos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Não se considerará atividade de previdência privada, sujeita às disposições desta Lei, a simples instituição, no âmbito limitado de uma empresa, de uma fundação ou de outra entidades de natureza autônoma, de pecúlio por morte, de pequeno valor, desde que administrado exclusivamente sob a forma de rateio entre os participantes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para os fins deste artigo, considera-se de pequeno valor o pecúlio que, para cobertura da mesma pessoa, não exceda o equivalente ao valor nominal atualizado de 300 (trezentas) Obrigações Reajustáveis do Tesouro Nacional - ORTN. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;As entidades abertas integram-se no Sistema Nacional de Seguros Privados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As sociedades seguradoras autorizadas a operar no Ramo Vida poderão ser também autorizadas a operar planos de previdência privada, obedecidas as condições estipuladas nesta Lei para as entidades abertas de fins lucrativos. <BR><BR></P>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Das Entidades Abertas </B><BR><BR></CENTER>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Do Órgão Normativo </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Para os fins deste Capítulo compete exclusivamente ao órgão normativo do Sistema Nacional de Seguros Privados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - fixar as diretrizes e normas da política a ser seguida pelas entidades referidas no artigo anterior; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - regular a constituição, organização, funcionamento e fiscalização de quantos exerçam atividades subordinadas a este Capítulo, bem como a aplicação das penalidades cabíveis; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - estipular as condições técnicas sobre custeio, investimentos, correção de valores monetários e outras relações patrimoniais; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - estabelecer as características gerais para os planos de pecúlio ou de rendas, na conformidade das diretrizes e normas de política fixadas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - estabelecer as normas gerais de contabilidade, atuária e estatística a serem observadas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - conhecer dos recursos interpostos de decisões dos órgãos executivos da política traçada pelo órgão normativo do Sistema; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - disciplinar o processo de cobrança de comissões de qualquer natureza para a colocação de planos. <BR><BR>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Do Órgão Executivo </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Compete ao Órgão Executivo do Sistema Nacional de Seguros Privados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - processar os pedidos de autorização para constituição, fundamento, fusão, incorporação, grupamento, transferência de controle e reforma dos estatutos das entidades abertas, opinar sobre os mesmos e encaminhá-los ao Ministro da Indústria e do Comércio; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - baixar instruções relativas à regulamentação das atividades das entidades abertas e aprovar seus planos de benefícios, de acordo com as diretrizes do órgão normativo do Sistema; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - fiscalizar a execução das normas gerais de contabilidade, atuária e estatística fixadas pelo órgão normativo do Sistema; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - fiscalizar as atividades das entidades abertas, inclusive quanto ao exato cumprimento da legislação e das normas em vigor e aplicar as penalidades cabíveis; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - proceder à liquidação das entidades abertas que tiverem cassada a autorização para funcionar no País; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - estabelecer condições para a posse e para o exercício de quaisquer cargos de administração de entidades abertas, assim como para o exercício de quaisquer funções em órgãos consultivos, fiscais ou assemelhados, segundo normas que forem expedidas pelo órgão normativo do Sistema. <BR><BR>
+<CENTER><B>SEÇÃO III </CENTER></B>
+<CENTER><B>Da Legislação Aplicável </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;As entidades abertas serão reguladas pelas disposições da presente Lei e, no que couber, pela legislação aplicável às entidades de seguro privado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Aplica-se às entidades abertas com fins lucrativos o disposto no artigo 25 da Lei nº. 4.595, de 3 de dezembro de 1964, com a redação que lhe deu o artigo 1º da Lei nº. 5.0, de 7 de outubro de 19. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Aos corretores de planos previdenciários de entidades abertas aplica-se a regulamentação da profissão de corretor de seguros de vida e de capitalização. <BR><BR></P>
+<CENTER><B>SEÇÃO IV </CENTER></B>
+<CENTER><B>Da Autorização para Funcionamento </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;A autorização para funcionamento de entidade aberta será concedida mediante portaria do Ministro da Indústria e do Comércio, a requerimento dos representantes legais da interessada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Concedida a autorização, a entidade terá o prazo de 90 (noventa) dias para comprovar, perante o órgão Executivo do Sistema Nacional de Seguros Privados, o cumprimento de formalidades legais e outras exigências. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A falta da comprovação a que se refere o parágrafo anterior acarretará a caducidade automática da autorização para funcionamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Aprovada a documentação apresentada em decorrência das disposições do artigo anterior, será expedida carta-patente pelo órgão executor do Sistema Nacional de Seguros Privados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;As alterações dos estatutos das entidades abertas dependerão de prévia autorização do Ministro da Indústria e do Comércio. <BR><BR>
+<CENTER><B>SEÇÃO V </CENTER></B>
+<CENTER><B>Das Operações </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;As entidades abertas terão como única finalidade a instituição de planos de concessão de pecúlios ou de rendas e só poderão operar os planos para os quais tenham autorização específica, segundo normas gerais e técnicas aprovadas pelo órgão normativo do Sistema Nacional de Seguros Privados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Para garantia de todas as suas obrigações, as entidades abertas constituirão reservas técnicas, fundos especiais e provisões, de conformidade com os critérios fixados pelo órgão normativo do Sistema Nacional de Seguros Privados, além das reservas e fundos determinados em leis especiais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; §1º As aplicações decorrentes do disposto neste artigo serão feitas conforme diretrizes estabelecidas pelo Conselho Monetário Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; §2º Aº Conselho Monetário Nacional caberá estabelecer diretrizes diferenciadas para determinadas entidades, levando em conta a existência de condições peculiares relativas à aplicação dos respectivos patrimônios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; §3º Na hipótese a que se refere o parágrafo anterior, a entidade terá prazo mínimo de 5 (cinco) anos para ajustar às diretrizes estabelecidas pelo Conselho Monetário Nacional todas as aplicações realizadas até a data de publicação desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Os bens garantidores das reservas técnicas, fundos e provisões serão registrados no órgão Executivo do Sistema Nacional de Seguros Privados e não poderão ser alienados, prometidos alienar ou de qualquer forma gravados sem sua prévia e expressa autorização sendo nulas, de pleno direito, quaisquer operações realizadas com violação do disposto neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Quando a garantia recair em bem imóvel, será obrigatoriamente inscrita no competente Cartório do Registro Geral de Imóveis, mediante requerimento firmado pela entidade e pelo Órgão Executivo do Sistema Nacional de Seguros Privados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Os participantes dos planos de benefícios que sejam credores destes têm privilégio especial sobre reservas técnicas, fundos especiais ou provisões garantidoras das operações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;As entidades abertas de fins lucrativos não poderão distribuir lucros ou quaisquer fundos correspondentes às reservas patrimoniais, desde que essa distribuição possa prejudicar os investimentos obrigatórios do capital e reserva, de acordo com os critérios estabelecidos na presente Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;As entidades abertas obedecerão às instruções do órgão Executivo do Sistema Nacional de Seguros Privados sobre as operações relacionadas com os planos de benefícios, fornecendo-lhe dados e informações atinentes a quaisquer aspectos de suas atividades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os servidores credenciados do Órgão Executivo do Sistema Nacional de Seguros Privados terão livre acesso às entidades abertas, delas podendo requisitar e apreender livros, notas técnicas e documentos, caracterizando-se como embaraço à fiscalização, sujeito às penas previstas nesta Lei, qualquer dificuldade oposta à consecução desse objetivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;É vedado às entidades abertas realizar quaisquer operações comerciais e financeiras: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - com seus diretores e membros dos conselhos consultivos, administrativos, fiscais ou assemelhados, bem assim com os respectivos cônjuges; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - com os parentes, até o 2º grau, das pessoas a que se refere o inciso anterior; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - com empresa de que participem as pessoas a que se referem os incisos I e II, que possuam, em conjunto ou isoladamente, mais de 10% (dez por cento) do capital, salvo autorização do órgão Executivo do Sistema Nacional de Seguros Privados. <BR><BR>
+<CENTER><B>SEÇÃO VI </CENTER></B>
+<CENTER><B>Das Disposições Especiais </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;Deverão constar dos regulamentos dos planos de benefícios, das propostas de inscrição e dos certificados de participantes das entidades abertas, dispositivos que indiquem: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - condições de admissão dos participantes de cada plano de benefício; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - período de carência, quando exigido, para concessão do benefício; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - normas de cálculos dos benefícios; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - sistema de revisão dos valores das contribuições e dos benefícios; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - existência ou não, nos planos dos benefícios, de valor de resgate das contribuições saldadas dos participantes e, em caso afirmativo, a norma de cálculo, quando estes se retirarem dos planos depois de cumpridas as condições previamente fixadas e antes da aquisição plena do direito aos benefícios; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - especificação de qualquer parcela destinada a fim diverso da garantia estabelecida pelo pagamento da contribuição; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - condição de perda da qualidade de participante dos planos de benefícios; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - informações que, a critério do órgão normativo do Sistema Nacional de Seguros Privados visem ao esclarecimento dos participantes dos planos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A todo participante será obrigatoriamente entregue, quando de sua inscrição, cópia dos estatutos e do plano de benefícios, além de material explicativo que descreva, em linguagem simples e precisa, suas características. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A promoção de venda dos planos não poderá incluir informações diferentes das que figurem nos documentos referidos neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O pagamento de benefício ao participante de plano previdenciário, dependerá de prova de quitação da mensalidade devida, antes da ocorrência do fato gerador, na forma estipulada no plano subscrito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;Os valores monetários das contribuições e dos benefícios serão atualizados segundo índice de variação do valor nominal atualizado das Obrigações Reajustáveis do Tesouro Nacional - ORTN e nas condições que forem estipuladas pelo órgão normativo do Sistema Nacional de Seguros Privados, inclusive quanto à periodicidade das atualizações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Admitir-se-á cláusula de correção monetária diversa da de ORTN, desde que baseada em índices e condições aprovadas pelo órgão normativo do Sistema Nacional de Seguros Privados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;Nas entidades abertas sem fins lucrativos, o resultado do exercício, satisfeitas todas as exigências legais e regulamentares no que se refere aos benefícios, será destinado à constituição de uma reserva de contingência de benefícios e, se ainda houver sobra, a programas culturais e de assistência aos participantes, aprovados pelo órgão normativo do Sistema Nacional de Seguros Privados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Todos os planos de benefícios deverão ser avaliados atuarialmente, em cada balanço, por entidade ou profissional legalmente habilitado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A responsabilidade profissional do atuário, verificada pela inadequação dos planos estabelecidos, quer no que se refere às contribuições, quer no que diz respeito ao valor das reservas, será apurada pelo Instituto Brasileiro de Atuária - IBA, por solicitação dos interessados, independentemente da ação judicial cabível. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Nas avaliações de que trata o artigo anterior deverão ser observadas as condições fixadas pelo órgão normativo do Sistema Nacional de Seguros Privados a respeito de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - regimes financeiros; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - tábuas biométricas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - taxa de juro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;As entidades abertas, inclusive as sem fins lucrativos, submeterão suas contas a auditores independentes, registrados no Banco Central do Brasil, publicando, anualmente, o parecer respectivo, juntamente com o balanço geral e demonstrações de Lucros e Perdas ou de Resultados do Exercício. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A auditoria independente poderá ser exigida também quanto aos aspectos atuariais, conforme normas a serem estabelecidas pelo órgão normativo do Sistema Nacional de Seguros Privados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;As entidades abertas deverão levantar balancetes ao final de cada trimestre, e balanço geral no último dia útil de cada ano. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O balanço e os balancetes deverão ser enviados ao Órgão Executivo do Sistema Nacional de Seguros Privados para exame e ao Banco Central do Brasil para fins estatísticos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;As entidades abertas deverão comunicar ao Órgão Executivo do Sistema Nacional de Seguros Privados os atos relativos à eleição de diretores e membros de conselhos deliberativos, consultivos, fiscais ou assemelhados, no prazo de 15 (quinze) dias de sua ocorrência. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; §1° O Órgão Executivo do Sistema Nacional de Seguros Privados, no prazo máximo de 60 (sessenta) dias, decidirá aceitar ou recusar o nome do eleito que não atender às condições a que se refere o artigo 9°, inciso VI, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; §2º A posse do eleito dependerá da aceitação a que se refere o parágrafo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; §3º Oferecida integralmente a documentação que for exigida nos termos do artigo 9°, inciso VI, desta Lei, e decorrido, sem manifestação do Órgão Executivo do Sistema Nacional de Seguros Privados, o prazo mencionado no § 1º deste artigo, entender-se-á não ter havido recusa à posse. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Na denominação das entidades abertas é vedada a utilização de expressões e siglas relacionadas com atividades profissionais específicas, ou de qualquer outras não condizentes com aquela condição, a critério do Órgão Executivo do Sistema Nacional de Seguros Privados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Os estatutos das entidades abertas, sem fins lucrativos, ao disciplinarem a forma de sua administração e controle, estabelecerão distinção expressa entre associados controladores e simples participantes dos planos de benefícios. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; §1° Associados controladores, para os efeitos desta Lei, são os integrantes de colegiados, obrigatoriamente instituídos, compostos de número ímpar e integrados de, no mínimo, 9 (nove) membros, todos pessoas físicas, com poderes normativos de fiscalização e de controle, especialmente os de estabelecer a política operativa, de designar a diretoria e de dispor, em instância final, do patrimônio da entidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; §2º Os associados controladores, mesmo que não exerçam diretamente funções de diretores, serão solidariamente responsáveis pelos atos ilegais ou danosos praticados, com o seu consentimento, pelo próprio colegiado ou pela diretoria da entidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;Sem prejuízo do disposto no artigo anterior, as entidades abertas, sem fins lucrativos, poderão remunerar seus diretores e membros de conselhos deliberativos, consultivos, fiscais ou assemelhados, desde que respeitadas as exigências estabelecidas no artigo 23. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>No caso de acumulação de funções, a remuneração corresponderá apenas a uma delas, cabendo opção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Nas entidades abertas, sem fins lucrativos, as despesas administrativas não poderão exceder os limites fixados, anualmente, pelo órgão normativo do Sistema Nacional de Seguros Privados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;Mediante prévia e expressa autorização do Órgão Executivo do Sistema Nacional de Seguros Privados, em cada caso, as entidades abertas, sem fins lucrativos, poderão adicionar, às contribuições de seus planos de benefícios, percentual específico destinado a obras filantrópicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A aplicação do percentual de que trata este artigo fica sujeita, sob pena de cancelamento da respectiva autorização de recebimento, à prestação anual de contas ao Órgão Executivo do Sistema Nacional de Seguros Privados. <BR><BR></P>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Das Entidades Fechadas </CENTER></B><BR>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Normas Gerais </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;As entidades fechadas consideram-se complementares do sistema oficial de previdência e assistência social, enquadrando-se suas atividades na área de competência do Ministério da Previdência e Assistência Social. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As patrocinadoras supervisionarão as atividades das entidades referidas neste artigo, orientando-se a fiscalização do poder público no sentido de proporcionar garantia aos compromissos assumidos para com os participantes dos planos de benefícios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No caso de várias patrocinadoras, será exigida a celebração de convênio de adesão entre estas e a entidade de previdência, no qual se estabeleçam, pormenorizadamente, as condições de solidariedade das partes, inclusive quanto ao fluxo de novas entradas anuais de patrocinadoras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Para os fins deste Capítulo, compete ao Ministério da Previdência e Assistência Social: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - através de órgão normativo a ser expressamente designado: <BR></P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>fixar as diretrizes e normas da política complementar de previdência a ser seguida pelas entidades referidas no artigo anterior, em face da orientação da política de previdência e assistência social do Governo Federal; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>regular a constituição, organização, funcionamento e fiscalização dos que exercem atividades subordinadas a este Capítulo, bem como a aplicação das penalidades cabíveis; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>estipular as condições técnicas sobre custeio, investimentos e outras relações patrimoniais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>estabelecer as características gerais para planos de benefícios, na conformidade do disposto na alínea "a", supra; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>estabelecer as normas gerais de contabilidade, atuária e estatística a serem observadas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>conhecer dos recursos de decisões dos órgãos executivos da política traçada na forma da alínea "a" deste inciso. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Através de órgão executivo a ser expressamente designado: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>processar os pedidos de autorização para constituição, funcionamento, fusão, incorporação, grupamento, transferência de controle e reforma dos Estatutos das entidades fechadas, opinar sobre os mesmos e encaminhá-los ao Ministro da Previdência e Assistência Social; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>baixar instruções e expedir circulares para implementação das normas estabelecidas, conforme o inciso I deste artigo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>fiscalizar a execução das normas gerais de contabilidade, atuária e estatística fixadas na forma do inciso I, alínea "e" deste artigo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>fiscalizar as atividades das entidades fechadas, inclusive quanto ao exato cumprimento da legislação e normas em vigor e aplicar as penalidades cabíveis; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>proceder à liquidação das entidades fechadas, que tiverem cassada a autorização de funcionamento, ou das que deixarem de ter condições para funcionar. </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º No caso de entidades fechadas patrocinadas por empresas ou outras instituições da administração federal, a estas caberão as atribuições de fiscalização e controle previstos nas alíneas <EM>c</EM> e <EM>d</EM> , do inciso II deste artigo. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A atuação das empresas ou outras instituições federais, referidas no parágrafo anterior, exercer-se-á em estreita articulação com órgão executivo mencionado no inciso II deste artigo, o qual poderá realizar complementarmente a fiscalização antes mencionada, a pedido dos instituidores ou patrocinadores, ou, excepcionalmente, de ofício, na omissão destas, bem como lhes proporcionará, quando solicitada, a necessária assistência técnica. <BR><BR></P>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Da Legislação Aplicável </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;As entidades fechadas serão reguladas pela legislação geral e pela legislação de previdência e assistência social, no que lhes for aplicável, e, em especial, pelas disposições da presente Lei. <BR><BR>
+<CENTER><B>SEÇÃO III </CENTER></B>
+<CENTER><B>Da Autorização para Funcionamento </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;A autorização para funcionamento das entidades fechadas será concedida mediante portaria do Ministro da Previdência e Assistência Social, a requerimento, conjunto, dos representantes legais da entidade interessada e de sua patrocinadora ou patrocinadoras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;As alterações dos estatutos das entidades fechadas dependerão de prévia autorização do Ministro da Previdência e Assistência Social. <BR><BR>
+<CENTER><B>SEÇÃO IV </CENTER></B>
+<CENTER><B>Das Operações </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;As entidades fechadas terão como finalidade básica a execução e operação de planos de benefícios para os quais tenham autorização específica, segundo normas gerais e técnicas aprovadas pelo órgão normativo do Ministério da Previdência e Assistência Social. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Independentemente de autorização específica, as entidades fechadas poderão incumbir-se da prestação de serviços assistenciais, desde que as operações sejam custeadas pelas respectivas patrocinadoras e contabilizadas em separado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Excetuadas as que tenham como patrocinadoras empresas públicas, sociedades de economia mista ou fundações vinculadas à Administração Pública, poderão as entidades fechadas executar programas assistenciais de natureza social e financeira, destinados exclusivamente aos participantes das entidades, nas condições e limites estabelecidos pelo órgão normativo do Ministério da Previdência e Assistência Social. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As entidades fechadas são consideradas instituições de assistência social, para os efeitos da letra "c" do item II do artigo 19 da Constituição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Sem prejuízo do disposto no parágrafo anterior, as entidades fechadas poderão remunerar seus diretores e membros de conselhos deliberativos, consultivos, fiscais ou assemelhados, desde que respeitadas as exigências estabelecidas no artigo 23 e no parágrafo único do artigo 31. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Para garantia de todas as suas obrigações, as entidades fechadas constituirão reservas técnicas, fundos especiais e provisões em conformidade com os critérios fixados pelo órgão normativo do Ministério da Previdência e Assistência Social, além das reservas e fundos determinados em leis especiais.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; §1º As aplicações decorrentes do disposto neste artigo serão feitas conforme diretrizes estabelecidas pelo Conselho Monetário Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; §2º O Conselho Monetário Nacional poderá estabelecer diretrizes diferenciadas para uma determinada entidade, ou grupo de entidades, levando em conta a existência de condições peculiares relativamente a suas patrocinadoras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;As entidades fechadas obedecerão às instruções do Órgão Executivo do Ministério da Previdência e Assistência Social sobre as operações relacionadas com os planos de benefícios, bem como fornecerão dados e informações atinentes a quaisquer aspectos de suas atividades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os servidores credenciados do Ministério da Previdência e Assistência Social terão livre acesso às entidades fechadas, delas podendo requisitar e apreender livros, notas técnicas e documentos, caracterizando-se como embaraço à fiscalização, sujeito às penas previstas nesta Lei, qualquer dificuldade oposta à consecução desse objetivo. </P>
+<CENTER><B>SEÇÃO V </CENTER></B>
+<CENTER><B>Das Disposições Especiais </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Deverão constar dos regulamentos dos planos de benefícios, das propostas de inscrição e dos certificados dos participantes das entidades fechadas, dispositivos que indiquem: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - condições de admissão dos participantes de cada plano de benefício; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - período de carência, quando exigido, para concessão de benefício; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - normas de cálculo dos benefícios; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - sistema de revisão dos valores das contribuições e dos benefícios; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - existência ou não, nos planos de benefícios de valor de resgate das contribuições saldadas dos participantes e, em caso afirmativo, a norma de cálculo quando estes se retirem dos planos, depois de cumpridas condições previamente fixadas e antes da aquisição do direito pleno aos benefícios; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - especificação de qualquer parcela destinada a fim diverso da garantia estabelecida pelo pagamento da contribuição; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - condição de perda da qualidade de participantes dos planos de benefícios; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - informações que, a critério do órgão normativo, visem ao esclarecimento dos participantes dos planos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para efeito de revisão dos valores dos benefícios, deverão as entidades observar as condições que forem estipuladas pelo órgão normativo do Ministério da Previdência e Assistência Social, baseadas nos índices de variação do valor nominal atualizado das Obrigações Reajustáveis do Tesouro Nacional - ORTN. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Admitir-se-á cláusula de correção dos benefícios diversa da de ORTN, baseada em variação coletiva de salários, nas condições estabelecidas pelo órgão normativo do Ministério da Previdência e Assistência Social. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Faculta-se às patrocinadoras das entidades fechadas a assunção da responsabilidade de encargos adicionais, referentes a benefícios concedidos, resultantes de ajustamentos em bases superiores às previstas nos parágrafos anteriores, mediante o aumento do patrimônio liquido, resultante de doação, subvenção ou realização do capital necessário à cobertura da reserva correspondente, nas condições estabelecidas pelo órgão normativo do Ministério da Previdência e Assistência Social. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Os administradores das patrocinadoras que não efetivarem regularmente as contribuições a que estiverem obrigadas, na forma dos regulamentos dos planos de benefícios, serão solidariamente responsáveis com os administradores das entidades fechadas, no caso de liquidação extrajudicial destas, a eles se aplicando, no que couber, as disposições do Capítulo IV desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Não será admitida a concessão de benefício sob a forma de renda vitalícia que, adicionada à aposentadoria concedida pela Previdência Social, exceda a média das remunerações sobre as quais incidirem as contribuições nos 12 (doze) meses imediatamente anteriores à data da concessão, ressalvadas as hipóteses dos §§ 6º e 7º seguintes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º No caso de perda parcial da remuneração recebida, será facultado ao participante manter o valor de sua contribuição, para assegurar a percepção dos benefícios dos níveis correspondentes àquela remuneração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º Os pecúlios instituídos pelas entidades fechadas não poderão exceder ao equivalente a 40 (quarenta) vezes o teto do salário de contribuição para a Previdência Social, para cobertura da mesma pessoa, ressalvada a hipótese de morte por acidente do trabalho, em que o valor do pecúlio terá por limite a diferença entre o dobro desse valor máximo e o valor do pecúlio instituído pela Lei n. 6.367, de 19 de outubro de 1976. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; §9º A todo participante será obrigatoriamente entregue, quando de sua inscrição, cópia do estatuto e do plano de benefícios, além de material explicativo que descreva, em linguagem simples e precisa, suas características. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Todos os planos de benefícios deverão ser avaliados atuarialmente, em cada balanço, por entidades ou profissionais legalmente habilitados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A responsabilidade profissional do atuário, verificada pela inadequação dos planos estabelecidos, quer no que se refere às contribuições, quer no que diz respeito ao valor das reservas, será apurada pelo Instituto Brasileiro de Atuária - IBA, por solicitação dos interessados, independentemente da ação judicial cabível. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;Nas avaliações de que trata o artigo anterior deverão ser observadas as condições fixadas pelo órgão normativo do Ministério da Previdência e Assistência Social a respeito de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - regimes financeiros; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - tábuas biométricas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - taxa de juro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;Admitir-se-á, no caso das reservas técnicas relativas a benefícios a conceder sob a forma de renda, que os fundos de garantia sejam mantidos em níveis não inferiores a 70% (setenta por cento) das correspondentes necessidades, se as patrocinadoras das entidades assumirem o compromisso de manter, em seus respectivos patrimônios, parcelas equivalentes às insuficiências observadas, de modo que sua cobertura possa, em qualquer época, ser realizada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Em caso de liquidação das patrocinadoras as entidades fechadas terão privilégio especial sobre os fundos constituídos conforme disposto neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Nas entidades fechadas o resultado do exercício, satisfeitas todas as exigências legais e regulamentares no que se refere aos benefícios, será destinado: a constituição de uma reserva de contingência de benefícios até o limite de 25% (vinte e cinco por cento) do valor da reserva matemática; e, havendo sobra, ao reajustamento de benefícios acima dos valores estipulados nos § 1° e 2º do artigo 42, liberando, se for o caso, parcial ou totalmente as patrocinadoras do compromisso previsto no § 3º do mesmo artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;As entidades fechadas submeterão suas contas a auditores independentes, registrados no Banco Central do Brasil, divulgando, anualmente, entre os participantes o parecer respectivo juntamente com o Balanço Geral e demonstração de Resultado do Exercício. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A auditoria independente poderá ser exigida também quanto aos aspectos atuariais, conforme for estabelecido pelo órgão normativo do Ministério da Previdência e Assistência Social. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;As entidades fechadas deverão levantar balancetes ao final de cada trimestre, e balanço geral no último dia útil do ano. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O balanço e os balancetes deverão ser enviados ao Órgão Executivo do Ministério da Previdência e Assistência Social para exame e ao Banco Central do Brasil para fins estatísticos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;As entidades fechadas deverão comunicar ao Órgão Executivo do Ministério da Previdência e Assistência Social os atos relativos à eleição de diretores e membros de conselhos deliberativos, consultivos, fiscais ou assemelhados, no prazo de 15 (quinze) dias de sua ocorrência, observadas as diretrizes para tanto estabelecidas pelo órgão normativo do Ministério da Previdência e Assistência Social. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;Ressalvadas as empresas públicas, sociedades de economia mista e as fundações vinculadas à Administração Pública, os diretores das patrocinadoras das entidades fechadas poderão ser, simultaneamente, diretores destas, desde que os patrimônios das entidades sejam independentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As entidades fechadas só poderão realizar operações ativas com as respectivas patrocinadoras nas condições e limites estabelecidos pelo órgão normativo do Ministério da Previdência e Assistência Social. <BR><BR></P>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Da Fiscalização e Intervenção </B><BR><BR></CENTER>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Normas Gerais </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;Sempre que ocorrer insuficiência de cobertura, ou inadequada aplicação das reservas técnicas, fundos especiais ou provisões, ou anormalidades graves no setor administrativo de qualquer entidade de previdência privada, a critério do órgão fiscalizador, poderá este nomear, por prazo determinado, um diretor-fiscal com as atribuições e vantagens que, em cada caso, forem fixados pelo órgão normativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;O descumprimento de qualquer determinação do diretor-fiscal por administradores e membros de conselhos deliberativos, consultivos, fiscais ou assemelhados, ou funcionários da entidade, acarretará o afastamento do infrator, sem prejuízo das sanções penais cabíveis, assegurado ao interessado o direito de recurso, sem efeito suspensivo, para o Ministro de Estado da área a que estiver vinculada a entidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;Os administradores das entidades de previdência privada ficarão suspensos do exercício de suas funções desde que instaurado processo-crime por atos ou fatos relativos à respectiva gestão, perdendo imediatamente o cargo na hipótese de condenação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;No prazo que lhe for designado, na forma do artigo 51, o diretor-fiscal procederá à análise de organização administrativa e da situação econômico-financeira da entidade e, se concluir pela inviabilidade de sua regularização, proporá ao órgão fiscalizador a intervenção na entidade. <BR><BR>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Da Intervenção </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;Para resguardar os direitos dos participantes, poderá ser decretada a intervenção na entidade de previdência privada, desde que se verifique, a critério do órgão fiscalizador: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - atraso no pagamento de obrigação líquida e certa; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - prática de atos que possam conduzi-la à insolvência; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - estar a entidade sendo administrada de modo a causar prejuízo aos participantes; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - estar a entidade em difícil situação econômico-financeira; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - aplicação de recursos em desacordo com as normas e determinações do Conselho Monetário Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A intervenção terá como objetivo principal a recuperação da entidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;A intervenção será decretada <EM>ex-officio</EM> , ou por solicitação dos administradores da própria entidade, mediante portaria do Ministro de Estado da área a que estiver vinculada, o qual nomeará interventor com plenos poderes de administração e gestão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; §1º Dependerão de prévia e expressa autorização do órgão fiscalizador os atos do interventor que impliquem em oneração ou disposição do patrimônio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; §2º Os administradores da entidade prestarão ao interventor todas as informações por ele solicitadas, entregando-lhe os livros e documentos requisitados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;A intervenção será decretada pelo prazo necessário ao exame da situação econômico-financeira da entidade e adoção das medidas destinadas à sua recuperação, prorrogável a critério do Ministro de Estado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;A intervenção produzirá, desde a data da publicação do ato de sua decretação, os seguintes efeitos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - suspensão da exigibilidade das obrigações vencidas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - suspensão da fluência do prazo das obrigações vincendas anteriormente contraídas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A intervenção não acarretará a interrupção da concessão de benefícios, ou dos pagamentos devidos pela entidade aos participantes dos planos de benefícios, podendo, no entanto, o interventor, tendo em vista as dificuldades financeiras da entidade, determinar a redução dos pagamentos devidos, durante o tempo que for necessário à recuperação da entidade ficando, entretanto, a parte não paga como passivo pendente, a ser liquidado após o período de intervenção, em conformidade com o plano de liquidação que vier a ser estabelecido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;Das decisões do interventor caberá recurso, em única instância, sem efeito suspensivo, no prazo de 10 (dez) dias, contados da ciência da decisão, para o Ministro de Estado da área a que estiver vinculada a entidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;Terminado o prazo a que se refere o artigo 57, o interventor encaminhará ao Ministro de Estado, por intermédio do respectivo órgão fiscalizador, relatório sobre a situação da entidade, contendo plano para sua recuperação ou proposta para sua liquidação extrajudicial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O relatório será publicado no Diário Oficial da União e em jornal de grande circulação no local da sede da entidade, cabendo recurso, em única instância, sem efeito suspensivo, dentro de 60 (sessenta) dias, da data da publicação para o Ministro de Estado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;Os participantes dos planos de previdência das entidades fechadas, bem como as patrocinadoras, não poderão se opor a qualquer plano de recuperação, proposto pelo interventor e aprovado pelo Ministro de Estado da área a que estiver vinculada a entidade, mesmo que essa recuperação envolva a transferência de todos direitos e obrigações para outra entidade, fechada ou aberta, com ou sem a redução dos benefícios e dos pagamentos devidos aos participantes dos planos de benefícios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;A intervenção cessará quando a situação da entidade estiver normalizada, de acordo com o relatório apresentado pelo interventor ao Ministro de Estado da área a que estiver vinculada, e por este aprovado, ou se for decretada a sua liquidação extrajudicial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O interventor prestará contas ao Ministro de Estado, independentemente de qualquer exigência, no momento em que deixar suas funções ou a qualquer tempo, quando solicitado, e responderá, civil e criminalmente, pelos seus atos. <BR><BR>
+<CENTER><B>SEÇÃO III </CENTER></B>
+<CENTER><B>Da Liquidação Extrajudicial </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;As entidades de previdência privada não poderão solicitar concordata e não estão sujeitas à falência, mas tão-somente ao regime de liquidação extrajudicial, prevista nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;Reconhecida a inviabilidade de recuperação da entidade, o Ministro de Estado da área a que estiver vinculada decretará a sua liquidação extrajudicial e nomeará o liquidante. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O liquidante terá amplos poderes de administração e liquidação, inclusive para representar a entidade, em juízo ou fora dele. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;Em todos os documentos e publicações de interesse da liquidanda, será obrigatoriamente utilizada a expressão "em liquidação extrajudicial", em seguida à denominação da entidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;A decretação da liquidação extrajudicial produzirá, de imediato, os seguintes efeitos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - suspensão das ações e execuções iniciadas sobre direitos e interesse relativos ao acervo da entidade liquidanda, não podendo ser intentadas quaisquer outras, enquanto durar a liquidação; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - vencimento antecipado das obrigações da liquidanda; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - não cumprimento de cláusulas que estabeleçam penas contra a entidade nos contratos vencidos em decorrência da decretação da liquidação extrajudicial; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - não fluência de juros, mesmo que estipulados, contra a liquidanda, enquanto não integralmente pago o passivo; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - interrupção da prescrição em relação às obrigações da entidade em liquidação; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - suspensão de multa, juros e correção monetária em relação a quaisquer dívidas de entidade; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - não reajustamento de quaisquer benefícios; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - inexigibilidade de penas pecuniárias por infração de leis administrativas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - interrupção do pagamento à liquidanda das contribuições dos participantes e das patrocinadoras relativas aos planos de benefícios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;O liquidante organizará o quadro geral de credores, realizará o ativo e liquidará o passivo. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Ficam dispensados de declarar os respectivos créditos os participantes dos planos de benefícios, estejam estes sendo recebidos ou não. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os participantes dos planos de benefícios terão privilégio especial sobre os bens garantidores das reservas técnicas e, caso não sejam suficientes esses bens para cobertura dos direitos respectivos, privilégio geral sobre as demais partes não vinculadas do ativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os participantes que já estiverem recebendo benefícios, ou que já tiverem adquirido esse direito antes de decretada a liquidação extrajudicial, terão preferência sobre os demais participantes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O rateio do montante de crédito dos participantes em gozo de benefício, ou com esse direito adquirido antes de decretada a liquidação extrajudicial, será feito de acordo com as bases técnicas atuariais fixadas pelo órgão normativo a que estiver vinculada a entidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º O rateio do montante de crédito dos participantes, não considerados no parágrafo anterior, terá por base o critério previsto para os casos de resgate do valor saldado de contribuições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;Não serão considerados credores privilegiados os participantes que, após a nomeação do diretor-fiscal de que trata a Seção I deste Capítulo, ou no curso da intervenção, suspenderem o pagamento das contribuições devidas, ou se atrasarem por prazo superior a 90 (noventa) dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;Mesmo no curso da liquidação será admitida a hipótese de recuperação, na forma indicada na Seção II deste Capítulo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;A liquidação extrajudicial cessará com a aprovação das contas finais do liquidante e baixa no registro público competente, ressalvada a hipótese prevista no artigo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;Os administradores e membros de conselhos deliberativos, consultivos, fiscais ou assemelhados, das entidades de previdência privada sob intervenção ou em liquidação extrajudicial, ficarão com todos os seus bens indisponíveis, não podendo, por qualquer forma, direta ou indireta, aliená-los ou onerá-los, até apuração e liquidação final de suas responsabilidades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A indisponibilidade prevista neste artigo decorre do ato que decretar a intervenção ou a liquidação extrajudicial, e atinge a todos aqueles que tenham estado no exercício das funções nos 12 (doze) meses anteriores ao mesmo ato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Por proposta do órgão fiscalizador, aprovada pelo Ministro de Estado a que estiver subordinado, a indisponibilidade, prevista neste artigo, poderá ser estendida aos bens de pessoas que, nos últimos 12 (doze) meses, os tenham adquirido, a qualquer título, das pessoas referidas no <EM>caput</EM> e no § 1º deste artigo, desde que haja seguros elementos de convicção de que se trata de simulada transferência e com o fim de evitar os efeitos desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Não se incluem nas disposições deste artigo os bens considerados inalienáveis ou impenhoráveis pela legislação em vigor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Não são igualmente atingidos pela indisponibilidade os bens objeto de contrato de alienação, de promessa de compra e venda, de cessão ou promessa de cessão de direitos, desde que os respectivos instrumentos tenham sido levados ao competente registro público, até 12 (doze) meses antes da data da decretação da intervenção, ou da liquidação extrajudicial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;Os abrangidos pela indisponibilidade de bens de que trata o artigo anterior não poderão ausentar-se do foro da intervenção ou da liquidação extrajudicial, sem prévia e expressa autorização do órgão fiscalizador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;Decretada a intervenção ou a liquidação extrajudicial, o interventor ou o liquidante comunicará ao registro público competente e às Bolsas de Valores a indisponibilidade de bens imposta no artigo , bem como publicará edital para conhecimento de terceiros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Recebida a comunicação, a autoridade competente ficará, relativamente a esses bens, impedida de:&nbsp;</P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>fazer transcrições, inscrições ou averbações de documentos públicos ou particulares; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>arquivar atos ou contratos que importem em transferência de cotas sociais, ações ou partes beneficiárias; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>realizar ou registrar operações e títulos de qualquer natureza; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>processar a transferência de propriedade de veículos automotores. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;Aplicam-se à liquidação das entidades de previdência privada, bem como à intervenção, no que couber e não colidir com os preceitos desta Lei, os dispositivos processuais da legislação sobre a intervenção e liquidação extrajudicial das instituições financeiras, cabendo ao órgão fiscalizador competente as funções atribuídas ao Banco Central do Brasil. <BR><BR>
+<CENTER><B>SEÇÃO IV </CENTER></B>
+<CENTER><B>Do Regime Repressivo </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;As infrações aos dispositivos desta Lei sujeitam as entidades de previdência privada ou seus administradores, membros de conselhos deliberativos, consultivos, fiscais ou assemelhados, às seguintes penalidades, sem prejuízo de outras estabelecidas na legislação vigente: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - advertência; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - multa pecuniária; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - suspensão do exercício do cargo; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - inabilitação temporária ou permanente para o exercício de cargo de direção de entidades de previdência privada, sociedades seguradoras e instituições financeiras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76.&nbsp;Os diretores, administradores, membros de conselhos deliberativos, consultivos, fiscais ou assemelhados, das entidades de previdência privada responderão solidariamente com a mesma pelos prejuízos causados a terceiros, inclusive aos seus acionistas, em conseqüência do descumprimento de leis, normas e instruções referentes às operações previstas nesta Lei e, em especial, pela falta de constituição das reservas obrigatórias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77.&nbsp;Constitui crime contra a economia popular, punível de acordo com a legislação respectiva, a ação ou omissão dolosa, pessoal ou coletiva, de que decorra a insuficiência das reservas ou de sua cobertura, vinculadas à garantia das obrigações das entidades de previdência privada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78.&nbsp;As multas serão fixadas e aplicadas pelo órgão fiscalizador, em função da gravidade da infração cometida até o limite do valor nominal atualizado de 1.000 (mil) Obrigações Reajustáveis do Tesouro Nacional - ORTN. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Das decisões do órgão fiscalizador caberá recurso, no prazo de 15 (quinze) dias, com efeito suspensivo, para o respectivo órgão normativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As multas constituirão, integralmente, Receita da União, vedada qualquer forma de participação em seus valores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 79.&nbsp;As infrações serão apuradas mediante processo administrativo que tenha por base o auto, a representação ou a denúncia positiva dos fatos irregulares, cabendo aos órgãos normativos dispor sobre as respectivas instaurações, recursos e seus efeitos, instâncias, prazos, perempção e outros atos processuais. <BR><BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Das Disposições Gerais e Transitórias </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 80.&nbsp;Qualquer pessoa que atue como entidade de previdência privada, sem estar devidamente autorizada, fica sujeita à multa, nos termos do artigo 78 desta Lei, e à pena de detenção de 1 (um) a 2 (dois) anos. Se se tratar de pessoa jurídica, seus diretores e administradores incorrerão na mesma pena. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º A pena de detenção, a que se refere este artigo, será aplicada nos casos de reincidência ou quando, recebida notificação do órgão fiscalizador, os responsáveis não cessarem imediatamente suas atividades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na hipótese do parágrafo anterior, o órgão fiscalizador comunicará a ocorrência à autoridade policial, para interdição do local, e ao Ministério Público, para as medidas de sua competência, dando publicidade a essas providências, para conhecimento de terceiros interessados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 81.&nbsp;As entidades que, na data de início da vigência desta Lei, estiverem atuando como entidades de previdência privada, terão o prazo de 120 (cento e vinte) dias, contados da expedição das normas pelo Órgão Executivo do Sistema, para requererem as autorizações exigidas, apresentando planos de adaptação às disposições desta Lei. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Requerida a autorização exigida e, apresentado, em tempo hábil, o plano de adaptação, o Órgão Executivo do Sistema deliberará sobre sua viabilidade, fará as exigências a serem observadas e fixará prazo não superior a 3 (três) anos para adequação das aplicações garantidoras de suas obrigações, admitida a prorrogação a juízo do órgão normativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Ao fixar os prazos de adaptação das entidades de previdência privada, em funcionamento na data do início da vigência da presente Lei, o Órgão Executivo do Sistema levará em conta as condições peculiares de determinadas entidades, de modo a preservar a cobertura das reservas e dos compromissos anteriormente assumidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Findo o prazo a que se refere este artigo, sem a apresentação do requerimento, ou se negada a autorização requerida ou a aprovação do respectivo plano de adaptação, nos termos dos §§ 1º e 2° deste artigo, as entidades entrarão em liquidação ordinária, sob pena de se lhes aplicar as disposições do artigo 80 desta Lei, ressalvado o disposto no artigo seguinte, e respeitado o que dispõe o inciso VI do artigo 8º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 82.&nbsp;A liquidação ordinária a que se refere o § 3º do artigo anterior não se aplica às entidades existentes na data de vigência do Decreto-lei nº. 73, de 21 de novembro de 1966, <EM>ex-vi</EM> do § 1° do seu artigo 143, e às autorizadas a funcionar por Portaria Ministerial, na forma do mesmo Decreto-Lei, às quais, na hipótese de não requererem a autorização exigida ou de não aprovação do respectivo plano de adaptação, serão aplicáveis as normas de intervenção e liquidação extrajudicial previstas no Capítulo IV desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 83.&nbsp;O Instituto de Previdência dos Congressistas - IPC, continuará a reger-se por legislação própria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 84.&nbsp;As entidades abertas de previdência privada com fins lucrativos, quando tiverem suas reservas tecnicamente constituídas e cobertas, no ativo, com depósitos ou investimentos, satisfazendo as condições adequadas de segurança, rentabilidade e liquidez, poderão, a juízo do Órgão Executivo do Sistema Nacional de Seguros Privados, ouvido o Instituto de Resseguros do Brasil, receber retrocessões de resseguros deste último. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 85.&nbsp;Independentemente de autorização específica, as entidades abertas, sem fins lucrativos, que, na data desta Lei, prestem a seus associados serviços de assistência social, médica e financeira, poderão continuar a fazê-lo observadas as disposições dos artigos 23 e 33. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 86.&nbsp;Compete exclusivamente ao Ministério da Previdência e Assistência Social, velar pelas fundações que se enquadrem no conceito de entidade fechada de previdência privada, como definido nos artigos 1º e 4º desta Lei, derrogado, a partir de sua vigência, no que com esta conflitar, o disposto nos artigos 26 a 30 do Código Civil e 1.200 a 1.204 do Código de Processo Civil e demais disposições em contrário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 87.&nbsp;O Poder Executivo regulamentará a presente Lei no prazo de 180 (cento e oitenta) dias contados a partir da data da sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 88.&nbsp;Esta Lei entrará em vigor 120 (cento e vinte) dias após a data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 89.&nbsp;Revogam-se as disposições em contrário. </P>
+<P>Brasília, em 15 de julho de 1977; 156º da Independência e 89º da República. </P>
+<P>ERNESTO GEISEL&nbsp; <BR>Ângelo Calmon de Sá <BR>L. G. do Nascimento e Silva <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 20/07/1977
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 20/7/1977, Página 9193       
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1977, Página 30 
+                                                        Vol. 5          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,964 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 3.115, DE 16 DE MARÇO DE 1957 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Determina a transformação das empresas ferroviárias da União em sociedade por ações, autoriza a constituição da Rede Ferroviária S.A., e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 3.115, DE 16 DE MARÇO DE 1957 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-3115-16-marco-1957-354635-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-3115-16-marco-1957-354635-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-3115-16-marco-1957-354635-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=197540">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-3115-16-marco-1957-354635-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 3.115, DE 16 DE MARÇO DE 1957</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Determina a transformação das empresas ferroviárias da União em sociedade por ações, autoriza a constituição da Rede Ferroviária S.A., e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							<P>O PRESIDENTE DA REPÚBLICA, <BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Fica o Poder Executivo autorizado a constituir, nos têrmos da presente lei, uma sociedade por ações sob a denominação de Rêde Ferroviária Federal Sociedade Anônima (R.F.F.S.A.), à qual serão incorporadas as estradas de ferro de propriedade da União e por ela administradas, assim como as que venham a ser transferidas ao domínio da União, ou cujos contratos de arrendamento sejam encampados ou rescindidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;O Presidente da República designará, por decreto, o representante da União nos atos constitutivos da R.F.F.S.A., o qual promoverá:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a avaliação dos bens e direitos arrolados para constituírem o capital da União; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>a organização dos Estatutos da Sociedade; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o plano de transferência dos serviços que tenham de passar do Ministério da Viação e Obras Públicas para a R.F.F.S.A. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A R.F.F.S.A. será constituída em sessão pública no Ministério da Viação e Obras Públicas e de cuja ata deverão constar os Estatutos aprovados, o histórico, bem como o resumo dos atos constitutivos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os atos constitutivos da Sociedade e os seus Estatutos serão aprovados por decreto do Poder Executivo, sendo arquivada no Departamento Nacional da Indústria e Comércio a cópia da ata, devidamente autenticada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Uma vez aprovada a constituição da Sociedade, ser-lhe-ão transferidas, automàticamente, tôdas as dotações orçamentárias destinadas às entidades a ela incorporadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Nos Estatutos da R.F.F.S.A., bem como nos das sociedades que vier a organizar, serão observadas, em tudo que lhes fôr aplicável e não contrariar os dispositivos da presente lei, as normas da lei das sociedades anônimas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;A União subscreverá a totalidade das ações que constituirão o capital inicial da R.F.F.S.A. e o integralizará com o valor:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>dos bens e direitos que hoje formam o patrimônio das emprêsas ferroviárias de sua propriedade e que foram incorporadas à R.F.F.S.A.; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>pela tomada de ações por pessoas jurídicas de direito público interno ou por sociedades de economia mista, nos têrmos do art. 6º da presente lei. </TD></TR></TBODY></TABLE></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O valor dos bens e direitos a que se refere êste artigo será fixado por avaliação, na forma do capítulo II (arts. 4º, 5º, 6º, 7º e 8º) do decreto-lei nº 2.627, de 26 de setembro de 1940. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O Govêrno poderá desfazer-se das ações de sua propriedade que excederem 51% (cinqüenta e um por cento) do capital da R.F.F.S.A., vendendo-as, por valor não inferior ao nominal, às pessoas jurídicas de direito público interno, às sociedades de economia mista constantes do art. 6º, itens I e II, e às pessoas físicas e jurídicas de direito privado, brasileiras, neste caso até o máximo de 20% (vinte por cento) do capital social. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O capital da R.F.F.S.A. será representado por ações ordinárias, com direito de voto, e preferenciais, sem êsse direito, podendo os aumentos dividir-se, no todo ou em parte, em ações preferenciais para cuja emissão não prevalecerá a restrição do parágrafo único do art. 9º do decreto-lei nº 2.627, de 26 de setembro de 1940. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º As ações preferenciais terão prioridade no reembôlso do capital e na distribuição do dividendo mínimo de 8% (oito por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;A R.F.F.S.A. operará diretamente ou através de subsidiárias, que organizar, mediante prévia autorização do Govêrno, expressa em decreto do Poder Executivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>No prazo máximo de um ano, a contar da publicação desta lei, a R.F.F.S.A. apresentará um plano de grupamento das estradas de ferro a ela incorporadas, de maneira a formarem sistemas regionais e a constituirem as sociedades anônimas subsidiárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;A R.F.F.S.A., bem como as sociedades que vier a organizar poderão admitir como acionistas: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; I. As pessoas jurídicas de direito público interno; <BR>&nbsp;&nbsp;&nbsp;&nbsp; II. O Banco do Brasil e as sociedades de economia mista criadas pela União, pelos Estados ou pelos Municípios que, por fôrça da lei, estejam sob o contrôle permanente do Poder Público; <BR>&nbsp;&nbsp;&nbsp;&nbsp; III. As pessoas físicas e jurídicas de direito privado, brasileiras, até 20% (vinte por cento) do respectivo capital. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Os Estatutos da R.F.F.S.A. e os das sociedades que vier a organizar, estabelecerão que, quando no capital de qualquer delas as ações pertencentes a pessoas jurídicas de direito público exceto a União, e as pessoas físicas e jurídicas de direito privado, brasileiras, alcançarem 7,5% (sete e meio por cento) do total, será assegurada a participação da minoria na Diretoria e no Conselho Fiscal da emprêsa onde isso ocorrer. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Compete à R.F.F.S.A.:&nbsp; <BR></P>
+<P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>administrar, explorar, conservar, reequipar, ampliar, melhorar e manter em tráfego as estradas de ferro a ela incorporadas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>lançar no mercado, por seu valor nominal, obrigações ao portador de sua própria emissão ou de emissão de emprêsas que vier a organizar, até o limite do dôbro de seu capital integralizado, com ou sem garantia do Tesouro; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>subscrever capital das sociedades sob seu contrôle e conceder-lhes empréstimos ou garantias; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>sistematizar e fiscalizar a administração das emprêsas sob seu contrôle, bem como seus métodos e processos de operação, mediante contrato de prestação de serviços em que garanta a essas emprêsas assistência técnica, contábíl, jurídica e administrativa; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>propor as revisões e modificações de tarifas, que julgar necessárias, ao Departamento Nacional de Estradas de Ferro que estudará as propostas, ouvindo os órgãos competentes e submetendo o resultado à aprovação final do Ministro da Viação e Obras Públicas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>elaborar o plano de atividades e aprovar os orçamentos das sociedades sob seu contrôle, fiscalizando a respectiva execução; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>reestruturar os quadros de pessoal em função das necessidades de serviço e padrões de vida regionais, fixar o seu número nas empresas que organizar, sua remuneração, direitos e deveres; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>realizar todos os trabalhos de estudo e construção de estradas de ferro que lhe forem cometidos pela União, ou para os quais lhe forem fornecidos recursos. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;É vedado à R.F.F.S.A.:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>alienar ou gravar as ações das sociedades sob seu contrôle a ponto de reduzir a menos de 51% (cinqüenta e um por cento) a sua própria participação no capital destas sociedades; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>aceitar depósitos irregulares; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>conceder financiamentos, sob qualquer modalidade, a particulares ou emprêsas que não estejam sob seu contrôle; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>penhorar as ações das sociedades que vier a organizar, salvo quando se tratar de operação com estabelecimento bancário de propriedade ou sob o contrôle do Tesouro Nacional. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;A administração da R.F.F.S.A. obedecerá à forma colegial e será exercida por uma diretoria cujos membros, solidàriamente responsáveis pelas decisões tomadas e em número de sete (7), serão eleitos pela assembléia geral que indicará, dentre êles, o presidente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Os diretores eleitos terão mandato de quatro (4) anos, com recondução permitida, sendo que, inicialmente, o presidente e um diretor terão mandato de quatro (4) anos, dois de três (3) anos, dois de dois (2) anos e um de um (1) ano, conforme indicação expressa da assembléia geral no ato da eleição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;O conselho fiscal será constituído de três (3) membros, com mandato de um ano, eleitos pela assembléia geral, assegurado o direito de representação da minoria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O conselho fiscal da R.F.F.S.A. terá as atribuições constantes do art. 127 do decreto-lei nº 2.627, de 26 de setembro de 1940, não se lhe aplicando o que dispõe o decreto-lei nº 2.928, de 31 de dezembro do mesmo ano. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;A administração da R.F.F.S.A. será assistida por um Conselho Consultivo, constituído de 2 (dois) representantes de cada uma das Confederações representativas do Comércio, da Indústria e da Agricultura, de 3 (três) chefes de serviços técnicos e administrativos, de 1 (um) representante do pessoal, cabendo a êsse Conselho sugerir medidas tendentes a melhorar os serviços da Sociedade e responder às consultas que lhe forem feitas pela administração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os membros do Conselho Consultivo serão assim designados:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>os representantes das Confederações por estas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>os 3 (três) chefes de serviços técnicos e administrativos pela Diretoria Executiva; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o representante do pessoal, pela forma que dispuser o regulamento. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O Conselho Consultivo reunir-se-á uma vez por mês, pelo menos, e no máximo quatro vêzes, sendo presidido por um dos Diretores, designado pela Diretoria. Seus membros farão jus a um "quantum" por sessão a que comparecerem, fixado, cada ano, pela Assembléia Geral ou, enquanto esta não funcionar, por ser a União a detentora da totalidade das ações, pelo Presidente da República. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;A R.F.F.S.A. administrará as ferrovias isoladas através de Superintendentes nomeados pela Diretoria; e as rêdes ou sistemas regionais, por intermédio de emprêsas subsidiárias organizadas conforme a complexidade dos serviços a cargo de cada uma. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Quando isoladas, as ferrovias poderão ser administradas por uma subsidiária da R.F.F.S.A., desde que seja conveniente à eficiência dos serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Até que as subsidiárias sejam organizadas, as rêdes regionais serão administradas por Diretorias compostas de 3 (três) membros, um dos quais será o Superintendente, nomeados pela Diretoria da R.F.F.S.A. todos responsáveis, solidàriamente, pelas decisões tomadas, sempre por maioria de votos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;Na constituição da Diretoria e do Conselho Fiscal das subsidiárias, observar-se-á, no que lhes fôr aplicável, o dispôsto nos arts. 9º e 10. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os diretores regionais, inclusive o superintendente, serão nomeados pela diretoria da R.F.F.S.A. por três (3) anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O número de Diretores de cada subsidiária será, no máximo, de 5 (cinco) e, no mínimo, de 3 (três), incluído o Presidente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O número de membros dos Conselhos Fiscais das subsidiárias será de 3 (três). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Cada subsidiária deverá ser assistida por um Conselho Consultivo, constituído à semelhança do disposto no art. 11, observado o seguinte:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>Os Conselhos Consultivos das subsidiárias serão acrescidos de tantos membros quantos fôrem os Estados que a Rêde atravessar; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>O representante de cada Estado será escolhido pela Direção da R.F.F.S.A., em lista tríplice indicada pelos Governos dos Estados. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Aos empregados da R.F.F.S.A. aplicar-se-ão os preceitos da legislação do trabalho, ... Vetado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Vetado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Aos servidores das ferrovias de propriedade da União, e por ela administradas, qualquer que seja sua qualidade - funcionários públicos e servidores autárquicos ou extranumerários amparados, ou não, pelo art. 23 e pelo parágrafo único do art. 18, do Ato das Disposições Constitucionais Transitórias ou pelas leis ns. 1.711, de 28 de outubro de 1952 (art. 261) e 2.284, de 9 de agôsto de 1954 - ficam garantidos todos os direitos, prerrogativas e vantagens que lhes são assegurados pela legislação em vigor, ...Vetado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Vetado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Vetado ... os referidos servidores ficarão sujeitos ao seguinte regime:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>passarão a integrar, na jurisdição do Ministério da Viação e Obras Públicas, quadros e tabelas suplementares extintos, cujos cargos e funções, isolados, assim como as classes ou padrões iniciais, quando de carreira, serão suprimidos à medida que vagarem. Depois de suprimidos todos os cargos da classe ou padrão inicial, começarão a ser supimidos da classe ou padrão imediatamente superior e assim sucessivamente, até a integral supressão da carreira; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>quando houver acesso de uma carreira para outra, o procedimento da letra anterior se aplica à carreira inferior, não sendo, no caso, extinto nenhum cargo isolado, ou da carreira superior, até a total extinção da carreira inferior, respeitada a legislação em vigor; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>Vetado. </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>prestarão serviço compatível com seus cargos ou funções, na categoria de pessoal cedido pela União à R.F.F.S.A.; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>Vetado. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Vetado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º No prazo de 6 (seis) meses, contados da instalação da R.F.F.S.A., a sua Diretoria organizará relação nominal dos servidores ... Vetado ... que excedam às necessidades do serviço ferroviário, os quais serão transferidos, pelo Poder Executivo, para outros órgãos e entidades federais, por iniciativa do Ministro da Viação e Obras Públicas e conforme as conveniências da administração pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Vetado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Ficam extintos todos os cargos em comissão e funções gratificadas dos quadros e tabelas das estradas de ferro federais incorporadas, na data da constituição da R.F.F.S.A., ... Vetado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Ao pessoal das estradas de ferro da União, em regime especial, serão assegurados todos os direitos, prerrogativas e vantagens que lhes são garantidos pela legislação e pelas condições vigorantes na data da publicação desta lei, ... Vetado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Vetado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Vetado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Vetado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Mediante requisição do Presidente da R.F.F.S.A. e autorização do Presidente da República, poderão ser postos à disposição da emprêsa ou de suas subsidiárias, em funções de direção, militares, funcionários e servidores públicos federais, assim como empregados de sociedades de economia mista controladas pela União, não podendo, todavia, acumular vencimentos e gratificações, sob pena de se considerar como tendo renunciado ao cargo primitivo, salvo os casos previstos no art. 185 da Constituição Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Para funções de direção, poderá também a direção da R.F.F.S.A. ou a de suas subsidiárias solicitar aos Governos dos Estados e às Prefeituras Municipais que lhes sejam postos à disposição servidores e funcionários civis ou militares, de seus respectivos quadros administrativos, nas mesmas condições e com as mesmas restrições prescritas neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;Os Estatutos da R.F.F.S.A. prescreverão normas específicas para a participação de seus empregados, qualificados no art. 14, nos lucros da sociedade, as quais deverão prevalecer até que, de modo geral, seja regulamentado o inciso IV do art. 157 da Constituição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;A receita da R.F.F.S.A. provirá dos seguintes recursos:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>dividendos das ações das emprêsas sob seu contrôle; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>renda do tráfego e de outras indústrias; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>renda das taxas de melhoramentos e renovação patrimonial; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>aluguéis ou arrendamentos de imóveis; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>prestação de serviços às subsidiárias ou a terceiros; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>subvenções do Tesouro, na forma do art. 22 e outros recursos concedidos pela União; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>juros e comissões provenientes de operações de crédito e de depósitos bancários; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>renda eventual. </TD></TR></TBODY></TABLE></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;Enquanto a União fôr detentora da totalidade do capital da R.F.F.S.A., os lucros líquidos da sociedade serão considerados reservas, e, quando atingirem Cr$10.000.000.000,00 (dez bilhões de cruzeiros) anuais, os lucros líquidos que ela apurar terão o destino fixado neste artigo, ainda quando a União não seja a detentora da totalidade do seu capital. Quando as dotações ou auxílios da União se tornarem inferiores a Cr$5.000.000.000,00 (cinco bilhões de cruzeiros) anuais, será permitida a distribuição de dividendos, ficando retidos, em conta especial, em poder da sociedade sòmente os atribuídos às ações de propriedade da União, para serem aplicados em aumento de capital, mantido, quanto a êste, o direito de participação proporcional dos demais acionistas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;O Orçamento da União consignará no primeiro ano de funcionamento da R.F.F.S.A. uma dotação de Cr$12.000.000.000,00 (doze bilhões de cruzeiros) que será entregue à sociedade em duodécimos para atender à situação deficitária dos seus serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os orçamentos seguintes consignarão dotação para o mesmo fim, reduzida de ano para ano de 5% (cinco por cento) até o limite de 50% (cinqüenta por cento) da dotação inicial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Na hipótese dessas dotações serem superiores aos deficits verificados, os saldos serão incorporados ao capital de movimento até que êsse atinja a Cr$1.000.000.000,00 (um bilhão de cruzeiros); a partir de quando êsses saldos serão aplicados em novas inversões, com o correspondente aumento de capital. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;Fica o Poder Executivo autorizado a abrir, pelo Ministério da Viação e Obras Públicas, crédito especial até o limite de Cr$500.000.000,00 (quinhentos milhões de cruzeiros), que será entregue à R.F.F.S.A. para constituir o seu capital de movimento necessário à operação dos seus serviços e atender às despesas de instalação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Todo aumento de salário impôsto pelo Govêrno da União ao pessoal da R.F.F.S.A. ou às suas subsidiárias importa em aumento de tarifa nas proporções necessárias, ao qual se procederá na forma da letra <EM>e</EM> do art. 7º desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Se a União não conceder o aumento de tarifa ou o fizer em proporção insuficiente para cobertura das despesas, deverá fornecer à R.F.F.S.A., em duodécimos, os recursos para atender a essas mesmas despesas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;A R.F.F.S.A. assumirá a responsabilidade dos compromissos, que oneram as estradas de ferro a ela incorporadas, mantidas as garantias do Tesouro Nacional, quando existirem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Aos financiamentos, créditos ou empréstimos que forem obtidos no exterior pela R.F.F.S.A., ou suas subsidiárias, para fins de reaparelhamento ou expansão de seus serviços, o Poder Executivo, ouvido o Banco Nacional do Desenvolvimento Econômico, poderá dar a garantia do Tesouro Nacional, independente de autorização especial do Poder Legislativo, até o limite máximo global de duzentos e cinqüenta milhões de dólares ou o equivalente em outras moedas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>No exercício da autorização constante dêste artigo, o Poder Executivo poderá obrigar o Tesouro Nacional como fiador e principal pagador da quantia mutuada e seus acessórios, praticando todos os atos necessários ao referido fim e aceitando cláusulas e condições usuais nas operações com organismos financeiros internacionais, inclusive o compromisso geral e antecipado de dirimir, por arbitramento tôdas as dúvidas e controvérsias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Os atos da constituição da R.F.F.S.A. e da integralização de seu capital, bem como as propriedades que possuir e as aquisições de bens e imóveis que fizer, e ainda os instrumentos de mandato para exercício do direito de voto nas assembléias gerais, serão isentos de impostos e taxas e quaisquer outros ônus fiscais compreendidos na competência da União, que se entenderá com as outras entidades de direito público, solicitando-lhes, na esfera de sua competência tributária, os mesmos favores para a sociedade da qual poderão participar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;A R.F.F.S.A. e suas subsidiárias gozarão de isenção de direitos de importação, impôsto de consumo e taxas aduaneiras, exceto a de previdência social, para os maquinismos, seus sobressalentes e acessórios, aparelhos, ferramentas, instrumentos e materiais destinados à construção, instalação ampliação, melhoramentos, funcionamento, exploração, conservação e manutenção de suas instalações para os fins a que se destinam, respeitadas as disposições legais relativas à existência de similares da indústria nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Todos os materiais e mercadorias adquiridos pela R.F.F.S.A. ou suas subsidiárias, na forma dêste artigo, serão desembaraçados mediante portaria dos Inspetores das Alfândegas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;À R.F.F.S.A. e às emprêsas sob seu contrôle fica assegurado o direito de promover desapropriação, nos têrmos da legislação em vigor, depois de declarada a utilidade pública dos bens a desapropriar pelo Ministério da Viação e Obras Públicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;A União poderá incumbir a R.F.F.S.A. da execução de serviços condizentes com o seu objetivo para os quais destinar recursos financeiros especiais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Fica a R.F.F.S.A. autorizada a organizar uma subsidiária para operar um sistema de armazéns gerais, frigoríficos e silos, que regularize o escoamento da produção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;A R.F.F.S.A. não fará nenhum transporte gratuito ou com abatimento, salvo de seu pessoal, nos têrmos de seu regulamento, excetuando-se de autoridades que forem indicadas em lei e dos membros do Congresso Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Os transportes requisitados pela pessoas jurídicas de direito público só serão atendidos mediante empenho prévio de verbas, a partir do segundo exercício de funcionamento da R.F.F.S.A. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;As relações entre a R.F.F.S.A. e o Departamento Nacional de Estradas de Ferro serão as mesmas que as leis e regulamentos estabelecerem para vigorar entre aquêle Departamento e as Estradas de Ferro, de propriedade de emprêsas particulares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;A direção da R.F.F.S.A. será obrigada a prestar, dentro de 30 (trinta) dias, as informações que lhe forem solicitadas, pela Câmara dos Deputados, pelo Senado Federal ou suas Comissões, bem como comparecer a estas, quando convocada, sob pena de perda do cargo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;O relatório anual da Diretoria da R.F.F.S.A., os balanços, as contas de lucros e perdas da Sociedade e de suas subsidiárias, em cada exercício, acompanhados do parecer do Conselho Fiscal, serão encaminhados, até o dia 15 de março, ao Conselho Consultivo, que se manifestará sôbre o relatório, formulando críticas e sugestões que reputar convenientes sôbre a gestão das emprêsas. Com ou sem parecer do Conselho Consultivo, o relatório, balanços e contas serão remetidos ao Tribunal de Contas da União até o dia 31 de março de cada ano. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O Tribunal de Contas examinará e dará parecer sôbre as contas e balanços, considerando-os à luz dos princípios e normas da administração e contabilidades privadas, e os enviará ao Congresso Nacional, para julgamento, até 30 de junho impreterìvelmente. Julgados pelo Congresso Nacional, adotará êste medidas tendentes a melhorar o funcionamento da R.F.F.S.A. e restituirá as contas e balanços ao Poder Executivo para que êste promova imediatamente as providências necessárias contra os responsáveis pelas irregularidades e abusos verificados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Esta lei entrará em vigor na data de sua publicação, revogadas as disposições em contrário. </P>
+<P>Rio de Janeiro, em 16 de março de 1957; 136º da Independência e 69º da República. </P>
+<P>JUSCELINO KUBITSCHEK <BR>José Maria Alkmim <BR>Lucio Meira <BR>Parsifal Barroso </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 20/03/1957
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 20/3/1957, Página 6489 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1957, Página 16 
+                                                        Vol. 1          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

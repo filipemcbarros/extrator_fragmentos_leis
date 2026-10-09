@@ -1,0 +1,910 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 4.589, DE 11 DE DEZEMBRO DE 1964 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Extingue a Comissão do Imposto Sindical, a Comissão Técnica de Orientação Sindical cria órgãos no Ministério do Trabalho e Previdência Social, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 4.589, DE 11 DE DEZEMBRO DE 1964 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=202274">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-4589-11-dezembro-1964-368905-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 4.589, DE 11 DE DEZEMBRO DE 1964</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							<META name=GENERATOR content="MSHTML 5.50.4807.2300">Extingue a Comissão do Imposto Sindical, a Comissão Técnica de Orientação Sindical cria órgãos no Ministério do Trabalho e Previdência Social, e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA, <BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Introdução </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;São extintas a Comissão do Imposto Sindical e a Comissão Técnica de Orientação Sindical e feitas, na estrutura administrativa do Ministério do Trabalho e Previdência Social e nas atribuições dos seus órgãos, as alterações constantes desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;São criados o Departamento Nacional de Emprêgo e Salário, o Conselho Superior do Trabalho Marítimo e as Delegacias Regionais do Trabalho do Distrito Federal e do Estado da Guanabara, e transformada a atual Divisão de Higiene e Segurança do Trabalho, do Departamento Nacional do Trabalho, em Departamento Nacional de Segurança e Higiene do Trabalho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os órgãos ora criados ou transformados terão a organização fixada nos respectivos Regimentos, consoante as atribuições gerais estabelecidas nesta Lei. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Do Departamento Nacional de Emprêgo e Salário </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;O Departamento Nacional de Emprêgo e Salário (D.N.E.S.) é o órgão destinado a estudar, orientar, coordenar e executar a política salarial e de emprêgo do País, observado o estatuído no artigo seguinte. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O D.N.E.S. será dirigido por um Diretor-Geral, nomeado em comissão, diretamente subordinado ao Ministério de Estado, devendo a escolha recair em pessoa de notórios conhecimentos especializados na matéria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Ao D.N.E.S., além do que decorre normalmente de sua finalidade, compete em especial: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Promover os estudos técnicos necessários à fixação e revisão dos níveis mínimos ou básicos de salário para as diferentes regiões do Pais; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Promover o levantamento periódico do custo de vida, através da coleta dos preços, e elaborar os respectivos índices; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Promover a realização, em caráter permanente, de estudos e pesquisas regionais, relecionados com as condições econômicas e com o padrão de vida do trabalhador e sua família; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Prestar informações, quando solicitado, para instrução de processos de reajustamento salarial dependente de decisão da Justiça do Trabalho; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - Estudar as condições do mercado de trabalho do País, de modo geral, e, em particular, no que se refere a emprêgo, desemprêgo e mão-de-obra qualificada; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - Promover, regularmente, estudos sôbre a fôrça de trabalho do País; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - Promover, observada a conjuntura do mercado de trabalho, a colocação de trabalhadores; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - Orientar, coordenar e fiscalizar os serviços de emprêgo de entidades públicas ou privadas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - Promover a identificação e registro profissional em todo o Pais; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - formular a política governamental de formação profissional em todo o território nacional, tendo em vista as condições do mercado de trabalho e as perspectivas do desenvolvimento econômico e social do País, ressalvada a competência do Ministério da Educação e Cultura e dos Conselhos de Educação dos Estados, prevista na Lei de Diretrizes e Bases da Educação Nacional; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - Conhecer dos recursos, em segunda e última instância, voluntários e ex officio , das decisões proferidas pelos Delegados Regionais do Ministério do Trabalho e Previdência Social, sôbre a observância das normas legais que lhes são pertinentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;Junto ao D.N.E.S, funcionará um Conselho Consultivo de Emprêgo e Salário (C.C.E.S.) com a finalidade de opinar sôbre os planos e estudos que lhe forem submetidos pelo Diretor-Geral do Departamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Conselho, além do Diretor-Geral do D.N.E.S., que o presidirá, constituir-se-á dos seguintes membros, designados pelo Ministro de Estado: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Dois técnicos em assuntos de salário ou emprêgo, sendo um ecomista, como representantes do Govêrno; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Dois representantes das categorias econômicas, escolhidos dentre as listas tríplices organizadas pelas Confederações de empregadores; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Dois representantes das categorias profissionais, escolhidos dentre as listas tríplices organizadas peIas Confederações de trabalhadores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Os processos de fixação e revisão dos níveis mínimos ou básicos de salário serão, obrigatòriamete, submetidos ao C.C.E.S. após pronunciamento das Confederações de empregadores e de trabalhadores sôbre as tabelas salariais elaboradas pelo D.N.E.S. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As Confederações terão o prazo de dez dias para se manifestarem sôbre os níveis salariais propostos pelo D.N.E.S. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A decisão proferida no caso dêste artigo, pelo C.C.E.S., ressalvada a hipótese de recurso para o Ministro de Estado, interposto por entidade sindical interessada, no prazo de dez dias, será encaminhada ao Presidente da República para os fins previstos no art. 115 da Consolidação das Leis do Trabalho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Os integrantes do C.C.E.S. farão jus a uma gratificação de presença, para um mínimo de quatro sesões a que comparecerem, até o máximo mensal correspondente ao salário-mínimo de maior valor no País. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Do Conselho Superior do Trabalho Marítimo </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Ao Conselho Superior Trabalho Marítimo (C.S.T.M) compete julgar, em última e definitiva instância, os recursos interpostos das decisões dos Conselhos Regionais do Trabalho Marítimo (C.R.T.M ), bem como expedir instruções regulamentares da aplicação da legislação de proteção ao trabalho nos portos, na navegação e na pesca e do funcionamento dos serviços de inspeção, disciplina e policiamento de que trata o Decreto-lei nº 3.346 de 12 de junho de 1941. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os Conselhos Regionais do Trabalho Marítimo cumprirão e farão cumprir as decisões do Conselho Superior do Trabalho Marítimo e as normas de serviço que forem expedidas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;O Conselho Superior do Trabalho Marítimo será constituído por sete membros nomeados pelo Presidente da República, sendo um representante do Ministério do Trabalho e Previdência Social, que exercerá a Presidência do Conselho; um representante do Ministério da Marinha; um representante do Ministério da Fazenda; um representante do Ministério da Viação e Obras Públicas; um representante do Ministério da Agricultura; um representante de empregadores e um de empregados, escolhidos os dois últimos em listas tríplices organizadas pelas entidades sindicais marítimas de grau superior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Os atuais Conselhos das Delegacias do Trabalho Marítimo passam a denominar-se Conselhos Regionais do Trabalho Marítimo, mantidas a sua composição, a jurisdição e competência, nos têrmos da legislação em vigor, cabendo ao Ministro do Trabalho e Previdência Social a designação dos respectivos membros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As atuias Delegacias do Trabalho Marítimo continuarão a ter a organização e as atribuições de que trata o Decreto-lei nº 3.346 de 12 de junho de 1941. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Os membros do Conselho Superior do Trabalho Marítimo farão jus a uma gratificação de presença para um mínimo de quatro sessões a que comparecerem, até o máximo mensal correspondente a uma vez e meia o salário-mínimo de maior valor no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Os membros dos Conselhos Regionais do Trabalho Marítimo farão jus a uma gratificação de presença, para um mínimo de quatro sessões a que comparecerem, até o máximo mensal correspondente a um salário-mínimo de maior valor da região. <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Do Departamento Nacional de Segurança e Higiene do Trabalho </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;O Departamento Nacional de Segurança e Higiene do Trabalho (D.N.S.H.T.) é o órgão de orientação e fiscalização da legislação e dos assuntos em geral relativos a segurança e higiene do trabalho, bem como do estudo de todos os problemas e aspectos inerentes à medicina e à engenharia do trabalho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Ao D.N.S.H.T., além do que decorre normalmente de sua finalidade, compete, em especial: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Promover investigações sôbre condições de segurança e higiene de locais e métodos de trabalho, inclusive das condições de trabalho peculiares à mulher e ao menor, estabelecer normas de caráter técnico e orientar a fiscalização da legislação concernente ao assunto; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Realizar estudos sôbre a patologia ocupacional e a fadiga no tralbalho; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Promover a educação sanitária do trabalhador e as campanhas de prevenção de acidentes do trabalho; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Orientar o funcionamento e supervisionar o contrôle das Comissões Internas e Prevenção de Acidentes (CIPA); <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - Expedir normas para a notificação de doenças profissionais e fiscalizar seu cumprimento; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - Promover estudos sôbre a engenharia de segurança visando ao aperfeiçoamento dos processos de prevenção de acidentes no trabalho; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - Colaborar nos estudos de medicina, segurança e higiene do trabalho, de âmbito internacional; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - Promover o serviço social do trabalho no âmbito de suas atribuições legais; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - Conhecer, em segunda e última instância dos recursos voluntários ou ex officio das decisões proferidas pelos Delegados Regionais do Trabalho sôbre a observância das normas legais pertinentes ao D.N.S.H.T. <BR><BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Das Delegacias Regionais do Trabalho </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Às Delegacias Regionais do Ministério do Trabalho e Previdência Social, nos Estados compete, no território de sua jurisdição, além das atribuições decorrentes da legislação em vigor ainda as seguintes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - quanto aos assuntos referentes ao Dapartamento Nacional de Emprêgo e Salário: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>realizar a identificação e o registro profissional, no âmbito de sua jurisdição; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>levantar os dados relativos às condições do mercado de trabalho, principalmente no que se referir a emprêgo, desemprêgo e formação profissional; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>promover a colocação de trabalhadores; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>fiscalizar o funcionamento dos serviços e agências de emprêgo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>coletar os elementos necessários à fixação e revisão dos níveis mínimos ou básicos de salário; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>realizar as coletas dos preços necessários ao levantamento periódico de custo de vida; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>realizar os levantamentos e pesquisas relacionadas com as condições sociais e econômicas do trabalhador e suas famílias; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>impor as penalidades cabíveis decorrentes da inobservância das normas relativas aos assuntos de que tratam as alíneas anteriores. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Quanto aos assuntos de competência do Departamento Nacional de Segurança e Higiene do Trabalho:<BR> <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>fiscalizar a observância das normas de segurança e higiene do trabalho; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>fiscalizar as condições peculiares ao trabalho da mulher e do menor; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>receber e registrar as relações de menores; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>promover a educação sanitária do trabalhador; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>realizar campanhas de prevenção de acidentes do trabalho e controlar as Comissões de Prevenção de Acidentes (CIPA); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>fiscalizar o cumprimento das normas atinentes à notificação obrigatória das doenças profissionais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>realizar as pesquisas necessárias ao estudo de patologia ocupacional e de fadiga no trabalho e da engenharia de segurança; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>realizar as atividades concernentes ao serviço social do trabalho; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>i)</I></TD>
+<TD>impor penalidades cabíveis decorrentes de inobservância das normas relativas aos assuntos de que tratam as alíneas anteriores. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>No trato dos assuntos de sua alçada, as Delegacias obedecerão às normas e determinações que lhes forem diretamente transmitidas pelos Departamentos do Ministério no âmbito das respectivas competências. <BR><BR>
+<CENTER><B>CAPÍTULO VI </CENTER></B>
+<CENTER><B>Disposições Gerais e Transitórias </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Compete ao D.N.T., além das atribuições previstas na legislação vigente:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>incentivar a realização de atividades culturais e recreativas, assim como a instituição de colônia de férias e de cooperativas, para o trabalhador e sua família, prestando assistência, quando solicitada, às empresas e entidades sindicais ou executando-as diretamente, quando conveniente; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>manter cursos de interêsse dos trabalhadores e de divulgação da legislação social-trabalhista; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>fiscalizar a aplicação do Impôsto Sindical e dirimir as dúvidas suscitadas quanto ao seu recolhimento, expedindo para êsse efeito, as normas que se fizerem necessárias. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;O Poder Executivo, através do Ministro do Trabalho e Previdência Social, designará uma Comissão composta de representantes do Govêrno e de tôdas as entidades sindicais de grau superior para realizar os necessários estudos e apresentar relatório circunstanciado ao titular da Pasta do Trabalho, propondo a extinção ou não do Impôsto Sindical, para efeito no primeiro caso, de envio de mensagem ao Congresso Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;O Ministro do Trabalho e Previdência Social designará, junto ao seu Gabinete, um grupo de trabalho composto de três membros com a incumbência de:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>transferir à Secretaria de Estado o acervo da CIS e da CTOS; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>distribuir pelas repartições do Ministério o pessoal aproveitado; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>proceder ao tombamento dos bens dos órgãos extintos e sua distribuição pelos órgãos do Ministério; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>movimentar, no Banco do Brasil, com a aprovação do Ministro do Trabalho, a conta especial "Emprêgo e Salário", a que se refere o art. 18, para a qual serão também transferidas as contas dos órgãos extintos, até que se processe a incorporação ao patrimônio da União, de acôrdo com o disposto no parágrafo único do art. 18; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>elaborar os orçamentos para as despesas de pessoal dos órgãos extintos e para aquisição do material necessário à instalação e funcionamento dos órgãos criados ou transformados pela presente Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>praticar os demais atos reclamados pela extinção dos órgãos, bem como decidir quanto à aplicacão de verbas necessárias à organização dos novos serviços. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Os vinte por cento do Impôsto Sindical que formam o "Fundo Social Sindical", passarão a constituir uma conta especial denominada "Emprêgo e Salário" que será utilizada, no exercício de 1965, exclusivamente nas despesas de instalação e funcionamento dos órgãos criados ou transformados pela presente Lei, no pagamento do pessoal transferido dos seus cargos em comissão e funções gratificadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A partir do exercício financeiro de 1966 e enquanto vigorar o atual sistema concernente ao Impôsto Sindical, o Banco do Brasil transferirá, ao Tesouro Nacional, os vinte por cento da conta especial "Emprêgo e Salário", para serem acrescidos ao orçamento do Ministério do Trabalho e Previdência Social, como refôrço de suas verbas ordinárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;A lei orçamentária discriminará no Anexo correspondente ao Ministério do Trabalho e Previdência Social a partir do exercício de 1966 os recursos necessários ao funcionamento dos órgãos criados ou transferidos pela presente Lei e ao pagamento do pessoal transferido, bem como dos cargos em comissão criados e as funções gratificadas necessárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;Ao D.N.S.H.T. compete orientar a atuação do SENAI e do SENAC na execução da política governamental da formação profissional em todo o País, ressalvada a competência do Ministério da Educação e Cultura e dos Conselhos de Educação dos Estados, prevista na Lei de Diretrizes e Bases da Educação Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para êste efeito, as entidades a que se refere êste artigo no prazo de noventa dias da vigência desta Lei, remeterão ao D.N.S.H.T. circunstanciado relatório sôbre a situação do aprendizado industrial e comercial do País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;São revogados os artigos 595, 596 e 597 da Consolidação das Leis do Trabalho, e o Decreto-lei nº 5.199, de 16 de janeiro de 1943. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;O § 2º do art. 588, os arts. 590, 591, 600 e 610 da Consolidação das Leis do Trabalho (Decreto-lei nº 5.452, de 1º de maio de 1943) passam a ter a seguinte redação: <BR><BR>
+<DIR>"Art. 588.&nbsp;........................................................................................<BR>........................................................................................................ <BR><BR>§ 2º O Banco do Brasil remeterá, anualmente, em dezembro, ao Departamento Nacional do Trabalho, o extrato da conta especial de contribuição de cada entidade sindical. <BR><BR>"Art. 590.&nbsp;Das importâcias recolhidas de acôrdo com o artigo 586, o Banco do Brasil transferirá a uma conta especial denominada Emprêgo e Salário, vinte por cento do Impôsto Sindical. <BR><BR>"Art. 591.&nbsp;As emprêsas ou indivíduos, integrantes de categorias econômicas ou profissionais que não se tenham constituído em sindicato devem, obrigatòriamente, concorrer com a importância correspondente à contribuição sindical para a federação representativa do grupo dentro do qual estiver incluído na respectiva categoria, de acôrdo com o plano de enquadramento sindical a que se refere o Capítulo II. <BR><BR>Nesse caso, das importâncias arrecadadas, vinte por cento serão deduzidos em favor da respectiva confederação e vinte por cento para a conta "Emprêgo e Salário". <BR><BR>§ 1º Operar-se-á da mesma forma quando não existir a federação, cabendo a contribuição à confederação representativa do correspondente grupo do qual serão deduzidos vinte por cento para a conta "Emprêgo e Salário". <BR><BR>§ 2º Na hipótese de não haver sindicato nem entidade sindical de grau superior, o impôsto do respectivo grupo será recolhido inteiramente em favor da conta Emprêgo e Salário. <BR><BR>"Art. 600.&nbsp;O pagamento da contribuição sindical efetuado fora do prazo do recolhimento referido neste Capítulo, quando espontâneo, será acrescido da multa de mora de dez por cento revertendo a importância correspondente a essa multa em favor do sindicato respectivo, ficando, nesse caso, o infrator isento de outra penalidade. <BR><BR>§ 1º Na inexistência de sindicato, o disposto neste artigo será recolhido à respectiva federação e, na sua inexistência à confederação respectiva. <BR><BR>§ 2º Não existindo sindicato ou entidade de grau superior, será recolhido para a conta Emprego e Salário. <BR><BR>"Art. 610.&nbsp;As dúvidas no cumprimento dêste Capítulo serão resolvidas pelo Diretor-Geral do Departamento Nacional do Trabalho, que expedirá as instruções que se tornarem necessárias à sua execução."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;São revogados os artigos da Consolidação das Leis do Trabalho referentes às Comissões de Salário-mínimo, passando as respectivas atribuições ao D.N.E.S. e às D.R.T., na forma da presente Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;São extintos os cargos em comissão de Diretor de Divisão de Higiene e Segurança do Trabalho e de Diretor do Serviço de Identificação Profissional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Para atender ao disposto nesta Lei, são criados 2 (dois) cargos em comissão, símbolo 2-C, de Diretor-Geral do Departamento Nacional de Segurança e Higiene do Trabalho, 2 (dois) cargos em comissão de Delegado Regional do Trabalho, símbolo 4-C, e 14 (quatorze) cargos em comissão de Diretor de Divisão símbolo 4-C, atribuídos aos órgãos criados ou transformados pela presente Lei e às Divisões que integram a respectiva organização, conforme dispuserem os respectivo Regimentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;O Ministro do Trabalho e Previdência Social providenciará no sentido de que sejam organizados ou readaptados à nova lei os Regimentos dos órgãos nela referidos e proporá a reestruturação das funções gratificadas existentes assim como a criação das que forem julgadas indispensáveis aos mesmos órgãos, para a execução do disposto nesta Lei, a serem expedidos por Decreto do Poder Executivo, correndo o respectivo pagamento, assim como os dos cargos criados no artigo 25, no exercício de 1965, pela conta especial prevista no art. 18, movimentada na forma do artigo 17. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Os bens de qualquer natureza, pertencentes às Comissões do Impôsto Sindical e à Comissão Técnica de Orientação Sindical, serão incorporados ao patrimônio da União e distribuídos aos órgãos do Ministério do Trabalho e Previdência Social tendo em vista sua melhor utilização, observado o disposto nos artigos 17 e 18. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Os servidores das Comissões referidas no art. 28 serão aproveitados em quadro Suplementar do Ministério do Trabalho e Previdência Social, nas condições em que se encontrarem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Computar-se-á o tempo de serviço prestado na C.I.S. e na C.T.O.S., pelos servidores transferidos, para fins de direitos e vantagens assegurados aos funcionários públicos na forma da legislação em vigor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;A presente Lei entrará em vigor em 1º de janeiro de 1965 revogadas as disposições em contrário, devendo ser regulamentada pelo Poder Executivo no prazo de 60 (sessenta) dias, contado de sua publicação, inclusive nos pontos que afetarem os demais órgãos do Ministério do Trabalho e Previdência Social. </P>
+<P>Brasília, 11 de dezembro de 1964; 143º da Independência e 76º da República. </P>
+<P>H. CASTELLO BRANCO <BR>Arnaldo Sussekind <BR>Otávio Gouveia de Bulhões </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 17/12/1964
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 17/12/1964, Página 11559 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1964, Página 456 
+                                                        Vol. 7          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

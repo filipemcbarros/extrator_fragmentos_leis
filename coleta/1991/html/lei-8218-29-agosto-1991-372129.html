@@ -1,0 +1,921 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 8.218, DE 29 DE AGOSTO DE 1991 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre imposto e contribuições federais, disciplina a utilização de cruzados novos e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 8.218, DE 29 DE AGOSTO DE 1991 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-8218-29-agosto-1991-372129-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-8218-29-agosto-1991-372129-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-8218-29-agosto-1991-372129-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                    <li>
+                                        <a href="lei-8218-29-agosto-1991-372129-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 8.218, DE 29 DE AGOSTO DE 1991</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							<META name=GENERATOR content="MSHTML 5.50.4807.2300">Dispõe sobre imposto e contribuições federais, disciplina a utilização de cruzados novos e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							<P>&nbsp;&nbsp;&nbsp;&nbsp; <STRONG>O PRESIDENTE DA REPÚBLICA</STRONG> <BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR></P>
+<CENTER>CAPÍTULO I <BR>DO IMPOSTO SOBRE PRODUTOS INDUSTRIALIZADOS </CENTER>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Os valores do Imposto sobre Produtos Industrializados dos produtos dos Capítulos 21 e 22 da Tabela de Incidência do Imposto sobre Produtos Industrializados (Tipi), de que tratam os arts. 1°, 2° e 3° da Lei n° 7.798, de 10 de julho de 1989, vigentes nesta data, fixados em cruzeiros, poderão ser alterados pelo Ministro da Economia, Fazenda e Planejamento, tendo em vista o comportamento do mercado na comercialização desses produtos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A alteração de que trata este artigo poderá ser feita até o limite que corresponder ao que resultaria da aplicação da alíquota a que o produto estiver sujeito na Tipi sobre o valor tributável. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para efeito do parágrafo anterior, o valor tributável é o preço normal de uma operação de venda, sem descontos ou abatimentos, para terceiros que não sejam interdependentes ou distribuidores, nem empresa interligada, coligada, controlada ou controladora (Decreto-Lei n° 1.950, de 14 de julho de 1982, art. 10, § 2°, e Lei n° 6.404, de 15 de dezembro de 1976, art. 243, § 1° e 2°). <BR><BR></P>
+<CENTER>CAPÍTULO II <BR>DO PAGAMENTO DE IMPOSTOS E CONTRIBUIÇÕES </CENTER>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Em relação aos fatos geradores que vierem a ocorrer a partir do primeiro dia do mês de agosto de 1991, os pagamentos dos tributos e contribuições relacionados a seguir deverão ser efetuados nos seguintes prazos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Imposto sobre Produtos Industrializados, até o quinto dia útil da quinzena subseqüente à de ocorrência dos fatos geradores;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Imposto de Renda retido na fonte: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>até o segundo dia útil da semana subseqüente à da ocorrência dos fatos geradores, no caso de retenções incidentes sobre rendimentos decorrentes do trabalho, com ou sem vínculo empregatício, e de aluguéis; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>na data da remessa, no caso de rendimentos de residentes ou domiciliados no exterior, quando ocorrer antes do prazo previsto na alínea seguinte; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>no segundo dia útil subseqüente ao de ocorrência do fato gerador, nos demais casos, exceto nas hipóteses previstas no art. 35 da Lei n° 7.713, de 22 de dezembro de 1988, e no art. 2°, § 1° do Decreto-Lei n° 2.397, de 21 de dezembro de 1987. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Imposto sobre Operações de Crédito, Câmbio e Seguro, ou Relativas a Títulos ou Valores Mobiliários:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>até o quinto dia útil da quinzena subseqüente à de ocorrência dos fatos geradores, no caso de aquisição de ouro, ativo financeiro; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>até o segundo dia útil seguinte àquele em que ocorrer cobrança ou registro contábil do Imposto, nos demais casos; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Contribuições para o Finsocial, o PIS-Pasep e sobre o açúcar e o álcool: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>até o quinto dia útil do mês subseqüente ao de ocorrência dos fatos geradores, ressalvado o disposto na alínea seguinte; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>até o quinto dia útil do segundo mês subseqüente ao da ocorrência dos fatos geradores, em relação à parcela de atualização da receita pelo Índice Nacional de Preços ao Consumidor - INPC e respectivos juros. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Em se tratando de microempresas e de empresas que tenham optado pela tributação do Imposto de Renda com base no lucro presumido, a que se refere o art. 25, serão observados os seguintes prazos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - até o último dia útil da quinzena subseqüente à da ocorrência do fato gerador, no caso do inciso I do <I>caput</I> , deste artigo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - até o último dia útil da semana subseqüente à da ocorrência do fato gerador, no caso da alínea a do inciso II do <I>caput</I> , deste artigo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - até o último dia útil da quinzena seguinte ao mês de ocorrência do fato gerador, no caso da alínea a do inciso IV do <I>caput</I> , deste artigo. <BR><BR></P>
+<CENTER>CAPÍTULO III <BR>DOS DÉBITOS PARA COM A FAZENDA NACIONAL </CENTER>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Sobre os débitos exigíveis de qualquer natureza para com a Fazenda Nacional, bem como para o Instituto Nacional do Seguro Social - INSS, incidirão: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - juros de mora equivalentes à Taxa Referencial Diária - TRD acumulada, calculados desde o dia em que o débito deveria ter sido pago, até o dia anterior ao do seu efetivo pagamento; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - multa de mora aplicada de acordo com a seguinte tabela: </P>
+<P>
+<TABLE cellSpacing=1 cellPadding=4 width=330 align=center border=1>
+<TBODY>
+<TR>
+<TD vAlign=top width="69%"><FONT size=2 face=Arial>
+<P align=justify>Dias transcorridos entre o vencimento do débito e o dia do seu pagamento</FONT></P></TD>
+<TD vAlign=top width="31%"><FONT size=2 face=Arial>
+<P align=justify>Multa Aplicável</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="69%"><FONT size=2 face=Arial>
+<P align=justify>acima de 90 dias </FONT></P></TD>
+<TD vAlign=top width="31%"><FONT size=2 face=Arial>
+<P align=center>40%</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="69%"><FONT size=2 face=Arial>
+<P align=justify>de 61 a 90 dias </FONT></P></TD>
+<TD vAlign=top width="31%"><FONT size=2 face=Arial>
+<P align=center>30%</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="69%"><FONT size=2 face=Arial>
+<P align=justify>de 46 a 60 dias </FONT></P></TD>
+<TD vAlign=top width="31%"><FONT size=2 face=Arial>
+<P align=center>20%</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="69%"><FONT size=2 face=Arial>
+<P align=justify>de 31 a 45 dias </FONT></P></TD>
+<TD vAlign=top width="31%"><FONT size=2 face=Arial>
+<P align=center>10%</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="69%"><FONT size=2 face=Arial>
+<P align=justify>de 16 a 30 dias </FONT></P></TD>
+<TD vAlign=top width="31%"><FONT size=2 face=Arial>
+<P align=center>3%</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="69%"><FONT size=2 face=Arial>
+<P align=justify>até 5 dias </FONT></P></TD>
+<TD vAlign=top width="31%"><FONT size=2 face=Arial>
+<P align=center>1%</FONT></P></TD></TR></TBODY></TABLE><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A multa de mora de débito vencido e não pago até o último dia útil do décimo segundo mês do vencimento será cobrada com a incidência da variação acumulada do Índice Nacional de Preços ao Consumidor - INPC, apurada a partir do quinto mês do vencimento até o mês do pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A multa de mora de que trata este artigo não incide sobre o débito oriundo de multa de ofício. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Nos casos de lançamento de ofício nas hipóteses abaixo, sobre a totalidade ou diferença dos tributos e contribuições devidos, inclusive as contribuições para o INSS, serão aplicadas as seguintes multas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - de cem por cento, nos casos de falta de recolhimento, de falta de declaração e nos de declaração inexata, excetuada a hipótese do inciso seguinte; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - de trezentos por cento, nos casos de evidente intuito de fraude, definidos nos arts. 71, 72 e 73 da Lei n° 4.502, de 30 de novembro de 1964, independentemente de outras penalidades administrativas ou criminais cabíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Se o contribuinte não atender, no prazo marcado, a intimação para prestar esclarecimentos, as multas a que se referem os incisos I e II passarão a ser de cento e cinqüenta por cento e quatrocentos e cinqüenta por cento, respectivamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O disposto neste artigo não se aplica às infrações relativas ao Imposto sobre Produtos Industrializados - IPI. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;As multas a que se referem os incisos I, II e III do art. 80 da Lei n° 4.502, de 30 de novembro de 1964, passam a ser de cem por cento, cento e cinqüenta por cento e quatrocentos e cinqüenta por cento, respectivamente, se o contribuinte não atender, no prazo marcado, à intimação para prestar esclarecimentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Será concedida redução de cinqüenta por cento da multa de lançamento de ofício, ao contribuinte que, notificado, efetuar o pagamento do débito no prazo legal de impugnação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se houver impugnação tempestiva, a redução será de trinta por cento se o pagamento de débito for efetuado dentro de trinta dias da ciência da decisão de primeira instância. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Para fins de inscrição como Dívida Ativa da União, o débito será atualizado pelo BTN Fiscal, desde a data do respectivo vencimento, até a data de extinção deste, e acrescido de juros de mora equivalentes à TRD acumulada, pelo prazo remanescente, até o primeiro dia do mês em que ocorrer a inscrição, e de juros de mora equivalentes à Taxa Referencial - TR, após essa data até a do pagamento, acrescido do encargo legal de que tratam o art. 1° do Decreto-Lei n° 1.025, de 21 de outubro de 1969, o art. 3° do Decreto-Lei n° 1.569, de 8 de agosto de 1977, na redação dada pelo art. 12 do Decreto-Lei n° 2.163, de 19 de setembro de 1984, e o art. 3° do Decreto-Lei n° 1.645, de 11 de dezembro de 1978. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Sobre os débitos de que trata este capítulo, quando parcelados, continuarão a incidir juros de mora, equivalentes à TR ou à TRD, sobre o saldo devedor, conforme se trate, respectivamente, de débito inscrito ou não como Dívida Ativa da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>No caso de parcelamento deferido até 31 de janeiro de 1991, o débito expresso em quantidade de BTN Fiscal será convertido em cruzeiros, com base no valor do BTN Fiscal de Cr$ 126,8621, observado o disposto neste artigo. <BR><BR></P>
+<CENTER>CAPÍTULO IV<BR>DA UTILIZAÇÃO DE CRUZADOS NOVOS </CENTER>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Os cruzados novos depositados no Banco Central do Brasil, de acordo com o disposto no art. 9° da Lei n° 8.024, de 12 de abril de 1990, poderão ser utilizadas no pagamento total ou parcial: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - de débitos, de qualquer origem ou natureza, vencidos até 31 de dezembro de 1990, junto: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>à Fazenda Nacional, inscritos ou não como Dívida Ativa da União, ajuizados ou não; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>aos Estados, ao Distrito Federal, aos Municípios e às respectivas autarquias, fundações públicas, sociedades de economia mista, empresas públicas e instituições financeiras públicas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>ao Banco Central do Brasil e às instituições financeiras públicas federais, bem como às empresas públicas e às sociedades controladas direta ou indiretamente pela União; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>ao Instituto Nacional de Seguro Social e às demais autarquias e fundações públicas federais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>ao Fundo de Garantia do Tempo de Serviço; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - do preço de aquisição: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>de bens imóveis da União, inclusive do domínio útil na constituição de aforamento de terrenos de marinha; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>de materiais inservíveis ou outros bens móveis, de propriedade da União; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>de bens móveis ou imóveis, de propriedade das autarquias, fundações, empresas públicas, sociedade de economia mista e instituições financeiras públicas federais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>de bens móveis ou imóveis, de propriedade dos Estados, do Distrito Federal, dos Municípios ou de suas respectivas autarquias, fundações, sociedades de economia mista, empresas públicas e instituições financeiras públicas; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - de saldos devedores, inclusive prestações mensais, vencidas ou não, e encargos acessórios, decorrentes de financiamentos habitacionais, enquadrados ou não nas condições do Sistema Financeiro da Habitação, contraídos até 29 de junho de 1991, junto a instituições integrantes dos Sistemas Financeiros Nacional ou da Habitação, inclusive na qualidade de agentes, promotores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O pagamento importará na transferência de titularidade dos cruzados novos, do devedor para credor ou alienante. Os recursos permanecerão depositados no Banco Central do Brasil até a respectiva conversão em cruzeiros, nos prazos previstos nos arts. 5°, 6° e 7° da Lei n° 8.024, de 12 de abril de 1990. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As receitas provenientes da conversão de que trata o parágrafo anterior serão, obrigatoriamente, aplicadas em títulos públicos inegociáveis por, pelo menos, dois anos ou na redução proporcional de dívida pública própria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Nos casos a que se referem as alíneas c dos incisos I e II, o pagamento dependerá de autorização da assembléia geral ou órgão equivalente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Na hipótese do parágrafo precedente, os cruzados novos poderão ser utilizados no pagamento total ou parcial de débitos vencidos até 31 de dezembro de 1990, junto aos entes referidos nas alíneas <EM>a</EM>, <EM>c</EM>, <EM>d</EM>, e e do inciso I. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Nos casos a que se referem a alínea b do inciso I e a alínea d do inciso II, o pagamento dependerá de autorização na competente lei estadual ou municipal ou, conforme o caso, da assembléia geral de acionistas, ou órgão equivalente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Na hipótese do parágrafo anterior, os cruzados novos poderão ser utilizados pelos Estados, pelo Distrito Federal, pelos Municípios, e respectivas autarquias, sociedades de economia mista, empresas públicas, fundações públicas e instituições financeiras públicas, no pagamento total ou parcial de débitos, vencidos até 31 de dezembro de 1990, junto aos entes referidos nas alíneas <EM>a</EM>, <EM>c</EM>, <EM>d </EM>e <EM>e</EM> inciso I. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º Para os fins do disposto neste artigo, fica permitida a transferência de titularidade de cruzados novos entre pessoas físicas, entre pessoas físicas e jurídicas, entre pessoas jurídicas atendidos os requisitos estabelecidos pelo Banco Central do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º As perdas de capital verificadas nas transferências de titularidade de que trata este artigo não são dedutíveis na apuração do lucro real. <BR><BR></P>
+<CENTER>CAPÍTULO V<BR>DAS DISPOSIÇÕES FINAIS E TRANSITÓRIAS </CENTER>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Os valores relativos a penalidades, constantes da legislação em vigor, convertidos em cruzeiros, nos termos do art. 21 da Lei n° 8.178, de 1° de março de 1991, ficam elevados em setenta por cento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Ministro da Economia, Fazenda e Planejamento poderá, mediante portaria, promover o arredondamento dos valores decorrentes da aplicação do disposto neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;As pessoas jurídicas que, de acordo com o balanço encerrado em relação ao período-base imediatamente anterior, possuírem patrimônio líquido superior a Cr$ 250.000.000,00 e utilizarem sistema de processamento eletrônico de dados para registrar negócios e atividades econômicas, escriturar livros ou elaborar documentos de natureza contábil ou fiscal ficarão obrigadas, a partir do período-base de 1991, a manter, em meio magnético ou assemelhado, à disposição do Departamento da Receita Federal, os respectivos arquivos e sistemas durante o prazo de cinco anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O valor referido neste artigo será reajustado, anualmente, com base no coeficiente de atualização das demonstrações financeiras a que se refere a Lei n° 8.200, de 28 de junho de 1991. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O Departamento da Receita Federal poderá expedir os atos necessários para estabelecer a forma e o prazo em que os arquivos e sistemas deverão ser apresentados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;A inobservância do disposto no artigo precedente acarretará a imposição das seguintes penalidades: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - multa de meio por cento do valor da receita bruta da pessoa jurídica no período, aos que não atenderem à forma em que devem ser apresentados os registros e respectivos arquivos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - multa de cinco por cento sobre o valor da operação correspondente, aos que omitirem ou prestarem incorretamente as informações solicitadas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - multa equivalente a Cr$ 30.000,00, por dia de atraso, até o máximo de trinta dias, aos que não cumprirem o prazo estabelecido pelo Departamento da Receita Federal ou diretamente pelo Auditor-Fiscal, para apresentação dos arquivos e sistemas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O prazo de apresentação de que trata o inciso III deste artigo será de, no mínimo, vinte dias, que poderá ser prorrogado por igual período pela autoridade solicitante, em despacho fundamentado, atendendo a requerimento circunstanciado e por escrito da pessoa jurídica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;A não apresentação dos arquivos ou sistemas até o trigésimo dia após o vencimento do prazo estabelecido equipara-se à inexistência da escrituração para fins de aplicação do disposto nos arts. 7° a 11 do Decreto-Lei n° 1.648, de 18 de dezembro de 1978, e legislação complementar, sem prejuízo da aplicação das penalidades previstas no artigo anterior ou de outras que sejam cabíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;A não apresentação, pela pessoa jurídica tributada com base no lucro real, do livro ou fichas utilizados para resumir e totalizar, por conta ou subconta, os lançamentos efetuados no Diário (Livro Razão) implicará a imposição de multa equivalente a Cr$ 30.000,00, por dia, até o máximo de trinta dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>No caso da não apresentação do livro de que trata este artigo até o trigésimo dia após o vencimento do prazo estabelecido, aplicar-se-á o disposto no art. 13. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;O pagamento da contribuição para o PIS-Pasep relativa aos fatos geradores ocorridos nos meses de maio e junho de 1991 será efetuado até o dia cinco do mês de agosto do mesmo ano. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Nº caso de não pagamento da contribuição até a data prevista neste artigo, o débito poderá ser pago, sem multa, em até doze parcelas mensais, iguais e sucessivas, observado o seguinte: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>nenhuma parcela poderá ser inferior a Cr$ 50.000,00; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>a primeira deverá ser paga até o último dia útil do mês de agosto de 1991; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>as demais serão pagas até o último dia útil dos meses subseqüentes; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>sobre os seus valores incidirão juros de mora equivalentes à TRD, desde o dia 5 de agosto de 1991, até o dia anterior ao do efetivo pagamento de cada parcela. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O pagamento da primeira parcela equivalerá a pedido de parcelamento na forma do art. 11 do Decreto-Lei n° 352, de 17 de junho de 1968, com a redação dada pelo art. 1° do Decreto-Lei n° 623, de 11 de junho de 1969, considerando-se automaticamente deferido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Na apuração do ganho de capital na alienação de bens e direitos, efetuada a partir da vigência desta lei, a pessoa física poderá utilizar, para efeito de correção do custo da aquisição: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o Índice de Preços ao Consumidor - IPC, relativamente ao ano de 1990; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a variação do BTN, relativamente aos meses de janeiro e fevereiro de 1991; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o Índice Nacional de Preços ao Consumidor - INPC, a partir do mês de março de 1991. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Na falta de publicação do INPC, poderá ser utilizado o Índice Geral de Preços-Mercado (IGP-M), publicado pela Fundação Getúlio Vargas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Na apuração dos ganhos líquidos de que trata o art. 18, inciso II, da Lei n° 8.134, de 27 de dezembro de 1990, é admitida a incidência da Taxa Referencial Diária - TRD sobre os custos de aquisição dos ativos negociados, da data de início até a data imediatamente anterior à de liquidação da operação, nos termos da legislação aplicável. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;O Livro de Apuração do Lucro Real poderá ser escriturado mediante a utilização de sistema eletrônico de processamento de dados, observadas as normas baixadas pelo Departamento da Receita Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;Em relação aos períodos-base anuais encerrados a partir da vigência desta lei, a pessoa jurídica que apresentar lucro real ou arbitrado acima de Cr$ 35.000.000,00 estará sujeita a um adicional do imposto de renda calculado sobre a parcela que exceder a essa quantia, às seguintes alíquotas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - cinco por cento sobre a parcela do lucro real ou arbitrado que exceder a Cr$ 35.000.000,00 até Cr$ 70.000.000,00; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - dez por cento sobre a parcela do lucro real ou arbitrado que exceder a Cr$ 70.000.000,00. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As alíquotas de que trata este artigo serão de dez e quinze por cento, respectivamente, para os bancos comerciais, bancos de investimentos, bancos de desenvolvimento, caixas econômicas, sociedades de crédito, financiamento e investimento, sociedades de crédito imobiliário, sociedades corretoras, distribuidoras de títulos e valores mobiliários e empresas de arrendamento mercantil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O valor do adicional será recolhido integralmente como receita da União, não sendo permitidas quaisquer deduções. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os limites de que trata este artigo serão reduzidos, proporcionalmente, quando o número de meses do período-base for inferior a doze. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;O custo de aquisição de bens do ativo permanente não poderá ser deduzido como despesa operacional, salvo se o bem adquirido tiver valor unitário não superior a Cr$ 50.000,00, ou prazo de vida útil que não ultrapasse um ano. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;O limite de que trata o inciso I do art. 22 da Lei n° 7.713, de 22 de dezembro de 1988, com a redação dada pelo art. 30 da Lei n° 8.134, de 27 de dezembro de 1990, passa a ser de Cr$ 70.000.000,00. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;A despesa operacional relativa às gratificações pagas aos empregados, seja qual for a designação que tiverem, excluído o 13° salário, não poderá exceder à importância anual de Cr$ 100.000,00 para cada um dos beneficiados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;O prejuízo no recebimento de créditos, quando de valor inferior a Cr$ 53.000,00 por devedor, poderá ser deduzido como despesa operacional, após decorrido um ano de seu vencimento, independentemente de se terem esgotado os recursos para sua cobrança. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Os limites de receita bruta anual para as microempresas (Lei n° 7.256, de 27 de novembro de 1984) e para as empresas poderem optar pelo lucro presumido (Lei n° 6.468, de 14 de novembro de 1977) passam a ser de Cr$ 30.000.000,00 e de Cr$ 200.000.000,00, respectivamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os limites de que trata este artigo serão reduzidos, proporcionalmente, no caso de período-base inferior a doze meses. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;O salário-família é isento do imposto de renda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Fica isenta do imposto de renda das pessoas físicas a correção monetária de investimentos calculada aos mesmos coeficientes da variação acumulada do INPC, desde que seu pagamento ou crédito ocorra em intervalos não inferiores a trinta dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;O rendimento pago em cumprimento de decisão judicial será considerado líquido do imposto de renda, cabendo à pessoa física ou jurídica, obrigada ao pagamento, a retenção e recolhimento do imposto de renda devido, ficando dispensada a soma dos rendimentos pagos, no mês, para aplicação da alíquota correspondente, nos casos de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - juros e indenizações por lucros cessantes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - honorários advocatícios; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - remuneração pela prestação de serviços no curso do processo judicial, tais como serviços de engenheiro, médico, contabilista, leiloeiro, perito, assistente técnico, avaliador, síndico, testamenteiro e liquidante. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;O pagamento pela pessoa jurídica do imposto de renda, da contribuição social sobre o lucro e do imposto de renda incidente na fonte sobre o lucro líquido, correspondentes a período-base encerrado em virtude de incorporação, fusão, cisão ou encerramento de atividades, deverá ser efetuado até o décimo dia subseqüente ao da ocorrência do fato gerador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;O pagamento do imposto de renda nos casos de saída definitiva do País e de encerramento de espólio deverá ser efetuado na data prevista para a entrega da respectiva declaração de rendimentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;O <I>caput</I> do art. 9° da Lei n° 8.177, de 1° de março de 1991, passa a vigorar com a seguinte redação: <BR></P>
+<DIR>"Art. 9º&nbsp;A partir de fevereiro de 1991, incidirão juros de mora equivalentes à TRD sobre os débitos de qualquer natureza para com a Fazenda Nacional, com a Seguridade Social, com o Fundo de Participação PIS-Pasep, com o Fundo de Garantia do Tempo de Serviço - FGTS e sobre os passivos de empresas concordatárias, em falência e de instituições em regime de liquidação extrajudicial, intervenção e administração especial temporária."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;O art. 25 da Lei n° 7.713, de 22 de dezembro de 1988, passa a vigorar com a seguinte redação: <BR></P>
+<DIR>"Art. 25.&nbsp;O imposto será calculado, observado o seguinte: <BR><BR>I - se o rendimento mensal for de até Cr$ 400.000,00, será deduzida uma parcela correspondente a Cr$ 120.000,00 e, sobre o saldo remanescente incidirá a alíquota de dez por cento; <BR><BR>II - se o rendimento mensal for superior a Cr$ 400.000,00, será deduzida uma parcela correspondente a Cr$ 288.000,00, e, sobre o saldo remanescente incidirá a alíquota de vinte e cinco por cento. <BR><BR>§ 1º Na determinação da base de cálculo sujeita à incidência do imposto, poderão ser deduzidos:<BR><BR><EM>a) </EM>Cr$ 10.000,00 por dependente, até o limite de cinco dependentes;<BR><EM>b) </EM>Cr$ 120.000,00 correspondentes à parcela isenta dos rendimentos provenientes de aposentadoria e pensão, transferência para a reserva remunerada ou reforma pagos pela previdência social da União, dos Estados, do Distrito Federal e dos Municípios ou por qualquer pessoa jurídica de direito público interno, a partir do mês em que o contribuinte completar sessenta e cinco anos de idade; <BR><EM>c) </EM>o valor da contribuição paga, no mês, para a previdência social da União, dos Estados, do Distrito Federal e dos Municípios; e<BR><EM>d) </EM>o valor da pensão judicial paga.<BR><BR>§ 2º As disposições deste artigo se aplicam aos pagamentos efetuados a partir de 1° de agosto de 1991."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 32.&nbsp;O inciso III do art. 80 da Lei n° 4.502, de 30 de novembro de 1964, na redação que lhe foi dada pela alteração 22ª do art. 2° do Decreto-Lei n° 34, de 18 de novembro de 1966, passa a vigorar com a seguinte redação: <BR></P>
+<DIR>"III - multa básica de trezentos por cento do valor do imposto que deixou de ser lançado ou recolhido, quando se tratar de infração qualificada, observado o disposto no art. 86."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;As multas de ofício de que trata esta lei, lançadas com base em créditos tributários ou com base em contribuições para o INSS, vencidos há mais de doze meses, serão acrescidas, no ato do lançamento, do valor resultante da variação do INPC, a partir do quinto mês do vencimento do crédito tributário ou da contribuição até o mês do lançamento da multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;As entidades beneficentes reconhecidas como de utilidade pública ficam autorizadas a vender em feiras, bazares e eventos semelhantes, com isenção dos tributos incidentes sobre a importação, mercadorias estrangeiras recebidas em doação de representações diplomáticas estrangeiras sediadas no País, nos termos e condições estabelecidos pelo Ministro da Economia, Fazenda e Planejamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O produto líquido da venda a que se refere este artigo terá como destinação exclusiva o desenvolvimento de atividades beneficentes no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Ficam suprimidos o inciso III e o § 3° do art. 4°, bem como os §§ 1° e 2° do art. 5° da Lei n° 8.178, de 1° de março de 1991. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;Aos rendimentos relativos a Depósitos Especiais Remunerados - DER, efetuados com recursos provenientes de conversão de cruzados novos, aplica-se o mesmo tratamento tributário a que estão sujeitos os rendimentos de depósitos em cadernetas de poupança. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;Aos atos praticados com base na Medida Provisória n° 297, de 28 de junho de 1991, e aos fatos jurídicos ocorridos no período de sua vigência aplicam-se as disposições nela contidas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Esta lei entra em vigor na data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Revogam-se as disposições em contrário, especialmente o art. 17 do Decreto-Lei n° 401, de 30 de dezembro de 1968, o § 2° do art. 7° da Lei n° 7.713, de 22 de dezembro de 1988, o art. 57 da Lei n° 7.799, de 10 de julho de 1989 e os arts. 34, 35 e 36 da Lei n° 8.212, de 25 julho de 1991.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 29 de agosto de 1991; 170° da Independência e 103° da República. </P>
+<P>FERNANDO COLLOR <BR>Marcílio Marques Moreira&nbsp; <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 30/08/1991
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 30/8/1991, Página 18093 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1991, Página 1702 
+                                                        Vol. 4          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

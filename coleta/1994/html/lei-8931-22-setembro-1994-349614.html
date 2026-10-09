@@ -1,0 +1,975 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 8.931, DE 22 DE SETEMBRO DE 1994 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre as diretrizes para a elaboração da lei orçamentária anual de 1995 e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 8.931, DE 22 DE SETEMBRO DE 1994 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-8931-22-setembro-1994-349614-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-8931-22-setembro-1994-349614-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-8931-22-setembro-1994-349614-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-8931-22-setembro-1994-349614-veto-24160-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-8931-22-setembro-1994-349614-retificacao-113055-pl.html">Retificação</a>
+                                            </li>
+                                    <li>
+                                        <a href="lei-8931-22-setembro-1994-349614-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 8.931, DE 22 DE SETEMBRO DE 1994</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre as diretrizes para a elaboração da lei orçamentária anual de 1995 e dá outras providências. <BR>
+						</p>
+				
+						<div class="texto">
+							&nbsp;&nbsp;&nbsp;&nbsp;<STRONG> O PRESIDENTE DA REPÚBLICA</STRONG> <BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Ficam estabelecidas, em cumprimento ao disposto no art. 165, § 2º, da Constituição Federal, as diretrizes orçamentárias da União para 1995, compreendendo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - as prioridades e metas da administração pública federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a organização e estrutura dos orçamentos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - as diretrizes gerais para a elaboração dos orçamentos da União e suas alterações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - as disposições relativas à dívida pública federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - as disposições relativas às despesas da União com pessoal e encargos sociais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - a política de aplicação dos recursos das agências financeiras oficiais de fomentos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - as disposições de caráter supletivo sobre execução dos orçamentos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - as disposições sobre alterações na legislação tributária da União para o exercício correspondente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - as disposições finais. <BR><BR><BR>
+<CENTER>CAPÍTULO I <BR>
+<P class=MsoNormal style="MARGIN: 0cm 0cm 10pt"><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"; TEXT-TRANSFORM: uppercase; LINE-HEIGHT: 115%'>Das Prioridades e Metas da Administração Pública Federal<?xml:namespace prefix = "o" ns = "urn:schemas-microsoft-com:office:office" /><o:p></o:p></SPAN></P></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Constituem prioridades da administração pública federal, além de sua orientação básica para a realização do ajuste fiscal, eliminação do déficit público, e combate à inflação, ao desemprego, à pobreza e à fome: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - educação, cultura e saúde, com ênfase para: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>melhoria dos atendimentos de saúde e ações preventivas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>saneamento; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>habitação popular; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>proteção à criança e ao adolescente; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>assistência alimentar e nutricional; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>educação fundamental; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ciência e tecnologia, com ênfase para: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>apoio à modernização tecnológica da base produtiva; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>incentivo ao desenvolvimento científico e tecnológico; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - incentivo à produção agrícola e reforma agrária, com ênfase para: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>irrigação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>organização da produção e cooperativismo; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - recuperação e consolidação da infra-estrutura; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - preservação, recuperação e conservação do meio ambiente rural e urbano. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;As prioridades definidas no artigo anterior terão procedência na alocação de recursos nos orçamentos de 1995, observadas as metas indicadas no Anexo desta Lei. <BR><BR><BR>
+<CENTER>CAPÍTULO II <BR>
+<P class=MsoNormal style="MARGIN: 0cm 0cm 10pt"><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"; TEXT-TRANSFORM: uppercase; LINE-HEIGHT: 115%'>Da Organização e Estrutura dos Orçamentos<o:p></o:p></SPAN></P></CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;O projeto de lei que o Poder Executivo encaminhará ao Congresso Nacional, no prazo previsto no art. 35, § 2º, III, do Ato das Disposições Constitucionais Transitórias, será composto de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - projeto de lei orçamentária anual, constituído de: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>texto da lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>anexo do orçamento fiscal e do orçamento da seguridade social, discriminando a receita e a despesa na forma definida nesta Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o anexo do orçamento de investimento a que se refere o art. 165, § 5º, II, da Constituição Federal, na forma definida nesta Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>a discriminação da legislação da receita e da despesa, referentes aos orçamentos fiscal e da seguridade social; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - informações complementares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Integrarão os anexos a que se refere este artigo, além dos componentes referenciados no art. 2º, § 1º, I a III e no art. 22, III, da Lei nº 4.320, de 17 de março de 1964, e no art. 7º desta Lei, os seguintes demonstrativos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - das despesas do orçamento fiscal e do orçamento da seguridade social, isolada e conjuntamente, segundo o Poder e órgão, por grupo de despesa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - das despesas dos orçamentos fiscal e do orçamento da seguridade social, isolada e conjuntamente, segundo a origem dos recursos, função, programa, subprograma e grupo de despesa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - dos recursos do Tesouro Nacional, diretamente arrecadados, nos orçamentos fiscal e da seguridade social, por órgão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - da programação, no orçamento fiscal, referente à manutenção e ao desenvolvimento do ensino, nos termos do art. 212 da Constituição Federal, ao nível de órgão, detalhando fontes e valores por categoria de programação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - dos recursos destinados à irrigação, nos termos do art. 42 do Ato das Disposições Constitucionais Transitórias, por região; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - do resumo da despesa do orçamento de investimento, segundo órgão, função, programa, subprograma e grupo de despesa da categoria capital; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - do resumo da receita do orçamento de investimento, com o desdobramento indicado no art. 48 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As informações complementares a que se refere o inciso II deste artigo serão prestadas através de demonstrativos que contenham: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a evolução da receita do Tesouro, nos últimos três anos, segundo categorias econômicas e seu desdobramento em fontes, a preços correntes e a preços de abril de 1994; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a evolução da receita de cada imposto e contribuição de que trata o art. 195 da Constituição Federal, nos últimos três anos, a preços correntes e a preços de abril de 1994; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a evolução da despesa do Tesouro, nos últimos três anos, segundo categorias econômicas e grupos de despesa, a preços correntes e a preços de abril de 1994; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - o resumo das receitas dos orçamentos fiscal e da seguridade social, isolada e conjuntamente, por categoria econômica e origem dos recursos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - os resultados correntes dos orçamentos fiscal e da seguridade social, isolada e conjuntamente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - as receitas dos orçamentos fiscal e da seguridade social, isolada e conjuntamente, de acordo com a classificação constante do Anexo III, da Lei nº 4.320, de 17 de março de 1964, e suas alterações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - as despesas dos orçamentos fiscal e da seguridade social, segundo órgão e origem dos recursos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - o resumo das despesas dos orçamentos fiscal e da seguridade social, isolada e conjuntamente, por categoria econômica e origem dos recursos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - o número de servidores e respectiva remuneração global, em 30 de abril de 1994, por Poder, órgão e entidade, discriminando: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>servidores ativos, por cargo, emprego e função; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>servidores inativos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>servidores em disponibilidade; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - o número de vagas, por Poder, órgão e entidade, em 30 de abril de 1994, segundo cargos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XII - os recursos destinados a eliminar o analfabetismo e universalizar o ensino fundamental, de forma a caracterizar o cumprimento do disposto no art. 60 do Ato das Disposições Constitucionais Transitórias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIII - a discriminação dos subprojetos em andamento, cuja execução financeira, até o exercício de 1994, atualizada monetariamente, ultrapasse vinte por cento de seu custo total estimado, informando o percentual de execução e o custo total, observado o que estabelece o art. 17 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIV - os recursos destinados à contrapartida nacional de empréstimos externos, nos orçamentos fiscal e da seguridade social, por órgão e categoria de programação, com indicação, em cada categoria programática, do agente financeiro respectivo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XV - a programação orçamentária, detalhada por subprojeto e subatividade, relativa à concessão de quaisquer empréstimos, com respectivos subsídios, quando houver, no âmbito dos orçamentos fiscal e da seguridade social; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XVI - a consolidação dos investimentos programados nos três orçamentos da União, por unidade orçamentária, eliminadas as duplicidades; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XVII - o detalhamento, por unidade orçamentária da administração direta e indireta que destine recursos para entidades de previdência fechada, do valor de suas contribuições a título de patrocinadora; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XVIII - a consolidação das despesas por programa e subprograma, em cada órgão, segundo os grupos de despesa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIX - o montante dos gastos executados com pessoal e encargos sociais e com outras despesas correntes por Poder, nos últimos três anos, e dos programados para 1995, com indicação da representatividade percentual dos gastos em relação à receita tributária, desconsiderados os tributos de caráter transitório; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XX - os valores, por subprojeto e subatividade, das transferências de recursos entre unidades orçamentárias, indicando, em relação à transferidora e à recebedora, os códigos de unidade orçamentária, de funcional-programática e de fonte de recursos, bem como o título do subprojeto ou subatividade e respectivo número seqüencial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXI - o detalhamento dos custos unitários médios utilizados na elaboração de orçamento para os principais itens de investimentos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXII - o detalhamento por agente financeiro, das receitas derivadas das operações de crédito interno e externo e dos critérios de cálculo das receitas próprias que compõem as fontes de financiamento de cada empresa contida no orçamento de investimento referido no art. 9º desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXIII - o detalhamento de cada fonte de recursos por grupo de despesa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXIV - o valor e a participação relativa dos gastos programados em investimentos e em outras despesas de capital no âmbito de cada órgão orçamentário, por entidade da federação, eliminadas as duplas contagens. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os demonstrativos exigidos por este artigo identificarão o dispositivo legal a que se referem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;Os orçamentos fiscal e da seguridade social compreenderão a programação dos Poderes da União, seus fundos, órgãos, autarquias, inclusive as especiais, fundações instituídas e mantidas pelo Poder Público, empresas públicas, sociedades de economia mista e demais entidades em que a União, direta ou indiretamente, detenha a maioria do capital social com direito a voto e que dela recebam recursos que não sejam provenientes de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - participação acionária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - pagamento pelo fornecimento de bens e pela prestação de serviços; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - pagamento de empréstimos e financiamentos concedidos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - transferências para aplicação em programas de financiamento nos termos do disposto nos arts. 159, I, "<EM>c</EM>" e 239, § 1º, da Constituição Federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - refinanciamento de dívida garantida pelo Tesouro Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Para efeito do disposto no art. 4º desta Lei, os Poderes Legislativo, Judiciário e o Ministério Público da União encaminharão ao Órgão Central do Sistema de Planejamento Federal e de Orçamentos, através do Sistema Integrado de Dados Orçamentários - SIDOR, suas respectivas propostas orçamentárias, para fins de consolidação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Na elaboração de suas propostas, as instituições mencionadas no <I>caput</I> deste artigo terão como parâmetro, para os montantes de suas despesas globais, a representatividade percentual de seus gastos no exercício de 1993, na receita bruta de impostos da União do mesmo exercício, aplicada sobre a receita correspondente em 1995. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Os orçamentos fiscal e da seguridade social discriminarão a despesa por unidade orçamentária, segundo a classificação funcional-programática, expressa por categoria de programação em seu menor nível, indicando, para cada uma, a modalidade de aplicação e o grupo de despesa a que se refere, observada a seguinte classificação: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - pessoal e encargos sociais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - juros e encargos da dívida; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - outras despesas correntes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - investimentos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - inversões financeiras, incluídas quaisquer despesas referentes à constituição ou aumento de capital de empresas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - amortização da dívida; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - outras despesas de capital. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As categorias de programação de que trata o <I>caput</I> deste artigo serão identificadas por subprojetos ou subatividades, com indicação sucinta das respectivas metas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os subprojetos e subatividades serão agrupados em projetos e atividades, contendo uma sucinta descrição dos respectivos objetivos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º No projeto de lei orçamentária anual será atribuído a cada subprojeto e subatividade, para fins de processamento, um código numérico seqüencial, que não constará da lei orçamentária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O enquadramento dos subprojetos e subatividades na classificação funcional-programática deverá observar os objetivos precípuos dos projetos e atividades, independentemente da entidade executora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;A modalidade de aplicação a que se refere o artigo anterior, destinada à indicação do executor, virá logo após a classificação funcional-programática e será expressa através de códigos identificadores da seguinte tipologia: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - governo estadual (30); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - administração municipal (40); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - entidade privada sem fins lucrativos (50); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a ser definida pelo órgão executor (90). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O código de modalidade de aplicação terá caráter indicativo para a montagem dos quadros de detalhamento da despesa iniciais, podendo ser modificado, para atender às conveniências da execução, mediante reformulação destes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;O orçamento de investimento, previsto no art. 165, § 5º, II, da Constituição Federal, será apresentado por empresa e terá as despesas de capital discriminadas segundo a classificação funcional-programática, expressa por categoria de programação em seu menor nível, por grupo de despesa, na forma do disposto no art. 7º, e a receita de acordo com o detalhamento definido no art. 48, ambos desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;A mensagem que encaminhar o projeto de lei orçamentária anual conterá, dentre outras informações: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - relato sucinto da conjuntura econômica do País, com indicação do cenário macroeconômico para 1995; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - resumo da política econômica e social do Governo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - demonstrativo das necessidades de financiamento do setor público federal, explicitando receitas e despesas, de modo a expressar os resultados nominal, primário e operacional implícitos no projeto de lei orçamentária anual para 1995, bem como demonstrativo de tais resultados nos últimos três anos, devidamente indicados os dados e metodologia utilizada na sua apuração; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - demonstrativo sobre a situação observada no exercício de 1993 em relação aos limites de que tratam os arts. 167, III e 169, da Constituição Federal, e os arts. 37 e 38 do Ato das Disposições Constitucionais Transitórias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - demonstrativo da estimativa da receita nos orçamentos fiscal e da seguridade social, incluindo as premissas básicas de comportamento dos principais itens da arrecadação prevista e, sucintamente, as memórias de cálculo respectivas, bem como uma análise retrospectiva da arrecadação nos últimos dois anos, para cada um desses itens; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - demonstrativo que indique, a preços de abril de 1994, os montantes das dívidas assumidas pela União com base nas Leis nºs 8.388 e 8.727, de 30 de dezembro de 1991 e 5 de novembro de 1993, respectivamente, ou legislação que venha a alterá-la ou substituí-la, os cronogramas de vencimento nos próximos cinco exercícios, discriminados por entidade credora e Estado beneficiado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - demonstrativo do estoque da dívida pública federal, mobiliário e contratual, em 30 de abril de 1994, inclusive daquela junto ao Banco Central, segundo as categorias interna e externa, indicando sua variação líquida em relação a 31 de dezembro de 1993 e os valores previstos para pagamento de amortização e encargos em 1995; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - fundamentos da estimativa da despesa com amortização e juros da dívida pública mobiliária federal, incluindo as taxas reais de juros previstas para o exercício financeiro de 1995; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - demonstrativo das estimativas de gastos com pessoal e encargos sociais para o exercício de 1995, explicitando o método de cálculo utilizado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - demonstrativo regionalizado do efeito decorrente de isenções e de quaisquer outros benefícios tributários, indicando, por tributo e por modalidade de benefício contido na legislação do tributo, a perda de receita que lhes possa ser atribuída; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - informações sobre o Programa Nacional de Desestatização, compreendendo o seu impacto na receita e nas despesas da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Os projetos de lei orçamentária anual e de créditos adicionais, bem como suas propostas de modificação nos termos do art. 166, § 5º, da Constituição Federal, serão apresentados na forma e com o detalhamento estabelecido nesta Lei.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Acompanhará o projeto de lei relativo a crédito adicional exposição de motivos que o justifique, com a indicação das conseqüências do cancelamento, quando for o caso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Os decretos de abertura de créditos suplementares autorizados na lei orçamentária anual serão acompanhados na sua publicação de exposição de motivos que a justifique, indicando os efeitos dos cancelamentos, quando for o caso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;Os projetos de lei orçamentária e de créditos adicionais conterão, ao nível de categoria de programação, a identificação das fontes de recursos que não constarão das respectivas leis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;O Poder Executivo enviará ao Congresso Nacional, simultaneamente ao encaminhamento do projeto de lei orçamentária anual e dos projetos de lei de créditos adicionais, em meio magnético de processamento eletrônico, todos os dados e informações constantes dos referidos projetos, bem como os destacamentos usados na sua consolidação, e os colocará à disposição do Congresso Nacional, mediante acesso ao Sistema Integrado de Dados Orçamentários - SIDOR. <BR><BR><BR>
+<CENTER>CAPÍTULO III 
+<P class=MsoNormal style="MARGIN: 0cm 0cm 10pt"><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"; LINE-HEIGHT: 115%'>DAS DIRETRIZES GERAIS PARA A ELABORAÇÃO <BR>DOS ORÇAMENTOS DA UNIÃO E SUAS ALTERAÇÕES<o:p></o:p></SPAN></P><B></CENTER></B><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Das Diretrizes Gerais </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;No projeto de lei orçamentária, as receitas e as despesas serão orçadas a preços de abril de 1994, convertidos em Reais por intermédio da Unidade Real de Valor (URV) vigente em 15 de abril de 1994. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os valores expressos na forma deste artigo serão corrigidos, no texto do projeto que a Comissão Mista de Planos, Orçamentos Públicos e Fiscalização submeter ao Plenário do Congresso Nacional e na lei orçamentária, pelo quociente entre o valor efetivo, ou valor estimado se este for indisponível, da Unidade Fiscal de Referência (UFIR) no dia 31 de dezembro de 1994 e o valor desta no dia 15 de abril de 1994. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º (VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Os compromissos em moeda estrangeira serão estimados, no projeto de lei, com base na taxa média de câmbio de venda, do referido mês. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Na programação da despesa serão observadas as seguintes restrições de ordem geral: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - não poderão ser fixadas despesas sem que estejam definidas as respectivas fontes de recursos e legalmente instituídas as unidades executoras; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - não poderão ser incluídos subprojetos com a mesma finalidade em mais de um órgão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - não poderão ser classificadas como subatividades dotações que visem ao desenvolvimento de ações limitadas no tempo e das quais resulte produto que concorra para a expansão ou aperfeiçoamento da ação do Governo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - não poderão ser transferidos a outras unidades orçamentárias do mesmo órgão os recursos recebidos por transferência, ressalvados os casos do Fundo de Previdência e Assistência Social, do Fundo Nacional de Saúde, do Fundo Nacional de Desenvolvimento da Educação e do Fundo de Amparo ao Trabalhador; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - não poderão ser incluídas despesas a título de Investimentos - Regime de Execução Especial, ressalvados os casos de calamidade pública, na forma do art. 167, § 3º, da Constituição Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Excetuados os casos de obras natureza ou continuidade física não permita o desdobramento e aqueles de obras objeto de financiamento de organismo multilateral que abranja mais de uma unidade da federação, a lei orçamentária anual não consignará recursos a subprojeto que se localize ou atenda a mais de uma unidade da federação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Na lei orçamentária, a programação de investimentos, no âmbito de cada órgão e entidades federais, além da observância das metas fixadas nesta Lei, somente incluirá subprojetos novos se tiverem sido adequadamente contemplados todos os subprojetos em andamento a seu cargo, entendidos como em andamento aqueles cuja execução financeira, até o exercício de 1994, a preços de abril de 1994, ultrapasse vinte por cento do seu custo total estimado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para fins de aplicação do disposto no <I>caput</I> deste artigo, não serão considerados subprojetos com títulos genéricos que tenham constado de leis orçamentárias anteriores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O projeto de lei orçamentária anual e suas propostas de alteração serão acompanhados por demonstrativo contendo informações sintéticas relativas aos subprojetos em andamento, de modo a permitir a avaliação do cumprimento do disposto neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;(VETADO) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;Não poderão ser destinados recursos para atender despesas com: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - início de construção, ampliação, reforma, aquisição, novas locações ou arrendamentos de imóveis residenciais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - aquisição de mobiliário e equipamento para unidades residenciais de representação funcional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - aquisições de automóveis de representação, ressalvadas aquelas referentes a automóveis de uso do Presidente e do Vice-Presidente da República, dos Presidentes da Câmara dos Deputados, do Senado Federal, dos Tribunais Superiores, dos Ministros de Estado e do Supremo Tribunal Federal, do Procurador-Geral da República e do Advogado-Geral da União; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - aquisição de aeronaves e outros veículos de representação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - celebração, renovação e prorrogação de contratos de locação e arrendamento de quaisquer veículos para representação pessoal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - ações de caráter sigiloso, salvo quando realizadas por órgãos ou entidades cuja legislação que as criou estabeleça, entre suas competências, o desenvolvimento de atividades relativas à segurança da sociedade e do Estado e que tenham como pré-condição o sigilo, constando os valores correspondentes de subprojetos ou subatividades específicas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - ações típicas dos Estados, do Distrito Federal e dos Municípios, ressalvados os casos previstos nos arts. 30, VI e VII, 200, 204, I, e 225, § 1º, III, da Constituição Federal, ou em lei específica; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - clubes e associações de servidores ou quaisquer outras entidades congêneres, excetuadas creches e escolas para o atendimento pré-escolar; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - pagamento a qualquer título a servidor da administração pública por serviços de consultoria ou assistência técnica custeadas com recursos provenientes de convênios, acordos, ajustes ou instrumentos congêneres firmados com órgãos ou entidades de direito público ou privado, nacionais ou internacionais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para efeito desta lei, entende-se como ações típicas dos Estados, do Distrito Federal e dos Municípios as ações governamentais que não sejam de competência exclusiva da União nem de competência comum à União, aos Estados, ao Distrito Federal e aos Municípios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Excluem-se das vedações contidas nos incisos I e II deste artigo, desde que especificamente identificadas nos orçamentos, as unidades equipadas essenciais à ação das organizações militares, as unidades necessárias à instalação de novas representações diplomáticas no exterior, as residências funcionais dos membros do Poder Legislativo em Brasília e as despesas dessa natureza que sejam relativas às sedes oficiais das representações diplomáticas no exterior e que sejam cobertas com recursos provenientes da renda consular; das fixadas no inciso III deste artigo, as aquisições com recursos oriundos da renda consular para atender às novas representações diplomáticas no exterior; bem como as referenciadas no inciso VIII, as instalações desportivas que sejam sediadas nas organizações militares ou que sirvam ao corpo diplomático sediado no Distrito Federal e que constituam patrimônio da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;As receitas diretamente arrecadadas por órgãos, fundos, autarquias, inclusive as especiais, fundações instituídas e mantidas pelo Poder Público, empresas públicas, sociedades de economia mista e demais empresas em que a União, direta ou indiretamente, detenha a maioria do capital com direito a voto, respeitadas suas peculiaridades legais, somente poderão ser programadas para investimentos e inversões financeiras depois de atenderem integralmente às necessidades relativas aos custeios administrativo e operacional, inclusive pessoal e encargos sociais, bem como ao pagamento de amortização, juros e encargos da dívida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os órgãos e entidades a que se refere o <I>caput</I> deste artigo encaminharão à Secretaria de Planejamento, Orçamento e Coordenação da Presidência da República, o método de cálculo das estimativas de arrecadação de suas receitas diretamente arrecadadas para 1995, em prazo a ser definido pelo referido órgão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Excluem-se do disposto no <I>caput</I> deste artigo a utilização, pelas instituições de pesquisa agropecuária, de até vinte por cento das receitas por elas diretamente arrecadadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;(VETADO)<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;É obrigatória a destinação de recursos para compor a contrapartida de empréstimos internos e externos e para o pagamento de sinal, amortização, juros e outros encargos, observados os cronogramas financeiros das respectivas operações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Somente serão incluídas no projeto de lei orçamentária dotações relativas às operações de crédito contratadas ou aprovadas pela Secretaria de Planejamento, Orçamento e Coordenação da Presidência da República ou pelo Ministro da Fazenda até 31 de julho de 1994. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;Todas as despesas relativas à dívida pública federal, mobiliária ou contratual, constarão da lei orçamentária anual, independentemente de quais sejam as fontes de recursos que a atenderão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Sem prejuízo do disposto na Lei nº 8.020, de 12 de abril de 1990, somente poderão ser destinados recursos dos orçamentos fiscal e da seguridade social, inclusive de receitas diretamente arrecadadas dos órgãos e entidades da administração pública federal, para entidade de previdência fechada ou congênere legalmente constituída e em funcionamento até 10 de julho de 1989, desde que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - não aumente a participação relativa da patrocinadora, em relação à contribuição dos seus participantes, verificada no exercício de 1989; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os recursos de cada patrocinadora, destinados a esta finalidade, não sejam superiores àqueles verificados no balanço de 1989, corrigidos pelo Índice Geral de Preços - Disponibilidade Interna, da Fundação Getúlio Vargas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;É vedada a inclusão, na lei orçamentária anual e em seus créditos adicionais, de dotações a título de subvenções sociais, ressalvadas aquelas destinadas a entidades privadas sem fins lucrativos, de atividades de natureza continuada, que preencham uma das seguintes condições: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>sejam de atendimento direto ao público nas áreas de assistência social, à saúde, ou à educação e estejam registradas no Conselho Nacional de Assistência Social (CNAS); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>sejam vinculadas a organismos internacionais de natureza filantrópica, institucional ou assistencial; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>atendam ao disposto no art. 61 do Ato das Disposições Constitucionais Transitórias. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para habilitar-se ao recebimento de subvenções sociais, a entidade privada sem fins lucrativos deverá apresentar declaração de funcionamento regular, emitida no exercício de 1995 por três autoridades locais e comprovante de regularidade do mandato de sua diretoria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A destinação de recursos a municípios, inclusive para o atendimento a ações de assistência social, saúde e educação, serão realizadas por intermédio de transferências intergovernamentais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;É vedada a inclusão de dotações a título de auxílios para entidades privadas, ressalvadas as sem fins lucrativos e desde que sejam: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - voltadas para o ensino especial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - voltadas para o ensino técnico agrícola no meio rural; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - cadastradas junto ao Ministério do Meio Ambiente e da Amazônia Legal para recebimento de recursos oriundos de programas ambientais doados por organismos internacionais ou agências estrangeiras governamentais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;(VETADO)<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;A lei orçamentária anual não conterá dotação global, a título de subvenções sociais, destinada à distribuição em adendo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;As transferências de recursos da União, consignadas na lei orçamentária anual, para Estados, Distrito Federal ou Municípios, a qualquer título, inclusive auxílios financeiros e contribuições, serão realizadas exclusivamente mediante convênio, acordo, ajuste ou outros instrumentos congêneres, na forma da legislação vigente, ressalvadas as destinadas a atender a estado de calamidade pública legalmente reconhecido por ato ministerial e as por força de dispositivo constitucional, e dependerão da unidade beneficiada comprovar que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - instituiu, regulamentou e arrecada todos os tributos previstos nos arts. 155 e 156, da Constituição Federal, ressalvado o imposto previsto no art. 156, III, com a redação dada pela Emenda Constitucional nº 3, quando comprovada a ausência do fato gerador; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a receita tributária própria corresponde, em relação ao total das receitas orçamentárias, exclusive as decorrentes de operações de crédito, a pelo menos: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>vinte por cento, no caso de Estado ou Distrito Federal; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>três por cento, no caso de Municípios com mais de 150.000 habitantes; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>dois por cento, no caso de Municípios de 50.000 a 150.000 habitantes; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>um por cento, no caso de Municípios de 25.000 a 50.000 habitantes; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>meio por cento, no caso de Municípios com até 25.000 habitantes; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - atende ao disposto nos arts. 167, III, e 212, da Constituição Federal e nos arts. 37 e 38, do Ato das Disposições Constitucionais Transitórias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - não está inadimplente: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>com a União, inclusive no que tange às contribuições de que tratam os arts. 195 e 239 da Constituição Federal; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>com relação às contribuições para o Fundo de Garantia de Tempo de Serviço; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>com relação à prestação de contas relativas a recursos anteriormente recebidos da administração pública federal, através de convênios, acordos, ajustes, subvenções sociais, contribuições, auxílios e similares; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - os subprojetos ou subatividades contemplados pelas transferências estejam incluídos na lei orçamentária da esfera de governo a que estiver subordinada a unidade beneficiada ou em créditos adicionais abertos no exercício. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A comprovação dos fatos previstos neste artigo será feita por declaração do respectivo Chefe do Poder Executivo, acompanhada de balancete sintético oficial referente ao exercício de 1994, da lei orçamentária para 1995, e de documentos comprobatórios do atendimento ao disposto neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A contrapartida exigida dos Estados, do Distrito Federal e dos Municípios, que poderá ser atendida através de recursos financeiros e/ou bens e serviços economicamente mensuráveis, será estabelecida de modo compatível com a capacidade financeira da respectiva unidade da Federação ou do Município e não poderá exceder: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a dez por cento do valor do subprojeto, nos Estados localizados nas áreas da Sudene, Sudam e na região Centro-Oeste; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a vinte por cento do valor do subprojeto nos demais Estados e Municípios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A exigência de contrapartida fixada no parágrafo anterior não se aplica: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - às operações de crédito internas e externas, salvo quando o contrato dispuser de forma diferente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - aos recursos transferidos pela União, oriundos de doações de organismos internacionais ou de governos estrangeiros e de programas de conversão da dívida externa doada para fins ambientais, sociais, culturais e de segurança pública; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - aos municípios que se encontrem em situação de calamidade pública formalmente reconhecida, durante todo o período que esta subsistir; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - (VETADO)<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Caberá ao órgão transferidor observar o disposto neste artigo e acompanhar a execução dos subprojetos ou subatividades desenvolvidos com os recursos transferidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;A concessão de empréstimo ou financiamento do Tesouro Nacional a Estado, Distrito Federal ou Município, inclusive entidades da administração indireta, fundações, empresas e sociedades controladas, fica condicionada à comprovação prevista no artigo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;Os empréstimos, financiamentos e refinanciamentos, com recursos dos orçamentos fiscal e da seguridade social, observarão as seguintes condições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - na hipótese de operações com custo de captação identificado, os encargos financeiros não poderão ser inferiores ao referido custo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - na hipótese de operações com custo de captação não identificado, os encargos financeiros não poderão ser inferiores à Taxa Referencial pró-rata tempore . <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Serão de responsabilidade do mutuário, além dos encargos financeiros previstos nos incisos I e II deste artigo, eventuais comissões, taxas e outras despesas congêneres cobradas pelo agente financeiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Ressalvam-se das disposições deste artigo as operações realizadas no âmbito do Programa de Financiamento às Exportações (PROEX). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;As prorrogações e composições de dívidas decorrentes de empréstimos, financiamentos e refinanciamentos concedidos com recursos dos orçamentos fiscal e da seguridade social somente poderão ocorrer se vierem a ser expressamente autorizadas por lei específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Ressalvam-se do disposto neste artigo os empréstimos concedidos para: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - aquisição, por autarquias e empresas públicas federais, de produtos agropecuários destinados à execução da Política de Garantia de Preços Mínimos, de que trata o Decreto-Lei nº 79, de 19 de dezembro de 1966, e a formação de estoques, nos termos do art. 31 da Lei nº 8.171, de 17 de janeiro de 1991; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a comercialização de produtos agropecuários; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a exportação de bens e serviços, nos termos da legislação vigente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;A destinação de recursos para equalização de encargos financeiros ou de preços, pagamento de bonificações a produtores e vendedores, e ajuda financeira, a qualquer título, a empresa com fins lucrativos, observará o disposto nos arts. 18, parágrafo único, e 19 da Lei nº 4.320, de 17 de março de 1964. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Será mencionada no respectivo projeto ou atividade orçamentária a legislação que autorizou o benefício. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;Serão constituídas no orçamento fiscal e da seguridade social, reservas de contingência específicas, vinculadas aos respectivos orçamentos, formadas por importância equivalente a três por cento: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - da receita global de impostos, deduzidas as transferências previstas no art. 159 da Constituição Federal e a parcela da receita de impostos vinculada à Educação, no caso do orçamento fiscal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - da receita das contribuições sociais previstas no art. 195, I, II e III, da Constituição Federal, no caso do orçamento da seguridade social. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;A programação relativa aos Encargos Previdenciários da União integrará o orçamento da seguridade social e discriminará, separadamente, as dotações atribuídas a cada órgão orçamentário e, dentro destes a cada entidade da administração indireta. <BR><BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Das Diretrizes Específicas do Orçamento Fiscal </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;A programação a cargo da unidade orçamentária Operações Oficiais de Crédito - Recursos sob Supervisão do Ministério da Fazenda conterá exclusiva e integralmente as dotações destinadas a atender: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - ao refinanciamento da dívida externa do setor público, inclusive de Estados, do Distrito Federal e de Municípios, bem como de suas autarquias, fundações públicas e empresas nas quais detenham, direta ou indiretamente, o controle acionário, que seja ou venha a ser de responsabilidade da União, nos termos das resoluções do Senado Federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ao refinanciamento da dívida interna de Estados, do Distrito Federal e de Municípios, bem como de suas autarquias, fundações públicas e empresas nas quais detenham, direta ou indiretamente, o controle acionário junto a órgãos e entidades controladas, direta ou indiretamente pela União, nos termos do disposto na Lei nº 8.727, de 5 de novembro de 1993 ou em outra que vier a sucedê-la; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - ao financiamento de programas de custeio e investimento agropecuário e de investimento agroindustrial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - aos financiamentos para a comercialização de produtos agropecuários, inclusive os agroecológicos, nos termos previstos no art. 4º do Decreto-Lei nº 79, de 19 de dezembro de 1966; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - ao financiamento para a formação de estoques previstos no art. 31 da Lei nº 8.171, de 17 de janeiro de 1991; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - ao financiamento de exportações, desde que tais operações estejam abrangidas pelo Programa de Financiamento às Exportações (Proex); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - ao financiamento de operações previstas em acordos internacionais, com execução a cargo do Ministério da Fazenda; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - à equalização de preços de comercialização da Política de Garantia de Preços Mínimos e à equalização de taxas de juros, previstas em lei específica; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - ao financiamento de programas de custeio e investimento agropecuário, em condições especiais definidas em lei, para projetos de colonização e assentamento por reforma agrária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os financiamentos de programas de custeio e investimento agropecuários a que se refere o inciso III deste artigo destinar-se-ão, prioritariamente, aos mini e pequenos produtores rurais e suas cooperativas e associações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;As despesas de que trata o artigo precedente serão financiadas, exclusivamente, com recursos provenientes de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - operações de crédito externas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - emissão de Títulos Públicos Federais, destinados ao pagamento integral da equalização de taxas de juros dos financiamentos às exportações, nos termos do Programa de Financiamento às Exportações (PROEX), e em conformidade com a Lei nº 8.187, de 1º de junho de 1991; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - retorno de empréstimos, financiamentos e refinanciamentos concedidos, a qualquer tempo, nas modalidades que, a partir de 1988, passaram a integrar o ativo das Operações Oficiais de Crédito - Recursos sob Supervisão do Ministério da Fazenda, observando-se que: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>o retorno do financiamento da dívida interna mobiliária de Estados, do Distrito Federal e de Municípios será destinado, exclusivamente, ao pagamento de amortizações, juros e outros encargos da dívida mobiliária contraída pela União, na forma da Lei nº 8.388, de 30 de dezembro de 1991, ou da lei que a vier substituir; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o retorno do refinanciamento da dívida externa do setor público que seja, ou venha a ser de responsabilidade da União, nos termos das resoluções do Senado Federal, será aplicado, exclusivamente, no pagamento de amortizações, juros e outros encargos da dívida mobiliária da União; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o retorno do refinanciamento da dívida não mobiliária de Estados, do Distrito Federal e dos Municípios, bem como de suas autarquias, fundações públicas e empresas nas quais detenham, direta ou indiretamente, o controle acionário, será destinado, exclusivamente, ao pagamento de amortizações, juros e outros encargos da dívida assumida pela União, na forma da Lei nº 8.388, de 30 de dezembro de 1991, ou da lei que a vier substituir; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - operações de crédito destinadas aos refinanciamentos de que tratam os incisos I e II do artigo anterior; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - (VETADO)<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;As dotações para a Política de Garantia de Preços Mínimos e para a formação de estoques previstos no art. 31 da Lei nº 8.171, de 17 de janeiro de 1991, serão orçadas de modo a compatibilizar os requisitos necessários para a estabilização da oferta e a disponibilidade estratégica de produtos essenciais ao abastecimento interno, com a disponibilidade de recursos do Tesouro Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;A programação orçamentária do Banco Central do Brasil obedecerá ao disposto nesta lei e compreenderá as despesas com pessoal e encargos sociais, outros custeios administrativos e operacionais, inclusive aquelas relativas a planos de benefícios e de assistência a servidores e investimentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Do total de investimentos programados em rodovias federais, no orçamento fiscal, serão destinados no máximo dez por cento à construção e pavimentação de rodovias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º (VETADO)<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Não se incluem no limite fixado por este artigo os investimentos com a eliminação de pontos críticos, com a implantação de faixa adicional destinada à adequação da capacidade de rodovias e os recursos alocados à duplicação de rodovias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;(VETADO)<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;A destinação de recursos para as ações de alimentação escolar obedecerá o princípio da descentralização, sendo os recursos da União destinados ao conjunto de Municípios de cada unidade da Federação alocados em categorias de programação específicas e os repasses respectivos realizados diretamente às administrações municipais, proporcionalmente ao número de alunos matriculados, no ano anterior ao do repasse, nas respectivas redes de ensino. <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Das Diretrizes Específicas do Orçamento da Seguridade Social </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;O orçamento da seguridade social compreenderá as dotações destinadas a atender às ações de saúde, previdência e assistência social e obedecerá ao disposto nos arts. 194, 195, 196, 200, 201, 203 e 212, § 4º, da Constituição Federal, e contará, dentre outros, com recursos provenientes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - das contribuições sociais a que se referem os arts. 195, I, II, III e § 8º, e 239, da Constituição Federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - das receitas próprias dos órgãos, fundos e entidades que integram, exclusivamente, este orçamento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - da contribuição dos servidores públicos de que tratam o art. 231 da Lei nº 8.112, de 11 de dezembro de 1990, e os arts. 9º e 10 da Lei nº 8.162, de 8 de janeiro de 1991, que será utilizada para atender despesas no âmbito dos Encargos Previdenciários da União; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - da transferência de recursos do orçamento fiscal e de recursos provenientes do fundo social de emergência fixados na lei orçamentária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A destinação de recursos para atender despesas com ações e serviços públicos de saúde e de assistência social obedecerá ao princípio da descentralização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;O orçamento da seguridade social discriminará: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - no caso das ações descentralizadas de saúde e assistência social, a transferência de recursos da União para cada Estado, para o Distrito Federal e para o conjunto de Municípios de cada unidade da Federação, em categorias de programação específicas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - no detalhamento das demais despesas, as diferentes categorias de benefícios; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - no detalhamento da receita, separadamente, as parcelas relativas às contribuições de empregadores, de trabalhadores e de contribuintes autônomos que compõem a receita da contribuição respectiva à seguridade social. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;(VETADO)<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;A transferência de recursos a Estados, Distrito Federal e Municípios, na área de saúde, será feita através de repasses diretos e automáticos do Fundo Nacional de Saúde, desde que sejam cumpridos os requisitos constantes do art. 4º da Lei nº 8.142, de 28 de dezembro de 1990, para os fundos correspondentes dos Estados, do Distrito Federal e dos Municípios. <BR><BR><BR>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Das Diretrizes Específicas do Orçamento de Investimento </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;O Orçamento de Investimento, previsto no art. 165, § 5º, inciso II, da Constituição Federal, detalhará, individualizadamente, por empresa, categoria de programação e natureza da despesa, as aplicações programadas em despesas de capital, inclusive as resultantes da aplicação do conceito estabelecido pela Lei nº 6.404, de 15 de dezembro de 1976, para as participações acionárias em outras empresas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Excetuam-se do disposto neste artigo as despesas relativas à amortização da dívida e às operações de empréstimos dos bancos e agências financeiras oficiais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º (VETADO)<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;O detalhamento das fontes de financiamento das despesas de capital a que se refere o artigo anterior será feito, por empresa, de modo a identificar as receitas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - geradas pela empresa a que se refere o demonstrativo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - oriundas de recursos próprios de sua controladora; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - decorrentes de participação acionária da União, diretamente ou por intermédio de empresa controladora; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - decorrentes de participação acionária de outras entidades controladas, direta ou indiretamente, pela União; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - oriundas de operações de crédito externo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - oriundas de operações de crédito interno; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - oriundas de outras fontes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;Não se aplicam às empresas integrantes do orçamento de investimento as normas gerais da Lei nº 4.320, de 17 de março de 1964, no que concerne ao regime contábil, execução do orçamento e demonstrativo de resultado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Excetua-se do disposto neste artigo a aplicação, no que couber, dos arts. 109 e 110, da Lei nº 4.320, de 17 de março de 1964, para as finalidades a que se destinam. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As despesas com aquisição de direitos do ativo imobilizado serão consideradas, nos termos da Lei nº 6.404, de 15 de dezembro de 1976, como investimentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;A programação dos investimentos à conta de recursos oriundos dos orçamentos fiscal e da seguridade social, inclusive mediante participação acionária, observará o valor e a destinação constantes do orçamento original. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;A mensagem que encaminhar o projeto de lei orçamentária ao Congresso Nacional será acompanhada de demonstrativos sintéticos, por empresa, do Programa de Dispêndios Globais, informando a origem dos recursos estimados, bem como a previsão da sua respectiva aplicação. <BR><BR><BR>
+<CENTER>CAPÍTULO IV <BR>
+<P class=MsoNormal style="MARGIN: 0cm 0cm 10pt"><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"; TEXT-TRANSFORM: uppercase; LINE-HEIGHT: 115%'>Das Disposições Relativas à Dívida Pública Federal<o:p></o:p></SPAN></P></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;A receita decorrente da emissão de títulos da dívida pública mobiliária federal interna pelo Tesouro Nacional será destinada exclusivamente ao atendimento das seguintes despesas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - amortização, juros e outros encargos da dívida interna e externa, de responsabilidade direta ou indireta do Tesouro Nacional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - refinanciamento da dívida externa do setor público que seja, ou venha a ser, de responsabilidade da União nos termos das resoluções do Senado Federal, bem como da dívida interna dos Estados, do Distrito Federal e dos Municípios, nos termos da Lei nº 8.388, de 30 de dezembro de 1991, e da Lei nº 8.727, de 5 de novembro de 1993; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - aumento de capital das empresas em que a União diretamente detenha a maioria do capital social com direito a voto e que não estejam incluídas no programa de desestatização; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - desapropriação de imóveis rurais, para fins de reforma agrária, nos termos do art. 184, § 4º, da Constituição Federal, com recursos de emissão de Títulos da Dívida Agrária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - pagamento integral da equalização de taxas de juros dos financiamentos às exportações, no âmbito do Programa de Financiamento às Exportações - (Proex), previsto no art. 2º da Lei nº 8.187, de 1º de junho de 1991; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - aquisição de garantias aceitas no exterior, necessárias à renegociação da dívida externa, de médio e longo prazos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - custeio de programas nas áreas da ciência e tecnologia, da saúde, da defesa nacional, da segurança pública e do meio ambiente, aprovados pelo Presidente da República, até o limite dos recursos arrecadados mediante a colocação de Notas do Tesouro Nacional Série P-NTN-P. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os títulos emitidos para atender ao disposto no inciso III deste artigo conterão cláusula de inalienabilidade até o seu vencimento e serão vendidos, ao par, às respectivas empresas beneficiárias do aumento do capital, com juros de até seis por cento ao ano e prazo mínimo de resgate de cinco anos, para principal e juros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os títulos emitidos para atender ao disposto no inciso V deste artigo conterão cláusula de correção cambial e de inalienabilidade; até o vencimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º No caso de amortização, juros e outros encargos decorrentes da extinção ou dissolução de entidades da administração pública federal, nos termos da Lei nº 8.029, de 12 de abril de 1990, os títulos serão emitidos com prazo mínimo de resgate de dois anos, para o principal e juros, e conterão cláusula de inalienabilidade até o seu vencimento. <BR><BR><BR>
+<CENTER>CAPÍTULO V <BR>
+<P class=MsoNormal style="MARGIN: 0cm 0cm 10pt"><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"; TEXT-TRANSFORM: uppercase; LINE-HEIGHT: 115%'>Das Disposições Relativas às Despesas <BR>da União com Pessoal e Encargos Sociais<o:p></o:p></SPAN></P></CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;A despesa com pessoal e encargos sociais, em cada Poder, não poderá exceder, no exercício de 1995, àquela correspondente ao efeito anual da despesa referente ao mês de abril de 1994, acrescido do reajuste decorrente das revisões gerais, inclusive das antecipações salariais, da remuneração dos respectivos servidores, observada a legislação pertinente em vigor, e, em especial, o disposto nos arts. 37, X, e 169, II, da Constituição Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Ressalvam-se do disposto neste artigo as despesas decorrentes de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - implantação dos planos de carreira previstos no art. 39 da Constituição Federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - preenchimento de vagas existentes em 30 de abril de 1994, mediante realização de concurso público expressamente autorizado pelos órgãos competentes de cada Poder; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - progressão funcional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - reajustes ou acréscimos de vantagens em virtude do disposto no art. 39, § 1º, da Constituição Federal;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - incorporação de vantagem prevista no § 2º, do art. 62, da Lei nº 8.112, de 11 de dezembro de 1990, e dos adicionais por tempo de serviço; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - reajustes a título de produtividade, em índice igual ou inferior à variação positiva do Produto Interno Bruto no exercício precedente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - provimento de cargos, criados por lei, desde que o acréscimo de despesa seja suportado pelo orçamento do respectivo órgão ou unidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No caso de instituições públicas da administração indireta, mantidas com recursos do Tesouro Nacional, a norma estabelecida no <I>caput</I> deste artigo será aplicada levando-se em conta as respectivas datas-base. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;Aplica-se o disposto no artigo anterior às transferências da União a Estados e ao Distrito Federal, destinadas ao atendimento de despesas com pessoal. <BR><BR><BR>
+<CENTER>CAPÍTULO VI <BR>
+<P class=MsoNormal style="MARGIN: 0cm 0cm 10pt"><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"; TEXT-TRANSFORM: uppercase; LINE-HEIGHT: 115%'>Da Política de Aplicação dos Recursos das <BR>Agências Financeira Oficiais de Fomento<o:p></o:p></SPAN></P></CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;As agências financeiras oficiais de fomento observarão, na concessão de empréstimos e financiamentos, respeitadas suas especificidades, as prioridades previstas no Plano Plurianual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os encargos dos empréstimos e financiamentos, concedidos pelas agências financeiras oficiais de fomento, não poderão ser inferiores aos respectivos custos de captação, salvo os casos previstos em lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A concessão de quaisquer empréstimos ou financiamentos pelas agências financeiras oficiais, inclusive aos Estados, ao Distrito Federal e aos Municípios, bem como às suas entidades da administração indireta, fundações, empresas e sociedades controladas, sem prejuízo das normas regulamentares pertinentes, somente poderá ser efetuada se o mutuário estiver adimplente com a União, seus órgãos e entidades das administrações direta e indireta e com o Fundo de Garantia por Tempo de Serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O Poder Executivo encaminhará, em anexo ao projeto de lei orçamentária anual, demonstrativo das aplicações orçadas nos termos deste artigo, de modo a evidenciar a proporção dos recursos destinados às prioridades definidas neste artigo. <BR><BR><BR>
+<CENTER>CAPÍTULO VII <BR>
+<P class=MsoNormal style="MARGIN: 0cm 0cm 10pt"><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"; TEXT-TRANSFORM: uppercase; LINE-HEIGHT: 115%'>Das Disposições Sobre Alterações na Legislação Tributária<o:p></o:p></SPAN></P></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;Ocorrendo alterações na legislação tributária, no decorrer de 1994, posteriores ao encaminhamento do projeto de lei orçamentária ao Congresso Nacional, que impliquem excesso de arrecadação em relação à estimativa de receita constante do referido projeto de lei, os recursos destas derivados serão objeto de projeto de lei de crédito adicional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;A concessão ou ampliação de incentivo, isenção ou benefício, de natureza tributária ou financeira, somente poderá ser aprovada caso indique a estimativa de renúncia de receita e as despesas, em idêntico valor, que serão anuladas, inclusive as transferências e vinculações constitucionais. <BR><BR><BR>
+<CENTER>CAPÍTULO VIII <BR>
+<P class=MsoNormal style="MARGIN: 0cm 0cm 10pt"><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"; TEXT-TRANSFORM: uppercase; LINE-HEIGHT: 115%'>Das Disposições de Caráter Supletivo <BR>sobre Execução dos Orçamentos<o:p></o:p></SPAN></P><BR></CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;(VETADO)<BR><BR>
+<CENTER>CAPÍTULO IX<BR>
+<P class=MsoNormal style="MARGIN: 0cm 0cm 10pt"><SPAN style='FONT-SIZE: 12pt; FONT-FAMILY: "Arial","sans-serif"; TEXT-TRANSFORM: uppercase; LINE-HEIGHT: 115%'>Das Disposições Finais<o:p></o:p></SPAN></P></CENTER>
+<CENTER>&nbsp;</CENTER>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;Os projetos de lei de créditos adicionais terão como prazo limite para encaminhamento ao Congresso Nacional a data de 31 de outubro de 1995, devendo a sua apreciação ser concluída no prazo de quarenta e cinco dias do seu recebimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;A prestação de contas anual da União incluirá relatório de execução na forma e com o detalhamento apresentados pela lei orçamentária anual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Da prestação de contas anual constará, necessariamente, informação quantitativa sobre o cumprimento das metas físicas previstas na lei orçamentária anual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;É vedada, em atenção ao que estabelece o art. 167, II, da Constituição Federal, a articulação de quaisquer procedimentos, no âmbito dos sistemas de orçamento, programação financeira e contabilidade, que viabilizem a execução de despesas sem adequada e suficiente disponibilidade de dotação orçamentária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;No exercício do acompanhamento e fiscalização orçamentária a que se refere o art. 166, § 1º, II, da Constituição Federal, será assegurado ao órgão responsável pela atividade, o acesso irrestrito, para fins de consulta, ao Sistema Integrado de Administração Financeira (Siafi) e ao Sistema Integrado de Dados Orçamentários (Sidor). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;O Poder Executivo, através do seu Órgão Central do Sistema de Planejamento Federal e de Orçamento, deverá atender, no prazo de dez dias úteis, contados da data de recebimento, as solicitações de informações encaminhadas pelo Presidente da Comissão Mista de Planos, Orçamentos Públicos e Fiscalização do Congresso Nacional, relativas a aspectos quantitativos e qualitativos de qualquer subprojeto, subatividade ou item de receita. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;Se o projeto de lei orçamentária anual não for encaminhado à sanção do Presidente da República até 31 de dezembro de 1994, a programação constante do projeto de lei remetido pelo Poder Executivo no prazo fixado no art. 35, § 2º, III, do Ato das Disposições Constitucionais Transitórias, relativa às despesas com custeio, incluídas as com pessoal e encargos sociais, e com o serviço da dívida, poderá ser executada, em cada mês, até o mês em que o projeto seja encaminhado à sanção, no limite de um doze avos do total de cada dotação atualizada até o final de 1994. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para efeito da atualização a que se refere o artigo, os valores de cada dotação contida no projeto referido no <I>caput</I> serão multiplicados pelo quociente entre o valor da Unidade Fiscal de Referência (Ufir) no dia 31 de dezembro de 1994 e o valor desta no dia 15 de abril de 1994. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Considerar-se-á antecipação de crédito à conta da lei orçamentária anual a utilização dos recursos autorizada neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os saldos negativos eventualmente apurados em virtude do procedimento previsto neste artigo serão ajustados, após a sanção da lei orçamentária anual, através da abertura de créditos adicionais, com base em remanejamento de dotações, cujos atos serão publicados antes da divulgação dos quadros de detalhamento da despesa a que se refere o art. 66 desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º As despesas financiadas com recursos próprios e com o retorno de financiamento no âmbito das Operações Oficiais de Crédito - Recursos sob a Supervisão do Ministério da Fazenda poderão ser executadas até o limite da efetiva arrecadação dessas receitas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Na eventual necessidade de abertura de crédito extraordinário, serão indicadas para cancelamento as dotações que seriam utilizadas se o projeto de lei orçamentária anual já tivesse sido sancionado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;Até vinte e quatro horas após o encaminhamento à sanção presidencial dos autógrafos do projeto de lei orçamentária anual e dos projetos de lei de créditos adicionais, o Poder Legislativo enviará, em meio magnético de processamento eletrônico, os dados e informações relativos aos autógrafos, indicando: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - em relação a cada categoria de programação dos projetos originais; o total dos acréscimos e o total dos decréscimos, por fonte, realizados pelo Congresso Nacional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - as novas categorias de programação, indicando, em relação a estas, os destacamentos fixados no art. 7º desta lei, as fontes e as denominações atribuídas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;A Secretaria de Planejamento, Orçamento e Coordenação da Presidência da República publicará, no prazo de vinte dias após a publicação da lei orçamentária anual, os quadros de detalhamento da despesa, por unidade orçamentária de cada órgão, fundo e entidade dos orçamentos fiscal e da seguridade social, especificando, para cada categoria de programação, a fonte, a categoria econômica, o grupo de despesa, a modalidade de aplicação e o elemento da despesa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os quadros de detalhamento da despesa serão acompanhados por demonstrativos consolidados das despesas dos orçamentos fiscal e da seguridade social, de modo a evidenciar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - fontes de recursos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - montante por modalidade de aplicação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - montante por elemento de despesa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - detalhamento da programação relacionada com a manutenção e desenvolvimento do ensino. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os quadros de detalhamento da despesa referentes aos Poderes Legislativo e Judiciário e ao Ministério Público da União serão elaborados na forma definida no <I>caput</I> deste artigo e aprovados por atos dos Presidentes da Câmara dos Deputados, do Senado Federal, do Tribunal de Contas da União, do Supremo Tribunal Federal, dos Tribunais Superiores, do Tribunal de Justiça do Distrito Federal e dos Territórios e do Procurador-Geral da República. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os quadros de detalhamento da despesa serão alterados em virtude da abertura de crédito adicional ou de fato que requeira a adequação das dotações às necessidades da execução orçamentária, observados os limites fixados na lei orçamentária anual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;Até sessenta dias após a publicação dos Balanços Gerais da União, serão indicados e totalizados com os valores orçamentários para cada órgão e suas entidades, a nível de subprojeto e subatividade, os saldos de créditos especiais e extraordinários autorizados nos últimos quatro meses do exercício financeiro de 1994, e reabertos, na forma do disposto no art. 167, § 2º, da Constituição Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;Até vinte e quatro horas após a publicação do relatório a que se refere o art. 165, § 3º, da Constituição Federal, o Poder Executivo colocará à disposição do Congresso Nacional os dados relativos à execução orçamentária do mesmo período, na forma e com o grau de detalhamento peculiar aos quadros de detalhamento da despesa, mediante acesso amplo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - ao Sistema Integrado de Administração Financeira (Siafi), para os orçamentos fiscal e da seguridade social; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ao Sistema Integrado de Dados Orçamentários (Sidor), para o orçamento de investimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;O relatório de que trata o artigo anterior deverá conter a execução mensal dos orçamentos fiscal e da seguridade social, classificada por grupo de despesa e fontes segundo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - órgão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - unidade orçamentária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - função; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - programa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - subprograma; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - projeto e atividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Integrará o relatório de execução orçamentária quadro comparativo, discriminando para cada um dos níveis referidos neste artigo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o valor constante da lei orçamentária anual; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o valor orçado, considerando-se a lei orçamentária anual e os créditos adicionais aprovados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o valor empenhado no mês; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - o valor empenhado até o mês; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - (VETADO).<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os valores a que se refere o parágrafo anterior não considerarão as despesas orçadas ou executadas relativas ao refinanciamento da dívida da União, que deverão ser apresentadas separadamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O relatório discriminará as despesas com pessoal e encargos sociais de modo a evidenciar os quantitativos despendidos com vencimentos e vantagens fixas, despesas variáveis, encargos com pensionistas e inativos e encargos sociais para as seguintes categorias: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - pessoal civil da administração direta; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - pessoal militar; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - servidores das autarquias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - servidores das fundações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - empregados de empresas públicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;(VETADO)<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;Esta lei entra em vigor na data de sua publicação. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 22 de setembro de 1994; 173º da Independência e 106º da República. </P>
+<P>ITAMAR FRANCO <BR>Ciro Ferreira Gomes <BR>Beni Veras </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 23/09/1994
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 23/9/1994, Página 14377      
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Diário do Congresso Nacional
+                                                         - 21/9/1995, Página 5775       
+                                                        
+                                                        (Apreciação de Veto)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1994, Página 3592 
+                                                        Vol. 10         
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

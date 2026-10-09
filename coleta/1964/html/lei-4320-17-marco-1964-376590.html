@@ -1,0 +1,990 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 4.320, DE 17 DE MARÇO DE 1964 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Estatui Normas Gerais de Direito Financeiro para elaboração e contrôle dos orçamentos e balanços da União, dos Estados, dos Municípios e do Distrito Federal. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- CSS do portal-tema: necessário para o botão de compartilhamento -->
+<link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 4.320, DE 17 DE MARÇO DE 1964 - Publicação Original</h2>
+
+			<div class="g-contexto-compartilhamento g-contexto-compartilhamento--extendido g-impressao">
+				<!-- Elemento propositalmente vazio, preenchido pelo JS de compartilhamento do portal -->
+			</div>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-4320-17-marco-1964-376590-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-4320-17-marco-1964-376590-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-4320-17-marco-1964-376590-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-4320-17-marco-1964-376590-retificacao-30914-pl.html">Retificação</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-4320-17-marco-1964-376590-veto-30915-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-4320-17-marco-1964-376590-promulgacaodevetos-30916-pl.html">Promulgação de Vetos</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-4320-17-marco-1964-376590-retificacao-33485-pl.html">Retificação</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=173050">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-4320-17-marco-1964-376590-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 4.320, DE 17 DE MARÇO DE 1964</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Estatui Normas Gerais de Direito Financeiro para elaboração e contrôle dos orçamentos e balanços da União, dos Estados, dos Municípios e do Distrito Federal. 
+						</p>
+				
+						<div class="texto">
+							<P>O PRESIDENTE DA REPÚBLICA, <BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte lei: <BR><BR>DISPOSIÇÃO PRELIMINAR </P>
+<P>Art. 1º Esta lei estatui normas gerais de direito financeiro para elaboração e contrôle dos orçamentos e balanços da União, dos Estados, dos Municípios e do Distrito Federal, de acôrdo com o disposto no art. 5º, inciso XV, letra b, da Constituição Federal. <BR><BR></P>
+<CENTER><STRONG>TÍTULO I </STRONG></CENTER>
+<CENTER><STRONG>DA LEI&nbsp;DE ORÇAMENTO</STRONG></CENTER>
+<CENTER><STRONG>&nbsp;</STRONG></CENTER>
+<CENTER><STRONG>CAPÍTULO I </STRONG></CENTER>
+<CENTER><STRONG>Disposições Gerais </STRONG></CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp; A Lei do Orçamento conterá a discriminação da receita e despesa de forma a evidenciar a política econômica financeira e o programa de trabalho do Govêrno, obedecidos os princípios de unidade, universalidade e anualidade. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1° Integrarão a Lei de Orçamento:&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - Sumário geral da receita por fontes e da despesa por funções do Govêrno;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - Quadro demonstrativo da Receita e Despesa segundo as Categorias Econômicas, na forma do Anexo nº 1;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - Quadro discriminativo da receita por fontes e respectiva legislação;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - Quadro das dotações por órgãos do Govêrno e da administração.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Acompanharão a Lei de Orçamento:&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - Quadros demonstrativos da receita e planos de aplicação dos fundos especiais;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - Quadros demonstrativos da despesa, na forma dos Anexos ns. 6 a 9;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - Quadro demonstrativo do programa anual de trabalho do Govêrno, em têrmos de realização de obras e de prestação de serviços. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;A Lei de Orçamento compreenderá tôdas as receitas, inclusive as de operações de crédito autorizadas em lei.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único. </EM>Vetado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;A Lei de Orçamento compreenderá tôdas as despesas próprias dos órgãos do Govêrno e da administração centralizada, ou que, por intermédio dêles se devam realizar, observado o disposto no artigo 2°. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;A Lei de Orçamento não consignará dotações globais destinadas a atender indiferentemente a despesas de pessoal, material, serviços de terceiros, transferências ou quaisquer outras, ressalvado o disposto no artigo 20 e seu parágrafo único. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Tôdas as receitas e despesas constarão da Lei de Orçamento pelos seus totais, vedadas quaisquer deduções.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As cotas de receitas que uma entidade pública deva transferir a outra incluir-se-ão, como despesa, no orçamento da entidade obrigada à transferência e, como receita, no orçamento da que as deva receber.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp; A Lei de Orçamento poderá conter autorização ao Executivo para:&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - Abrir créditos suplementares até determinada importância. (VETADO);&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - Realizar em qualquer mês do exercício financeiro, operações de crédito por antecipação da receita, para atender a insuficiências de caixa.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Em casos de déficit, a Lei de Orçamento indicará as fontes de recursos que o Poder Executivo fica autorizado a utilizar para atender&nbsp;à sua cobertura. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2° O produto estimado de operações de crédito e de alienação de bens imóveis sòmente se incluirá na receita quando umas e outras forem especìficamente autorizadas pelo Poder Legislativo em forma que jurìdicamente possibilite ao Poder Executivo realizá-las no exercício.&nbsp;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A autorização legislativa a que se refere o parágrafo anterior, no tocante a operações de crédito, poderá constar da própria Lei de Orçamento. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;A discriminação da receita geral e da despesa de cada órgão do Govêrno ou unidade administrativa, a que se refere o artigo 2º, § 1º, incisos III e IV obedecerá à forma do Anexo nº 2. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1° Os itens da discriminação da receita e da despesa, mencionados nos artigos 11, § 4°, e 13, serão identificados por números de código decimal, na forma dos Anexos ns. 3 e 4.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Completarão os números do código decimal referido no parágrafo anterior os algarismos caracterizadores da classificação funcional da despesa, conforme estabelece o Anexo nº 5. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 3° O código geral estabelecido nesta lei não prejudicará a adoção de códigos locais. <BR><BR></P>
+<CENTER><STRONG>CAPÍTULO II </STRONG></CENTER>
+<CENTER><STRONG>DA RECEITA</STRONG></CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;A receita classificar-se-á nas seguintes categorias econômicas: Receitas Correntes e Receitas de Capital. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1° São Receitas Correntes as receitas tributária, patrimonial, industrial e diversas e, ainda as provenientes de recursos financeiros recebidos de outras pessoas de direito público ou privado, quando destinadas a atender despesas classificáveis em Despesas Correntes.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º São Receitas de Capital as provenientes da realização de recursos financeiros oriundos de constituição de dívidas; da conversão em espécie, de bens e direitos; os recursos recebidos de outras pessoas de direito público ou privado destinados a atender despesas classificáveis em Despesas de Capital e, ainda, o superavit do Orçamento Corrente.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O superavit do Orçamento Corrente resultante do balanceamento dos totais das receitas e despesas correntes, apurado na demonstração a que se refere o Anexo n. 1, não constituirá item da receita orçamentária.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A classificação da receita por fontes obedecerá ao seguinte esquema: </P>
+<P align=center><STRONG>RECEITAS CORRENTES<BR>&nbsp;Receita Tributária<BR></STRONG></P>
+<P align=left>&nbsp;&nbsp;&nbsp;&nbsp; Impostos<BR>&nbsp;&nbsp;&nbsp;&nbsp; Taxas<BR>&nbsp;&nbsp;&nbsp;&nbsp; Contribuições de Melhoria </P>
+<P align=center>Receita Patrimonial </P>
+<P align=left>&nbsp;&nbsp;&nbsp;&nbsp; Receitas Imobiliárias<BR>&nbsp;&nbsp;&nbsp;&nbsp; Receitas de Valores Mobiliários<BR>&nbsp;&nbsp;&nbsp;&nbsp; Participações e Dividendos<BR>&nbsp;&nbsp;&nbsp;&nbsp; Outras Receitas Patrimoniais </P>
+<P align=center>Receita Industrial </P>
+<P align=left>&nbsp;&nbsp;&nbsp;&nbsp; Receita de Serviços Industriais<BR>&nbsp;&nbsp;&nbsp;&nbsp; Outras Receitas Industriais </P>
+<P align=center>Transferências Correntes </P>
+<P align=center>Receitas Diversas </P>
+<P align=left>&nbsp;&nbsp;&nbsp;&nbsp; Multas<BR>&nbsp;&nbsp;&nbsp;&nbsp; Contribuições <BR>&nbsp;&nbsp;&nbsp;&nbsp; Cobrança da Divida Ativa<BR>&nbsp;&nbsp;&nbsp;&nbsp; Outras Receitas Diversas </P>
+<P align=center>RECEITAS DE CAPITAL</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Operações de Crédito<BR>&nbsp;&nbsp;&nbsp;&nbsp; Alienação de Bens Móveis e Imóveis<BR>&nbsp;&nbsp;&nbsp;&nbsp; Amortização de Empréstimos Concedidos<BR>&nbsp;&nbsp;&nbsp;&nbsp; Transferências de Capital<BR>&nbsp;&nbsp;&nbsp;&nbsp; Outras Receitas de Capital <BR><BR></P>
+<CENTER><STRONG>CAPÍTULO III </STRONG></CENTER>
+<CENTER><STRONG>DA DESPESA</STRONG></CENTER>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;A despesa será classificada nas seguintes categorias econômicas: </P>
+<P align=center>DESPESAS CORRENTES </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Despesas de Custeio<BR>&nbsp;&nbsp;&nbsp;&nbsp; Transferências Correntes </P>
+<P align=center>DESPESAS DE CAPITAL </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Investimentos<BR>&nbsp;&nbsp;&nbsp;&nbsp; Inversões Financeiras<BR>&nbsp;&nbsp;&nbsp;&nbsp; Transferências de Capital. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Classificam-se como Despesas de Custeio as dotações para manutenção de serviços anteriormente criados, inclusive as destinadas a atender a obras de conservação e adaptação de bens imóveis.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Classificam-se como Transferências Correntes as dotações para despesas&nbsp;às quais não corresponda contraprestação direta em bens ou serviços, inclusive para contribuições e subvenções destinadas a atender à manutenção de outras entidades de direito público ou privado.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Consideram-se subvenções, para os efeitos desta lei, as transferências destinadas a cobrir despesas de custeio das entidades beneficiadas, distinguindo-se como:&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; I - subvenções sociais, as que se destinem a instituições públicas ou privadas de caráter assistencial ou cultural, sem finalidade lucrativa;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - subvenções econômicas, as que se destinem a emprêsas públicas ou privadas de caráter industrial, comercial, agrícola ou pastoril.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 4º Classificam-se como Investimentos as dotações para o planejamento e a execução de obras, inclusive as destinadas à aquisição de imóveis considerados necessários à realização destas últimas, bem como para os programas especiais de trabalho, aquisição de instalações, equipamentos e material permanente e constituição ou aumento do capital de emprêsas que não sejam de caráter comercial ou financeiro.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Classificam-se como Inversões Financeiras as dotações destinadas a:&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - aquisição de imóveis, ou de bens de capital já em utilização;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - aquisição de títulos representativos do capital de emprêsas ou entidades de qualquer espécie, já constituídas, quando a operação não importe aumento do capital;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - constituição ou aumento do capital de entidades ou emprêsas que visem a objetivos comerciais ou financeiros, inclusive operações bancárias ou de seguros.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 6º São Transferências de Capital as dotações para investimentos ou inversões financeiras que outras pessoas de direito público ou privado devam realizar, independentemente de contraprestação direta em bens ou serviços, constituindo essas transferências auxílios ou contribuições, segundo derivem diretamente da Lei de Orçamento ou de lei especial anterior, bem como as dotações para amortização da dívida pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;Observadas as categorias econômicas do art. 12, a discriminação ou especificação da despesa por elementos, em cada unidade administrativa ou órgão de govêrno, obedecerá ao seguinte esquema: </P>
+<P align=center>DESPESAS CORRENTES<BR>Despesas de Custeio </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Pessoal Civil<BR>&nbsp;&nbsp;&nbsp;&nbsp; Pessoal Militar<BR>&nbsp;&nbsp;&nbsp;&nbsp; Material de Consumo<BR>&nbsp;&nbsp;&nbsp;&nbsp; Serviços de Terceiros<BR>&nbsp;&nbsp;&nbsp;&nbsp; Encargos Diversos </P>
+<P align=center>Transferências Correntes </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Subvenções Sociais<BR>&nbsp;&nbsp;&nbsp;&nbsp; Subvenções Econômicas<BR>&nbsp;&nbsp;&nbsp;&nbsp; Inativos<BR>&nbsp;&nbsp;&nbsp;&nbsp; Pensionistas<BR>&nbsp;&nbsp;&nbsp;&nbsp; Salário Família e Abono Familiar<BR>&nbsp;&nbsp;&nbsp;&nbsp; Juros da Dívida Pública<BR>&nbsp;&nbsp;&nbsp;&nbsp; Contribuições de Previdência Social<BR>&nbsp;&nbsp;&nbsp;&nbsp; Diversas Transferências Correntes </P>
+<P align=center>DESPESAS DE CAPITAL<BR>Investimentos</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Obras Públicas<BR>&nbsp;&nbsp;&nbsp;&nbsp; Serviços em Regime de Programação Especial<BR>&nbsp;&nbsp;&nbsp;&nbsp; Equipamentos e Instalações<BR>&nbsp;&nbsp;&nbsp;&nbsp; Material Permanente<BR>&nbsp;&nbsp;&nbsp;&nbsp; Participação em Constituição ou Aumento de Capital de Emprêsas ou Entidades Industriais ou Agrícolas</P>
+<P align=center>Inversões Financeiras</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Aquisição de Imóveis<BR>&nbsp;&nbsp;&nbsp;&nbsp; Participação em Constituição ou Aumento de Capital de Emprêsas ou Entidades Comerciais ou Financeiras<BR>&nbsp;&nbsp;&nbsp;&nbsp; Aquisição de Títulos Representativos de Capital de Emprêsa em Funcionamento<BR>&nbsp;&nbsp;&nbsp;&nbsp; Constituição de Fundos Rotativos<BR>&nbsp;&nbsp;&nbsp;&nbsp; Concessão de Empréstimos<BR>&nbsp;&nbsp;&nbsp;&nbsp; Diversas Inversões Financeiras</P>
+<P align=center>Transferências de Capital</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Amortização da Dívida Pública<BR>&nbsp;&nbsp;&nbsp;&nbsp; Auxílios para Obras Públicas<BR>&nbsp;&nbsp;&nbsp;&nbsp; Auxílios para Equipamentos e Instalações<BR>&nbsp;&nbsp;&nbsp;&nbsp; Auxílios para Inversões Financeiras<BR>&nbsp;&nbsp;&nbsp;&nbsp; Outras Contribuições&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Constitui unidade orçamentária o agrupamento de serviços (VETADO) a que serão consignadas dotações próprias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parágrafo único<EM>.</EM>Em casos excepcionais, serão consignadas dotações a unidades administrativas subordinadas ao mesmo órgão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Na Lei de Orçamento a discriminação da despesa far-se-á (VETADO) por elementos.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; §1º VETADO.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Para efeito de classificação da despesa, considera-se material permanente o de duração superior a dois anos. <BR><BR></P>
+<CENTER><STRONG>SEÇÃO I </STRONG></CENTER>
+<CENTER><STRONG>Das Despesas Correntes <BR></STRONG></CENTER>
+<CENTER><STRONG>SUBSEÇÃO ÚNICA </STRONG></CENTER>
+<CENTER><STRONG>Das Transferências Correntes </STRONG></CENTER>
+<CENTER></CENTER>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; I) Das Subvenções Sociais </DIV>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Fundamentalmente e nos limites das possibilidades financeiras, a concessão de subvenções sociais visará a prestação de serviços essenciais de assistência social, médica e educacional, sempre que a suplementação de recursos de origem privada aplicados a esses objetivos, revelar-se mais econômica.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único. </EM>O valor das subvenções, sempre que possível, será calculado com base em unidades de serviços efetivamente prestados ou postos à disposição dos interessados obedecidos os padrões mínimos de eficiência prèviamente fixados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Sòmente à instituição cujas condições de funcionamento forem julgadas satisfatórias pelos órgãos oficiais de fiscalização serão concedidas subvenções. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; II) Das Subvenções Econômicas </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 18. A cobertura dos deficits de manutenção das emprêsas públicas, de natureza autárquica ou não, far-se-á mediante subvenções econômicas expressamente incluídas nas despesas correntes do orçamento da União, do Estado, do Município ou do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único. </EM>Consideram-se, igualmente, como subvenções econômicas:</P>
+<P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>as dotações destinadas a cobrir a diferença entre os preços de mercado e os preços de revenda, pelo Govêrno, de gêneros alimentícios ou outros materiais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>as dotações destinadas ao pagamento de bonificações a produtores de determinados gêneros ou materiais. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;A Lei de Orçamento não consignará ajuda financeira, a qualquer título, a emprêsa de fins lucrativos, salvo quando se tratar de subvenções cuja concessão tenha sido expressamente autorizada em lei especial. <BR><BR></P>
+<CENTER><STRONG>Seção II </STRONG></CENTER>
+<CENTER><STRONG>Das Despesas de Capital <BR><BR></STRONG></CENTER>
+<CENTER><STRONG>Subseção Primeira </STRONG></CENTER>
+<CENTER><STRONG>Dos Investimentos </STRONG></CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;Os investimentos serão discriminados na Lei de Orçamento segundo os projetos de obras e de outras aplicações. <BR><BR>&nbsp;&nbsp;&nbsp;<EM>&nbsp;&nbsp; Parágrafo único. </EM>Os programas especiais de trabalho que, por sua natureza, não possam cumprir-se subordinadamente às normas gerais de execução da despesa poderão ser custeadas por dotações globais, classificadas entre as Despesas de Capital. </P>
+<P align=center><STRONG>Subseção Segunda <BR>Das Transferências de Capital </STRONG></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;A Lei de Orçamento não consignará auxílio para investimentos que se devam incorporar ao patrimônio das emprêsas privadas de fins lucrativos. <BR><BR><EM>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo único. </EM>O disposto neste artigo aplica-se às transferências de capital à conta de fundos especiais ou dotações sob regime excepcional de aplicação. </P>
+<CENTER><STRONG>TÍTULO II </STRONG></CENTER>
+<CENTER><STRONG>Da Proposta Orcamentária <BR></STRONG></CENTER>
+<CENTER><STRONG>CAPÍTULO I </STRONG></CENTER>
+<CENTER><STRONG>Conteúdo e Forma da Proposta Orçamentária </STRONG></CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;A proposta orçamentária, que o Poder Executivo encaminhará ao Poder Legislativo nos prazos estabelecidos nas Constituições e nas Leis Orgânicas dos Municípios, compor-se-á de:&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - Mensagem, que conterá: exposição circunstanciada da situação econômico-financeira, documentada com demonstração da dívida fundada e flutuante, saldos de créditos especiais, restos a pagar e outros compromissos financeiros exigíveis; exposição e justificação da política econômico-financeira do Govêrno; justificação da receita e despesa, particularmente no tocante ao orçamento de capital;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - Projeto de Lei de Orçamento;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - Tabelas explicativas, das quais, além das estimativas de receita e despesa, constarão, em colunas distintas e para fins de comparação:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>A receita arrecadada nos três últimos exercícios anteriores àquele em que se elaborou a proposta; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>A receita prevista para o exercício em que se elabora a proposta; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>A receita prevista para o exercício a que se refere a proposta; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>A despesa realizada no exercício imediatamente anterior; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>A despesa fixada para o exercício em que se elabora a proposta; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>A despesa prevista para o exercício a que se refere a proposta. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Especificação dos programas especiais de trabalho custeados por dotações globais, em têrmos de metas visadas, decompostas em estimativa do custo das obras a realizar e dos serviços a prestar, acompanhadas de justificação econômica, financeira, social e administrativa.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único. </EM>Constará da proposta orçamentária, para cada unidade administrativa, descrição sucinta de suas principais finalidades, com indicação da respectiva legislação. <BR></P>
+<CENTER><STRONG>CAPÍTULO II</STRONG></CENTER>
+<CENTER><STRONG>&nbsp;Da Elaboração da Proposta Orçamentária&nbsp;<BR><BR>Seção Primeira</STRONG></CENTER>
+<CENTER><STRONG>Das Previsões Plurienais </STRONG></CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;As receitas e despesas de capital serão objeto de um Quadro de Recursos e de Aplicação de Capital, aprovado por decreto do Poder Executivo, abrangendo, no mínimo um triênio.&nbsp; <BR><BR><EM>&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo único. </EM>O Quadro de Recursos e de Aplicação de Capital será anualmente reajustado acrescentando-se-lhe as previsões de mais um ano, de modo a assegurar a projeção contínua dos períodos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;O Quadro de Recursos e de Aplicação de Capital abrangerá:&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - as despesas e, como couber, também as receitas previstas em planos especiais aprovados em lei e destinados a atender a regiões ou a setores da administração ou da economia;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - as despesas à conta de fundos especiais e, como couber, as receitas que os constituam;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - em anexos, as despesas de capital das entidades referidas no Título X desta lei, com indicação das respectivas receitas, par as quais forem previstas transferências de capital. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Os programas constantes do Quadro de Recursos e de Aplicação de Capital sempre que possível serão correlacionados a metas objetivas em têrmos de realização de obras e de prestação de serviços.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único. </EM>Consideram-se metas os resultados que se pretendem obter com a realização de cada programa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;A proposta orçamentária conterá o programa anual atualizado dos investimentos inversões financeiras e transferências previstos no Quadro de Recursos e de Aplicação de Capital.</P>
+<CENTER><STRONG>Seção Segunda </STRONG></CENTER>
+<CENTER><STRONG>Das Previsões Anuais </STRONG></CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;As propostas parciais de orçamento guardarão estrita conformidade com a política econômico-financeira, o programa anual de trabalho do Govêrno e, quando fixado, o limite global máximo para o orçamento de cada unidade administrativa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;As propostas parciais das unidades administrativas, organizadas em formulário próprio, serão acompanhadas de:&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - tabelas explicativas da despesa, sob a forma estabelecida no artigo 22, inciso III, letras d, e, e f;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - justificação pormenorizada de cada dotação solicitada, com a indicação dos atos de aprovação de projetos e orçamentos de obras públicas, para cujo início ou prosseguimento ela se destina. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Caberá aos órgãos de contabilidade ou de arrecadação organizar demonstrações mensais da receita arrecadada, segundo as rubricas, para servirem de base a estimativa da receita, na proposta orçamentária.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único. </EM>Quando houver órgão central de orçamento, essas demonstrações ser-lhe-ão remetidas mensalmente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;A estimativa da receita terá por base as demonstrações a que se refere o artigo anterior à arrecadação dos três últimos exercícios, pelo menos, bem como as circunstâncias de ordem conjuntural e outras, que possam afetar a produtividade de cada fonte de receita. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;As propostas orçamentárias parciais serão revistas e coordenadas&nbsp;na proposta geral, considerando-se a receita estimada e as novas circunstâncias.<BR></P>
+<CENTER><STRONG>TÍTULO III </STRONG></CENTER>
+<CENTER><STRONG>Da elaboração da Lei de Orçamento</STRONG> </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Se não receber a proposta orçamentária no prazo fixado nas Constituições ou nas Leis Orgânicas dos Municípios, o Poder Legislativo considerará como proposta a Lei de Orçamento vigente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;Não se admitirão emendas ao projeto de Lei de Orçamento que visem a: </P>
+<P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>alterar a dotação solicitada para despesa de custeio, salvo quando provada, nesse ponto a inexatidão da proposta; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>conceder dotação para o início de obra cujo projeto não esteja aprovado pelos órgãos competentes; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>conceder dotação para instalação ou funcionamento de serviço que não esteja anteriormente criado; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>conceder dotação superior aos quantitativos prèviamente fixados em resolução do Poder Legislativo para concessão de auxílios e subvenções. </TD></TR></TBODY></TABLE></P>
+<CENTER><STRONG>TÍTULO IV </STRONG></CENTER>
+<CENTER><STRONG>Do Exercício Financeiro </STRONG></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;O exercício financeiro coincidirá com o ano civil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Pertencem ao exercício financeiro:&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; I - as receitas nêle arrecadadas;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - as despesas nêle legalmente empenhadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;Consideram-se Restos a Pagar as despesas empenhadas mas não pagas até o dia 31 de dezembro distinguindo-se as processadas das não processadas.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único. </EM>Os empenhos que correm&nbsp;à conta de créditos com vigência plurienal, que não tenham sido liquidados, só serão computados como Restos a Pagar no último ano de vigência do crédito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;As despesas de exercícios encerrados, para as quais o orçamento respectivo consignava crédito próprio, com saldo suficiente para atendê-las, que não se tenham processado na época própria, bem como os Restos a Pagar com prescrição interrompida e os compromissos reconhecidos após o encerramento do exercício correspondente poderão ser pagos à conta de dotação específica consignada no orçamento, discriminada por elementos, obedecida, sempre que possível, a ordem cronológica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Reverte à dotação a importância de despesa anulada no exercício; quando a anulação ocorrer após o encerramento dêste considerar-se-á receita do ano em que se efetivar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;As importâncias relativas a tributo, multas e créditos da Fazenda Pública, lançados mas não cobrados ou não recolhidos no exercício de origem, constituem Dívida Ativa a partir da data de sua inscrição.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único. </EM>As importâncias dos tributos e demais rendas não sujeitas a lançamentos ou não lançadas, serão escrituradas como receita do exercício em que forem arrecadadas nas respectivas rubricas orçamentárias, desde que até o ato do recebimento não tenham sido inscritas como Dívida Ativa. <BR><BR>
+<CENTER><STRONG>TÍTULO V </STRONG></CENTER>
+<CENTER><STRONG>Dos Créditos Adicionais </STRONG></CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;São créditos adicionais as autorizações de despesas não computadas ou insuficientemente dotadas na Lei de Orçamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;Os créditos adicionais classificam-se em:&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - suplementares, os destinados a refôrço de dotação orçamentária;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - especiais, os destinados a despesas para as quais não haja dotação orçamentária específica;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - extraordinários, os destinados a despesas urgentes e imprevistas, em caso de guerra, comoção intestina ou calamidade pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Os créditos suplementares e especiais serão autorizados por lei e abertos por decreto executivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;VETADO.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º VETADO.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - VETADO.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - VETADO.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - VETADO.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - VETADO.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º VETADO.&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º VETADO.<BR>&nbsp;&nbsp;&nbsp;&nbsp; § 4° VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;Os créditos extraordinários serão abertos por decreto do Poder Executivo, que dêles dará imediato conhecimento ao Poder Legislativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;Os créditos adicionais terão vigência adstrita ao exercício financeiro em que forem abertos, salvo expressa disposição legal em contrário, quanto aos especiais e extraordinários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;O ato que abrir crédito adicional indicará a importância, a espécie do mesmo e a classificação da despesa, até onde fôr possível.<BR></P>
+<CENTER><STRONG>TÍTULO VI </STRONG></CENTER>
+<CENTER><STRONG>DA EXECUÇÃO&nbsp;DO ORÇAMENTO<BR></STRONG></CENTER>
+<CENTER><STRONG><BR>CAPÍTULO I</STRONG></CENTER>
+<CENTER><STRONG>&nbsp;Da Programação da Despesa </STRONG></CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;Imediatamente após a promulgação da Lei de Orçamento e com base nos limites nela fixados, o Poder Executivo aprovará um quadro de cotas trimestrais da despesa que cada unidade orçamentária fica autorizada a utilizar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;A fixação das cotas a que se refere o artigo anterior atenderá aos seguintes objetivos: </P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>assegurar às unidades orçamentárias, em tempo útil, a soma de recursos necessários e suficientes a melhor execução do seu programa anual de trabalho; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>manter, durante o exercício, na medida do possível, o equilíbrio entre a receita arrecadada e a despesa realizada, de modo a reduzir ao mínimo eventuais insuficiências de tesouraria. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;A programação da despesa orçamentária, para efeito do disposto no artigo anterior, levará em conta os créditos adicionais e as operações extra-orçamentárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;As cotas trimestrais poderão ser alteradas durante o exercício, observados o limite da dotação e o comportamento da execução orçamentária. <BR><BR>
+<CENTER><STRONG>CAPÍTULO II </STRONG></CENTER>
+<CENTER><STRONG>Da Receita </STRONG></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;Nenhum tributo será exigido ou aumentado sem que a lei o estabeleça, nenhum será cobrado em cada exercício sem prévia autorização orçamentária, ressalvados a tarifa aduaneira e o impôsto lançado por motivo de guerra. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;São objeto de lançamento os impostos diretos e quaisquer outras rendas com vencimento determinado em lei, regulamento ou contrato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;O lançamento da receita é&nbsp;ato da repartição competente, que verifica a procedência do crédito fiscal e a pessoa que lhe é devedora e inscreve o débito desta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;Não será admitida a compensação da obrigação de recolher rendas ou receitas com direito creditório contra a Fazenda Pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;Os agentes da arrecadação devem fornecer recibos das importâncias que arrecadarem.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º VETADO.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os recibos serão fornecidos em uma única via. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;O recolhimento de tôdas as receitas far-se-á em estrita observância ao princípio de unidade de tesouraria, vedada qualquer fragmentação para criação de caixas especiais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;(VETADO) serão classificadas como receita orçamentária, sob as rubricas próprias, tôdas as receitas arrecadadas, inclusive as provenientes de operações de crédito, ainda que não previstas no Orçamento. <BR><BR>
+<CENTER><STRONG>CAPÍTULO III </STRONG></CENTER>
+<CENTER><STRONG>Da Despesa </STRONG></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;O empenho de despesa é o ato emanado de autoridade competente que cria para o Estado obrigação de pagamento pendente (VETADO) de implemento de condição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;O empenho da despesa não poderá exceder o limite dos créditos concedidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;É vedada a realização de despesa sem prévio empenho.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Em casos especiais previstos na legislação específica será dispensada a emissão da nota de empenho.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Será feito por estimativa o empenho da despesa cujo montante não se possa determinar.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º É permitido o empenho global de despesas contratuais e outras, sujeitas a parcelamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;Para cada empenho será extraído um documento denominado "nota de empenho" que indicará o nome do credor a especificação e a importância da despesa, bem como a dedução desta do saldo da dotação própria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;O pagamento da despesa só será efetuado quando ordenado após sua regular liquidação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;A liquidação da despesa consiste na verificação do direito adquirido pelo credor tendo por base os títulos e documentos comprobatórios do respectivo crédito.<BR>&nbsp;&nbsp;&nbsp;&nbsp; § 1° Essa verificação tem por fim apurar:&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a origem e o objeto do que se deve pagar;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a importância exata a pagar;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - a quem se deve pagar a importância, para extinguir a obrigação.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A liquidação da despesa por fornecimentos feitos ou serviços prestados terá por base:&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o contrato, ajuste ou acôrdo respectivo;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a nota de empenho;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - os comprovantes da entrega do material ou da prestação efetiva do serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;A ordem de pagamento é o despacho exarado por autoridade competente, determinando que a despesa seja paga.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único. </EM>VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;O pagamento da despesa será efetuado por tesouraria ou pagadoria regularmente instituídas por estabelecimentos bancários credenciados e, em casos excepcionais, por meio de adiantamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;As dotações atribuídas às diversas unidades orçamentárias poderão, quando expressamente determinado na Lei de Orçamento, ser movimentadas por órgãos centrais de administração geral.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único. </EM>É permitida a redistribuição de parcelas das dotações de pessoal, de uma para outra unidade orçamentária, quando considerada indispensável à movimentação de pessoal, dentro das tabelas ou quadros comuns às unidades interessadas, a que se realize em obediência à legislação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;Os pagamentos devidos pela Fazenda Pública, em virtude de sentença judiciária, far-se-ão na ordem de apresentação dos precatórios e à conta dos créditos respectivos, sendo proibida a designação de casos ou de pessoas nas dotações orçamentárias e nos créditos adicionais abertos para êsse fim. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;O regime de adiantamento é aplicável aos casos de despesas expressamente definidos em lei e consiste na entrega de numerário a servidor, sempre precedida de empenho na dotação própria para o fim de realizar despesas, que não possam subordinar-se ao processo normal de aplicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;Não se fará adiantamento a servidor em alcance (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;A aquisição de material, o fornecimento e a adjudicação de obras e serviços serão regulados em lei, respeitado o princípio da concorrência. <BR><BR>
+<CENTER><STRONG>TÍTULO VII </STRONG></CENTER>
+<CENTER><STRONG>DOS FUNDOS ESPECIAIS&nbsp;</STRONG></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;Constitui fundo especial o produto de receitas especificadas que, por lei, se vinculam à realização de determinados objetivos ou serviços, facultada a adoção de normas peculiares de aplicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;A aplicação das receitas orçamentárias vinculadas a fundos especiais far-se-á através de dotação consignada na Lei de Orçamento ou em créditos adicionais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;Salvo determinação em contrário da lei que o instituiu, o saldo positivo do fundo especial apurado em balanço será transferido para o exercício seguinte, a crédito do mesmo fundo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;A lei que instituir fundo especial poderá determinar normas peculiares de contrôle, prestação e tomada de contas, sem, de qualquer modo, elidir a competência específica do Tribunal de Contas ou órgão equivalente. <BR><BR>
+<CENTER><STRONG>TÍTULO VIII </STRONG></CENTER>
+<CENTER><STRONG>Do Contrôle da Execução Orçamentária<BR></STRONG></CENTER>
+<CENTER><STRONG><BR>CAPÍTULO I </STRONG></CENTER>
+<CENTER><STRONG>Disposições Gerais </STRONG></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;O contrôle da execução orçamentária compreenderá:&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; I - a legalidade dos atos de que resultem a arrecadação da receita ou a realização da despesa, o nascimento ou a extinção de direitos e obrigações;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a fidelidade funcional dos agentes da administração, responsáveis por bens e valores públicos;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - o cumprimento do programa de trabalho expresso em têrmos monetários e em têrmos de realização de obras e prestação de serviços. <BR><BR>
+<CENTER><STRONG>CAPÍTULO II </STRONG></CENTER>
+<CENTER><STRONG>Do Contrôle Interno </STRONG></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76.&nbsp;O Poder Executivo exercerá os três tipos de contrôle a que se refere o artigo 75, sem prejuízo das atribuições do Tribunal de Contas ou órgão equivalente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77.&nbsp;A verificação da legalidade dos atos de execução orçamentária será prévia, concomitante e subseqüente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78.&nbsp;Além da prestação ou tomada de contas anual, quando instituída em lei, ou por fim de gestão, poderá haver, a qualquer tempo, levantamento, prestação ou tomada de contas de todos os responsáveis por bens ou valores públicos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 79.&nbsp;Ao órgão incumbido da elaboração da proposta orçamentária ou a outro indicado na legislação, caberá o contrôle estabelecido no inciso III do artigo 75.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único. </EM>Êsse controle far-se-á, quando fôr o caso, em têrmos de unidades de medida, prèviamente estabelecidas para cada atividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 80.&nbsp;Compete aos serviços de contabilidade ou órgãos equivalentes verificar a exata observância dos limites das cotas trimestrais atribuídas a cada unidade orçamentária, dentro do sistema que fôr instituído para êsse fim. <BR><BR>
+<CENTER><STRONG>CAPÍTULO III </STRONG></CENTER>
+<CENTER><STRONG>DO CONTRÔLE EXTERNO </STRONG></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 81.&nbsp;O contrôle da execução orçamentária, pelo Poder Legislativo, terá por objetivo verificar a probidade da administração, a guarda e legal emprêgo dos dinheiros públicos e o cumprimento da Lei de Orçamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 82.&nbsp;O Poder Executivo, anualmente, prestará contas ao Poder Legislativo, no prazo estabelecido nas Constituições ou nas Leis Orgânicas dos Municípios.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As contas do Poder Executivo serão submetidas ao Poder Legislativo, com parecer prévio do Tribunal de Contas ou órgão equivalente.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Quando, no Município, não houver Tribunal de Contas ou órgão equivalente, a Câmara de Vereadores poderá designar peritos contadores para verificarem as contas do prefeito e sôbre elas emitirem parecer. <BR><BR>
+<CENTER><STRONG>TÍTULO IX </STRONG></CENTER>
+<CENTER><STRONG>DA CONTABILIDADE&nbsp;</STRONG><BR><BR></CENTER>
+<CENTER><STRONG>CAPÍTULO I </STRONG></CENTER>
+<CENTER><STRONG>Disposições Gerais </STRONG></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 83.&nbsp;A contabilidade evidenciará perante a Fazenda Pública a situação de todos quantos, de qualquer modo, arrecadem receitas, efetuem despesas, administrem ou guardem bens a ela pertencentes ou confiados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 84.&nbsp;Ressalvada a competência do Tribunal de Contas ou órgão equivalente, a tomada de contas dos agentes responsáveis por bens ou dinheiros públicos será realizada ou superintendida pelos serviços de contabilidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 85.&nbsp;Os serviços de contabilidade serão organizados de forma a permitirem o acompanhamento da execução orçamentária, o conhecimento da composição patrimonial, a determinação dos custos dos serviços industriais, o levantamento dos balanços gerais, a análise e a interpretação dos resultados econômicos e financeiros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 86.&nbsp;A escrituração sintética das operações financeiras e patrimoniais efetuar-se-á pelo método das partidas dobradas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 87.&nbsp;Haverá contrôle contábil dos direitos e obrigações oriundos de ajustes ou contratos em que a administração pública fôr parte. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 88.&nbsp;Os débitos e créditos serão escriturados com individuação do devedor ou do credor e especificação da natureza, importância e data do vencimento, quando fixada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 89.&nbsp;A contabilidade evidenciará os fatos ligados à administração orçamentária, financeira, patrimonial e industrial. <BR><BR>
+<CENTER><STRONG>CAPÍTULO II </STRONG></CENTER>
+<CENTER><STRONG>Da Contabilidade Orçamentária e Financeira </STRONG></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 90.&nbsp;A contabilidade deverá evidenciar, em seus registros, o montante dos créditos orçamentários vigentes, a despesa empenhada e a despesa realizada, à conta dos mesmos créditos, e as dotações disponíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 91.&nbsp;O registro contábil da receita e da despesa far-se-á de acôrdo com as especificações constantes da Lei de Orçamento e dos créditos adicionais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 92.&nbsp;A dívida flutuante compreende:&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - os restos a pagar, excluídos os serviços da dívida;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - os serviços da dívida a pagar;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - os depósitos;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - os débitos de tesouraria.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único. </EM>O registro dos restos a pagar far-se-á por exercício e por credor distinguindo-se as despesas processadas das não processadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 93.&nbsp;Tôdas as operações de que resultem débitos e créditos de natureza financeira, não compreendidas na execução orçamentária, serão também objeto de registro, individuação e contrôle contábil. <BR><BR>
+<CENTER><STRONG>CAPÍTULO III </STRONG></CENTER>
+<CENTER><STRONG>Da Contabilidade Patrimonial e Industrial </STRONG></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 94.&nbsp;Haverá registros analíticos de todos os bens de caráter permanente, com indicação dos elementos necessários para a perfeita caracterização de cada um dêles e dos agentes responsáveis pela sua guarda e administração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 95.&nbsp;A contabilidade manterá registros sintéticos dos bens móveis e imóveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 96.&nbsp;O levantamento geral dos bens móveis e imóveis terá por base o inventário analítico de cada unidade administrativa e os elementos da escrituração sintética na contabilidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 97.&nbsp;Para fins orçamentários e determinação dos devedores, far-se-á o registro contábil das receitas patrimoniais, fiscalizando-se sua efetivação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 98.&nbsp;VETADO.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único. </EM>A dívida fundada será escriturada com individuação e especificações que permitam verificar, a qualquer momento, a posição dos empréstimos, bem como os respectivos serviços de amortização e juros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 99.&nbsp;Os serviços públicos industriais, ainda que não organizados como emprêsa pública ou autárquica, manterão contabilidade especial para determinação dos custos, ingressos e resultados, sem prejuízo da escrituração patrimonial e financeira comum. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 100.&nbsp;As alterações da situação líquida patrimonial, que abrangem os resultados da execução orçamentária, bem como as variações independentes dessa execução e as superveniências e insubsistências ativas e passivas, constituirão elementos da conta patrimonial. <BR><BR>
+<CENTER><STRONG>CAPÍTULO IV </STRONG></CENTER>
+<CENTER><STRONG>Dos Balanços </STRONG></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 101.&nbsp;Os resultados gerais do exercício serão demonstrados no Balanço Orçamentário, no Balanço Financeiro, no Balanço Patrimonial, na Demonstração das Variações Patrimoniais, segundo os Anexos números 12, 13, 14 e 15 e os quadros demonstrativos constantes dos Anexos números 1, 6, 7, 8, 9, 10, 11, 16 e 17. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 102.&nbsp;O Balanço Orçamentário demonstrará as receitas e despesas previstas em confronto com as realizadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 103.&nbsp;O Balanço Financeiro demonstrará a receita e a despesa orçamentárias bem como os recebimentos e os pagamentos de natureza extra-orçamentária, conjugados com os saldos em espécie provenientes do exercício anterior, e os que se transferem para o exercício seguinte.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único. </EM>Os Restos a Pagar do exercício serão computados na receita extra-orçamentária para compensar sua inclusão na despesa orçamentária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 104.&nbsp;A Demonstração das Variações Patrimoniais evidenciará as alterações verificadas no patrimônio, resultantes ou independentes da execução orçamentária, e indicará o resultado patrimonial do exercício. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 105.&nbsp;O Balanço Patrimonial demonstrará:<BR>&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - O Ativo Financeiro;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - O Ativo Permanente;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - O Passivo Financeiro;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - O Passivo Permanente;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - O Saldo Patrimonial;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - As Contas de Compensação.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O Ativo Financeiro compreenderá os créditos e valores realizáveis independentemente de autorização orçamentária e os valores numerários.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O Ativo Permanente compreenderá os bens, créditos e valores, cuja mobilização ou alienação dependa de autorização legislativa.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O Passivo Financeiro compreenderá as dívidas fundadas e outras&nbsp;pagamento independa de autorização orçamentária.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O Passivo Permanente compreenderá as dívidas fundadas e outras que dependam de autorização legislativa para amortização ou resgate.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Nas contas de compensação serão registrados os bens, valôres, obrigações e situações não compreendidas nos parágrafos anteriores e que, mediata ou indiretamente, possam vir a afetar o patrimônio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 106.&nbsp;A avaliação dos elementos patrimoniais obedecerá as normas seguintes:&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - Os débitos e créditos, bem como os títulos de renda, pelo seu valor nominal, feita a conversão, quando em moeda estrangeira, à taxa de câmbio vigente na data do balanço;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - os bens móveis e imóveis, pelo valor de aquisição ou pelo custo de produção ou de construção;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - os bens de almoxarifado, pelo preço médio ponderado das compras.<BR>&nbsp;&nbsp;&nbsp;&nbsp; § 1° Os valores em espécie, assim como os débitos e créditos, quando em moeda estrangeira, deverão figurar ao lado das correspondentes importâncias em moeda nacional.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º As variações resultantes da conversão dos débitos, créditos e valores em espécie serão levadas à conta patrimonial.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Poderão ser feitas reavaliações dos bens móveis e imóveis. <BR><BR>
+<CENTER><STRONG>TÍTULO X </STRONG></CENTER>
+<CENTER><STRONG>Das Autarquias e Outras Entidades </STRONG></CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 107.&nbsp;As entidades autárquicas ou paraestatais, inclusive de previdência social ou investidas de delegação para arrecadação de contribuições parafiscais da União, dos Estados, dos Municípios e do Distrito Federal terão seus orçamentos aprovados por decreto do Poder Executivo, salvo se disposição legal expressa determinar que o sejam pelo Poder Legislativo.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único. </EM>Compreendem-se nesta disposição as emprêsas com autonomia financeira e administrativa cujo capital pertencer, integralmente, ao Poder Público. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 108.&nbsp;Os orçamentos das entidades referidas no artigo anterior vincular-se-ão ao orçamento da União, dos Estados, dos Municípios e do Distrito Federal, pela inclusão:&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - como receita, salvo disposição legal em contrário, do saldo positivo previsto entre os totais das receitas e despesas;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - como subvenção econômica, na receita do orçamento da beneficiária, salvo disposição legal em contrário, do saldo negativo previsto entre os totais das receitas e despesas.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os investimentos ou inversões financeiros da União, dos Estados, dos Municípios e do Distrito Federal, realizados por intermédio das entidades aludidas no artigo anterior, serão classificados como receita de capital destas e despesa de transferência de capital daqueles.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º As previsões para depreciação serão computadas para efeito de apuração do saldo líquido das mencionadas entidades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 109.&nbsp;Os orçamentos e balanços das entidades compreendidas no artigo 107 serão publicados como complemento dos orçamentos e balanços da União, dos Estados, dos Municípios e do Distrito Federal a que estejam vinculados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 110.&nbsp;Os orçamentos e balanços das entidades já referidas obedecerão aos padrões e normas instituídas por esta lei, ajustados às respectivas peculiaridades.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único. </EM>Dentro do prazo que a legislação fixar, os balanços serão remetidos ao órgão central de contabilidade da União, dos Estados, dos Municípios e do Distrito Federal, para fins de incorporação dos resultados, salvo disposição legal em contrário. <BR><BR>
+<CENTER><STRONG>TÍTULO XI </STRONG></CENTER>
+<CENTER><STRONG>Disposições Finais </STRONG></CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 111.&nbsp;O Conselho Técnico de Economia e Finanças do Ministério da Fazenda, além de outras apurações, para fins estatísticos, de interêsse nacional, organizará e publicará o balanço consolidado das contas da União, Estados, Municípios e Distrito Federal, suas autarquias e outras entidades, bem como um quadro estruturalmente idêntico, baseado em dados orçamentários.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os quadros referidos neste artigo terão a estrutura do Anexo número 1.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2 O quadro baseado nos orçamentos será publicado até o último dia do primeiro semestre do próprio exercício e o baseado nos balanços, até o último dia do segundo semestre do exercício imediato àquele a que se referirem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 112.&nbsp;Para cumprimento do disposto no artigo precedente, a União, os Estados, os Municípios e o Distrito Federal remeterão ao mencionado órgão, até 30 de abril, os orçamentos do exercício, e até 30 de junho, os balanços do exercício anterior.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único. </EM>O pagamento, pela União, de auxílio ou contribuição a Estados, Municípios ou Distrito Federal, cuja concessão não decorra de imperativo constitucional, dependerá de prova do atendimento ao que se determina neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 113.&nbsp;Para fiel e uniforme aplicação das presentes normas, o Conselho Técnico de Economia e Finanças do Ministério da Fazenda atenderá a consultas, coligirá elementos, promoverá o intercâmbio de dados informativos, expedirá recomendações técnicas, quando solicitadas, e atualizará sempre que julgar conveniente, os anexos que integram a presente lei.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único. </EM>Para os fins previstos neste artigo, poderão ser promovidas, quando necessário, conferências ou reuniões técnicas, com a participação de representantes das entidades abrangidas por estas normas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 114.&nbsp;Os efeitos desta lei são contados a partir de 1 de janeiro de 1964. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 115.&nbsp;Revogam-se as disposições em contrário. </P>
+<P>Brasília, em 17 de março de 1964; 143º da Independência e 76º da República. </P>
+<P>JOÃO GOULART <BR>Abelardo Jurema <BR>Sylvio Borges de Souza Motta <BR>Jair Ribeiro <BR>João Augusto de Araújo Castro <BR>Waldyr Ramos Borges <BR>Expedito Machado <BR>Oswaldo Costa Lima Filho <BR>Júlio Furquim Sambaquy <BR>Amaury Silva <BR>Anysio Botelho <BR>Wilson Fadul <BR>Antonio Oliveira Brito <BR>Egydio Michaelsen</P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 23/03/1964
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 23/3/1964, Página 2745       
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1964, Página 5 
+                                                        Vol. 1          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Diário do Congresso Nacional
+                                                         - 30/4/1962, Página 159 
+                                                        
+                                                        (Veto)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Diário do Congresso Nacional
+                                                         - 23/4/1964, Página 131        
+                                                        
+                                                        (Veto)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+
+<!-- JS do portal-tema: necessário para o botão de compartilhamento -->
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/vendor-bundle.js"></script>
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/camara-bundle.js"></script>
+
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

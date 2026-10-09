@@ -1,0 +1,966 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 8.443, DE 16 DE JULHO DE 1992 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre a Lei Orgânica do Tribunal de Contas da União e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- CSS do portal-tema: necessário para o botão de compartilhamento -->
+<link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 8.443, DE 16 DE JULHO DE 1992 - Publicação Original</h2>
+
+			<div class="g-contexto-compartilhamento g-contexto-compartilhamento--extendido g-impressao">
+				<!-- Elemento propositalmente vazio, preenchido pelo JS de compartilhamento do portal -->
+			</div>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-8443-16-julho-1992-365298-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-8443-16-julho-1992-365298-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-8443-16-julho-1992-365298-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-8443-16-julho-1992-365298-veto-116578-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-8443-16-julho-1992-365298-retificacao-116579-pl.html">Retificação</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=218454">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-8443-16-julho-1992-365298-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 8.443, DE 16 DE JULHO DE 1992</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre a Lei Orgânica do Tribunal de Contas da União e dá outras providências. <BR>
+						</p>
+				
+						<div class="texto">
+							<STRONG>&nbsp;&nbsp;&nbsp;&nbsp; O PRESIDENTE DA REPÚBLICA</STRONG>&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER><B>TÍTULO I </CENTER></B>
+<CENTER><B>Natureza, Competência e Jurisdição </CENTER></B><BR><BR>
+<CENTER>CAPÍTULO I<BR>Natureza e Competência </CENTER>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp; Ao Tribunal de Contas da União, órgão de controle externo, compete, nos termos da Constituição Federal e na forma estabelecida nesta Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - julgar as contas dos administradores e demais responsáveis por dinheiros, bens e valores públicos das unidades dos poderes da União e das entidades da administração indireta, incluídas as fundações e sociedades instituídas e mantidas pelo poder público federal, e as contas daqueles que derem causa a perda, extravio ou outra irregularidade de que resulte dano ao Erário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - proceder, por iniciativa própria ou por solicitação do Congresso Nacional, de suas Casas ou das respectivas Comissões, à fiscalização contábil, financeira, orçamentária, operacional e patrimonial das unidades dos poderes da União e das entidades referidas no inciso anterior; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - apreciar as contas prestadas anualmente pelo Presidente da República, nos termos do art. 36 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - acompanhar a arrecadação da receita a cargo da União e das entidades referidas no inciso I deste artigo, mediante inspeções e auditorias, ou por meio de demonstrativos próprios, na forma estabelecida no Regimento Interno;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - apreciar, para fins de registro, na forma estabelecida no Regimento Interno, a legalidade dos atos de admissão de pessoal, a qualquer título, na administração direta e indireta, incluídas as fundações instituídas e mantidas pelo poder público federal, excetuadas as nomeações para cargo de provimento em comissão, bem como a das concessões de aposentadorias, reformas e pensões, ressalvadas as melhorias posteriores que não alterem o fundamento legal do ato concessório; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - efetuar, observada a legislação pertinente, o cálculo das quotas referentes aos fundos de participação a que alude o parágrafo único do art. 161 da Constituição Federal, fiscalizando a entrega dos respectivos recursos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - emitir, nos termos do § 2º do art. 33 da Constituição Federal, parecer prévio sobre as contas do Governo de Território Federal, no prazo de sessenta dias, a contar de seu recebimento, na forma estabelecida no Regimento Interno; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - representar ao poder competente sobre irregularidades ou abusos apurados, indicando o ato inquinado e definindo responsabilidades, inclusive as de Ministro de Estado ou autoridade de nível hierárquico equivalente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - aplicar aos responsáveis as sanções previstas nos arts. 57 a 61 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - elaborar e alterar seu Regimento Interno; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - eleger seu Presidente e seu Vice-Presidente, e dar-lhes posse; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XII - conceder licença, férias e outros afastamentos aos ministros, auditores e membros do Ministério Público junto ao Tribunal, dependendo de inspeção por junta médica a licença para tratamento de saúde por prazo superior a seis meses; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIII - propor ao Congresso Nacional a fixação de vencimentos dos ministros, auditores e membros do Ministério Público junto ao Tribunal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIV - organizar sua Secretaria, na forma estabelecida no Regimento Interno, e prover-lhe os cargos e empregos, observada a legislação pertinente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XV - propor ao Congresso Nacional a criação, transformação e extinção de cargos, empregos e funções de quadro de pessoal de sua Secretaria, bem como a fixação da respectiva remuneração; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XVI - decidir sobre denúncia que lhe seja encaminhada por qualquer cidadão, partido político, associação ou sindicato, na forma prevista nos arts. 53 a 55 desta lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XVII - decidir sobre consulta que lhe seja formulada por autoridade competente, a respeito de dúvida suscitada na aplicação de dispositivos legais e regulamentares concernentes a matéria de sua competência, na forma estabelecida no Regimento Interno. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º No julgamento de contas e na fiscalização que lhe compete, o Tribunal decidirá sobre a legalidade,&nbsp;a legitimidade e a economicidade dos atos de gestão e das despesas deles decorrentes, bem como sobre a aplicação de subvenções e a renúncia de receitas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º A resposta à consulta a que se refere o inciso XVII deste artigo tem caráter normativo e constitui prejulgamento da tese, mas não do fato ou caso concreto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 3º Será parte essencial das decisões do Tribunal ou de suas Câmaras:<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o relatório do Ministro-Relator, de que constarão as conclusões da instrução (do Relatório da equipe de auditoria ou do técnico responsável pela análise do processo, bem como do parecer das chefias imediatas, da Unidade Técnica), e do Ministério Público junto ao Tribunal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - fundamentação com que o Ministro-Relator analisará as questões de fato e de direito; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - dispositivo com que o Ministro-Relator decidirá sobre o mérito do processo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp; Para o desempenho de sua competência o Tribunal receberá, em cada exercício, o rol de responsáveis e suas alterações, e outros documentos ou informações que considerar necessários, na forma estabelecida no Regimento Interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Tribunal poderá solicitar ao Ministro de Estado supervisor da área, ou à autoridade de nível hierárquico equivalente outros elementos indispensáveis ao exercício de sua competência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp; Ao Tribunal de Contas da União, no âmbito de sua competência e jurisdição, assiste o poder regulamentar, podendo, em conseqüência, expedir atos e instruções normativas sobre matéria de suas atribuições e sobre a organização dos processos que lhe devam ser submetidos, obrigando ao seu cumprimento, sob pena de responsabilidade. <BR><BR><BR></P>
+<CENTER>CAPÍTULO II <BR>Jurisdição </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp; O Tribunal de Contas da União tem jurisdição própria e privativa, em todo o território nacional, sobre as pessoas e matérias sujeitas à sua competência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp; A jurisdição do Tribunal abrange: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - qualquer pessoa física, órgão ou entidade a que se refere o inciso I do art. 1º desta Lei, que utilize, arrecade, guarde, gerencie ou administre dinheiros, bens e valores públicos ou pelos quais a União responda, ou que, em nome desta, assuma obrigações de natureza pecuniária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - aqueles que derem causa a perda, extravio ou outra irregularidade de que resulte dano ao Erário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - os dirigentes ou liquidantes das empresas encampadas ou sob intervenção ou que de qualquer modo venham a integrar, provisória ou permanentemente, o patrimônio da União ou de outra entidade pública federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - os responsáveis pelas contas nacionais das empresas supranacionais de cujo capital social a União participe, de forma direta ou indireta, nos termos do tratado constitutivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - os responsáveis por entidades dotadas de personalidade jurídica de direito privado que recebam contribuições parafiscais e prestem serviço de interesse público ou social; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - todos aqueles que lhe devam prestar contas ou cujos atos estejam sujeitos à sua fiscalização por expressa disposição de lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - os responsáveis pela aplicação de quaisquer recursos repassados pela União, mediante convênio, acordo, ajuste ou outros instrumentos congêneres, a Estado, ao Distrito Federal ou a Município; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - os sucessores dos administradores e responsáveis a que se refere este artigo, até o limite do valor do patrimônio transferido, nos termos do inciso XLV do art. 5º da Constituição Federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - os representantes da União ou do Poder Público na Assembléia Geral das empresas estatais e sociedades anônimas de cujo capital a União ou o Poder Público participem, solidariamente, com os membros dos Conselhos Fiscal e de Administração, pela prática de atos de gestão ruinosa ou liberalidade à custa das respectivas sociedades. <BR><BR><BR>
+<CENTER><B>TÍTULO II </CENTER></B>
+<CENTER><B>Julgamento e Fiscalização </CENTER></B><BR><BR>
+<CENTER>CAPÍTULO I <BR>Julgamento de Contas </CENTER><BR><BR>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Tomada e Prestação de Contas </CENTER></B>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp; Estão sujeitas à tomada de contas e, ressalvado o disposto no inciso XXXV do art. 5º da Constituição Federal, só por decisão do Tribunal de Contas da União podem ser liberadas dessa responsabilidade as pessoas indicadas nos incisos I a VI do art. 5º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp; As contas dos administradores e responsáveis a que se refere o artigo anterior serão anualmente submetidas a julgamento do Tribunal, sob forma de tomada ou prestação de contas, organizadas de acordo com normas estabelecidas em instrução normativa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Nas tomadas ou prestações de contas a que alude este artigo devem ser incluídos todos os recursos, orçamentários e extra-orçamentários, geridos ou não pela unidade ou entidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp; Diante da omissão no dever de prestar contas, da não comprovação da aplicação dos recursos repassados pela União, na forma prevista no inciso VII do art. 5º desta lei, da ocorrência de desfalque ou desvio de dinheiros, bens ou valores públicos, ou, ainda, da prática de qualquer ato ilegal, ilegítimo ou antieconômico de que resulte dano ao Erário, a autoridade administrativa competente, sob pena de responsabilidade solidária, deverá imediatamente adotar providências com vistas à instauração da tomada de contas especial para apuração dos fatos, identificação dos responsáveis e quantificação do dano. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Não atendido o disposto no <EM><I>caput</I></EM> deste artigo, o Tribunal determinará a instauração da tomada de contas especial, fixando prazo para cumprimento dessa decisão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º A tomada de contas especial prevista no <EM><I>caput</I></EM> deste artigo e em seu § 1º será, desde logo, encaminhada ao Tribunal de Contas da União para julgamento, se o dano causado ao Erário for de valor igual ou superior à quantia para esse efeito fixada pelo Tribunal em cada ano civil, na forma estabelecida no seu Regimento Interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 3º Se o dano for de valor inferior à quantia referida no parágrafo anterior, a tomada de contas especial será anexada ao processo da respectiva tomada ou prestação de contas anual do administrador ou ordenador de despesa, para julgamento em conjunto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp; Integrarão a tomada ou prestação de contas, inclusive a tomada de contas especial,&nbsp;dentre outros elementos estabelecidos no Regimento Interno, os seguintes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - relatório de gestão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - relatório do tomador de contas, quando couber; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - relatório e certificado de auditoria, com o parecer do dirigente do órgão de controle interno, que consignará qualquer irregularidade ou ilegalidade constatada, indicando as medidas adotadas para corrigir as faltas encontradas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - pronunciamento do Ministro de Estado supervisor da área ou da autoridade de nível hierárquico equivalente, na forma do art. 52 desta Lei. <BR><BR><BR></P>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Decisões em Processo de Tomada ou Prestação de Contas </CENTER></B>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;A decisão em processo de tomada ou prestação de contas pode ser preliminar, definitiva ou terminativa. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Preliminar é a decisão pela qual o Relator ou o Tribunal, antes de pronunciar-se quanto ao mérito das contas, resolve sobrestar o julgamento, ordenar a citação ou a audiência dos responsáveis ou, ainda, determinar outras diligências necessárias ao saneamento do processo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Definitiva é a decisão pela qual o Tribunal julga as contas regulares, regulares com ressalva, ou irregulares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 3º Terminativa é a decisão pela qual o Tribunal ordena o trancamento das contas que forem consideradas iliquidáveis, nos termos dos arts. 20 e 21 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;O Relator presidirá a instrução do processo, determinando, mediante despacho singular, de ofício ou por provocação do órgão de instrução ou do Ministério Público junto ao Tribunal, o sobrestamento do julgamento, a citação ou a audiência dos responsáveis, ou outras providências consideradas necessárias ao saneamento dos autos, fixando prazo, na forma estabelecida no Regimento Interno, para o atendimento das diligências, após o que submeterá o feito ao Plenário ou à Câmara respectiva para decisão de mérito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Verificada irregularidade nas contas, o Relator ou o Tribunal: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - definirá a responsabilidade individual ou solidária pelo ato de gestão inquinado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - se houver débito, ordenará a citação do responsável para, no prazo estabelecido no Regimento Interno, apresentar defesa ou recolher a quantia devida;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - se não houver débito, determinará a audiência do responsável para, no prazo estabelecido no Regimento Interno, apresentar razões de justificativa; não resulte dano ao Erário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - adotará outras medidas cabíveis. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º O responsável cuja defesa for rejeitada pelo Tribunal será cientificado para, em novo e improrrogável prazo estabelecido no Regimento Interno, recolher a importância devida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Reconhecida pelo Tribunal a boa-fé, a liquidação tempestiva do débito atualizado monetariamente sanará o processo, se não houver sido observada outra irregularidade nas contas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 3º O responsável que não atender à citação ou à audiência será considerado revel pelo Tribunal, para todos os efeitos, dando-se prosseguimento ao processo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;A decisão preliminar a que se refere ao art. 11 desta Lei poderá, a critério do Relator, ser publicada no <EM>Diário Oficial</EM> da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;O Tribunal julgará as tomadas ou prestações de contas até o término do exercício seguinte àquele em que estas lhes tiverem sido apresentadas.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Ao julgar as contas, o Tribunal decidirá se estas são regulares, regulares com ressalva, ou irregulares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;As contas serão julgadas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - regulares, quando expressarem, de forma clara e objetiva, a exatidão dos demonstrativos contábeis, a legalidade, a legitimidade e a economicidade dos atos de gestão do responsável; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - regulares com ressalva, quando evidenciarem impropriedade ou qualquer outra falta de natureza formal de que não resulte dano ao Erário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - irregulares, quando comprovada qualquer das seguintes ocorrências: </P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>omissão no dever de prestar contas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>prática de ato de gestão ilegal, ilegítimo, antieconômico, ou infração à norma legal ou regulamentar de natureza contábil, financeira, orçamentária, operacional ou patrimonial; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>dano ao Erário decorrente de ato de gestão ilegítimo&nbsp;ou antieconômico; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>desfalque ou desvio de dinheiros, bens ou valores públicos. </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Tribunal poderá julgar irregulares as contas no caso de reincidência no descumprimento de determinação de que o responsável tenha tido ciência, feita em processo de tomada ou prestação de contas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Nas hipóteses do inciso III, alíneas <EM>c </EM>e <EM>d</EM> deste artigo, o Tribunal, ao julgar irregulares as contas, fixará a responsabilidade solidária: </P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>do agente público que praticou o ato irregular, e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>do terceiro que, como contratante ou parte interessada na prática do mesmo ato, de qualquer modo haja concorrido para o cometimento do dano apurado. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Verificada a ocorrência prevista no parágrafo anterior deste artigo, o Tribunal providenciará a imediata remessa de cópia da documentação pertinente ao Ministério Público da União, para ajuizamento das ações civis e penais cabíveis. <BR><BR><BR>
+<CENTER><B>SUBSEÇÃO I </CENTER></B>
+<CENTER><B>Contas Regulares </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Quando julgar as contas regulares, o Tribunal dará quitação plena ao responsável. <BR><BR><BR>
+<CENTER><B>SUBSEÇÃO II </CENTER></B>
+<CENTER><B>Contas Regulares com Ressalva </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Quando julgar as contas regulares com ressalva, o Tribunal dará quitação ao responsável e lhe determinará, ou a quem lhe haja sucedido, a adoção de medidas necessárias à correção das impropriedades ou faltas identificadas, de modo a prevenir a ocorrência de outras semelhantes. <BR><BR><BR>
+<CENTER><B>SUBSEÇÃO III </CENTER></B>
+<CENTER><B>Contas Irregulares </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;Quando julgar as contas irregulares, havendo débito, o Tribunal condenará o responsável ao pagamento da dívida atualizada monetariamente, acrescida dos juros de mora devidos, podendo, ainda, aplicar-lhe a multa prevista no art. 57 desta Lei, sendo o instrumento da decisão considerado título executivo para fundamentar a respectiva ação de execução. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Não havendo débito, mas comprovada qualquer das ocorrências previstas nas alíneas<EM> a</EM>, <EM>b</EM> e <EM>c</EM> do inciso III, do art. 16, o Tribunal aplicará ao responsável a multa prevista no inciso I do art. 58, desta Lei. <BR><BR><BR>
+<CENTER><B>SUBSEÇÃO IV </CENTER></B>
+<CENTER><B>Contas Iliquidáveis </CENTER></B>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;As contas serão consideradas iliquidáveis quando caso fortuito ou de força maior, comprovadamente alheio à vontade do responsável, tornar materialmente impossível o julgamento de mérito a que se refere o art. 16 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;O Tribunal ordenará o trancamento das contas que forem consideradas iliquidáveis e o conseqüente arquivamento do processo. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Dentro do prazo de cinco anos contados da publicação da decisão terminativa no <EM>Diário Oficial</EM> da União, o Tribunal poderá, à vista de novos elementos que considere suficientes, autorizar o desarquivamento do processo e determinar que se ultime a respectiva tomada ou prestação de contas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Transcorrido o prazo referido no parágrafo anterior sem que tenha havido nova decisão, as contas serão consideradas encerradas, com baixa na responsabilidade do administrador. <BR><BR><BR></P>
+<CENTER><B>SEÇÃO III </CENTER></B>
+<CENTER><B>Execução das Decisões </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;A citação, a audiência, a comunicação de diligência ou a notificação far-se-á: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - mediante ciência do responsável ou do interessado, na forma estabelecida no Regimento Interno; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - pelo correio, mediante carta registrada, com aviso de recebimento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - por edital publicado no <EM>Diário Oficial</EM> da União, quando o seu destinatário não for localizado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A comunicação de rejeição dos fundamentos da defesa ou das razões de justificativa será transmitida ao responsável ou interessado, na forma prevista neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;A decisão definitiva será formalizada nos termos estabelecidos no Regimento Interno, por acórdão, cuja publicação no <EM>Diário Oficial</EM> da União constituirá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - no caso de contas regulares, certificado de quitação plena do responsável para com o Erário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - no caso de contas regulares com ressalva, certificado de quitação com determinação, nos termos do art. 18 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - no caso de contas irregulares: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>obrigação de o responsável, no prazo estabelecido no Regimento Interno, comprovar perante o Tribunal que recolheu aos cofres públicos a quantia correspondente ao débito que lhe tiver sido imputado ou da multa cominada, na forma prevista nos arts. 19 e 57 desta Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>título executivo bastante para cobrança judicial da dívida decorrente do débito ou da multa, se não recolhida no prazo pelo responsável; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>fundamento para que a autoridade competente proceda à efetivação das sanções previstas nos arts. 60 e 61 desta Lei. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;A decisão do Tribunal, de que resulte imputação de débito ou cominação de multa, torna a dívida líquida e certa e tem eficácia de título executivo, nos termos da alínea <EM>b</EM> do inciso III do art. 23 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;O responsável será notificado para, no prazo estabelecido no Regimento Interno, efetuar e comprovar o recolhimento da dívida a que se refere o art. 19 e seu parágrafo único desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A notificação será feita na forma prevista no art. 22 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Em qualquer fase do processo, o Tribunal poderá autorizar o recolhimento parcelado da importância devida, na forma estabelecida no Regimento Interno, incidindo sobre cada parcela os correspondentes acréscimos legais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A falta de recolhimento de qualquer parcela importará no vencimento antecipado do saldo devedor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Comprovado o recolhimento integral, o Tribunal expedirá quitação do débito ou da multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Expirado o prazo a que se refere o <EM><I>caput</I></EM> do art. 25 desta Lei, sem manifestação do responsável, o Tribunal poderá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - determinar o desconto integral ou parcelado da dívida nos vencimentos, salários ou proventos do responsável, observados os limites previstos na legislação pertinente; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - autorizar a cobrança judicial da dívida por intermédio do Ministério Público junto ao Tribunal, na forma prevista no inciso III do art. 81 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;A decisão terminativa, acompanhada de seus fundamentos, será publicada no <EM>Diário Oficial</EM> da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Os prazos referidos nesta Lei contam-se da data: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - do recebimento pelo responsável ou interessado: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>da citação ou da comunicação de audiência; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>da comunicação de rejeição dos fundamentos da defesa ou das razões de justificativa; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>da comunicação de diligência; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>da notificação; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - da publicação de edital no <EM>Diário Oficial</EM> da União, quando, nos casos indicados no inciso anterior, o responsável ou interessado não for localizado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - nos demais casos, salvo disposição legal expressa em contrário, da publicação da decisão ou do acórdão no <EM>Diário Oficial</EM> da União. <BR><BR><BR>
+<CENTER><B>SEÇÃO IV </CENTER></B>
+<CENTER><B>Recursos </CENTER></B>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;Em todas as etapas do processo de julgamento de contas será assegurado ao responsável ou interessado ampla defesa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;De decisão proferida em processo de tomada ou prestação de contas cabem recursos de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - reconsideração; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - embargos de declaração; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - revisão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Não se conhecerá de recurso interposto fora do prazo, salvo em razão da superveniência de fatos novos na forma prevista no Regimento Interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;O recurso de reconsideração, que terá efeito suspensivo, será apreciado por quem houver proferido a decisão recorrida, na forma estabelecida no Regimento Interno, e poderá ser formulado por escrito uma só vez, pelo responsável ou interessado, ou pelo Ministério Público junto ao Tribunal, dentro do prazo de quinze dias, contados na forma prevista no art. 30 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;Cabem embargos de declaração para corrigir obscuridade, omissão ou contradição da decisão recorrida. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os embargos de declaração podem ser opostos por escrito pelo responsável ou interessado, ou pelo Ministério Público junto ao Tribunal, dentro do prazo de dez dias, contados na forma prevista no art. 30 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os embargos de declaração suspendem os prazos para cumprimento da decisão embargada e para interposição dos recursos previstos nos incisos I e III do art. 32 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;De decisão definitiva caberá recurso de revisão ao Plenário, sem efeito suspensivo, interposto por escrito, uma só vez, pelo responsável, seus sucessores, ou pelo Ministério Público junto ao Tribunal, dentro do prazo de cinco anos, contados na forma prevista no inciso III do art. 30 desta Lei, e fundar-se-á: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - em erro de cálculo nas contas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - em falsidade ou insuficiência de documentos em que se tenha fundamentado a decisão recorrida; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - na superveniência de documentos novos com eficácia sobre a prova produzida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A decisão que der provimento a recurso de revisão ensejará a correção de todo e qualquer erro ou engano apurado. <BR><BR><BR></P>
+<CENTER>CAPÍTULO II <BR>Fiscalização a Cargo do Tribunal </CENTER><BR><BR>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Contas do Presidente da República </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;Ao Tribunal de Contas da União compete, na forma estabelecida no Regimento Interno, apreciar as contas prestadas anualmente pelo Presidente da República, mediante parecer prévio a ser elaborado em sessenta dias a contar de seu recebimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As contas consistirão nos balanços gerais da União e no relatório do órgão central do sistema de controle interno do Poder Executivo sobre a execução dos orçamentos de que trata o § 5º do art. 165 da Constituição Federal. <BR><BR><BR>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Fiscalização exercida por iniciativa do Congresso Nacional </CENTER></B>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;(Vetado) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>(Vetado) </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 38. Compete, ainda, ao Tribunal: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - realizar por iniciativa da Câmara dos Deputados, do Senado Federal, de comissão técnica ou de inquérito, inspeções e auditorias de natureza contábil, financeira, orçamentária, operacional e patrimonial nas unidades administrativas dos Poderes Legislativo, Executivo e Judiciário e nas entidades da administração indireta, incluídas as fundações e sociedades instituídas e mantidas pelo poder público federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - prestar as informações solicitadas pelo Congresso Nacional, por qualquer de suas Casas, ou por suas Comissões, sobre a fiscalização contábil, financeira, orçamentária, operacional e patrimonial e sobre resultados de inspeções e auditorias realizadas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - emitir, no prazo de trinta dias contados do recebimento da solicitação, pronunciamento conclusivo sobre matéria que seja submetida a sua apreciação pela Comissão mista permanente de Senadores e Deputados, nos termos dos §§ 1º e 2º do art. 72 da Constituição Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - auditar, por solicitação da Comissão a que se refere o art. 166, § 1º, da Constituição Federal, ou comissão técnica de qualquer das Casas do Congresso Nacional, projetos e programas autorizados na Lei orçamentária anual, avaliando os seus resultados quanto à eficácia, eficiência e economicidade. <BR><BR><BR></P>
+<CENTER><B>SEÇÃO III </CENTER></B>
+<CENTER><B>Atos Sujeitos a Registro </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;De conformidade com o preceituado nos arts. 5º, inciso XXIV, 71, incisos II e III, 73 <I>in fine</I>, 74, § 2º, 96, inciso I, alínea <EM>a</EM>, 97, 39, §§ 1º e 2º e 40, § 4º, da Constituição Federal, o Tribunal apreciará, para fins de registro ou reexame, os atos de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - admissão de pessoal, a qualquer título, na administração direta e indireta, incluídas as fundações instituídas e mantidas pelo poder público, executadas as nomeações para cargo de provimento em comissão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - concessão inicial de aposentadoria, reformas e pensões, bem como de melhorias posteriores que tenham alterado o fundamento legal do respectivo concessório inicial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os atos a que se refere este artigo serão apreciados pelo Tribunal na forma estabelecida no Regimento Interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;O Relator presidirá a instrução do processo, determinando, mediante despacho singular, por sua ação própria e direta, ou por provocação do órgão de instrução ou do Ministério Público junto ao Tribunal, a adoção das providências consideradas necessárias ao saneamento dos autos, fixando prazo, na forma estabelecida no Regimento Interno, para o atendimento das diligências, após o que submeterá o feito ao Plenário ou à Câmara respectiva para decisão de mérito. <BR><BR>
+<CENTER><B>SEÇÃO IV </CENTER></B>
+<CENTER><B>Fiscalização de Atos e Contratos </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;Para assegurar a eficácia do controle e para instruir o julgamento das contas, o Tribunal efetuará a fiscalização dos atos de que resulte receita ou despesa, praticados pelos responsáveis sujeitos à sua jurisdição, competindo-lhe, para tanto, em especial: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - acompanhar, pela publicação no <EM>Diário Oficial</EM> da União, ou por outro meio estabelecido no Regimento Interno: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a lei relativa ao plano plurianual, a lei de diretrizes orçamentárias, a lei orçamentária anual e a abertura de créditos adicionais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>os editais de licitação, os contratos, inclusive administrativos, e os convênios, acordos, ajustes ou outros instrumentos congêneres, bem como os atos referidos no art. 38 desta Lei; </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - realizar, por iniciativa própria, na forma estabelecida no Regimento Interno, inspeções e auditorias de mesma natureza que as previstas no inciso I do art. 38 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - fiscalizar, na forma estabelecida no Regimento Interno, as contas nacionais das empresas supranacionais de cujo capital social a União participe, de forma direta ou indireta, nos termos do tratado constitutivo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - fiscalizar, na forma estabelecida no Regimento Interno, a aplicação de quaisquer recursos repassados pela União mediante convênio, acordo, ajuste ou outros instrumentos congêneres, a Estado, ao Distrito Federal ou a Município. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º As inspeções e auditorias de que trata esta Seção serão regulamentadas no Regimento Interno e realizadas por servidores da Secretaria do Tribunal.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º O Tribunal comunicará às autoridades competentes dos poderes da União o resultado das inspeções e auditorias que realizar, para as medidas saneadoras das impropriedades e faltas identificadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Nenhum processo, documento ou informação poderá ser sonegado ao Tribunal em suas inspeções ou auditorias, sob qualquer pretexto. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º No caso de sonegação, o Tribunal assinará prazo para apresentação dos documentos, informações e esclarecimentos julgados necessários, comunicando o fato ao Ministro de Estado supervisor da área ou à autoridade de nível hierárquico equivalente, para as medidas cabíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Vencido o prazo e não cumprida a exigência, o Tribunal aplicará as sanções previstas no inciso IV do art. 58 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Ao proceder à fiscalização de que trata este Capítulo, o Relator ou o Tribunal: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - determinará as providências estabelecidas no Regimento Interno, quando não apurada transgressão a norma legal ou regulamentar de natureza contábil, financeira, orçamentária, operacional e patrimonial, ou for constatada, tão-somente, falta ou impropriedade de caráter formal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - se verificar a ocorrência de irregularidade quanto à legitimidade ou economicidade, determinará a audiência do responsável para, no prazo estabelecido no Regimento Interno, apresentar razões de justificativa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Não elidido o fundamento da impugnação, o Tribunal aplicará ao responsável a multa prevista no inciso III do art. 58 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;No início ou no curso de qualquer apuração, o Tribunal, de ofício ou a requerimento do Ministério Público, determinará, cautelarmente, o afastamento temporário do responsável, se existirem indícios suficientes de que, prosseguindo no exercício de suas funções, possa retardar ou dificultar a realização de auditoria ou inspeção, causar novos danos ao Erário ou inviabilizar o seu ressarcimento. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Estará solidariamente responsável a autoridade superior competente que, no prazo determinado pelo Tribunal, deixar de atender à determinação prevista no <EM><I>caput</I></EM> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Nas mesmas circunstâncias do <EM><I>caput</I></EM> deste artigo e do parágrafo anterior, poderá o Tribunal, sem prejuízo das medidas previstas nos arts. 60 e 61 desta Lei, decretar, por prazo não superior a um ano, a indisponibilidade de bens do responsável, tantos quantos considerados bastantes para garantir o ressarcimento dos danos em apuração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;Verificada a ilegalidade de ato ou contrato, o Tribunal, na forma estabelecida no Regimento Interno, assinará prazo para que o responsável adote as providências necessárias ao exato cumprimento da lei, fazendo indicação expressa dos dispositivos a serem observados. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º No caso de ato administrativo, o Tribunal, se não atendido: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - sustará a execução do ato impugnado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - comunicará a decisão à Câmara dos Deputados e ao Senado Federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - aplicará ao responsável a multa prevista no inciso II do art. 58 desta Lei.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No caso de contrato, o Tribunal, se não atendido, comunicará o fato ao Congresso Nacional, a quem compete adotar o ato de sustação e solicitar, de imediato, ao Poder Executivo, as medidas cabíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 3º Se o Congresso Nacional ou o Poder Executivo, no prazo de noventa dias, não efetivar as medidas previstas no parágrafo anterior, o Tribunal decidirá a respeito da sustação do contrato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Verificada a ocorrência de fraude comprovada à licitação, o Tribunal declarará a inidoneidade do licitante fraudador para participar, por até cinco anos, de licitação na Administração Pública Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;Ao exercer a fiscalização, se configurada a ocorrência de desfalque, desvio de bens ou outra irregularidade de que resulte dano ao Erário, o Tribunal ordenará, desde logo, a conversão do processo em tomada de contas especial, salvo a hipótese prevista no art. 93 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O processo de tomada de contas especial a que se refere este artigo tramitará em separado das respectivas contas anuais. <BR><BR><BR></P>
+<CENTER><B>SEÇÃO V </CENTER></B>
+<CENTER><B>Pedido de Reexame </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;De decisão proferida em processos concernentes às matérias de que tratam as Seções III e IV deste Capítulo caberá pedido de reexame, que terá efeito suspensivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O pedido de reexame reger-se-á pelo disposto no parágrafo único do art. 32 e no art. 33 desta Lei. <BR><BR><BR>
+<CENTER>CAPÍTULO III <BR>Controle Interno </CENTER>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;Os Poderes Legislativo, Executivo e Judiciário manterão, de forma integrada, sistema de controle interno, com a finalidade de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - avaliar o cumprimento das metas previstas no plano plurianual, a execução dos programas de governo e dos orçamentos da União; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - comprovar a legalidade e avaliar os resultados quanto à eficácia e à eficiência da gestão orçamentária, financeira e patrimonial nos órgãos e entidades da administração federal, bem como da aplicação de recursos públicos por entidades de direito privado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - exercer o controle das operações de crédito, avais e garantias, bem como dos direitos e haveres da União; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - apoiar o controle externo no exercício de sua missão institucional . <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;No apoio ao controle externo, os órgãos integrantes do sistema de controle interno deverão exercer, dentre outras, as seguintes atividades: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - (Vetado) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - realizar auditorias nas contas dos responsáveis sob seu controle, emitindo relatório, certificado de auditoria e parecer; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - alertar formalmente a autoridade administrativa competente para que instaure tomada de contas especial, sempre que tiver conhecimento de qualquer das ocorrências referidas no <EM><I>caput</I></EM> do art. 8º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;Os responsáveis pelo controle interno, ao tomarem conhecimento de qualquer irregularidade ou ilegalidade, dela darão ciência de imediato ao Tribunal de Contas da União, sob pena de responsabilidade solidária. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Na comunicação ao Tribunal, o dirigente do órgão competente indicará as providências adotadas para evitar ocorrências semelhantes.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Verificada em inspeção ou auditoria, ou no julgamento de contas, irregularidade ou ilegalidade que não tenha sido comunicada tempestivamente ao Tribunal, e provada a omissão, o dirigente do órgão de controle interno, na qualidade de responsável solidário, ficará sujeito às sanções previstas para a espécie nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;O Ministro de Estado supervisor da área ou a autoridade de nível hierárquico equivalente emitirá, sobre as contas e o parecer do controle interno, expresso e indelegável pronunciamento, no qual atestará haver tomado conhecimento das conclusões nele contidas. <BR><BR><BR></P>
+<CENTER>CAPÍTULO IV<BR>Denúncia </CENTER>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;Qualquer cidadão, partido político, associação ou sindicato é parte legítima para denunciar irregularidades ou ilegalidades perante o Tribunal de Contas da União. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º (Vetado) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º (Vetado)&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 3º A denúncia será apurada em caráter sigiloso, até que se comprove a sua procedência, e somente poderá ser arquivada após efetuadas as diligências pertinentes, mediante despacho fundamentado do responsável.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 4º Reunidas as provas que indiquem a existência de irregularidade ou ilegalidade, serão públicos os demais atos do processo, assegurando-se aos acusados a oportunidade de ampla defesa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;O denunciante poderá requerer ao Tribunal de Contas da União certidão dos despachos e dos fatos apurados, a qual deverá ser fornecida no prazo máximo de quinze dias, a contar do recebimento do pedido, desde que o respectivo processo de apuração tenha sido concluído ou arquivado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Decorrido o prazo de noventa dias, a contar do recebimento da denúncia, será obrigatoriamente fornecida a certidão de que trata este artigo, ainda que não estejam concluídas as investigações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;No resguardo dos direitos e garantias individuais, o Tribunal dará tratamento sigiloso às denúncias formuladas, até decisão definitiva sobre a matéria. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Ao decidir, caberá ao Tribunal manter ou não o sigilo quanto ao objeto e à autoria da denúncia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º O denunciante não se sujeitará a qualquer sanção administrativa, cível ou penal, em decorrência da denúncia, salvo em caso de comprovada má-fé.<BR><BR><BR></P>
+<CENTER>CAPÍTULO V<BR>Sanções </CENTER><BR><BR>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Disposição Geral </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;O Tribunal de Contas da União poderá aplicar aos administradores ou responsáveis, na forma prevista nesta Lei e no seu Regimento Interno, as sanções previstas neste Capítulo. <BR><BR>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Multas </CENTER></B>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;Quando o responsável for julgado em débito, poderá ainda o Tribunal aplicar-lhe multa de até cem por cento do valor atualizado do dano causado ao Erário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;O Tribunal poderá aplicar multa de Cr$ 42.000.000,00 (quarenta e dois milhões de cruzeiros), ou valor equivalente em outra moeda que venha a ser adotada como moeda nacional, aos responsáveis por: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - contas julgadas irregulares de que não resulte débito, nos termos do parágrafo único do art. 19 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ato praticado com grave infração à norma legal ou regulamentar de natureza contábil, financeira, orçamentária, operacional e patrimonial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - ato de gestão ilegítimo ou antieconômico de que resulte injustificado dano ao Erário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - não atendimento, no prazo fixado, sem causa justificada, a diligência do Relator ou a decisão do Tribunal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - obstrução ao livre exercício das inspeções e auditorias determinadas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - sonegação de processo, documento ou informação, em inspeções ou auditorias realizadas pelo Tribunal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - reincidência no descumprimento de determinação do Tribunal. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Ficará sujeito à multa prevista no <EM><I>caput</I></EM> deste artigo aquele que deixar de dar cumprimento à decisão do Tribunal, salvo motivo justificado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º O valor estabelecido no <EM><I>caput</I></EM> deste artigo será atualizado, periodicamente, por portaria da Presidência do Tribunal, com base na variação acumulada, no período, pelo índice utilizado para atualização dos créditos tributários da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 3º O Regimento Interno disporá sobre a gradação da multa prevista no <EM><I>caput</I></EM> deste artigo, em função da gravidade da infração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;O débito decorrente de multa aplicada pelo Tribunal de Contas da União nos do art. 57 desta Lei, quando pago após o seu vencimento, será atualizado monetariamente na data do efetivo pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;Sem prejuízo das sanções previstas na Seção anterior e das penalidades administrativas, aplicáveis pelas autoridades competentes, por irregularidades constatadas pelo Tribunal de Contas da União, sempre que este, por maioria absoluta de seus membros, considerar grave a infração cometida, o responsável ficará inabilitado, por um período que variará de cinco a oito anos, para o exercício de cargo em comissão ou função de confiança no âmbito da Administração Pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;O Tribunal poderá, por intermédio do Ministério Público, solicitar à Advocacia-Geral da União ou, conforme o caso, aos dirigentes das entidades que lhe sejam jurisdicionadas, as medidas necessárias ao arresto dos bens dos responsáveis julgados em débito, devendo ser ouvido quanto à liberação dos bens arrestados e sua restituição. <BR><BR><BR></P>
+<CENTER><B>TÍTULO III </CENTER></B>
+<CENTER><B>Organização do Tribunal </CENTER></B><BR><BR>
+<CENTER>CAPÍTULO I<BR>Sede e Composição </CENTER>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;O Tribunal de Contas da União tem sede no Distrito Federal e compõe-se de nove ministros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;Os ministros, em suas ausências e impedimentos por motivo de licença, férias ou outro afastamento legal, serão substituídos, mediante convocação do Presidente do Tribunal, pelos auditores, observada a ordem de antigüidade no cargo, ou a maior idade, no caso de idêntica antigüidade. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os auditores serão também convocados para substituir ministros, para efeito de <EM>quorum</EM>, sempre que os titulares comunicarem, ao Presidente do Tribunal ou da Câmara respectiva, a impossibilidade de comparecimento à sessão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Em caso de vacância de cargo de ministro, o Presidente do Tribunal convocará auditor para exercer as funções inerentes ao cargo vago, até novo provimento, observado o critério estabelecido no <EM><I>caput</I></EM> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;Funciona junto ao Tribunal de Contas da União o Ministério Público, na forma estabelecida nos arts. 80 a 84 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;O Tribunal de Contas da União disporá de Secretaria para atender às atividades de apoio técnico e administrativo necessárias ao exercício de sua competência. <BR><BR></P>
+<CENTER>CAPÍTULO II <BR>Plenário e Câmaras </CENTER>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;O Plenário do Tribunal de Contas da União, dirigido por seu Presidente, terá a competência e o funcionamento regulados nesta Lei e no seu Regimento Interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;O Tribunal de Contas da União poderá dividir-se em Câmaras, mediante deliberação da maioria absoluta de seus ministros titulares. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Não será objeto de deliberação das Câmaras matéria da competência privativa do Plenário, a ser definida no Regimento Interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º A competência, o número, a composição, a presidência e o funcionamento das Câmaras serão regulados no Regimento Interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;O Tribunal fixará, no Regimento Interno, os períodos de funcionamento das sessões do Plenário e das Câmaras e o recesso que entender conveniente, sem ocasionar a interrupção de seus trabalhos.</P>
+<P>&nbsp;<BR></P>
+<CENTER>CAPÍTULO III <BR>Presidente e Vice-Presidente </CENTER>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;Os ministros elegerão o Presidente e o Vice-Presidente do Tribunal para mandato correspondente a um ano civil, permitida a reeleição apenas por um período de igual duração. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º A eleição realizar-se-á em escrutínio secreto, na última sessão ordinária do mês de dezembro, ou, em caso de vaga eventual, na primeira sessão ordinária após sua ocorrência, exigida a presença de, pelo menos, cinco ministros titulares, inclusive o que presidir o ato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º O Vice-Presidente substituirá o Presidente em suas ausências ou impedimentos e exercerá as funções de Corregedor, cujas atribuições serão as estabelecidas no Regimento Interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 3º Na ausência ou impedimento do Vice-Presidente, o Presidente será substituído pelo ministro mais antigo em exercício no cargo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 4º O eleito para a vaga que ocorrer antes do término do mandato exercerá o cargo no período restante. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 5º Não se procederá a nova eleição se a vaga ocorrer dentro dos sessenta dias anteriores ao término do mandato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 6º A eleição do Presidente precederá à do Vice-Presidente . <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 7º Considerar-se-á eleito o ministro que obtiver a maioria dos votos. Não alcançada esta, proceder-se-á a novo escrutínio entre os dois mais votados, decidindo-se afinal, entre esses, pela antigüidade no cargo de ministro do Tribunal, caso nenhum consiga a maioria dos votos.<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 8º Somente os ministros titulares, ainda que em gozo de licença, férias, ou ausentes com causa justificada, poderão tomar parte nas eleições, na forma estabelecida no Regimento Interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;Compete ao Presidente, dentre outras atribuições estabelecidas no Regimento Interno: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - dirigir o Tribunal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - dar posse aos ministros, auditores, membros do Ministério Público junto ao Tribunal e dirigentes das unidades da Secretaria, na forma estabelecida no Regimento Interno; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - expedir atos de nomeação, admissão, exoneração, remoção, dispensa, aposentadoria e outros atos relativos aos servidores do Quadro de Pessoal da Secretaria, os quais serão publicados no <EM>Diário Oficial</EM> da União e no Boletim do Tribunal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - diretamente ou por delegação, movimentar as dotações e os créditos orçamentários próprios e praticar os atos de administração financeira, orçamentária e patrimonial necessários ao funcionamento do Tribunal. <BR><BR><BR></P>
+<CENTER>CAPÍTULO IV <BR>Ministros </CENTER>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;Os ministros do Tribunal de Contas da União serão nomeados dentre brasileiros que satisfaçam os seguintes requisitos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - ter mais de trinta e cinco e menos de sessenta e cinco anos de idade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - idoneidade moral e reputação ilibada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - notórios conhecimentos jurídicos, contábeis, econômicos e financeiros ou de administração pública; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - contar mais de dez anos de exercício de função ou de efetiva atividade profissional que exija os conhecimentos mencionados no inciso anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;Os ministros do Tribunal de Contas da União serão escolhidos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - um terço pelo Presidente da República, com aprovação do Senado Federal, sendo dois alternadamente dentre auditores e membros do Ministério Público junto ao Tribunal, indicados em lista tríplice pelo Plenário, segundo os critérios de antigüidade e merecimento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - dois terços pelo Congresso Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;Os ministros do Tribunal de Contas da União terão as mesmas garantias, prerrogativas, impedimentos, vencimentos e vantagens dos ministros do Superior Tribunal de Justiça e somente poderão aposentar-se com as vantagens do cargo quando o tiverem exercido efetivamente por mais de cinco anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os ministros do Tribunal gozarão das seguintes garantias e prerrogativas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - vitaliciedade, não podendo perder o cargo senão por sentença judicial transitada em julgado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - inamovibilidade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - irredutibilidade de vencimentos, observado, quanto à remuneração, o disposto nos arts. 37, XI, 150, II, 153, III e 153, § 2º, I, da Constituição Federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - aposentadoria, com proventos integrais, compulsoriamente aos setenta anos de idade ou por invalidez comprovada, e facultativa após trinta anos de serviço, contados na forma da lei, observada a ressalva prevista no <EM><I>caput</I></EM>, <EM><I>in fine</I></EM>, deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;É vedado ao ministro do Tribunal de Contas da União: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - exercer, ainda que em disponibilidade, outro cargo ou função, salvo uma de magistério; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - exercer cargo técnico ou de direção de sociedade civil, associação ou fundação, de qualquer natureza ou finalidade, salvo de associação de classe, sem remuneração; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - exercer comissão remunerada ou não, inclusive em órgãos de controle da administração direta ou indireta, ou em concessionárias de serviço público; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - exercer profissão liberal, emprego particular, comércio, ou participar de sociedade comercial, exceto como acionista ou cotista sem ingerência; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - celebrar contrato com pessoa jurídica de direito público, empresa pública, sociedade de economia mista, fundação, sociedade instituída e mantida pelo poder público ou empresa concessionária de serviço público, salvo quando o contrato obedecer a normas uniformes para todo e qualquer contratante;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - dedicar-se à atividade político-partidária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;(Vetado) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>(Vetado) </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 76. Não podem ocupar, simultaneamente, cargos de ministro parentes consangüíneos ou afins, na linha reta ou na colateral, até o segundo grau. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A incompatibilidade decorrente da restrição imposta no <EM><I>caput</I></EM> deste artigo resolve-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - antes da posse, contra o último nomeado ou contra o mais moço, se nomeados na mesma data; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - depois da posse, contra o que lhe deu causa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - se a ambos imputável, contra o que tiver menos tempo de exercício no Tribunal. <BR><BR><BR></P>
+<CENTER>CAPÍTULO V <BR>Auditores </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77.&nbsp;Os auditores, em número de três, serão nomeados pelo Presidente da República, dentre os cidadãos que satisfaçam os requisitos exigidos para o cargo de ministro do Tribunal de Contas da União, mediante concurso público de provas e títulos, observada a ordem de classificação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A comprovação do efetivo exercício por mais de dez anos de cargo da carreira de Controle Externo do Quadro de Pessoal da Secretaria do Tribunal constitui título computável para efeito do concurso a que se refere o <EM><I>caput</I></EM> deste artigo . <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78.&nbsp;(Vetado) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O auditor, quando não convocado para substituir ministro, presidirá à instrução dos processos que lhe forem distribuídos, relatando-os com proposta de decisão a ser votada pelos integrantes do Plenário ou da Câmara para a qual estiver designado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 79.&nbsp;O auditor, depois de empossado, só perderá o cargo por sentença judicial transitada em julgado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Aplicam-se ao auditor as vedações e restrições previstas nos arts. 74 e 76 desta Lei. <BR><BR><BR>
+<CENTER>CAPÍTULO VI <BR>Ministério Público Junto ao Tribunal </CENTER>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 80.&nbsp;O Ministério Público junto ao Tribunal de Contas da União, ao qual se aplicam os princípios institucionais da unidade, da indivisibilidade e da independência funcional, compõe-se de um procurador-geral, três subprocuradores-gerais e quatro procuradores, nomeados pelo Presidente da República, dentre brasileiros, bacharéis em direito. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º (Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º A Carreira do Ministério Público junto ao Tribunal de Contas da União é constituída pelos cargos de subprocurador-geral e procurador, este inicial e aquele representando o último nível da carreira, não excedendo a dez por cento a diferença de vencimentos de uma classe para outra, respeitada igual diferença entre os cargos de subprocurador-geral e procurador-geral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 3º O ingresso na carreira far-se-á no cargo de procurador, mediante concurso público de provas e títulos, assegurada a participação da Ordem dos Advogados do Brasil em sua realização e observada, nas nomeações, a ordem de classificação, enquanto a promoção ao cargo de subprocurador-geral far-se-á, alternadamente, por antigüidade e merecimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 81.&nbsp;Competem ao procurador-geral junto ao Tribunal de Contas da União, em sua missão de guarda da lei e fiscal de sua execução, além de outras estabelecidas no Regimento Interno, as seguintes atribuições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - promover a defesa da ordem jurídica, requerendo, perante o Tribunal de Contas da União as medidas de interesse da Justiça, da Administração e do Erário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - comparecer às sessões do Tribunal e dizer de direito, verbalmente ou por escrito, em todos os assuntos sujeitos à decisão do Tribunal, sendo obrigatória sua audiência nos processos de tomada ou prestação de contas e nos concernentes aos atos de admissão de pessoal e de concessão de aposentadorias, reformas e pensões; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - promover junto à Advocacia-Geral da União ou, conforme o caso, perante os dirigentes das entidades jurisdicionadas do Tribunal de Contas da União, as medidas previstas no inciso II do art. 28 e no art. 61 desta lei, remetendo-lhes a documentação e instruções necessárias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - interpor os recursos permitidos em lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 82.&nbsp;Aos subprocuradores-gerais e procuradores compete, por delegação do procurador-geral, exercer as funções previstas no artigo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Em caso de vacância e em suas ausências e impedimentos por motivo de licença, férias ou outro afastamento legal, o procurador-geral será substituído pelos subprocuradores-gerais e, na ausência destes, pelos procuradores, observada, em ambos os casos, a ordem de antigüidade no cargo, ou a maior idade, no caso de idêntica antigüidade, fazendo jus, nessas substituições, aos vencimentos do cargo exercido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 83.&nbsp;O Ministério Público contará com o apoio administrativo e de pessoal da Secretaria do Tribunal, conforme organização estabelecida no Regimento Interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 84.&nbsp;Aos membros do Ministério Público junto ao Tribunal de Contas da União aplicam-se, subsidiariamente, no que couber, as disposições da Lei Orgânica do Ministério Público da União, pertinentes a direitos, garantias, prerrogativas, vedações, regime disciplinar e forma de investidura no cargo inicial da carreira. <BR><BR><BR></P>
+<CENTER>CAPÍTULO VII <BR>Secretaria do Tribunal </CENTER><BR><BR>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Objetivo e Estrutura </CENTER></B>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 85.&nbsp;À Secretaria incumbe a prestação de apoio técnico e a execução dos serviços administrativos do Tribunal de Contas da União. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A organização, atribuições e normas de funcionamento da Secretaria são as estabelecidas no Regimento Interno.&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O Tribunal poderá manter unidades integrantes de sua Secretaria nos estados federados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 86.&nbsp;São obrigações do servidor que exerce funções específicas de controle externo no Tribunal de Contas da União: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - manter, no desempenho de suas tarefas, atitude de independência, serenidade e imparcialidade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - representar à chefia imediata contra os responsáveis pelos órgãos e entidades sob sua fiscalização, em casos de falhas e/ou irregularidades; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - propor a aplicação de multas, nos casos previstos no Regimento Interno; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - guardar sigilo sobre dados e informações obtidos em decorrência do exercício de suas funções e pertinentes aos assuntos sob sua fiscalização, utilizando-os, exclusivamente, para a elaboração de pareceres e relatórios destinados à chefia imediata. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 87.&nbsp;Ao servidor a que se refere o artigo anterior, quando credenciado pelo Presidente do Tribunal ou, por delegação deste, pelos dirigentes das Unidades Técnicas da Secretaria do Tribunal, para desempenhar funções de auditoria, de inspeções e diligências expressamente determinadas pelo Tribunal ou por sua Presidência, são asseguradas as seguintes prerrogativas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - livre ingresso em órgãos e entidades sujeitos à jurisdição do Tribunal de Contas da União; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - acesso a todos os documentos e informações necessários à realização de seu trabalho; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - competência para requerer, nos termos do Regimento Interno, aos responsáveis pelos órgãos e entidades objeto de inspeções, auditorias e diligências, as informações e documentos necessários para instrução de processos e relatórios de cujo exame esteja expressamente encarregado por sua chefia imediata. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 88.&nbsp;Fica criado, na Secretaria, diretamente subordinado à Presidência, um instituto que terá a seu cargo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a realização periódica de concursos públicos de provas ou de provas e títulos, para seleção dos candidatos a matrícula nos cursos de formação requeridos para ingresso nas carreiras do Quadro de Pessoal do Tribunal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a organização e a administração de cursos de níveis superior e médio, para formação e aprovação final dos candidatos selecionados nos concursos referidos no inciso anterior; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a organização e a administração de cursos de treinamento e de aperfeiçoamento para os servidores do Quadro de Pessoal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a promoção e a organização de simpósios, seminários, trabalhos e pesquisas sobre questões relacionadas com as técnicas de controle da administração pública; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - a organização e administração de biblioteca e de centro de documentação, nacional e internacional, sobre doutrina, técnicas e legislação pertinentes ao controle e questões correlatas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Tribunal regulamentará em resolução a organização, as atribuições e as normas de funcionamento do instituto referido neste artigo. <BR><BR><BR></P>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Orçamentos </CENTER></B>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 89.&nbsp;(Vetado)</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º (Vetado)&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º (Vetado) <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º (Vetado) <BR><BR><BR></P>
+<CENTER><B>TÍTULO IV </CENTER></B>
+<CENTER><B>Disposições Gerais e Transitórias </CENTER></B>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 90.&nbsp;A fiscalização contábil, financeira, orçamentária, operacional e patrimonial do Tribunal de Contas da União será exercida pelo Congresso Nacional, na forma definida no seu Regimento Comum. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Tribunal encaminhará ao Congresso Nacional, trimestral e anualmente, relatório de suas atividades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º No relatório anual, o Tribunal apresentará análise da evolução dos custos de controle e de sua eficiência, eficácia e economicidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 91.&nbsp;Para a finalidade prevista no art. 1º, inciso I, alínea<EM> g</EM> e no art. 3º, ambos da Lei Complementar nº 64, de 18 de maio de 1990, o Tribunal enviará ao Ministério Público Eleitoral, em tempo hábil, o nome dos responsáveis cujas contas houverem sido julgadas irregulares nos cinco anos imediatamente anteriores à realização de cada eleição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 92.&nbsp;Os atos relativos a despesa de natureza reservada serão, com esse caráter, examinados pelo Tribunal, que poderá, à vista das demonstrações recebidas, ordenar a verificação <EM>in loco</EM> dos correspondentes documentos comprobatórios, na forma estabelecida no Regimento Interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 93.&nbsp;A título de racionalização administrativa e economia processual, e com o objetivo de evitar que o custo da cobrança seja superior ao valor do ressarcimento, o Tribunal poderá determinar, desde logo, o arquivamento do processo, sem cancelamento do débito, a cujo pagamento continuará obrigado o devedor, para que lhe possa ser dada quitação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 94.&nbsp;É vedado a ministro, auditor e membro do Ministério Público junto ao Tribunal intervir em processo de interesse próprio, de cônjuge ou de parente consangüíneo ou afim, na linha reta ou na colateral, até o segundo grau. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 95.&nbsp;Os ministros, auditores e membros do Ministério Público junto ao Tribunal têm prazo de trinta dias, a partir da publicação do ato de nomeação no <EM>Diário Oficial</EM> da União, prorrogável por mais sessenta dias, no máximo, mediante solicitação escrita, para posse e exercício no cargo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 96.&nbsp;As atas das sessões do Tribunal serão publicadas, na íntegra, sem ônus, no <EM>Diário Oficial</EM> da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 97.&nbsp;As publicações editadas pelo Tribunal são as definidas no Regimento Interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 98.&nbsp;O Boletim do Tribunal de Contas da União é considerado órgão oficial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 99.&nbsp;O Regimento Interno do Tribunal somente poderá ser aprovado e alterado pela maioria absoluta de seus ministros titulares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 100.&nbsp;O Tribunal de Contas da União poderá firmar acordo de cooperação com os Tribunais de Contas dos Estados, do Distrito Federal, dos Municípios, ou dos Conselhos ou Tribunais de Contas dos Municípios, na forma estabelecida pelo Regimento Interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 101.&nbsp;O Tribunal de Contas da União, para o exercício de sua competência institucional, poderá requisitar aos órgãos e entidades federais, sem quaisquer ônus, a prestação de serviços técnicos especializados, a serem executados em prazo previamente estabelecido, sob pena de aplicação da sanção prevista no art. 58 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 102.&nbsp;A Fundação Instituto Brasileiro de Geografia e Estatística (IBGE) ou entidade congênere fará publicar no <EM>Diário Oficial</EM> da União, até o dia 31 de agosto de cada ano, e para os fins previstos no inciso VI do art. 1º desta Lei, a relação das populações por Estados e Municípios. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os interessados, dentro do prazo de vinte dias da publicação, poderão apresentar reclamações fundamentadas à Fundação IBGE, que decidirá conclusivamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Até o dia 31 de outubro de cada ano, a Fundação IBGE encaminhará ao Tribunal de Contas da União a relação referida neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 103.&nbsp;O Tribunal de Contas da União prestará auxílio à comissão mista do Congresso Nacional incumbida do exame do endividamento externo brasileiro, nos termos do art. 26 do Ato das Disposições Constitucionais Transitórias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 104.&nbsp;Os ordenadores de despesas dos órgãos da administração direta, bem assim os dirigentes das entidades da administração indireta. e fundações e quaisquer servidores responsáveis por atos de que resulte despesa pública, remeterão ao Tribunal de Contas da União, por solicitação do Plenário ou de suas Câmaras, cópia das suas declarações de rendimentos e de bens. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º O descumprimento da obrigação estabelecida neste artigo ensejará a aplicação da multa estabelecida no art. 58, desta Lei, pelo Tribunal, que manterá em sigilo o conteúdo das declarações apresentadas e poderá solicitar os esclarecimentos que entender convenientes sobre a variação patrimonial dos declarantes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º O sigilo assegurado no parágrafo anterior poderá ser quebrado por decisão do Plenário, em processo no qual fique comprovado enriquecimento ilícito por exercício irregular da função pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 3º A quebra de sigilo sem autorização do Plenário constitui infração funcional punível na forma do art. 132, inciso IX, da Lei nº 8.112, de 11 de dezembro de 1990. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 4º O disposto neste artigo aplica-se à autoridade a que se refere o art. 52 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 105.&nbsp;O processo de escolha de ministro do Tribunal de Contas da União, em caso de vaga ocorrida ou que venha a ocorrer após a promulgação da Constituição de 1988, obedecerá ao seguinte critério: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - na primeira, quarta e sétima vagas, a escolha caberá ao Presidente da República, devendo recair as duas últimas, respectivamente, em auditor e membro do Ministério Público junto ao Tribunal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - na segunda, terceira, quinta, sexta, oitava e nona vagas, a escolha será da competência do Congresso Nacional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a partir da décima vaga, reinicia-se o processo previsto nos incisos anteriores, observada a alternância quanto à escolha de auditor e membro do Ministério Público junto ao Tribunal, nos termos do inciso I do § 2º do art. 73 da Constituição Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 106.&nbsp;Aos ministros do Tribunal de Contas da União que, na data da promulgação da Constituição Federal de 1988, preenchiam os requisitos necessários à aposentadoria com as vantagens do cargo, não se aplica a ressalva prevista no art. 73, <EM><I>caput</I></EM>, <EM><I>in fine</I></EM>, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 107.&nbsp;A distribuição dos processos observará os princípios da publicidade, da alternatividade e do sorteio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 108.&nbsp;Serão publicadas as sessões ordinárias do Tribunal de Contas da União. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Tribunal poderá realizar sessões extraordinárias de caráter reservado, para tratar de assuntos de natureza administrativa interna ou quando a preservação de direitos individuais e o interesse público o exigirem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na hipótese do parágrafo anterior, os atos processuais terão o concurso das partes envolvidas, se assim desejarem seus advogados, podendo consultar os autos e pedir cópia de peças e certidões dos mesmos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 3º Nenhuma sessão extraordinária de caráter reservado poderá ser realizada sem a presença obrigatória de representante do Ministério Público. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 109.&nbsp;O Tribunal de Contas da União ajustará o exame dos processos em curso às disposições desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 110.&nbsp;No prazo de noventa dias a contar da entrada em vigor desta Lei, o Tribunal encaminhará ao Congresso Nacional projeto de lei dispondo sobre o quadro próprio de pessoal de sua secretaria, com observância dos princípios constitucionais pertinentes e, especialmente, das seguintes diretrizes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - regime jurídico único; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - previsão das respectivas estrutura orgânica e atribuições; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - condicionamento, como indispensável a investidura em cargo ou emprego, à prévia aprovação em concurso público de provas ou de provas e títulos, bem como em cursos organizados na forma preconizada no inciso II do art. 88 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - provimento dos cargos em comissão e funções de confiança por servidores do quadro próprio de pessoal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - competência do Tribunal, para em relação aos cargos em comissão e funções de confiança: <BR><BR></P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a )</I></TD>
+<TD>estabelecer-lhes o escalonamento, segundo a legislação pertinente; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>transformá-los e reclassificá-los em consonância com os parâmetros previstos na Lei de Diretrizes Orçamentárias; </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - fixação da respectiva remuneração, observados os limites orçamentários fixados, os níveis de remuneração adotados para os servidores do Poder Legislativo e, no que couber, os princípios reguladores do sistema de pessoal da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 111.&nbsp;Os atuais cargos de subprocurador-geral junto ao Tribunal de Contas da União integrarão quadro em extinção, assegurados os direitos e observadas as vedações aplicáveis a seus titulares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 112.&nbsp;Esta Lei entra em vigor na data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 113.&nbsp;Revogam-se as disposições em contrário, em especial o Decreto-Lei nº 199, de 25 de fevereiro de 1967. </P>
+<P>in fineBrasília, 16 de julho de 1992; 171º da Independência e 104º da República. </P>
+<P>FERNANDO COLLOR <BR>Célio Borja</P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 17/07/1992
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 17/7/1992, Página 9449 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+
+<!-- JS do portal-tema: necessário para o botão de compartilhamento -->
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/vendor-bundle.js"></script>
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/camara-bundle.js"></script>
+
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

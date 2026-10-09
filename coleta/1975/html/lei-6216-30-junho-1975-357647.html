@@ -1,0 +1,956 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 6.216, DE 30 DE JUNHO DE 1975 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Altera a Lei nº 6.015, de 31 de dezembro de 1973, que dispõe sobre registros públicos. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 6.216, DE 30 DE JUNHO DE 1975 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                            <li>  	
+                                                <a href="lei-6216-30-junho-1975-357647-veto-36568-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-6216-30-junho-1975-357647-retificacao-36569-pl.html">Retificação</a>
+                                            </li>
+                                    <li>
+                                        <a href="lei-6216-30-junho-1975-357647-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 6.216, DE 30 DE JUNHO DE 1975</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							<META name=GENERATOR content="MSHTML 5.50.4807.2300">Altera a Lei nº 6.015, de 31 de dezembro de 1973, que dispõe sobre registros públicos. 
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA:&nbsp; <BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei: <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 1º &nbsp;A Lei nº 6.015, de 31 de dezembro de 1973, vigorará com as seguintes modificações: <BR><BR>
+<CENTER><B>TÍTULO I </CENTER></B>
+<CENTER><B>Das Disposições Gerais </CENTER></B><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Das Atribuições </CENTER></B><BR><STRONG>&nbsp;&nbsp;&nbsp;</STRONG>Art. 1º &nbsp;nova redação <BR><BR>
+<DIR>"Art. 1º &nbsp;Os serviços concernentes aos Registros Públicos, estabelecidos pela legislação civil para autenticidade, segurança e eficácia dos atos jurídicos, ficam sujeitos ao regime estabelecido nesta Lei. <BR><BR>§ 1º Os Registros referidos neste artigo são os seguintes: <BR><BR>I - o registro civil de pessoas naturais; <BR>II - o registro civil de pessoas jurídicas; <BR>III - o registro de títulos e documentos; <BR>IV - o registro de imóveis. <BR><BR>§ 2º Os demais registros reger-se-ão por leis próprias."</DIR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 2º &nbsp;nova redação. <BR><BR>
+<DIR>"Art. 2º &nbsp;Os registros indicados no § 1º do artigo anterior ficam a cargo de serventuários privativos nomeados de acordo com o estabelecido na Lei de Organização Administrativa e Judiciária do Distrito Federal e dos Territórios e nas Resoluções sobre a Divisão e Organização Judiciária dos Estados, e serão feitos: <BR><BR>I - o do item I, nos ofícios privativos, ou nos cartórios de registro de nascimentos, casamentos e óbitos; <BR>II - os dos itens II e III, nos ofícios privativos, ou nos cartórios de registro de títulos e documentos; <BR>III - os do item IV, nos ofícios privativos, ou nos cartórios de registro de imóveis."<BR><BR></DIR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Da Escrituração </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 3º a 7º&nbsp; mantidos.<STRONG> </STRONG></DIV><BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Da Ordem do Serviço </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 8º a 13 &nbsp;mantidos.<STRONG> </STRONG></DIV><BR><BR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 14 &nbsp;nova redação. <BR><BR>
+<DIR>"Art. 14 &nbsp;Pelos atos que praticarem, em descorrência desta Lei, os Oficiais do Registro terão direito, a título de remuneração, aos emolumentos fixados nos Regimentos de Custas do Distrito Federal, dos Estados e dos Territórios, os quais serão pagos, pelo interessado que os requerer, no ato de requerimento ou no da apresentação do título."</DIR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;&nbsp;&nbsp; Art. 15 &nbsp;mantido. <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Da Publicidade </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 16 a 18&nbsp; mantidos.<STRONG> </STRONG></DIV><BR><BR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 19 &nbsp;nova redação. <BR><BR>
+<DIR>"Art. 19 &nbsp;A certidão será lavrada em inteiro teor, em resumo, ou em relatório, conforme quesitos, e devidamente autenticada pelo oficial ou seus substitutos legais, não podendo ser retardada por mais de 5 (cinco) dias. <BR><BR>§ 1º A certidão, de inteiro teor, poderá ser extraída por meio datilográfico ou reprográfico. <BR><BR>§ 2º As certidões do Registro Civil das Pessoas Naturais mencionarão, sempre, a data em que foi Iavrado o assento e serão manuscritas ou datilografadas e, no caso de adoção de papéis impressos, os claros serão preenchidos também em manuscrito ou datilografados. <BR><BR>§ 3º Nas certidões de registro civil, não se mencionará a circunstância de ser legítima, ou não, a filiação, salvo a requerimento do próprio interessado, ou em virtude de determinação judicial. <BR><BR>§ 4º As certidões de nascimento mencionarão, além da data em que foi feito a assento, a data, por extenso, do nascimento e, ainda, expressamente, o lugar onde o fato houver ocorrido. <BR><BR>§ 5º As certidões extraídas dos registros públicos deverão ser fornecidas em papel e mediante escrita que permitam a sua reprodução por fotocópia, ou outro processo equivalente."</DIR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 20 &nbsp;mantido.&nbsp; <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;</STRONG>Art. 21 &nbsp;nova redação. <BR><BR>
+<DIR>"Art. 21 &nbsp;Sempre que houver qualquer alteração posterior ao ato cuja certidão é pedida, deve o Oficial mencioná-la, obrigatoriamente, não obstante as especificações do pedido, sob pena de responsabilidade civil e penal, ressalvado o disposto nos artigos 45 e 95. <BR><BR><I>Parágrafo único. </I>A alteração a que se refere este artigo deverá ser anotada na própria certidão, contendo a inscrição de que "a presente certidão envolve elementos de averbação à margem do termo."<BR><BR></DIR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Da Conservação </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 22 e 23&nbsp; nova redação. </DIV><BR><BR>
+<DIR>"Art. 22 &nbsp;Os livros de registro, bem como as fichas que os substituam, somente sairão do respectivo cartório mediante autorização judicial. <BR><BR>Art. 23 &nbsp;Todas as diligências judiciais e extrajudiciais que exigirem a apresentação de qualquer livro, ficha substitutiva de livro ou documento, efetuar-se-ão no próprio cartório."</DIR>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts. 24 a 27&nbsp; mantidos. </DIV><BR><BR>
+<CENTER><B>CAPÍTULO VI </CENTER></B>
+<CENTER><B>Da Responsabilidade </CENTER></B><BR><STRONG>&nbsp;&nbsp;&nbsp;</STRONG>Art. 28&nbsp; mantido. <BR><BR>
+<CENTER><B>TÍTULO II </CENTER></B>
+<CENTER><B>Do Registro Civil das Pessoas Naturais </CENTER></B><BR><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Disposições Gerais </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 29 a 32&nbsp; mantidos. </DIV><BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Da Escrituração e da Ordem de Serviço </CENTER></B><BR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 33 &nbsp;nova redação. <BR><BR>
+<DIR>"Art. 33 &nbsp;Haverá, em cada cartório, os seguintes livros, todos com 300 (trezentas) folhas cada um:</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - "A" - de registro de nascimento; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - "B" - de registro de casamento; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - "B Auxiliar" - de registro de casamento Religioso para Efeitos Civis; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - "C" - de registro de óbitos; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - "C Auxiliar" - de registro de natimortos; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - "D" - de registro de proclama". <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; Arts. 34 a 45&nbsp; mantidos. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Das Penalidades </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 46 a 49&nbsp; mantidos. </DIV><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 50 &nbsp;supressão. <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Do Nascimento </CENTER></B><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 51 &nbsp;Passa a art. 50, com nova redação do " caput ", mantidos os parágrafos. <BR><BR>
+<DIR>"Art. 50 &nbsp;Todo nascimento que ocorrer no território nacional deverá ser dado a registro, (VETADO) no lugar em que tiver ocorrido o parto (VETADO), dentro do prazo de 15 (quinze) dias, ampliando-se até 3 (três) meses para os lugares distantes mais de 30 (trinta) quilômetros da sede do cartório."</DIR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 52&nbsp;&nbsp; Passa a art. 51.&nbsp; <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;</STRONG>Art. 53&nbsp;&nbsp; Passa a art. 52, com nova redação ao item 6º. <BR><BR>
+<DIR>"6º - finalmente, as pessoas (VETADO) encarregadas da guarda do menor."</DIR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 54 &nbsp;passa a art. 53, com nova redação. <BR><BR>
+<DIR>"Art. 53 &nbsp;No caso de ter a criança nascido morta ou no de ter morrido na ocasião do parto, será, não obstante, feito o assento com os elementos que couberem e com remissão ao do óbito.</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º No caso de ter a criança nascido morta, será o registro feito no livro "C Auxiliar", com os elementos que couberem.&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No caso de a criança morrer na ocasião do parto, tendo, entretanto, respirado, serão feitos os dois assentos, o de nascimento e o de óbito, com os elementos cabíveis e com remissões recíprocas."&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 55 &nbsp;Passa a art. 54, com nova redação ao item 2º. <BR><BR>
+<DIR>"2º - O sexo do registrando ";</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Arts. 56 e 57&nbsp; Passam a artigos 55 e 56, respectivamente.&nbsp;&nbsp; <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 58&nbsp; Passa a art. 57, com nova redação. <BR><BR>
+<DIR>"Art. 57&nbsp;Qualquer alteração posterior de nome, somente por exceção e motivadamente, após audiência do Ministério Público, será permitida por sentença do juiz a que estiver sujeito o registro, arquivando-se o mandato e publicando-se a alteração pela imprensa. <BR><BR>§ 1º Poderá, também, ser averbado, nos mesmos termos, o nome abreviado, usado como firma comercial registrada ou em qualquer atividade profissional. <BR><BR>§ 2º A mulher solteira, desquitada ou viúva, que viva com homem solteiro, desquitado ou viúvo, excepcionalmente e havendo motivo ponderável, poderá requerer ao juiz competente que, no registro de nascimento, seja averbado o patronímico de seu companheiro, sem prejuízo dos apelidos próprios, de família, desde que haja impedimento legal para o casamento, decorrente do estado civil de qualquer das partes ou de ambas. <BR><BR>§ 3º O Juiz competente somente processará o pedido, se tiver expressa concordância do companheiro, e se da vida em comum houverem decorrido, no mínimo, 5 (cinco) anos ou existirem filhos da união. <BR><BR>§ 4º O pedido de averbação só terá curso, quando desquitado o companheiro, se a ex-esposa houver sido condenada ou tiver renunciado ao uso dos apelidos do marido, ainda que dele receba pensão alimentícia. <BR><BR>§ 5º O aditamento regulado nesta Lei será cancelado a requerimento de uma das partes, ouvida a outra. <BR><BR>§ 6º Tanto o aditamento quanto o cancelamento da averbação previstos neste artigo serão processados em segredo de justiça."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Arts 59 a 67&nbsp; Passam a artigos 58 a 66. <BR><BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Da Habilitação para o Casamento </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68&nbsp; Passa a art. 67, com nova redação ao § 1º e acréscimo de § 6º mantidos o "caput" e os demais parágrafos. </P>
+<DIR>"§ 1º Autuada a petição com os documentos, o oficial mandará afixar proclamas de casamento em lugar ostensivo de seu cartório e fará publicá-los na imprensa local, se houver, Em seguida, abrirá vista dos autos ao órgão do Ministério Público, para manifestar-se sobre o pedido e requerer o que for necessário à sua regularidade, podendo exigir a apresentação de atestado de residência, firmado por autoridade policial, ou qualquer outro elemento de convicção admitido em direito. <BR><BR>§ 6º Quando o casamento se der em circunscrição diferente daquela da habilitação, o oficial do registro comunicará ao da habilitação esse fato, com os elementos necessários às anotações nos respectivos autos."</DIR>
+<P><STRONG>&nbsp;&nbsp;&nbsp;</STRONG>&nbsp;&nbsp; Arts. 69 e 70&nbsp; Passam a artigos 68 e 69. </P>
+<CENTER><B>CAPÍTULO VI </CENTER></B>
+<CENTER><B>Do Casamento </CENTER></B><BR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 71 &nbsp;Passa a art. 70, com acréscimo do item 10, mantido o parágrafo único. <BR><BR>
+<DIR>"10) à margem do termo, a impressão digital do contraente que não souber assinar o nome."<BR><BR></DIR>
+<CENTER><B>CAPÍTULO VII </CENTER></B>
+<CENTER><B>Do Registro do Casamento Religioso para efeitos Civis </CENTER></B><BR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 72 &nbsp;Passa a art. 71.&nbsp; <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;</STRONG>Art. 73 &nbsp;Passa a art. 72, com supressão do parágrafo único.&nbsp; <BR><BR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 74 &nbsp;Passa a art. 73, com nova redação aos §§ 1º e 2º, mantidos o "caput " e o § 3º. <BR><BR>
+<DIR>"§ 1º O assento ou termo conterá a data da celebração, o lugar, o culto religioso, o nome do celebrante, sua qualidade, o cartório que expediu a habilitação, sua data, os nomes, profissões, residências, nacionalidades das testemunhas que o assinarem e os nomes dos contraentes.<BR>&nbsp; § 2º Anotada a entrada do requerimento o oficial fará o registro no prazo de 24 (vinte e quatro) horas."</DIR>
+<P><STRONG>&nbsp;&nbsp;</STRONG> Arts. 75 e 76 &nbsp;passam a arts. 74 e 75.<BR></P>
+<CENTER><B>CAPÍTULO VIII </CENTER></B>
+<CENTER><B>Do Casamento em Iminente Risco de Vida </CENTER></B><BR><STRONG>&nbsp;&nbsp;&nbsp;</STRONG>Art. 77 &nbsp;passa a art. 76, com nova redação do " caput ", mantidos os parágrafos. <BR><BR>
+<DIR>"Art. 76 &nbsp;Ocorrendo iminente risco de vida de algum dos contraentes, e não sendo possível a presença da autoridade competente para presidir o ato, o casamento poderá realizar-se na presença de 6 (seis) testemunhas, que comparecerão, dentro de 5 (cinco) dias, perante a autoridade judiciária mais próxima, a fim de que sejam reduzidas a termo suas declarações."<BR><BR></DIR>
+<CENTER><B>CAPÍTULO IX </CENTER></B>
+<CENTER><B>Do Óbito </CENTER></B><BR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 78 &nbsp;passa a art. 77, com nova redação <BR><BR>
+<DIR>"Art. 77&nbsp;Nenhum sepultamento será feito sem certidão, do oficial de registro do lugar do falecimento, extraída após a lavratura do assento de óbito, em vista do atestado de médico, se houver no lugar, ou em caso contrário, de duas pessoas qualificadas que tiverem presenciado ou verificado a morte. <BR><BR>§ 1º Antes de proceder ao assento de óbito de criança de menos de 1 (um) ano, o oficial verificará se houve registro de nascimento, que, em caso de falta, será previamente feito.<BR>§ 2º A cremação de cadáver somente será feita daquele que houver manifestado a vontade de ser incinerado ou no interesse da saúde pública e se o atestado de óbito houver sido firmado por 2 (dois) médicos ou por 1 (um) médico legista e, no caso de morte violenta, depois de autorizada pela autoridade judiciária."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Arts. 79 a 89 &nbsp;passam a arts. 78 a 88. <BR><BR>
+<CENTER><B>CAPÍTULO X </CENTER></B>
+<CENTER><B>Da Emancipação, Interdição e Ausência </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts. 90 a 95&nbsp; passam a arts. 89 a 94. </DIV><BR><BR>
+<CENTER><B>CAPÍTULO XI </CENTER></B>
+<CENTER><B>Da Legitimação Adotiva </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 96 e 97&nbsp; passam a arts. 95 e 96. </DIV><BR><BR>
+<CENTER><B>CAPÍTULO XII </CENTER></B>
+<CENTER><B>Da Averbação </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 98 a 106&nbsp; passam a arts. 97 a 105. </DIV><BR><BR>
+<CENTER><B>CAPÍTULO XIII </CENTER></B>
+<CENTER><B>Das Anotações </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 107 a 109&nbsp; passam a arts. 106 a 108. </DIV><BR><BR>
+<CENTER><B>CAPÍTULO XIV </CENTER></B>
+<CENTER><B>Das Retificações, Restaurações e Suprimentos </CENTER></B><BR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 110 &nbsp;passa a art. 109.&nbsp; <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;</STRONG>Art. 111 &nbsp;passa a art. 110, com nova redação ao § 1º, mantidos o "caput " e os demais parágrafos. <BR><BR>
+<DIR>"§ 1º Recebida a petição, protocolada e autuada, o oficial a submeterá, com os documentos que a instruírem, ao órgão do Ministério Público, e fará os autos conclusos ao Juiz togado da circunscrição, que os despachará em 48 (quarenta e oito) horas."</DIR><STRONG>&nbsp;&nbsp;</STRONG> Arts. 112 a 114 &nbsp;passam a arts. 111 a 113.<BR><BR><BR>
+<CENTER><B>TÍTULOS III E IV </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts. 115 a 167&nbsp; passam a arts. 114 a 166. </DIV><BR><BR>
+<CENTER><B>TÍTULO V </CENTER></B>
+<CENTER><B>Do Registro de Imóveis </CENTER></B><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Das Atribuições </CENTER></B><BR><STRONG>&nbsp;&nbsp;&nbsp;</STRONG>Art. 168 &nbsp;passa a art. 167, com nova redação, suprimidos os §§ 1º e 2º, que passarão a artigos autônomos. <BR><BR>
+<DIR>"Art. 167&nbsp; No Registro de Imóveis, além da matrícula, serão feitos. <BR><BR>I - o registro: <BR>1) da instituição de bem de família; <BR>2) das hipotecas legais, judiciais e convencionais; <BR>3) dos contratos de locação de prédios, nos quais tenha sido consignada cláusula de vigência no caso de alienação da coisa locada; <BR>4) do penhor de máquinas e de aparelhos utilizados na indústria, instalados e em funcionamento, com os respectivos pertences ou sem eles; <BR>5) das penhoras, arrestos e seqüestros de imóveis; <BR>6) das servidões em geral; <BR>7) do usufruto e do uso sobre imóveis e da habitação, quando não resultarem do direito de família; <BR>8) das rendas constituídas sobre imóveis ou a eles vinculadas por disposição de última vontade; <BR>9) dos contratos de compromisso de compra e venda de cessão deste e de promessa de cessão, com ou sem cláusula de arrependimento, que tenham por objeto imóveis não loteados e cujo preço tenha sido pago no ato de sua celebração, ou deva sê-lo a prazo, de uma só vez ou em prestações; <BR>10) da enfiteuse; <BR>11) da anticrese; <BR>12) das convenções antenupciais; <BR>13) das cédulas de crédito rural; <BR>14) das cédulas de crédito, industrial; <BR>15) dos contratos de penhor rural; <BR>16) dos empréstimos por obrigações ao portador ou debêntures, inclusive as conversíveis em ações; <BR>17) das incorporações, instituições e convenções de condomínio; <BR>18) dos contratos de promessa de venda, cessão ou promessa de cessão de unidades autônomas condominiais a que alude a Lei nº 4.591, de 16 de dezembro de 1964, quando a incorporação ou a instituição de condomínio se formalizar na vigência desta Lei; <BR>19) dos loteamentos urbanos e rurais; <BR>20) dos contratos de promessa de compra e venda de terrenos loteados em conformidade com o Decreto-lei nº 58, de 10 de dezembro de 1937, e respectiva cessão e promessa de cessão, quando o loteamento se formalizar na vigência desta Lei; <BR>21) das citações de ações reais ou pessoais reipersecutórias, relativas a imóveis; <BR>22) das sentenças de desquite e de nulidade ou anulação de casamento, quando, nas respectivas partilhas, existirem imóveis ou direitos reais sujeitos a registro; <BR>23) dos julgados e atos jurídicos entre vivos que dividirem imóveis ou os demarcarem inclusive nos casos de incorporação que resultarem em constituição de condomínio e atribuírem uma ou mais unidades aos incorporadores; <BR>24) das sentenças que nos inventários, arrolamentos e partilhas, adjudicarem bens de raiz em pagamento das dívidas da herança; <BR>25) dos atos de entrega de legados de imóveis, dos formais de partilha e das sentenças de adjudicação em inventário ou arrolamento quando não houver partilha; <BR>26) da arrematação e da adjudicação em hasta pública; <BR>27) do dote; <BR>28) das sentenças declaratórias de usucapião; <BR>29) da compra e venda pura e da condicional; <BR>30) da permuta; <BR>31) da dação em pagamento; <BR>32) da transferência, de imóvel a sociedade, quando integrar quota social; <BR>33) da doação entre vivos; <BR>34) da desapropriação amigável e das sentenças que, em processo de desapropriação, fixarem o valor da indenização; <BR><BR>II - a averbação: <BR>1) das convenções antenupciais e do regime de bens diversos do legal, nos registros referentes a imóveis ou a direitos reais pertencentes a qualquer dos cônjuges, inclusive os adquiridos posteriormente ao casamento; <BR>2) por cancelamento, da extinção dos ônus e direitos reais; <BR>3) dos contratos de promessa de compra e venda, das cessões e das promessas de cessão a que alude o Decreto-lei nº 58, de 10 de dezembro de 1937, quando o loteamento se tiver formalizado anteriormente à vigência desta Lei; <BR>4) da mudança de denominação e de numeração dos prédios, da edificação, da reconstrução, da demolição, do desmembramento e do loteamento de imóveis; <BR>5) da alteração do nome por casamento ou por desquite, ou, ainda, de outras circunstâncias que, de qualquer modo, tenham influência no registro ou nas pessoas nele interessadas; <BR>6) dos atos pertinentes a unidades autônomas condominiais a que alude a Lei nº 4.591, de 16 de dezembro de 1964, quando a incorporação tiver sido formalizada anteriormente à vigência desta Lei; <BR>7) das cédulas hipotecárias; <BR>8) da caução e da cessão fiduciária de direitos relativos a imóveis; <BR>9) das sentenças de separação de dote; <BR>10) do restabelecimento da sociedade conjugal; <BR>11) das cláusulas de inalienabilidade, impenhorabilidade e incomunicabilidade impostas a imóveis, bem como da constituição de fideicomisso; <BR>12) das decisões, recursos e seus efeitos, que tenham por objeto atos ou títulos registrados ou averbados; <BR>13) " ex offício ", dos nomes dos logradouros, decretados pelo poder público."</DIR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 168 &nbsp;§ 2º&nbsp; passa a art. 168, com nova redação. <BR><BR>
+<DIR>"Art. 168 &nbsp;Na designação genérica de registro, consideram-se englobadas a inscrição e a transcrição a que se referem as leis civis."</DIR><STRONG>&nbsp;&nbsp;&nbsp;</STRONG>Art. 169 &nbsp;nova redação. <BR><BR>
+<DIR>"Art. 169 &nbsp;Todos os atos enumerados no art. 167 são obrigatórios e efetuar-se-ão no Cartório da situação do imóvel, salvo: <BR><BR>I - as averbações, que serão efetuadas na matrícula ou à margem do registro a que se referirem, ainda que o imóvel tenha passado a pertencer a outra circunscrição; <BR>II - os registros relativos a imóveis situados em comarcas ou circunscrições limítrofes, que serão feitos em todas elas."</DIR>Acréscimo: <BR><BR>
+<DIR>"Art. 170 &nbsp;O desmembramento territorial posterior ao registro não exige sua repetição no novo cartório."</DIR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 170 &nbsp;passa a art. 171, com nova redação. <BR><BR>
+<DIR>"Art. 171 &nbsp;Os atos relativos, a vias férreas serão registrados no cartório correspondente à estação inicial da respectiva linha."<BR><BR></DIR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Da Escrituração </CENTER></B><BR><STRONG>&nbsp;&nbsp;&nbsp;</STRONG>Art. 168 &nbsp;§ 1º&nbsp;passa a art. 172, com nova redação. <BR><BR>
+<DIR>"Art. 172 &nbsp;No Registro de Imóveis serão feitos, nos termos desta Lei, o registro e a averbação dos títulos ou atos constitutivos, declaratórios, translativos e extintos de direitos reais sobre imóveis reconhecidos em lei, " inter vivos" ou " mortis causa" quer para sua constituição, transferência e extinção, quer para sua validade em relação a terceiros, quer para a sua disponibilidade."</DIR><STRONG>&nbsp;&nbsp;&nbsp;</STRONG>Art. 171<STRONG> </STRONG>&nbsp;passa a art. 173, com nova redação. <BR><BR>
+<DIR>"Art. 173 &nbsp;Haverá, no Registro de Imóveis, os seguintes livros: <BR><BR>I - Livro nº 1º - Protocolo; <BR>II - Livro nº 2 - Registro Geral; <BR>III - Livro nº 3 - Registro Auxiliar; <BR>IV - Livro nº 4 - Indicador Real; <BR>V - Livro nº 5 - Indicador Pessoal. <BR><BR><I>Parágrafo único. </I>Observado o disposto no § 2º do art. 3º, desta lei, os livros nºs 2, 3, 4 e 5 poderão ser substituídos por fichas."</DIR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 172 &nbsp;passa a art. 174, com nova redação, suprimido o parágrafo único, que passa a constituir artigo autônomo. <BR><BR>
+<DIR>"Art. 174 O livro nº 1 - Protocolo - servirá para apontamento de todos os títulos apresentados diariamente, ressalvado o disposto no parágrafo único do art. 12 desta Lei."</DIR><STRONG>&nbsp;&nbsp;&nbsp;</STRONG>&nbsp;Art. 172<STRONG> </STRONG>&nbsp;Parágrafo único - passa a art. 175, com nova redação. <BR><BR>
+<DIR>"Art. 175 &nbsp;São requisitos da escrituração do Livro nº 1 - Protocolo: <BR><BR>I - o número de ordem, que seguirá indefinidamente nos livros da mesma espécie; <BR>II - a data da apresentação; <BR>III - o nome do apresentante; <BR>IV - a natureza formal do título; <BR>V - os atos que formalizar, resumidamente mencionados."</DIR><STRONG>&nbsp;&nbsp;</STRONG>&nbsp;Art. 173 &nbsp;passa a art. 176, com nova redação, suprimidos, em conseqüência, os arts. 227 e 237. <BR><BR>
+<DIR>"Art. 176&nbsp;O Livro nº 2 - Registro Geral - será destinado, à matrícula dos imóveis e ao registro ou averbação dos atos relacionados no art. 167 e não atribuídos ao Livro nº 3. <BR><BR><I>Parágrafo único. </I>A escrituração do Livro nº 2 obedecerá às seguintes normas:<BR><BR>&nbsp;I - cada imóvel terá matrícula própria, que será aberta por ocasião do primeiro registro a ser feito na vigência desta Lei; <BR><BR>II - são requisitos da matrícula: <BR>1) o número de ordem, que seguirá ao infinito; <BR>2) a data; <BR>3) a identificação do imóvel, feita mediante indicação de suas características e confrontações, localização, área e denominação, se rural, ou logradouro e número, se urbano, e sua designação cadastral, se houver; <BR>4) o nome, domicílio e nacionalidade do proprietário, bem como: 
+<TABLE>
+<TBODY>
+<TR>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>tratando-se de pessoa física, o estado civil, a profissão, o número de inscrição no Cadastro de Pessoas Físicas do Ministério da Fazenda ou do Registro Geral da cédula de identidade, ou à falta deste, sua filiação; </TD></TR></TBODY></TABLE></DIR>
+<DIR>
+<TABLE>
+<TBODY>
+<TR>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>tratando-se de pessoa jurídica, a sede social e o número de inscrição no Cadastro Geral de Contribuintes do Ministério da Fazenda; <BR></TD></TR></TBODY></TABLE>5) o número do registro anterior; <BR><BR>III - são requisitos do registro no Livro nº 2: <BR>1) a data; <BR>2) o nome, domicílio e nacionalidade do transmitente, ou do devedor, e do adquirente, ou credor, bem como: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>tratando-se de pessoa física, o estado civil, a profissão e o número de inscrição no Cadastro de Pessoas Físicas do Ministério da Fazenda ou do Registro Geral da cédula de identidade, ou, à falta deste, sua filiação; </TD></TR></TBODY></TABLE>
+<P>
+<TABLE>
+<TBODY>
+<TR>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>tratando-se de pessoa jurídica, a sede social e o número de inscrição no Cadastro Geral de Contribuintes do Ministério da Fazenda;&nbsp;<BR></TD></TR></TBODY></TABLE>3) o título de transmissão ou do ônus;<BR>4) a forma do título, sua procedência e caracterização;<BR>5) o valor do contrato, da coisa ou da dívida, prazo desta, condições e mais especializações, inclusive juros, se houver"<STRONG> &nbsp;&nbsp;&nbsp;&nbsp;</STRONG><BR><BR><STRONG></STRONG></P></DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Arts 174 e 175 passam a artigos 177 e 178, com nova redação. <BR><BR></P>
+<DIR>"Art. 177.&nbsp; O Livro nº 3 - Registro Auxiliar - será destinado ao registro dos atos que, sendo atribuídos ao Registro de Imóveis por disposição legal, não digam respeito diretamente a imóvel matriculado. <BR><BR>Art. 178.&nbsp; Registrar-se-ão no Livro nº 3 - Registro Auxiliar: <BR><BR>I - a emissão de debêntures, sem prejuízo do registro eventual e definitivo, na matrícula do imóvel, da hipoteca, anticrese ou penhor que abonarem especialmente tais emissões, firmando-se pela ordem do registro a prioridade entre as séries de obrigações emitidas pela sociedade; <BR>II - as cédulas de crédito rural e de crédito industrial, sem prejuízo do registro da hipoteca cedular; <BR>III - as convenções de condomínio; <BR>IV - o penhor de máquinas e de aparelhos utilizados na indústria, instalados e em funcionamento, com os respectivos pertences ou sem eles; <BR>V - as convenções antenupciais; <BR>VI - os contratos de penhor rural; <BR>VII - os títulos que, a requerimento do interessado, forem registrados no seu inteiro teor, sem prejuízo do ato, praticado no Livro nº 2."</DIR>
+<P><STRONG>&nbsp;</STRONG>Art. 176. passa a art. 179, com nova redação. </P>
+<DIR>"Art. 179.&nbsp;O Livro nº 4 - Indicador Real - será o repositório de todos os imóveis que figurarem nos demais livros, devendo conter sua identificação, referência aos números de ordem dos outros livros e anotações necessárias. <BR><BR>§ 1º Se não for utilizado o sistema de fichas, o Livro nº 4 conterá, ainda, o número de ordem, que seguirá indefinidamente, nos livros da mesma espécie. <BR><BR>§ 2º Adotado o sistema previsto no parágrafo precedente, os oficiais deverão ter, para auxiliar a consulta, um livro-índice ou fichas pelas ruas, quando se tratar de imóveis urbanos, e pelos nomes e situações, quando rurais."</DIR>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 177 &nbsp;passa a art. 180, com nova redação.<BR></P>
+<DIR>"Art. 180 &nbsp;O Livro nº 5 - Indicador Pessoal - dividido alfabeticamente, será o repositório dos nomes de todas as pessoas que, individual ou coletivamente, ativa ou passivamente, direta ou indiretamente, figurarem nos demais livros, fazendo-se referência aos respectivos números de ordem."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Se não for utilizado o sistema de fichas, o Livro nº 5 conterá, ainda, o número de ordem de cada letra do alfabeto, que seguirá indefinidamente, nos livros da mesma espécie. Os oficiais poderão adotar, para auxiliar as buscas, um livro-índice ou fichas em ordem alfabética. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Arts 178 a 184&nbsp; supressão. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Acréscimo: <BR><BR></P>
+<DIR>"Art. 181 &nbsp;Poderão ser abertos e escriturados, concomitantemente, até 10 (dez) livros de "Registro Geral", obedecendo, neste caso, a sua escrituração ao algarismo final da matrícula, sendo as matrículas de número final 1 (um) feitas no Livro 2-1, as de final 2 (dois) no Livro 2-2 e as de final 3 (três) no Livro 2-3, e assim, sucessivamente."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Também poderão ser desdobrados, a critério do oficial, os Livros nºs 3 "Registro Auxiliar", 4 "Indicador Real" e 5 "Indicador Pessoal". <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Processo de Registro </CENTER></B><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>&nbsp;Art. 185 &nbsp;e seu parágrafo único. passam a arts. 182 e 183, respectivamente, com nova redação. <BR><BR>
+<DIR>"Art. 182&nbsp;Todos os títulos tomarão, no Protocolo, o número de ordem que lhes competir em razão da seqüência rigorosa de sua apresentação. <BR><BR>Art. 183 &nbsp;Reproduzir-se-á, em cada título, o número de ordem respectivo e a data de sua prenotação."</DIR>Acréscimo: <BR><BR>
+<DIR>"Art. 184 &nbsp;O Protocolo será encerrado diariamente."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Arts. 186 a 191 &nbsp;passam a artigos 185 a 190, com nova redação. <BR><BR>
+<DIR>"Art. 185 &nbsp;A escrituração do protocolo incumbirá tanto ao oficial titular como ao seu substituto legal, podendo, ser feita, ainda, por escrevente auxiliar expressamente designado pelo oficial titular ou pelo seu substituto legal mediante autorização do juiz competente, ainda que os primeiros não estejam nem afastados nem impedidos. <BR><BR>Art. 186 &nbsp;O número de ordem determinará a prioridade do título, e esta a preferência dos direitos reais, ainda que apresentados pela mesma pessoa mais de um título simultaneamente. <BR><BR>Art. 187 &nbsp;Em caso de permuta, e pertencendo os imóveis à mesma circunscrição, serão feitos os registros nas matrículas correspondentes, sob um único número de ordem no Protocolo. <BR><BR>Art. 188 &nbsp;Protocolizado o título, proceder-se-á ao registro, dentro do prazo de 30 (trinta) dias, salvo nos casos previstos nos artigos seguintes. <BR><BR>Art. 189 &nbsp;Apresentado título de segunda hipoteca, com referência expressa à existência de outra anterior, o oficial, depois de prenotá-lo, aguardará durante 30 (trinta) dias que os interessados na primeira promovam a inscrição. Esgotado esse prazo, que correrá da data da prenotação, sem que seja apresentado o título anterior, o segundo será inscrito e obterá preferência sobre aquele. <BR><BR>Art. 190 &nbsp;Não serão registrados, no mesmo dia, títulos pelos quais se constituam direitos reais contraditórios sobre o mesmo imóvel."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 192 &nbsp;e seu parágrafo único - passam a arts. 191 e 192, com nova redação. <BR><BR>
+<DIR>"Art. 191 &nbsp;Prevalecerão, para efeito de prioridade de registro, quando apresentados no mesmo dia, os títulos prenotados no Protocolo sob número de ordem mais baixo, protelando-se o registro dos apresentados posteriormente, pelo prazo correspondente a, pelo menos, um dia útil. <BR><BR>Art. 192 &nbsp;O disposto nos arts. 190 e 191 não se aplica às escrituras públicas, da mesma data e apresentadas no mesmo dia, que determinem, taxativamente, a hora da sua lavratura, prevalecendo, para efeito de prioridade, a que foi lavrada em primeiro lugar."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>&nbsp;Art. 193 &nbsp;mantido com a mesma redação. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 194 &nbsp;nova redação, com supressão do parágrafo único. <BR><BR>
+<DIR>"Art. 194 &nbsp;O título de natureza particular apresentado em uma só via será arquivado em cartório, fornecendo o oficial, a pedido, certidão do mesmo."</DIR>&nbsp;&nbsp;&nbsp;&nbsp; Arts. 195 e 196&nbsp; supressão. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 197 &nbsp;e seus parágrafos - passam a arts. 195, 196 e 197, respectivamente, com nova redação. <BR><BR>
+<DIR>"Art. 195&nbsp; Se o imóvel não estiver matriculado ou registrado em nome do outorgante, o oficial exigirá a prévia matrícula e o registro do título anterior, qualquer que seja a sua natureza, para manter a continuidade do registro. <BR><BR>Art. 196 &nbsp;A matrícula será feita à vista dos elementos constantes do título apresentado e do registro anterior que constar do próprio cartório. <BR><BR>Art. 197&nbsp;Quando o título anterior estiver registrado em outro cartório, o novo título será apresentado juntamente com certidão atualizada, comprobatória do registro anterior, e da existência ou inexistência de ônus."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Arts. 198 a 201 &nbsp;" caput " - passam a art. 198, com nova redação. <BR><BR>
+<DIR>"Art. 198 &nbsp;Havendo exigência a ser satisfeita, o oficial indicá-la-á por escrito. Não se conformando o apresentante com a exigência do oficial, ou não a podendo satisfazer, será o título, a seu requerimento e com a declaração de dúvida, remetido ao juízo competente para dirimí-la, obedecendo-se ao seguinte: <BR><BR>I - no Protocolo, anotará o oficial, à margem da prenotação, a ocorrência da dúvida; <BR>II - após certificar, no título, a prenotação e a suscitação da dúvida, rubricará o oficial todas as suas folhas; <BR>III - em seguida, o oficial dará ciência dos termos da dúvida ao apresentante, fornecendo-lhe cópia da suscitação e notificando-o para impugná-la, perante o juízo competente, no prazo de 15 (quinze) dias; <BR>IV - certificado o cumprimento do disposto no item anterior, remeterse-ão ao juízo competente, mediante carga, as razões da dúvida, acompanhadas do título."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 201 &nbsp;§ 1º. passa a art. 199, com nova redação, suprimido o § 2º. <BR><BR>
+<DIR>"Art. 199 &nbsp;Se o interessado não impugnar a dúvida no prazo referido no item III do artigo anterior, será ela, ainda assim, julgada por sentença."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 202 &nbsp;e seu parágrafo único - passam a arts. 200, 201 e 202, com nova redação. <BR><BR>
+<DIR>"Art. 200 &nbsp;Impugnada a dúvida com os documentos que o interessado apresentar, será ouvido o Ministério Público, no prazo de 10 (dez) dias. <BR><BR>Art. 201 Se não forem requeridas diligências, o juiz proferirá decisão no prazo de 15 (quinze) dias, com base nos elementos constantes dos autos. <BR><BR>Art. 202 &nbsp;Da sentença, poderão interpor apelação, com os efeitos devolutivo e suspensivo, o interessado, o Ministério Público e o terceiro prejudicado."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Arts. 203 e 204 &nbsp;passam a art. 203, com nova redação. <BR><BR>
+<DIR>"Art. 203 &nbsp;Transitada em julgado a decisão da dúvida, proceder-se-á do seguinte modo: <BR><BR>I - se for julgada procedente, os documentos serão restituídos à parte, independentemente de translado, dando-se ciência da decisão ao oficial, para que a consigne no Protocolo e cancele a prenotação; <BR>II - se for julgada improcedente, o interessado apresentará, de novo, os seus documentos, com o respectivo mandado, ou certidão da sentença, que ficarão arquivados, para que, desde logo, se proceda ao registro, declarando o oficial o fato na coluna de anotações do Protocolo."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Arts. 205 a 217 &nbsp;passam a artigos 204 a 216, com nova redação. <BR><BR>
+<DIR>"Art. 204 &nbsp;A decisão da dúvida tem natureza administrativa e não impede o uso do processo contencioso competente. <BR><BR>Art. 205 &nbsp;Cessarão automaticamente os efeitos da prenotação se, decorridos 30 (trinta) dias do seu lançamento no Protocolo, o título não tiver sido registrado por omissão do interessado em atender às exigências legais. <BR><BR>Art. 206 &nbsp;Se o documento, uma vez prenotado, não puder ser registrado, ou o apresentante desistir do seu registro, a importância relativa às despesas previstas no art. 14 será restituída, deduzida a quantia correspondente às buscas e a prenotação. <BR><BR>Art. 207 &nbsp;No processo, de dúvida, somente serão devidas custas, a serem pagas pelo interessado, quando a dúvida for julgada procedente. <BR><BR>Art. 208 &nbsp;O registro começado dentro das horas fixadas não será interrompido, salvo motivo de força maior declarado, prorrogando-se expediente até ser concluído. <BR><BR>Art. 209 &nbsp;Durante a prorrogação nenhuma nova apresentação será admitida, lavrando o termo de encerramento no Protocolo. <BR><BR>Art. 210 &nbsp;Todos os atos serão assinados e encerrados pelo oficial, por seu substituto legal, ou por escrevente expressamente designado pelo oficial ou por seu substituto legal e autorizado pelo juiz competente ainda que os primeiros não estejam nem afastados nem impedidos. <BR><BR>Art. 211 &nbsp;Nas vias dos títulos restituídas aos apresentantes, serão declarados resumidamente, por carimbo, os atos praticados. <BR><BR>Art. 212 &nbsp;Se o teor do registro não exprimir a verdade, poderá o prejudicado reclamar sua retificação, por meio de processo próprio. <BR><BR>Art. 213 &nbsp;A requerimento do interessado, poderá ser retificado o erro constante do registro, desde que tal retificação não acarrete prejuízo a terceiro. <BR><BR>§ 1º A retificação será feita mediante despacho judicial, salvo no caso de erro evidente, o qual o oficial, desde logo, corrigirá, com a devida cautela. <BR><BR>§ 2º Se da retificação resultar alteração da descrição das divisas ou da área do imóvel, serão citados, para manifestarem sobre o requerimento, em 10 (dez) dias, todos os confrontantes e o alienante ou seus sucessores. <BR><BR>§ 3º O Ministério Público será ouvido no pedido de retificação. <BR><BR>§ 4º Se o pedido de retificação for impugnado fundamentadamente, o juiz remeterá o interessado para as vias ordinárias. <BR><BR>§ 5º Da sentença do juiz, deferindo ou não o requerimento, cabe recurso de apelação com ambos os efeitos. <BR><BR>Art. 214 &nbsp;As nulidades de pleno direito do registro, uma vez provadas, invalidam-no, independentemente de ação direta. <BR><BR>Art. 215 &nbsp;São nulos os registros efetuados após sentença de abertura de falência, ou do termo legal nele fixado, salvo se a apresentação tiver sido feita anteriormente. <BR><BR>Art. 216 &nbsp;O registro poderá também ser retificado ou anulado por sentença em processo contencioso, ou por efeito do julgado em ação de anulação ou de declaração de nulidade de ato jurídico, ou de julgado sobre fraude à execução."<BR><BR></DIR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Das Pessoas </CENTER></B>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; </DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp;Arts 218 a 221&nbsp;&nbsp; passam a artigos 217 a 220, com nova redação. <BR><BR>
+<DIR>"Art. 217 &nbsp;O registro e a averbação poderão ser provocados por qualquer pessoa, incumbindo-lhe as despesas respectivas. <BR><BR>Art. 218 &nbsp;Nos atos a título gratuito, o registro pode também ser promovido pelo transferente, acompanhado da prova de aceitação do beneficiado. <BR><BR>Art. 219 &nbsp;O registro do penhor rural independe do consentimento do credor hipotecário. <BR><BR>Art. 220 &nbsp;São considerados, para fins de escrituração, credores e devedores, respectivamente: <BR><BR>I - nas servidões, o dono do prédio dominante e dono do prédio serviente; <BR>II - no uso, o usuário e o proprietário; <BR>III - na habitação, o habitante e proprietário; <BR>IV - na anticrese, o mutuante e mutuário; <BR>V - no usufruto, o usufrutuário e nu-proprietário; <BR>VI - na enfiteuse, o senhorio e o enfiteuta; <BR>VII - na constituição de renda, o beneficiário e o rendeiro censuário; <BR>VIII - na locação, o locatário e o locador; <BR>IX - nas promessas de compra e venda, o promitente comprador e o promitente vendedor; <BR>X - nas penhoras e ações, o autor e o réu; <BR>XI - nas cessões de direitos, o cessionário e o cedente;<BR>XII - nas promessas de cessão de direitos, o promitente cessionário e o promitente cedente."</DIR></DIV>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Dos Títulos <BR><BR></CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Arts. 222 e 223 e seus parágrafos&nbsp; passam a arts. 221, 222, 223 e 224, respectivamente, com nova redação. <BR><BR>
+<DIR>"Art. 221 &nbsp;Somente são admitidos registro: <BR><BR>I - escrituras públicas, inclusive as lavradas em consulados brasileiros; <BR>II - escritos particulares autorizados em lei, assinados pelas partes e testemunhas, com as firmas reconhecidas, dispensado o reconhecimento quando se tratar de atos praticados por entidades vinculadas ao Sistema Financeiro da Habitação; <BR>III - atos autênticos de países estrangeiros, com força de instrumento público, legalizados e traduzidos na forma da lei, e registrados no cartório do Registro de Títulos e Documentos, assim como sentenças proferidas por tribunais estrangeiros após homologação pelo Supremo Tribunal Federal; <BR>IV - cartas de sentença, formais de partilha, certidões e mandados extraídos de autos de processo. <BR><BR>Art. 222 &nbsp;Em todas as escrituras e em todos os atos relativos a imóveis, bem como nas cartas de sentença e formais de partilha, o tabelião ou escrivão deve fazer referência à matrícula ou ao registro anterior, seu número e cartório. <BR><BR>Art. 223 &nbsp;Ficam sujeitas à obrigação, a que alude o artigo anterior, as partes que, por instrumento particular, celebrarem atos relativos a imóveis. <BR><BR>Art. 224 &nbsp;Nas escrituras, lavradas em decorrência de autorização judicial, serão mencionadas por certidão, em breve relatório com todas as minúcias que permitam identificá-los, os respectivos alvarás."</DIR><STRONG>&nbsp;</STRONG>&nbsp;&nbsp;&nbsp; Arts 224 e 225&nbsp; &nbsp;inclusão no Capítulo seguinte. </DIV>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 226 e 227 - supressão. </DIV>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 228 e 229&nbsp;&nbsp; &nbsp;passam a arts. 225 e 226, com nova redação. </DIV>
+<DIR>"Art. 225 &nbsp;Os tabeliães, escrivães e juizes farão com que, nas escrituras e nos autos judiciais, as partes indiquem, com precisão, os característicos, as confrontações e as localizações dos imóveis, mencionando os nomes dos confrontantes e, ainda, quando se tratar só de terreno, se esse fica do lado par ou do lado ímpar do logradouro, em que quadra e a que distância métrica da edificação ou da esquina mais próxima, exigindo dos interessados certidão do registro imobiliário. <BR><BR>§ 1º&nbsp;As mesmas minúcias, com relação à caracterização do imóvel, devem constar dos instrumentos particulares apresentados em cartório para registro. <BR><BR>§ 2º&nbsp;Consideram-se irregulares, para efeito de matrícula, os títulos nos quais a caracterização do imóvel não coincida com a que consta do registro anterior. <BR><BR>Art. 226 &nbsp;Tratando-se de usucapião, os requisitos da matrícula devem constar do mandado judicial."<BR><BR></DIR>
+<CENTER><B>CAPÍTULO VI </CENTER></B>
+<CENTER><B>Da Matrícula </CENTER></B><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>&nbsp;Art. 224 &nbsp;passa a art. 227, com nova redação. <BR><BR>
+<DIR>"Art. 227 &nbsp;Todo imóvel objeto de título a ser registrado deve estar matriculado no Livro nº 2 - Registro Geral - obedecido o disposto no art. 176."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 225 &nbsp;e seu § 1º&nbsp;passam a arts. 228 e 229, com nova redação, suprimidos os §§ 2º e 3º. <BR><BR>
+<DIR>"Art. 228 &nbsp;A matrícula será efetuada por ocasião do primeiro registro a ser lançado na vigência desta Lei, mediante os elementos constantes do título apresentado e do registro anterior nele mencionado. <BR><BR>Art. 229 &nbsp;Se o registro anterior foi efetuado em outra circunscrição, a matrícula será aberta com os elementos constantes do título apresentado e da certidão atualizada daquele registro, a qual ficará arquivada em cartório."</DIR>&nbsp;&nbsp;&nbsp; Acréscimos: <BR><BR>
+<DIR>"Art. 230 &nbsp;Se na certidão constar ônus, o oficial fará a matrícula, e, logo em seguida ao registro, averbará a existência do ônus, sua natureza e valor, certificando o fato no título que devolver à parte, o que o correrá, também, quando o ônus estiver lançado no próprio cartório. <BR><BR>Art. 231&nbsp;No preenchimento dos livros, observar-se-ão as seguintes normas: <BR><BR>I - no alto da face de cada folha será lançada a matrícula do imóvel, com os requisitos constantes do art. 176, e no espaço restante e no verso, serão lançados por ordem cronológica e em forma narrativa, os registros e averbações dos atos pertinentes ao imóvel matriculado; <BR>II - preenchida uma folha, será feito o transporte para a primeira folha em branco do mesmo livro ou do livro da mesma série que estiver em uso, onde continuarão os lançamentos, com remissões recíprocas. <BR><BR>Art. 232 &nbsp;Cada lançamento de registro será precedido pela letra " R " e o da averbação pelas letras " AV ", seguindo-se o número de ordem do lançamento e o da matrícula (ex: R-1-1, R-2-1, AV-3-1, R-4-1, AV-5-1, etc.)"</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Arts 230 e 231 &nbsp;passam a arts. 233 e 234, com nova redação. <BR><BR>
+<DIR>"Art. 233 &nbsp;A matrícula será cancelada: <BR><BR>I - por decisão judicial; <BR>II - quando em virtude de alienação parciais, o imóvel for inteiramente transferido a outros proprietários; <BR>III - pela fusão, nos termos do artigo seguinte. <BR><BR>Art. 234&nbsp; Quando dois ou mais imóveis contíguos pertencentes ao mesmo proprietário, constarem de matrículas autônomas, pode ele requerer a fusão destas em uma só, de novo número, encerrando-se as primitivas."</DIR>&nbsp; Acréscimo: <BR><BR>
+<DIR>"Art. 235 &nbsp;Podem, ainda, ser unificados, com abertura de matrícula única: <BR><BR>I - dois ou mais imóveis constantes de transcrições anteriores a esta Lei, à margem das quais será averbada a abertura da matrícula que os unificar; <BR>II - dois ou mais imóveis, registrados por ambos os sistemas, caso em que, nas transcrições, será feita a averbação prevista no item anterior, as matrículas serão encerradas na forma do artigo anterior. <BR><BR><I>Parágrafo único. </I>Os imóveis de que trata este artigo, bem como os oriundos de desmembramentos, partilha e glebas destacadas de maior porção, serão desdobrados em novas matrículas, juntamente com os ônus que sobre eles existirem, sempre que ocorrer a transferência de uma ou mais unidades, procedendo-se, em seguida, ao que estipula o item II do art. 233."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Arts. 232 e 233 supressão. <BR><BR>
+<CENTER><B>CAPÍTULO VII </CENTER></B>
+<CENTER><B>Do Registro </CENTER></B><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 234 &nbsp;supressão. <BR>&nbsp;&nbsp;&nbsp;&nbsp; Acréscimo: <BR><BR>
+<DIR>"Art. 236 &nbsp;Nenhum registro poderá ser feito sem que o imóvel a que se referir esteja matriculado."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>&nbsp;Art. 235 &nbsp;e parágrafo único &nbsp;passam a art. 237, com nova redação: <BR><BR>
+<DIR>"Art. 237 &nbsp;Ainda que o imóvel esteja matriculado, não se fará registro que dependa da apresentação de título anterior, a fim de que se preserve a continuidade do registro."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;</STRONG> Arts. 241, 244, 245, 238, 239, 236 e 243 e seu parágrafo único - passam, respectivamente, a arts. 238 a 245, com nova redação: <BR><BR>
+<DIR>"Art. 238 &nbsp;O registro de hipoteca convencional valerá pelo prazo de 30 (trinta) anos, findo o qual só será mantido o número anterior se reconstituída por novo título e novo registro. <BR><BR>Art. 239 &nbsp;As penhoras, arrestos e seqüestros de imóveis serão registrados depois de pagas as custas do registro pela parte interessada, em cumprimento de mandado ou à vista de certidão do escrivão, de que constem, além dos requisitos exigidos para o registro, os nomes do juiz, do depositário, das partes e a natureza do processo. <BR><BR><I>Parágrafo único. </I>A certidão será lavrada pelo escrivão do feito, com a declaração do fim especial a que se destina, após a entrega, em cartório, do mandado devidamente cumprido. <BR><BR>Art. 240 &nbsp;O registro da penhora faz prova quanto à fraude de qualquer transação posterior. <BR><BR>Art. 241 &nbsp;O registro da anticrese no livro nº 2 declarará, também, o prazo, a época do pagamento e a forma de administração. <BR><BR>Art. 242 &nbsp;O contrato de locação, com cláusula expressa de vigência no caso de alienação do imóvel, registrado no Livro nº 2, consignará também, o seu valor, a renda, o prazo, o tempo e o lugar do pagamento, bem como pena convencional. <BR><BR>Art. 243 &nbsp;A matrícula do imóvel promovida pelo titular do domínio útil, e vice-versa. <BR><BR>Art. 244 &nbsp;As escrituras antenupciais serão registradas no livro nº 3 do cartório do domicílio conjugal, sem prejuízo de sua averbação obrigatória no lugar da situação dos imóveis de propriedade do casal, ou dos que forem sendo adquiridos e sujeitos a regime de bens diverso do comum, com a declaração das respectivas cláusulas, para ciência de terceiros. <BR><BR>Art. 245 &nbsp;Quando o regime de separação de bens for determinado por lei, far-se-á a respectiva averbação nos termos do artigo anterior, incumbindo ao Ministério Público zelar pela fiscalização e observância dessa providência."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Arts. 237, 240 e 242&nbsp; &nbsp;supressão. <BR><BR>
+<CENTER><B>CAPÍTULO VIII </CENTER></B>
+<CENTER><B>Da Averbação e do Cancelamento </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 246, 248, 258 e 260&nbsp; supressão. </DIV><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 247 &nbsp;passa a art. 246, com nova redação: <BR><BR>
+<DIR>"Art. 246 &nbsp;Além dos casos expressamente indicados no item II do artigo 167, serão averbados na matrícula as subrogações e outras ocorrências que, por qualquer modo, alterem o registro. <BR><BR><I>Parágrafo único. </I>As averbações a que se referem os itens 4 e 5 do inciso II do art. 167 serão feitas a requerimento dos interessados, com firma reconhecida, instruído com documento comprobatório fornecido pela autoridade competente. A alteração do nome só poderá ser averbada quando devidamente comprovada por certidão do Registro Civil."</DIR>&nbsp;&nbsp;&nbsp; Acréscimo: <BR><BR>
+<DIR>"Art. 247 &nbsp;Averbar-se-á, também, na matrícula, a declaração de indisponibilidade de bens, na forma prevista na Lei."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;</STRONG> Arts. 249 e 250 &nbsp;passam a artigos 248 e 249, com nova redação: <BR><BR>
+<DIR>"Art. 248&nbsp;O cancelamento efetuar-se-á mediante averbação, assinada pelo oficial, seu substituto legal ou escrevente autorizado, e declarará o motivo que o determinou, bem como o título em virtude do qual foi feito. <BR><BR>Art. 249 &nbsp;O cancelamento poderá ser total ou parcial e referir-se a qualquer dos atos do registro."</DIR>&nbsp;&nbsp;&nbsp; Acréscimo: <BR><BR>
+<DIR>"Art. 250 &nbsp;Far-se-á o cancelamento: <BR><BR>I - em cumprimento de decisão judicial transitada em julgado; <BR>II - a requerimento unânime das partes que tenham participado do ato registrado, se capazes, com as firmas reconhecidas por tabelião; <BR>III - A requerimento do interessado, instruído com documento hábil."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Arts. 254 a 257, 259, 251 a 253 e 256 &nbsp;passam a arts. 251 a 259, com nova redação: <BR><BR>
+<DIR>"Art. 251 &nbsp;O cancelamento de hipoteca só pode ser feito: <BR><BR>I - à vista de autorização expressa ou quitação outorgada pelo credor ou seu sucessor, em instrumento público ou particular; <BR>II - em razão de procedimento administrativo ou contencioso, no qual o credor tenha sido intimado (artigo 698 do Código de Processo Civil); <BR>III - na conformidade da legislação referente às cédulas hipotecárias. <BR><BR>Art. 252 &nbsp;O registro, enquanto não cancelado, produz todos os efeitos legais ainda que, por outra maneira, se prove que o título está desfeito, anulado, extinto ou rescindido. <BR><BR>Art. 253 &nbsp;Ao terceiro prejudicado é lícito, em juízo, fazer prova da extinção dos ônus, reais, e promover o cancelamento do seu registro. <BR><BR>Art. 254 &nbsp;Se, cancelado o registro, subsistirem o título e os direitos dele decorrentes, poderá o credor promover novo registro, o qual só produzirá efeitos a partir da nova data. <BR><BR>Art. 255&nbsp;Além dos casos previstos nesta Lei, a inscrição de incorporação ou loteamento só será cancelada a requerimento do incorporador ou loteador, enquanto nenhuma unidade ou lote for objeto de transação averbada, ou mediante o consentimento de todos os compromissários ou cessionários. <BR><BR>Art. 256 &nbsp;O cancelamento da servidão, quando o prédio dominante estiver hipotecado, só poderá ser feito com aquiescência do credor, expressamente manifestada. <BR><BR>Art. 257 &nbsp;O dono do prédio serviente terá, nos termos da lei, direito a cancelar a servidão. <BR><BR>Art. 258 &nbsp;O foreiro poderá, nos termos da lei, averbar a renúncia de seu direito, sem dependência do consentimento do senhorio direto. <BR><BR>Art. 259 &nbsp;O cancelamento não pode ser feito em virtude de sentença sujeita, ainda, a recurso."<BR><BR></DIR>
+<CENTER><B>CAPÍTULO IX </CENTER></B>
+<CENTER><B>Do Bem de Família </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 261 a 266&nbsp; &nbsp;passam a arts. 260 a 265. </DIV><BR><BR>
+<CENTER><B>CAPÍTULO X </CENTER></B>
+<CENTER><B>Da Remissão do Imóvel Hipotecado </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 267 a 277&nbsp; &nbsp;passam a arts. 266 a 276.<STRONG> </STRONG></DIV><BR><BR>
+<CENTER><B>CAPÍTULO XI </CENTER></B>
+<CENTER><B>Do Registro Torrens </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; Arts 278 a 289&nbsp; passam a arts. 277 a 288.<STRONG> </STRONG></DIV><BR><BR>
+<CENTER><B>TÍTULO VI </CENTER></B>
+<CENTER><B>Do Registro da Propriedade Literária, Científica e Artística. <BR></CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;Arts 290 a 304&nbsp; &nbsp;supressão, inclusive do Título e seu enunciado. </DIV><BR><BR>
+<CENTER><B>TÍTULO VII </CENTER></B>
+<CENTER><B>passa a </CENTER></B><BR>
+<CENTER><B>TÍTULO VI </CENTER></B>
+<CENTER><B>Das Disposições Finais e Transitórias </CENTER></B>
+<DIV align=left></DIV>
+<DIV align=left>&nbsp;&nbsp;&nbsp;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp; Arts 305 a 307&nbsp; &nbsp;passam a arts. 289 a 291. </DIV><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 308 &nbsp;passa a art. 292, com nova redação: <BR><BR>
+<DIR>"Art. 292 &nbsp;O encerramento dos livros em uso, antes da vigência da presente Lei, não exclui a validade dos atos neles registrados, nem impede que, neles, se façam as averbações e anotações posteriores. <BR><BR><I>Parágrafo único. </I>Se a averbação ou anotação dever ser feita no Livro nº 2 do Registro de Imóvel, pela presente Lei, e não houver espaço nos anteriores Livros de Transcrição das Transmissões, será aberta a matrícula do imóvel."</DIR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 309 &nbsp;passa a art. 293. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 310 &nbsp;passa a arts. 294 a 296, com nova redação: <BR><BR>
+<DIR>"Art. 294 &nbsp;Os oficiais, na data de vigência desta Lei, lavrarão termo de encerramento nos livros, e dele remeterão cópia ao juiz a que estiverem subordinados. <BR><BR><I>Parágrafo único. </I>Sem prejuízo do cumprimento integral das disposições desta Lei, os livros antigos poderão ser aproveitados, até o seu esgotamento, mediante autorização judicial e adaptação aos novos modelos, iniciando-se nova numeração. " <BR><BR></DIR>
+<P></P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 295 &nbsp;Esta Lei entrará em vigor no dia 1º de janeiro 1976. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Art. 296 &nbsp;Revogam-se a Lei nº 4.827, de 7 de março de 1924, os Decretos nºs 4.857, de 9 de novembro de 1939, 5.318, de 29 de fevereiro 1940, 5.553, de 6 de maio de 1940, e as demais disposições em contrário. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Modelos anexos - serão adaptados às disposições do art. 173. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 2º &nbsp;O Poder Executivo fará republicar, no Diário Oficial da União, o texto da Lei nº 6.015, de 31 de dezembro de 1973, com as alterações decorrentes desta e da Lei nº 6.140, de 28 de novembro de 1974. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 3º &nbsp;Esta Lei entra em vigor na data de sua publicação. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</STRONG>Art. 4º &nbsp;Revogam-se Lei nº 6.064, de 28 de junho de 1974 e as demais disposições em contrário. </P>
+<P>Brasília, 30 de junho de 1975; 154º da Independência e 87º da República. </P>
+<P>ERNESTO GEISEL <BR>Armando Falcão</P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 01/07/1975
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 1/7/1975, Página 7897       
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1975, Página 111 
+                                                        Vol. 5          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

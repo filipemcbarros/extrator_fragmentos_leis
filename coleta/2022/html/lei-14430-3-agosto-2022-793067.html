@@ -1,0 +1,909 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 14.430, DE 3 DE AGOSTO DE 2022 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre a emissão de Letra de Risco de Seguro (LRS) por Sociedade Seguradora de Propósito Específico (SSPE), sobre as regras gerais aplicáveis à securitização de direitos creditórios e à emissão de Certificados de Recebíveis e sobre a flexibilização do requisito de instituição financeira para a prestação do serviço de escrituração e de custódia de valores mobiliários; altera as Leis nºs 6.404, de 15 de dezembro de 1976, 6.385, de 7 de dezembro de 1976, 9.718, de 27 de novembro de 1998, 4.594, de 29 de dezembro de 1964, e o Decreto-Lei nº 73, de 21 de novembro de 1966; e revoga dispositivos das Leis nºs 9.514, de 20 de novembro de 1997, 10.931, de 2 de agosto de 2004, 11.076, de 30 de dezembro de 2004, 12.810, de 15 de maio de 2013, 13.331, de 1º de setembro de 2016, e 13.986, de 7 de abril de 2020. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 14.430, DE 3 DE AGOSTO DE 2022 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-14430-3-agosto-2022-793067-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-14430-3-agosto-2022-793067-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-14430-3-agosto-2022-793067-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-14430-3-agosto-2022-793067-veto-165847-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-14430-3-agosto-2022-793067-promulgacaodevetos-166576-pl.html">Promulgação de Vetos</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=2318021">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-14430-3-agosto-2022-793067-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 14.430, DE 3 DE AGOSTO DE 2022</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre a emissão de Letra de Risco de Seguro (LRS) por Sociedade Seguradora de Propósito Específico (SSPE), sobre as regras gerais aplicáveis à securitização de direitos creditórios e à emissão de Certificados de Recebíveis e sobre a flexibilização do requisito de instituição financeira para a prestação do serviço de escrituração e de custódia de valores mobiliários; altera as Leis nºs 6.404, de 15 de dezembro de 1976, 6.385, de 7 de dezembro de 1976, 9.718, de 27 de novembro de 1998, 4.594, de 29 de dezembro de 1964, e o Decreto-Lei nº 73, de 21 de novembro de 1966; e revoga dispositivos das Leis nºs 9.514, de 20 de novembro de 1997, 10.931, de 2 de agosto de 2004, 11.076, de 30 de dezembro de 2004, 12.810, de 15 de maio de 2013, 13.331, de 1º de setembro de 2016, e 13.986, de 7 de abril de 2020. 
+						</p>
+				
+						<div class="texto">
+							&nbsp;&nbsp;&nbsp;&nbsp; <STRONG>O PRESIDENTE DA REPÚBLICA</STRONG><BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER>CAPÍTULO I <BR>DO OBJETO </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Esta Lei dispõe sobre: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a emissão de Letra de Risco de Seguro (LRS) por Sociedade Seguradora de Propósito Específico (SSPE); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - as regras gerais aplicáveis à securitização de direitos creditórios e à emissão de Certificados de Recebíveis; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - a flexibilização do requisito de instituição financeira para a prestação do serviço de escrituração e de custódia de valores mobiliários. <BR><BR>
+<CENTER>CAPÍTULO II <BR>DA EMISSÃO DE LETRA DE RISCO DE SEGURO POR SOCIEDADE <BR>SEGURADORA DE PROPÓSITO ESPECÍFICO </CENTER><BR><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Disposições Gerais </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;A Sociedade Seguradora de Propósito Específico (SSPE) é a sociedade seguradora que tem como finalidade exclusiva realizar uma ou mais operações, independentes patrimonialmente, de aceitação de riscos de seguros, previdência complementar, saúde suplementar, resseguro ou retrocessão de uma ou mais contrapartes e seu financiamento por meio de emissão de Letra de Risco de Seguro (LRS), instrumento de dívida vinculada a riscos de seguros e resseguros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A SSPE captará para cada operação, por meio de emissão de LRS, recursos necessários como garantias a riscos de seguros, previdência complementar, saúde suplementar, resseguro ou retrocessão, denominados, para fins do disposto nesta Lei, riscos de seguros e resseguros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º As garantias de que trata o § 1º deste artigo, em conjunto com o prêmio recebido, deverão corresponder, no mínimo, ao valor nominal total da perda máxima possível decorrente dos riscos de seguros e resseguros aceitos, acrescido de despesas que possam ser incorridas pela SSPE, e serão utilizadas exclusivamente para a cobertura dos riscos e o cumprimento das obrigações representadas na LRS emitida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Para fins do disposto nesta Lei, considera-se contraparte a sociedade seguradora, o ressegurador, a entidade de previdência complementar, a operadora de saúde suplementar, ou a pessoa jurídica, de natureza pública ou privada, sediada ou não no País, que cede riscos de seguros e resseguros à SSPE, conforme critérios estabelecidos em regulamentação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;A SSPE somente poderá ceder riscos em resseguro ou em retrocessão nas hipóteses e nas condições estabelecidas pelo Conselho Nacional de Seguros Privados (CNSP). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Os contratos de cessão de riscos de seguros e resseguros à SSPE poderão utilizar, entre outros, critérios matemáticos objetivos baseados em índices ou parâmetros para a definição de valores garantidos e o acionamento de cobertura contratual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;A SSPE não responderá diretamente perante o segurado, o participante, o beneficiário ou o assistido pelo montante assumido quando a contraparte for sociedade seguradora, ressegurador, entidade de previdência complementar ou operadora de saúde suplementar, hipótese em que a contraparte ficará integralmente responsável pela indenização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Na hipótese de insolvência, de decretação de liquidação ou de falência da contraparte de que trata o <I>caput</I> deste artigo, será permitido o pagamento direto ao segurado, ao participante, ao beneficiário ou ao assistido da parcela de indenização ou benefício correspondente à cessão do risco à SSPE, desde que o pagamento da parcela não tenha sido realizado pela contraparte ao segurado nem à própria contraparte. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Os investidores titulares da LRS não poderão requerer a falência ou a liquidação da SSPE. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Compete ao CNSP, além das demais competências previstas na legislação: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - estabelecer as diretrizes e as normas referentes aos contratos e à aceitação, pela SSPE, dos riscos de seguros e resseguros, do seu financiamento por meio de emissão de LRS e das condições da emissão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - regulamentar limites e restrições, quando aplicáveis, nas operações de que trata esta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - regulamentar os critérios previstos no § 3º do art. 2º desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - estabelecer a forma e as condições para o registro e o depósito da LRS;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - determinar as demonstrações financeiras a serem elaboradas pela SSPE, a sua periodicidade e a necessidade de auditoria efetuada por auditores independentes; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - regulamentar os demais aspectos necessários à operacionalização do disposto nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;A distribuição e a oferta pública da LRS observarão o disposto em regulamentação editada pela Comissão de Valores Mobiliários (CVM). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Ato conjunto do CNSP e do Conselho Monetário Nacional (CMN) disciplinará a atuação, os requisitos, as atribuições e as responsabilidades do agente fiduciário nas operações de que trata esta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;A SSPE será regulada também, no que couber, pela legislação aplicável às sociedades seguradoras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Para as SSPEs, as faixas de enquadramento e os respectivos valores constantes de tabela que determina o valor devido de taxa de fiscalização serão iguais aos aplicados às sociedades seguradoras que operam, exclusivamente, com seguros de danos, nos termos da legislação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Para enquadramento nas faixas indicadas na legislação específica com valores de taxas de fiscalização constantes da legislação específica, serão considerados, somente, os valores totais de prêmios da SSPE. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Da Letra de Risco de Seguro </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;A Letra de Risco de Seguro (LRS) é um título de crédito nominativo, transferível e de livre negociação, representativo de promessa de pagamento em dinheiro, vinculado a riscos de seguros e resseguros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A LRS é de emissão exclusiva da SSPE de que trata esta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A LRS deve possuir relação paritária com os riscos aceitos pela SSPE, que devem ser, integralmente e no mesmo montante, cobertos pela LRS emitida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Os contratos de transferência de risco da contraparte para a SSPE, bem como a LRS, devem garantir que a transferência de risco seja efetiva em todas as circunstâncias e que a extensão dessa transferência esteja claramente definida e seja incontroversa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O CNSP poderá definir requisitos para que os contratos de transferência de risco da contraparte para a SSPE prevejam uma data-limite para que os riscos sejam considerados cobertos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Os direitos dos investidores titulares das LRS estão, em todos os momentos, subordinados às obrigações decorrentes do contrato de cessão de riscos à SSPE. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º A obrigação representada pela LRS extingue-se pela inexistência de riscos a decorrer, de sinistros a pagar e de recursos a serem devolvidos aos seus titulares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;A LRS deve conter, no mínimo, as seguintes informações: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - nome e número de inscrição no Cadastro Nacional da Pessoa Jurídica (CNPJ) da SSPE emitente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - nome e número de inscrição no CNPJ da contraparte que cede os riscos de seguros e resseguros à SSPE emitente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - número de ordem, local, data de emissão e data do início da cobertura dos riscos de seguros e resseguros; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - data de vencimento e data de expiração da cobertura dos riscos de seguros e resseguros; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - denominação "Letra de Risco de Seguro"; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - tipo de cobertura e ramo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - descrição dos riscos cedidos pela contraparte, inclusive quanto aos locais em que eles se encontram; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - valor nominal emitido e valor da perda máxima; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - moeda do valor nominal emitido; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - nome do titular; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - taxa de juros e datas de sua exigibilidade, admitida a capitalização; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XII - remuneração da operação a ser paga à SSPE; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIII - descrição dos ativos que lastreiam a LRS; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIV - identificação do contrato ou da escritura de emissão da LRS; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XV - identificação do agente fiduciário, se houver. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;A LRS será emitida exclusivamente sob a forma escritural, por meio de lançamento em sistema eletrônico da SSPE emissora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A SSPE emissora emitirá, mediante solicitação, certidão de inteiro teor do título. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A certidão de que trata o § 1º deste artigo poderá ser emitida na forma eletrônica, observados os requisitos de segurança que garantam a autenticidade e a integridade do documento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;A LRS é título executivo extrajudicial e pode: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ser executada com base em certidão de inteiro teor emitida pela SSPE emissora; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - gerar valor de resgate inferior ao valor de sua emissão, em função da eventual ocorrência de eventos cobertos decorrentes dos riscos de seguros e resseguros aceitos ou por seus critérios de remuneração. <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Da Independência Patrimonial das Operações </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Cada operação de aceitação de riscos de seguros e resseguros e consequente financiamento por meio da emissão de LRS terá independência patrimonial em relação: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - às demais operações de que trata o <I>caput</I> deste artigo efetuadas pela mesma SSPE; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - à própria SSPE. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A independência patrimonial de que trata o <I>caput</I> deste artigo abrange a identidade própria e individualizada nos aspectos regulamentares, cadastrais, atuariais, contábeis, de investimentos e obrigações e será operacionalizada por meio da inscrição de cada operação no CNPJ. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O disposto neste artigo não confere personalidade jurídica às operações feitas pela SSPE. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A eventual insolvência da SSPE não afetará em nenhuma hipótese os patrimônios independentes constituídos para cada operação, que continuarão afetados e vinculados às LRS. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Os patrimônios independentes constituídos para cada operação não serão alcançados pelos efeitos da decretação de intervenção, de liquidação extrajudicial ou de falência da SSPE emissora e não integrarão a massa concursal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Os dispositivos desta Lei que estabelecem a afetação ou a separação, a qualquer título, de patrimônio da SSPE à emissão específica de LRS produzem efeitos em relação a quaisquer outros débitos da SSPE, inclusive de natureza fiscal, previdenciária ou trabalhista, em especial quanto às garantias e aos privilégios que lhes são atribuídos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;O patrimônio de cada operação de que trata o <I>caput</I> do art. 16 desta Lei incluirá a parcela do prêmio repassado pela contraparte não destinado à remuneração da SSPE e: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - não poderá ser utilizado para o pagamento de obrigações relativas a outras operações da SSPE; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - será destinado exclusivamente à liquidação das LRS a que estiver afetado e ao pagamento de sinistros, de custos de administração e de obrigações fiscais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - não responderá perante os credores da SSPE por qualquer obrigação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - não será passível de constituição de garantias por quaisquer dos credores da SSPE, por mais privilegiados que sejam; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - somente responderá pelas obrigações inerentes às LRS a ele afetadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A totalidade do patrimônio da SSPE responderá pelos prejuízos que esta causar por descumprimento de disposição legal ou regulamentar, por negligência ou por administração temerária ou, ainda, por desvio da finalidade do patrimônio separado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A realização dos direitos dos investidores titulares das LRS deverá limitarse às garantias integrantes do patrimônio separado de cada operação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A realização dos direitos da contraparte de cada operação não ficará limitada às garantias integrantes do patrimônio separado da referida operação, hipótese em que o patrimônio da própria SSPE responderá de forma subsidiária. <BR><BR>
+<CENTER>CAPÍTULO III <BR>DAS REGRAS GERAIS APLICÁVEIS À SECURITIZAÇÃO DE DIREITOS CREDITÓRIOS <BR>E À EMISSÃO DE CERTIFICADOS DE RECEBÍVEIS </CENTER><BR><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Disposições Gerais </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;As companhias securitizadoras são instituições não financeiras constituídas sob a forma de sociedade por ações que têm por finalidade realizar operações de securitização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>É considerada operação de securitização a aquisição de direitos creditórios para lastrear a emissão de Certificados de Recebíveis ou outros títulos e valores mobiliários perante investidores, cujo pagamento é primariamente condicionado ao recebimento de recursos dos direitos creditórios e dos demais bens, direitos e garantias que o lastreiam. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;Compete à CVM editar as normas sobre a emissão pública de Certificados de Recebíveis e outros valores mobiliários representativos de operações de securitização de tais direitos, incluídos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o registro, a estrutura, o funcionamento e as atividades das companhias securitizadoras de direitos creditórios emissoras de valores mobiliários ofertados publicamente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - as características e o regime de prestação de informações associados aos Certificados de Recebíveis e aos demais valores mobiliários ofertados publicamente; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - as hipóteses de destituição e de substituição das companhias securitizadoras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A CVM poderá dispensar as companhias securitizadoras registradas de aplicar disposições da Lei nº 6.404, de 15 de dezembro de 1976, desde que a dispensa não represente prejuízo ao interesse público, à proteção do público investidor e à informação adequada ao mercado de valores mobiliários. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Dos Certificados de Recebíveis </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;Os Certificados de Recebíveis são títulos de crédito nominativos, emitidos de forma escritural, de emissão exclusiva de companhia securitizadora, de livre negociação, constituem promessa de pagamento em dinheiro, preservada a possibilidade de dação em pagamento, e são títulos executivos extrajudiciais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Quando ofertados publicamente ou admitidos à negociação em mercado regulamentado de valores mobiliários, os Certificados de Recebíveis são considerados valores mobiliários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os direitos creditórios que lastrearão os Certificados de Recebíveis serão previamente identificados, atenderão aos critérios de elegibilidade previstos no termo de securitização e deverão ser adquiridos até a data de integralização dos Certificados de Recebíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;Aos Certificados de Recebíveis aplica-se, no que couber, o disposto na legislação cambial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O Certificado de Recebíveis pode ser garantido por aval, hipótese em que é vedado o seu cancelamento ou a sua concessão parcial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O protesto cambial é dispensado para assegurar o direito de regresso contra avalistas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O endossante não responde pelo cumprimento da prestação constante do Certificado de Recebíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A companhia securitizadora responde pela origem e pela autenticidade dos direitos creditórios vinculados ao Certificado de Recebíveis por ela emitido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º O valor do Certificado de Recebíveis não pode exceder ao valor total dos direitos creditórios e de outros ativos a ele vinculados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º A transferência do Certificado de Recebíveis implica a transferência de todos os direitos que lhe são inerentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º Somente o Certificado de Recebíveis pode ser dado em garantia enquanto estiver em circulação, hipótese em que os direitos creditórios a ele vinculados não podem ser dados em garantia separadamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;Os Certificados de Recebíveis integrantes de cada emissão da companhia securitizadora serão formalizados por meio de termo de securitização, do qual constarão as seguintes informações: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - nome da companhia securitizadora emitente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - número de ordem, local e data de emissão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - denominação "Certificado de Recebíveis" acrescida da natureza dos direitos creditórios; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - valor nominal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - data de vencimento ordinário do valor nominal e de resgate dos Certificados de Recebíveis e, se for o caso, discriminação dos valores e das datas de pagamento das amortizações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - remuneração por taxa de juros fixa, flutuante ou variável, que poderá contar com prêmio, fixo ou variável, e admitir a capitalização no período estabelecido no termo de securitização; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - critérios para atualização monetária, se houver; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - cláusula de correção por variação cambial, se houver, desde que estabelecida em conformidade com o disposto nos §§ 8º e 9º deste artigo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - local e método de pagamento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - indicação do número de emissão e da eventual divisão dos Certificados de Recebíveis integrantes da mesma emissão em diferentes classes ou séries, inclusive a possibilidade de aditamentos posteriores para inclusão de novas classes e séries e requisitos de complementação de lastro, quando for o caso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - indicação da existência ou não de subordinação entre as classes integrantes da mesma emissão, entendida como a preferência de uma classe sobre outra para fins de amortização e resgate dos Certificados de Recebíveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XII - descrição dos direitos creditórios que compõem o lastro da emissão dos Certificados de Recebíveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIII - indicação, se for o caso, da possibilidade de substituição ou de aquisição futura dos direitos creditórios vinculados aos Certificados de Recebíveis com a utilização dos recursos provenientes do pagamento dos direitos creditórios originais vinculados à emissão, com detalhamento do procedimento para a sua formalização, dos critérios de elegibilidade e do prazo para a aquisição dos novos direitos creditórios, sob pena de amortização antecipada obrigatória dos Certificados de Recebíveis, observado o disposto no inciso II do § 2º deste artigo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIV - se houver, garantias fidejussórias ou reais de amortização dos Certificados de Recebíveis integrantes da emissão ou de classes e séries específicas, se for o caso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XV - indicação da possibilidade de dação em pagamento dos direitos creditórios aos titulares dos Certificados de Recebíveis, hipótese em que deverão ser estabelecidos os procedimentos a serem adotados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVI - regras e procedimentos aplicáveis às assembleias gerais de titulares de Certificados de Recebíveis; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVII - hipóteses em que a companhia securitizadora poderá ser destituída ou substituída. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os Certificados de Recebíveis de mesma emissão serão lastreados pela mesma carteira de direitos creditórios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Na hipótese prevista no § 1º do art. 20 desta Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a CVM poderá estabelecer informações adicionais a serem incluídas no termo de securitização a que se refere o <I>caput</I> deste artigo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a substituição e a aquisição de novos direitos creditórios com a utilização dos recursos provenientes do pagamento dos direitos creditórios originais vinculados à emissão de que trata o inciso XIII do <I>caput</I> deste artigo poderão ocorrer nos termos e nas condições estabelecidos na regulamentação editada pela CVM; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - a companhia securitizadora deverá observar a regulamentação editada pela CVM nas hipóteses previstas nos incisos XVI e XVII do <I>caput</I> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O montante dos direitos creditórios vinculados ao pagamento dos Certificados de Recebíveis deverá ser, no mínimo, suficiente para permitir a sua amortização integral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O Certificado de Recebíveis, quando ofertado privadamente, poderá ter, conforme dispuser o termo de securitização, garantia flutuante, que lhe assegurará privilégio geral sobre o ativo do patrimônio comum da companhia securitizadora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Na hipótese prevista no § 4º deste artigo, a garantia flutuante não impedirá a negociação dos bens que compõem o Certificado de Recebíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º A companhia securitizadora poderá celebrar com investidores promessa de subscrição e integralização de Certificados de Recebíveis, de forma a receber recursos para a aquisição de direitos creditórios que servirão de lastro para a sua emissão, conforme chamadas de capital feitas de acordo com o cronograma esperado para a aquisição dos direitos creditórios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º Os instrumentos de emissão de outros títulos de dívida representativos de operação de securitização emitidos por companhias securitizadoras deverão observar os dispositivos desta Lei aplicáveis ao termo de securitização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º O Certificado de Recebíveis poderá ser emitido com cláusula de correção pela variação cambial, desde que seja: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - integralmente vinculado a direitos creditórios com cláusula de correção na mesma moeda; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - emitido em favor de investidor residente ou domiciliado no exterior, observado o disposto no § 9º deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º O CMN poderá estabelecer outras condições para a emissão de Certificado de Recebíveis com cláusula de correção pela variação cambial, inclusive sobre a emissão em favor de investidor residente no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;O Certificado de Recebíveis deverá ser levado a registro ou a depósito em entidade autorizada pelo Banco Central do Brasil ou pela CVM a exercer a atividade de registro ou depósito centralizado de ativos financeiros e de valores mobiliários, nos termos da Lei nº 12.810, de 15 de maio de 2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O Certificado de Recebíveis será obrigatoriamente submetido a depósito quando for: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ofertado publicamente; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - negociado em mercados organizados de valores mobiliários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Os Certificados de Recebíveis, nas distribuições realizadas no exterior, poderão ser registrados em entidade de registro e de liquidação financeira situada no país de distribuição, desde que a entidade seja: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - autorizada em seu país de origem; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - supervisionada por autoridade estrangeira com a qual a CVM tenha firmado acordo de cooperação mútua que permita intercâmbio de informações sobre operações realizadas nos mercados por ela supervisionados, ou que seja signatária de memorando multilateral de entendimentos da Organização Internacional das Comissões de Valores. <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Do Regime Fiduciário </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;A companhia securitizadora poderá instituir regime fiduciário sobre os direitos creditórios e sobre os bens e direitos que sejam objeto de garantia pactuada em favor do pagamento dos Certificados de Recebíveis ou de outros títulos e valores mobiliários representativos de operações de securitização e, se houver, do cumprimento de obrigações assumidas pelo cedente dos direitos creditórios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;O regime fiduciário será instituído mediante declaração unilateral da companhia securitizadora ao firmar termo de securitização, que, além de observar o disposto no art. 22 desta Lei, deverá submeter-se às seguintes condições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - constituição do regime fiduciário sobre os direitos creditórios e os demais bens e direitos que lastreiam a emissão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - constituição de patrimônio separado, composto pela totalidade dos direitos creditórios e dos demais bens e direitos referidos no inciso I deste <I>caput</I>; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - nomeação de agente fiduciário, quando se tratar de emissões públicas, que seja instituição financeira ou entidade autorizada para esse fim pelo Banco Central do Brasil, para atuar em nome e no interesse dos titulares dos Certificados de Recebíveis, acompanhada da indicação de seus deveres, de suas responsabilidades e de sua remuneração, das hipóteses, das condições e da forma de sua destituição ou substituição e das demais condições de sua atuação, observada a regulamentação aplicável; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - forma de liquidação do patrimônio separado, inclusive mediante dação em pagamento dos direitos creditórios e dos bens e direitos referidos no inciso I deste <I>caput</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O termo de securitização em que seja instituído o regime fiduciário deverá ser registrado em entidade autorizada pelo Banco Central do Brasil ou pela CVM a exercer a atividade de registro ou depósito centralizado de ativos financeiros e de valores mobiliários, nos termos da Lei nº 12.810, de 15 de maio de 2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No que se refere à condição prevista no inciso II do <I>caput</I> deste artigo, os direitos creditórios, os bens e os direitos objeto do regime fiduciário permanecerão sob a titularidade da companhia securitizadora, embora estejam afetados exclusiva e integralmente ao pagamento da emissão de Certificados de Recebíveis de que sejam lastro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Os direitos creditórios, os bens e os direitos objeto do regime fiduciário: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - constituirão patrimônio separado, titularizado pela companhia securitizadora, que não se confunde com o seu patrimônio comum ou com outros patrimônios separados de titularidade da companhia securitizadora decorrentes da constituição de regime fiduciário no âmbito de outras emissões de Certificados de Recebíveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - serão mantidos apartados do patrimônio comum e de outros patrimônios separados da companhia securitizadora até que se complete a amortização integral da emissão a que estejam afetados, admitida para esse fim a dação em pagamento, ou até que sejam preenchidas condições de liberação parcial dispostas no termo de securitização, quando aplicáveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - serão destinados exclusivamente à liquidação dos Certificados de Recebíveis a que estiverem afetados e ao pagamento dos custos de administração e de obrigações fiscais correlatas, observados os procedimentos estabelecidos no termo de securitização; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - não responderão perante os credores da companhia securitizadora por qualquer obrigação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - não serão passíveis de constituição de garantias por quaisquer dos credores da companhia securitizadora, por mais privilegiados que sejam; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - responderão somente pelas obrigações inerentes aos Certificados de Recebíveis a que estiverem vinculados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º É vedada a concessão de direitos a titulares de uma emissão sobre direitos creditórios, bens e direitos integrantes de patrimônio separado relativo a outra emissão de Certificados de Recebíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A companhia securitizadora, sempre que se verificar insuficiência do patrimônio separado, poderá, após restar assegurado o disposto no § 1º deste artigo, promover a sua recomposição, mediante aditivo ao termo de securitização ou instrumento equivalente, no qual serão incluídos outros direitos creditórios, com observância dos requisitos previstos nesta Seção e, quando ofertada publicamente, na forma estabelecida em regulamentação editada pela CVM. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A realização dos direitos dos titulares dos Certificados de Recebíveis deverá limitar-se aos direitos creditórios, aos recursos provenientes da liquidação desses direitos e às garantias acessórias e integrantes do patrimônio separado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Os dispositivos desta Lei que estabelecem a afetação ou a separação, a qualquer título, de patrimônio da companhia securitizadora a emissão específica de Certificados de Recebíveis produzem efeitos em relação a quaisquer outros débitos da companhia securitizadora, inclusive de natureza fiscal, previdenciária ou trabalhista, em especial quanto às garantias e aos privilégios que lhes são atribuídos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º A companhia securitizadora, na condição de titular de cada patrimônio separado, sem prejuízo de eventuais limitações que venham a ser dispostas expressamente no termo de securitização ou na regulamentação editada pela CVM, poderá adotar, em nome próprio e a expensas do patrimônio separado, todas as medidas cabíveis para a sua realização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Na hipótese prevista no § 5º deste artigo, a companhia securitizadora poderá contratar e demitir prestadores de serviços e adotar medidas judiciais ou extrajudiciais relacionadas à arrecadação e à cobrança dos direitos creditórios, à excussão de garantias e à boa gestão do patrimônio separado, observados a finalidade legal do patrimônio separado e as disposições e os procedimentos previstos no termo de securitização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Instituído o regime fiduciário, caberá à companhia securitizadora administrar cada patrimônio separado, manter registros contábeis independentes em relação a cada um deles e elaborar e publicar as demonstrações financeiras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O patrimônio próprio da companhia securitizadora responderá pelos prejuízos que esta causar por descumprimento de disposição legal ou regulamentar, por negligência ou por administração temerária ou, ainda, por desvio da finalidade do patrimônio separado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Ao agente fiduciário serão conferidos poderes gerais de representação da comunhão dos titulares dos Certificados de Recebíveis beneficiários do regime fiduciário, inclusive os de receber e dar quitação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Incumbe ao agente fiduciário: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - zelar pela proteção dos direitos e interesses dos beneficiários e acompanhar a atuação da companhia securitizadora na administração do patrimônio separado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - adotar as medidas judiciais ou extrajudiciais necessárias à defesa dos interesses dos beneficiários e à realização dos créditos afetados ao patrimônio separado, caso a companhia securitizadora não o faça; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - exercer a administração do patrimônio separado, na hipótese de insolvência da companhia securitizadora; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - promover, na forma prevista no termo de securitização, a liquidação do patrimônio separado; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - executar os demais encargos que lhe forem atribuídos no termo de securitização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O agente fiduciário responderá pelos prejuízos que causar por descumprimento de disposição legal ou regulamentar, por negligência ou por administração temerária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Aplicam-se ao agente fiduciário os mesmos requisitos e incompatibilidades estabelecidos pelo disposto no art. 66 da Lei nº 6.404, de 15 de dezembro de 1976. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Nas emissões públicas, o agente fiduciário observará a regulamentação editada pela CVM. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;A insuficiência dos ativos integrantes do patrimônio separado para a satisfação integral dos Certificados de Recebíveis correlatos não dará causa à declaração de sua falência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Na hipótese prevista no <I>caput</I> deste artigo, caberá à companhia securitizadora, ou ao agente fiduciário, caso a securitizadora não o faça, convocar assembleia geral dos beneficiários para deliberar sobre as normas de administração ou liquidação do patrimônio separado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Na hipótese prevista no <I>caput</I> deste artigo, a assembleia geral estará legitimada a adotar qualquer medida pertinente à administração ou à liquidação do patrimônio separado, inclusive a transferência dos bens e direitos dele integrantes para o agente fiduciário, para outra companhia securitizadora ou para terceiro que seja escolhido pelos titulares dos Certificados de Recebíveis em assembleia geral, a forma de liquidação do patrimônio e a nomeação do liquidante. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A assembleia geral deverá ser convocada por meio de edital publicado no sítio eletrônico da emissora com antecedência de, no mínimo, 15 (quinze) dias e será instalada: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - em primeira convocação, com a presença de beneficiários que representem, no mínimo, 2/3 (dois terços) do valor global dos títulos; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - em segunda convocação, independentemente da quantidade de beneficiários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Na assembleia geral, serão consideradas válidas as deliberações tomadas pela maioria dos presentes, em primeira ou em segunda convocação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º A companhia securitizadora poderá promover, a qualquer tempo e sempre sob a ciência do agente fiduciário, o resgate da emissão mediante a dação em pagamento dos bens e direitos integrantes do patrimônio separado aos titulares dos Certificados de Recebíveis nas seguintes hipóteses: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - caso a assembleia geral não seja instalada, por qualquer motivo, em segunda convocação; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - caso a assembleia geral seja instalada e os titulares dos Certificados de Recebíveis não decidam a respeito das medidas a serem adotadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Nas hipóteses previstas no § 5º deste artigo, os titulares dos Certificados de Recebíveis tornar-se-ão condôminos dos bens e direitos, nos termos da Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;Na hipótese de insolvência da companhia securitizadora, o agente fiduciário assumirá imediatamente a administração do patrimônio separado, em nome e por conta dos titulares dos Certificados de Recebíveis, e convocará assembleia geral para deliberar sobre a forma de administração, observado o disposto no § 3º do art. 22 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O agente fiduciário poderá promover o resgate dos Certificados de Recebíveis mediante a dação em pagamento dos bens e direitos integrantes do patrimônio separado aos seus titulares nas seguintes hipóteses: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - caso a assembleia geral não seja instalada, por qualquer motivo, em segunda convocação; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - caso a assembleia geral seja instalada e os titulares dos Certificados de Recebíveis não decidam a respeito das medidas a serem adotadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Nas hipóteses previstas no § 1º deste artigo, os titulares dos Certificados de Recebíveis tornar-se-ão condôminos dos bens e direitos, nos termos da Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A insolvência da companhia securitizadora ou de seu grupo econômico não afetará os patrimônios separados que tiver constituído. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Nas emissões privadas que não contem com agente fiduciário, os investidores ficarão diretamente autorizados a se reunir em assembleia para deliberar sobre a administração do patrimônio separado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;O regime fiduciário de que trata esta Seção será extinto pelo implemento das condições a que esteja submetido, em conformidade com o termo de securitização, ou nas hipóteses de resgate dos Certificados de Recebíveis mediante a dação em pagamento dos bens e direitos integrantes do patrimônio separado aos titulares dos Certificados de Recebíveis, em conformidade com o disposto nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O agente fiduciário, uma vez resgatados integralmente os Certificados de Recebíveis e extinto o regime fiduciário, deverá fornecer à companhia securitizadora, no prazo de 3 (três) dias úteis, contado da data do resgate, termo de quitação, que servirá para baixa do registro do regime fiduciário perante a entidade de que trata o <I>caput</I> do art. 18 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A baixa de que trata o § 1º deste artigo importará a reintegração ao patrimônio comum da companhia securitizadora dos ativos que sobejarem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Os emolumentos devidos aos cartórios de registros de imóveis para cancelamento do regime fiduciário e das garantias reais existentes serão cobrados como ato único. <BR><BR>
+<CENTER>CAPÍTULO IV <BR>DA FLEXIBILIZAÇÃO DO REQUISITO DE INSTITUIÇÃO FINANCEIRA PARA A PRESTAÇÃO <BR>DO SERVIÇO DE ESCRITURAÇÃO E DE CUSTÓDIA DE VALORES MOBILIÁRIOS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;O art. 293 da Lei nº 6.404, de 15 de dezembro de 1976, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 293.&nbsp;A Comissão de Valores Mobiliários poderá autorizar as bolsas de valores e outras entidades, que sejam ou não instituições financeiras, a prestar os serviços previstos nos seguintes dispositivos desta Lei: <BR><BR>I - art. 27; <BR><BR>II - § 2º do art. 34; <BR><BR>III - § 1º do art. 39; <BR><BR>IV - arts. 40, 41, 42, 43 e 44; <BR><BR>V - art. 72; e <BR><BR>VI - arts. 102 e 103.<BR>.........................................................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;O <I>caput</I> do art. 24 da Lei nº 6.385, de 7 de dezembro de 1976, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 24.&nbsp;A prestação de serviços de custódia de valores mobiliários está sujeita à autorização prévia da Comissão de Valores Mobiliários.<BR>..........................................................................................................................." (NR)</DIR><BR><BR>
+<CENTER>CAPÍTULO V<BR>DISPOSIÇÕES FINAIS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;A Lei nº 9.718, de 27 de novembro de 1998, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 3º&nbsp;.............................................................................................................<BR>............................................................................................................................ <BR><BR>§ 8º Na determinação da base de cálculo da Contribuição para o PIS/Pasep e a Cofins, poderão ser deduzidas as despesas de captação de recursos incorridas pelas pessoas jurídicas que tenham por objeto a securitização de créditos. <BR><BR>I - (revogado); <BR><BR>II - (revogado); <BR><BR>III - (revogado).<BR>......................................................................................................................." (NR)</DIR>
+<DIR>"Art. 14.&nbsp;......................................................................................................... <BR>......................................................................................................................... <BR><BR>VII - que explorem as atividades de securitização de crédito." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;O Decreto-Lei nº 73, de 21 de novembro de 1966, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 123.&nbsp;O exercício da profissão de corretor de seguros depende de prévia habilitação e registro pelas entidades autorreguladoras de corretagem de seguros ou pela Susep, na forma definida pelo CNSP. <BR><BR>§ 1º (Revogado). <BR><BR>§ 2º (Revogado). <BR><BR>§ 3º (Revogado)." (NR)</DIR>
+<DIR>"Art. 124.&nbsp;(VETADO)." (NR)</DIR>
+<DIR>"Art. 127.&nbsp;Caberá responsabilidade profissional perante a Susep ou perante as entidades autorreguladoras do mercado de corretagem, na forma definida pelo CNSP, ao corretor que deixar de cumprir as leis, os regulamentos e as resoluções em vigor, ou que der causa dolosa ou culposa a prejuízos às sociedades seguradoras ou aos segurados." (NR)</DIR>
+<DIR>"Art. 128.&nbsp;O corretor de seguros estará sujeito às seguintes penalidades: <BR>&nbsp;<BR><EM>a) </EM>(revogada); <BR><EM>b) </EM>(revogada); <BR><EM>c) </EM>(revogada); <BR><BR>I - advertência; <BR><BR>II - multa prevista no inciso IV do <I>caput</I> do art. 108 desta Lei; <BR><BR>III - suspensão temporária do exercício da profissão; <BR><BR>IV - cancelamento do registro. <BR><BR><I>Parágrafo único. </I>As penalidades serão aplicadas pela Susep ou pelas entidades autorreguladoras do mercado de corretagem, em processo regular, na forma definida pelo CNSP." (NR)</DIR>
+<DIR>"Art. 128-A.&nbsp;(VETADO)."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;A Lei nº 4.594, de 29 de dezembro de 1964, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 1º&nbsp;............................................................................................................ <BR><BR><I>Parágrafo único. </I>São atribuições do corretor de seguros: <BR><BR>I - a identificação do risco e do interesse que se pretende garantir; <BR><BR>II - a recomendação de providências que permitam a obtenção da garantia do seguro; <BR><BR>III - a identificação e a recomendação da modalidade de seguro que melhor atenda às necessidades do segurado e do beneficiário; <BR><BR>IV - a identificação e a recomendação da seguradora; <BR><BR>V - a assistência ao segurado durante a execução e a vigência do contrato, bem como a ele e ao beneficiário por ocasião da regulação e da liquidação do sinistro; <BR><BR>VI - a assistência ao segurado na renovação e na preservação da garantia de seu interesse." (NR)</DIR>
+<DIR>"Art. 2º&nbsp;O exercício da profissão de corretor de seguros depende de prévia habilitação técnica e registro em entidade autorreguladora do mercado de corretagem ou na Superintendência de Seguros Privados (Susep), nos termos definidos pelo Conselho Nacional de Seguros Privados (CNSP).<BR>......................................................................................................................" (NR)</DIR>
+<DIR>"Art. 3º&nbsp;O interessado na obtenção do registro de que trata o art. 2º desta Lei deverá comprovar documentalmente: <BR>.................................................................................................................................. <BR>&nbsp;<BR><EM>c) </EM>não ter sido condenado, nos 5 (cinco) anos anteriores ao pedido de registro, por crimes a que se referem as Leis nºs 11.101, de 9 de fevereiro de 2005, e 7.492, de 16 de junho de 1986, e as Seções II, III e IV do Capítulo VI do Título I, os Capítulos I a VII do Título II, o Capítulo V do Título VI, os Capítulos I a IV do Título X e o Capítulo I do Título XI, todos da Parte Especial do Decreto-Lei nº 2.848, de 7 de dezembro de 1940 (Código Penal); <BR><EM>d) </EM>(revogada); <BR><EM>e) </EM>ter a habilitação técnico-profissional para a atividade e a modalidade de seguro em que irá atuar, nos termos definidos pelo CNSP.<BR>................................................................................................................................... <BR><BR>§ 2º Satisfeitos pelo requerente os requisitos deste artigo, terá ele direito à obtenção do respectivo registro previsto no <I>caput</I> deste artigo. <BR><BR>§ 3º A associação à entidade autorreguladora do mercado de corretagem não pode ser condição para a obtenção do registro, conforme o inciso XX do <I>caput</I> do art. 5º da Constituição Federal." (NR)</DIR>
+<DIR>"Art. 4º&nbsp;O cumprimento da exigência da alínea "<EM>e</EM>" do <I>caput</I> do art. 3º desta Lei consistirá na aprovação em exames ou na realização de cursos em instituições de ensino de reconhecida capacidade, na forma da regulamentação do CNSP. <BR><BR><EM>a) </EM>(revogada); <BR><EM>b) </EM>(revogada); <BR><EM>c) </EM>(revogada). " (NR)<BR><BR>"Art. 7º&nbsp;O registro de corretor de seguros, inclusive prepostos, será expedido pela Susep ou por entidade autorreguladora do mercado de corretagem." (NR)</DIR>
+<DIR>"Art. 11.&nbsp;Os sindicatos de corretores de seguros e a federação à qual estão filiados poderão divulgar nos respectivos sítios eletrônicos, para fins de acesso ao público em geral, a relação devidamente atualizada dos corretores e prepostos registrados nas entidades autorreguladoras do mercado de corretagem e na Susep, resguardadas as informações de caráter sigiloso." (NR)</DIR>
+<DIR>"Art. 12.&nbsp;O corretor de seguros poderá ter prepostos de sua livre escolha, bem como designar, dentre eles, quem o substitua nos impedimentos ou nas faltas, registrados na forma do art. 7º desta Lei. <BR><BR><I>Parágrafo único. </I>(Revogado)." (NR)</DIR>
+<DIR>"Art. 13.&nbsp;Somente ao corretor devidamente habilitado nos termos desta Lei e que houver assinado a proposta deverão ser pagas as corretagens pactuadas para cada modalidade de seguro, inclusive em caso de ajustamento de prêmios. <BR>.................................................................................................................................. <BR><BR>§ 2º (VETADO). <BR><BR>§ 3º Ao corretor de seguros não poderá ser atribuído nenhum custo administrativo da seguradora decorrente de propostas, mesmo as não efetivadas." (NR)</DIR>
+<DIR>"Art. 14.&nbsp;O corretor de seguros deverá ter o registro das propostas que encaminhar às sociedades seguradoras, podendo ser na forma digitalizada, com todos os assentamentos necessários à elucidação completa dos negócios em que intervier." (NR)</DIR>
+<DIR>"Art. 15.&nbsp;O corretor de seguros deverá recolher incontinenti ao caixa da sociedade seguradora o prêmio que porventura tiver recebido do segurado para pagamento de seguro realizado por seu intermédio." (NR)</DIR>
+<DIR>"Art. 18.&nbsp;As sociedades de seguros somente poderão receber proposta de contrato de seguros:<BR>........................................................................................................................" (NR)</DIR>
+<DIR>"Art. 21.&nbsp;Os corretores de seguros, independentemente de responsabilidade penal e civil em que possam incorrer no exercício de suas funções, são passíveis das sanções administrativas de advertência, multa, suspensão e cancelamento de registro, na forma estabelecida pelo CNSP." (NR)</DIR>
+<DIR>"Art. 26.&nbsp;O processo para cominação das penalidades previstas nesta Lei regerse- á, no que for aplicável, pela legislação vigente e pelas normas disciplinadoras complementares editadas pelo CNSP." (NR)</DIR>
+<DIR>"Art. 31.&nbsp;Os corretores já registrados perante a Susep, por ocasião da entrada em vigor desta Lei, bem como os prepostos, poderão continuar a exercer a atividade." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Ficam revogados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - os seguintes dispositivos da Lei nº 4.594, de 29 de dezembro de 1964: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>alínea "<EM>d</EM>" do <I>caput</I> do art. 3º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>alíneas "<EM>a</EM>", "<EM>b</EM>" e "<EM>c</EM>" do <I>caput</I> do art. 4º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>art. 5º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>art. 6º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>arts. 8º, 9º e 10; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>parágrafo único do art. 12; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>(VETADO); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>art. 16; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>i)</I></TD>
+<TD>art. 19; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>j)</I></TD>
+<TD>arts. 22, 23, 24 e 25; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>k)</I></TD>
+<TD>arts. 27, 28, 29 e 30; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>l)</I></TD>
+<TD>art. 32; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - os seguintes dispositivos do Decreto-Lei nº 73, de 21 de novembro de 1966: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>§§ 1º, 2º e 3º do art. 123; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>alíneas "<EM>a</EM>", "<EM>b</EM>" e "<EM>c</EM>" do <I>caput</I> do art. 128; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - os seguintes dispositivos da Lei nº 9.514, de 20 de novembro de 1997: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>parágrafo único do art. 6º; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>arts. 7º ao 16; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - os incisos I, II e III do § 8º do art. 3º da Lei nº 9.718, de 27 de novembro de 1998; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - os seguintes dispositivos da Lei nº 10.931, de 2 de agosto de 2004: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>art. 23; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>art. 57, na parte em que altera os arts. 8º e 16 da Lei nº 9.514, de 20 de novembro de 1997; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - os seguintes dispositivos da Lei nº 11.076, de 30 de dezembro de 2004: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>parágrafo único do art. 36; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>arts. 37 ao 40; </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - o art. 31 da Lei nº 12.810, de 15 de maio de 2013; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - o art. 1º da Lei nº 13.331, de 1º de setembro de 2016, na parte em que altera o art. 37 da Lei nº 11.076, de 30 de dezembro de 2004; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - o art. 43 da Lei nº 13.986, de 7 de abril de 2020, na parte em que altera os arts. 36 e 37 da Lei nº 11.076, de 30 de dezembro de 2004. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 39. Esta Lei entra em vigor na data de sua publicação, ressalvada a alínea "<EM>i</EM>" do inciso I do <I>caput</I> do art. 38 desta Lei, que entrará em vigor em 1º de janeiro de 2023, devendo todas e quaisquer obrigações decorrentes do referido artigo serem cumpridas na sua totalidade e integralidade até 31 de dezembro de 2022. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 3 de agosto de 2022; 201º da Independência e 134º da República. </P>
+<P>JAIR MESSIAS BOLSONARO <BR>Paulo Guedes </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 04/08/2022
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 4/8/2022, Página 1 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

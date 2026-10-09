@@ -1,0 +1,832 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 14.874, DE 28 DE MAIO DE 2024 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre a pesquisa com seres humanos e institui o Sistema Nacional de Ética em Pesquisa com Seres Humanos. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 14.874, DE 28 DE MAIO DE 2024 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-14874-28-maio-2024-795693-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-14874-28-maio-2024-795693-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-14874-28-maio-2024-795693-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-14874-28-maio-2024-795693-veto-171917-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-14874-28-maio-2024-795693-promulgacaodevetos-175777-pl.html">Promulgação de Vetos</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=2125189">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-14874-28-maio-2024-795693-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 14.874, DE 28 DE MAIO DE 2024</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre a pesquisa com seres humanos e institui o Sistema Nacional de Ética em Pesquisa com Seres Humanos. 
+						</p>
+				
+						<div class="texto">
+							<STRONG>&nbsp;&nbsp;&nbsp;&nbsp; O PRESIDENTE DA REPÚBLICA<BR></STRONG>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR><BR>
+<CENTER>CAPÍTULO I<BR>DISPOSIÇÕES GERAIS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Esta Lei dispõe sobre princípios, diretrizes e regras para a condução de pesquisas com seres humanos por instituições públicas ou privadas e institui o Sistema Nacional de Ética em Pesquisa com Seres Humanos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Para os efeitos desta Lei, consideram-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - acesso direto: permissão que agente ou instituição autorizados nos termos desta Lei têm para examinar, analisar, verificar e reproduzir registros e relatórios de pesquisa, mediante o compromisso de respeito ao sigilo e à confidencialidade dos dados a que tiverem acesso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - assentimento: anuência da criança, do adolescente ou do indivíduo legalmente incapaz em participar voluntariamente da pesquisa, após ter sido informado e esclarecido sobre todos os aspectos relevantes de sua participação, na medida de sua capacidade de compreensão e de acordo com suas singularidades, sem prejuízo do necessário consentimento dos responsáveis legais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - auditoria: exame sistemático e independente das atividades e dos documentos relacionados à pesquisa, para determinar se foram realizados e se os dados foram registrados, analisados e precisamente relatados de acordo com o protocolo da pesquisa, com os Procedimentos Operacionais Padrão (POPs), com as boas práticas e com as demais exigências previstas em regulamento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - autoridade sanitária: entidade que detém a competência para regulamentar, controlar e fiscalizar produtos e serviços que envolvam risco à saúde pública, nos termos do art. 8º da Lei nº 9.782, de 26 de janeiro de 1999; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - biobanco: coleção organizada, sem fins comerciais, de material biológico humano e de informações associadas, coletados e armazenados para fins de pesquisa, conforme regulamento ou normas técnicas, éticas e operacionais predefinidas, sob responsabilidade e gerenciamento de instituição pública ou privada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - biorrepositório: coleção organizada, sem fins comerciais, de material biológico humano e de informações associadas, coletados e armazenados para fins de projeto de pesquisa específico, conforme regulamento ou normas técnicas, éticas e operacionais predefinidas, sob responsabilidade de instituição pública ou privada e gerenciamento do pesquisador; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - Boas Práticas Clínicas (BPCs): padrão definido em regulamento, conforme normas e melhores práticas internacionais, para planejamento, condução, realização, monitoramento, auditoria, registro, análise e relato da pesquisa, com vistas a assegurar a credibilidade e a validade dos dados e dos resultados, bem como a proteção dos direitos, da integridade e do sigilo da identidade dos participantes da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - brochura do pesquisador ou investigador: compilação de dados clínicos e não clínicos relativos ao produto sob investigação relevantes para o acompanhamento clínico dos participantes durante a condução da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - centro de pesquisa: local onde as atividades relacionadas à pesquisa são conduzidas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - Comitê de Ética em Pesquisa (CEP): colegiado vinculado à instituição que realiza a pesquisa, de natureza pública ou privada, de composição interdisciplinar, constituído de membros das áreas médica, científica e não científica, de caráter consultivo e deliberativo, que atua de forma independente e autônoma, para assegurar a proteção dos direitos, da segurança e do bem-estar dos participantes da pesquisa, antes e no decorrer da pesquisa, mediante análise, revisão e aprovação ética dos protocolos de pesquisa e de suas emendas, bem como dos métodos e materiais a serem usados para obter e documentar o consentimento livre e esclarecido dos participantes da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - comitê de ética em pesquisa credenciado: colegiado definido no inciso X que tenha sido credenciado, na forma de regulamento, pela instância nacional de ética em pesquisa, prevista no inciso XXVI, para análise das pesquisas de risco baixo e moderado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XII - comitê de ética em pesquisa acreditado: colegiado definido no inciso X que, além de ter sido credenciado, tenha sido acreditado, na forma de regulamento, pela instância nacional de ética em pesquisa, prevista no inciso XXVI, para análise das pesquisas de risco elevado, podendo ainda realizar análise das pesquisas de risco baixo e moderado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIII - consentimento livre e esclarecido: manifestação do indivíduo, ou de seu representante legal, mediante assinatura de termo de consentimento livre e esclarecido, de sua disposição de participar voluntariamente da pesquisa, após ter sido informado e esclarecido sobre todos os aspectos relevantes para a tomada de decisão sobre sua participação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIV - contrato de pesquisa: acordo escrito, datado e assinado entre 2 (duas) ou mais partes envolvidas, que define quaisquer disposições relativas à delegação e à distribuição de tarefas e às obrigações sobre a condução da pesquisa e, quando for o caso, aos aspectos financeiros, facultada a utilização do protocolo como base para o acordo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XV - dados-fonte: informações sobre resultados clínicos, observações ou atividades contidas nos registros originais e nas cópias autenticadas de registros originais de um estudo, necessárias para a sua reconstrução e avaliação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVI - desvio de protocolo de ensaio clínico: qualquer descumprimento dos procedimentos ou requisitos definidos na versão do protocolo de ensaio clínico aprovada, sem implicações relevantes na integridade do ensaio, na qualidade dos dados ou nos direitos e na segurança dos participantes do ensaio clínico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVII - dispositivo médico: qualquer instrumento, aparelho, equipamento, implante, dispositivo para diagnóstico <I>in vitro</I>, software, material ou outro artigo, destinado pelo fabricante a ser usado, isolada ou conjuntamente, em seres humanos, para algum dos seguintes propósitos médicos: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>diagnóstico, prevenção, monitoramento, tratamento, atenuação ou alívio de uma doença; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>diagnóstico, monitoramento, tratamento ou reparação de uma lesão ou deficiência; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>investigação, substituição, alteração da anatomia ou de um estado ou processo fisiológico ou patológico; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>suporte ou sustentação à vida; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>controle ou apoio à concepção; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>fornecimento de informações por meio de exame <I>in vitro</I> de amostras provenientes do corpo humano, incluindo doações de órgãos e tecidos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>exercício de ação não alcançável no corpo humano por meios farmacológicos, imunológicos ou metabólicos, mas que pode ser auxiliado na sua ação pretendida por tais meios; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVIII - dispositivo médico experimental: dispositivo médico cujo desempenho clínico, eficácia ou segurança está sendo avaliado em um ensaio clínico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIX - documento-fonte: documentos, dados e registros originais, tais como registros hospitalares, gráficos clínicos, prontuários médicos, dados laboratoriais, memorandos, diários de pacientes ou listas de verificação de avaliação, registros de dispensação da farmácia, dados gravados de instrumentos automatizados, cópias ou transcrições certificadas após a verificação como cópias precisas, microfichas, negativos fotográficos, microfilmes ou mídias magnéticas, raios-X e registros mantidos na farmácia, nos laboratórios e nos departamentos envolvidos na pesquisa, ou documentos semelhantes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XX - emenda: descrição escrita de uma ou mais alterações no protocolo de pesquisa, com a devida justificativa para alteração; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXI - ensaio clínico: pesquisa clínica experimental com um ou mais seres humanos realizada para avaliar a segurança, o desempenho clínico ou a eficácia de dispositivo médico, medicamento experimental ou terapia avançada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXII - evento adverso: qualquer ocorrência médica desfavorável, relacionada ou não ao produto sob investigação, em paciente ou participante de pesquisa durante a sua realização; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXIII - evento adverso grave: qualquer evento adverso que resulta em óbito, risco de morte, situações que requerem hospitalização ou prolongamento da hospitalização, incapacidade significativa, anomalia congênita ou evento clinicamente significativo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXIV - inspeção: ato de autoridade reguladora que consiste na condução de revisão oficial de documentos, instalações, registros e quaisquer outros recursos que sejam considerados pela autoridade como relacionados ao ensaio clínico e que podem estar localizados no centro de pesquisa, nas dependências do patrocinador ou da Organização Representativa de Pesquisa Clínica (ORPC), ou em outros estabelecimentos considerados apropriados pelas autoridades reguladoras; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXV - instância de análise ética em pesquisa: colegiado interdisciplinar competente para proceder à análise ética dos protocolos de pesquisa com seres humanos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXVI - instância nacional de ética em pesquisa: colegiado interdisciplinar e independente, integrante do Ministério da Saúde, sob a coordenação da área técnica responsável pelo campo da ciência e tecnologia, de caráter normativo, consultivo, deliberativo e educativo, competente para proceder à regulação, à fiscalização e ao controle ético da pesquisa, com vistas a proteger a integridade e a dignidade dos participantes da pesquisa, e para contribuir para o desenvolvimento da pesquisa dentro de padrões éticos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXVII - medicamento experimental: produto farmacêutico testado ou utilizado como objeto de estudo em ensaio clínico, inclusive produto registrado, a ser preparado quanto à fórmula farmacêutica ou ao acondicionamento de modo diverso da forma autorizada pelo órgão competente, ou a ser utilizado para indicação ainda não autorizada ou para obtenção de mais informações sobre a forma já autorizada pelo órgão competente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXVIII - monitor: profissional capacitado, designado pelo patrocinador ou pela Organização Representativa de Pesquisa Clínica (ORPC) e responsável pelo monitoramento da pesquisa, que deve atuar em conformidade com os POPs, as boas práticas clínicas e as exigências regulatórias aplicáveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXIX - Organização Representativa de Pesquisa Clínica (ORPC): pessoa jurídica ou organização contratada por patrocinador para realizar uma ou mais tarefas e funções relacionadas a pesquisas clínicas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXX - participante da pesquisa: indivíduo que, de forma livre e esclarecida, ou sob esclarecimento e autorização de seu responsável legal, participa voluntariamente da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXXI - patrocinador: pessoa física ou jurídica, de direito público ou privado, que apoia pesquisa mediante ação de financiamento, de infraestrutura, de recursos humanos ou de suporte institucional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXXII - pesquisa científica, tecnológica ou de inovação envolvendo seres humanos: pesquisa que, individual ou coletivamente, tem interação com o ser humano, de forma direta, sem fins de registro do produto sob pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXXIII - pesquisa clínica com seres humanos: conjunto de procedimentos científicos desenvolvidos de forma sistemática com seres humanos com vistas a: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>avaliar a ação, a segurança e a eficácia de medicamentos, de produtos, de técnicas, de procedimentos, de dispositivos médicos ou de cuidados à saúde, para fins terapêuticos, preventivos ou de diagnóstico; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>verificar a distribuição de fatores de risco, de doenças ou de agravos na população; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>avaliar os efeitos de fatores ou de estados sobre a saúde; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXXIV - pesquisa com seres humanos: pesquisa que, individual ou coletivamente, tem como participante o ser humano, em sua totalidade ou em parte, e o envolve de forma direta ou indireta, incluído o manejo de seus dados, informações ou material biológico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXXV - pesquisa multicêntrica: pesquisa executada em diferentes centros de estudo por mais de um pesquisador e que segue protocolo único; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXXVI - pesquisador ou investigador: pessoa responsável pela condução da pesquisa em instituição ou em centro de pesquisa e corresponsável pela integridade e bem-estar dos participantes da pesquisa;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXXVII - pesquisador-coordenador ou investigador-coordenador: pessoa responsável pela coordenação da pesquisa e dos pesquisadores de diferentes centros participantes de pesquisa multicêntrica e corresponsável pela integridade e bem-estar dos participantes da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXXVIII - placebo: formulação sem efeito farmacológico, ou de procedimento simulado, utilizada em grupos-controle de ensaios clínicos e destinados à comparação com a intervenção sob experimentação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XXXIX - plano de fornecimento pós-estudo: documento elaborado pelo patrocinador e submetido à análise ética, com a justificativa para o fornecimento ou não do medicamento experimental após o término do ensaio clínico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XL - Procedimentos Operacionais Padrão (POPs): instruções operacionais detalhadas, escritas, que têm por objetivo proporcionar a uniformidade de procedimentos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XLI -produto de comparação: produto registrado ou placebo utilizado no grupo-controle de ensaio clínico para permitir a comparação de seus resultados com os do grupo que recebeu a intervenção sob experimentação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XLII - produto de terapia avançada experimental: tipo especial de medicamento complexo, utilizado em ensaio clínico, constituído de células que foram submetidas a manipulação extensa e/ou que desempenham função distinta da original, ou que consiste em gene humano recombinante ou contém gene humano recombinante, com finalidade de obter propriedades terapêuticas, preventivas ou de diagnóstico, ainda não registrado ou que está em fase de teste para indicação de uso ainda não aprovado pela autoridade sanitária competente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XLIII - produto sob investigação: medicamento experimental, placebo, comparador ativo ou qualquer outro produto utilizado no ensaio clínico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XLIV - programa de fornecimento pós-estudo: documento elaborado pelo patrocinador e submetido à análise ética, com a descrição detalhada sobre a estratégia de fornecimento gratuito do produto experimental após o término do ensaio clínico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XLV - projeto de pesquisa: documento que apresenta as ideias centrais da pesquisa, com descrição detalhada das ações e dos procedimentos que serão desenvolvidos durante a investigação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XLVI - protocolo de pesquisa: documento que descreve os objetivos, o desenho, a metodologia, as considerações estatísticas, a organização do estudo, o contexto e a fundamentação, entre outros elementos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XLVII - provimento material prévio: compensação financeira para despesas do participante e de seus acompanhantes, quando necessário, realizada previamente à sua participação na pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XLVIII - reação adversa: qualquer resposta nociva e não intencional a qualquer dose de produto sob investigação ou a nova indicação desse produto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XLIX - reação adversa inesperada: reação adversa de natureza, severidade, especificidade ou desfecho clínico não consistente com as informações disponíveis acerca do produto sob investigação, de acordo com os dados da brochura do pesquisador; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;L - relatório de pesquisa: documento escrito com os resultados da pesquisa, que contém, necessariamente e de forma integrada, a descrição e a análise dos dados da pesquisa, inclusive clínicos e estatísticos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LI - representante do participante da pesquisa: pessoa capaz de expressar pontos de vista e interesses de indivíduos que participam da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LII - ressarcimento: compensação material, exclusivamente de despesas do participante e de seus acompanhantes, quando necessário, tais como despesas com transporte e alimentação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LIII - Termo de Consentimento Livre e Esclarecido (TCLE): documento no qual é explicitado o consentimento livre e esclarecido do participante da pesquisa, ou do seu responsável legal, de forma escrita, com todas as informações necessárias, em linguagem clara e objetiva, de fácil entendimento, para o completo esclarecimento sobre a pesquisa da qual se propõe participar; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LIV - testemunha imparcial: indivíduo sem participação na pesquisa e não vinculado a pessoa nela envolvida diretamente que acompanha o processo de consentimento livre e esclarecido nos casos em que o participante da pesquisa, ou seu representante legal, não seja capaz de ler; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV - violação do protocolo de pesquisa: desvio do protocolo que pode comprometer a qualidade dos dados, a integridade da pesquisa ou a segurança ou os direitos dos participantes da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LVI - vulnerabilidade: condição na qual pessoa ou grupo de pessoas tenha reduzida a capacidade de tomar decisões e de opor resistência na situação de pesquisa, em decorrência de fatores individuais, psicológicos, econômicos, culturais, sociais ou políticos, observado, em qualquer caso, o consentimento descrito para situações de vulnerabilidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;A pesquisa deverá atender às exigências éticas e científicas aplicáveis às pesquisas com seres humanos, especialmente: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - respeito aos direitos, à dignidade, à segurança e ao bem-estar do participante da pesquisa, que deverá prevalecer sobre os interesses da ciência e da sociedade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - embasamento em avaliação favorável da relação risco-benefício para o participante da pesquisa e para a sociedade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - embasamento científico sólido e descrição em protocolo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - condução de acordo com protocolo aprovado pelo CEP; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - garantia de competência e de qualificação técnica e acadêmica dos profissionais envolvidos na realização da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - garantia de participação voluntária, mediante consentimento livre e esclarecido do participante da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - respeito à privacidade do participante da pesquisa e às regras de confidencialidade de seus dados, garantida a preservação do sigilo sobre sua identidade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - provimento dos cuidados assistenciais necessários em casos que envolvam intervenção; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - adoção de procedimentos que assegurem a qualidade dos aspectos técnicos envolvidos e a validade científica da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - condução da pesquisa em plena compatibilidade com as boas práticas clínicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Além do disposto no <I>caput</I> deste artigo, quando se tratar de ensaio clínico, a pesquisa atenderá às seguintes exigências: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - disponibilidade de informação clínica e não clínica acerca do produto sob investigação, para respaldar a condução da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - garantia de cuidados médicos e tomada de decisões médicas no interesse do participante da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - avaliação contínua da necessidade de adequar ou de suspender o estudo em curso assim que constatada a superioridade significativa de uma intervenção sobre outra; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - produção, manuseio e armazenamento dos produtos sob investigação de acordo com as normas de boas práticas de fabricação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - registro em bases de dados públicas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - garantia da participação de representantes de ambos os sexos e de segmentos raciais constitutivos da sociedade, quando essencial para pesquisa e quando não gerar qualquer tipo de prejuízo para seu andamento, exigida nesses casos a aplicação de critérios técnico-científicos em função do objeto da pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;O protocolo e o contrato de pesquisa observarão o disposto nesta Lei e no regulamento. <BR><BR><BR>
+<CENTER>CAPÍTULO II <BR>DO SISTEMA NACIONAL DE ÉTICA EM PESQUISA COM SERES HUMANOS </CENTER><BR><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Da Análise Ética </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;É instituído o Sistema Nacional de Ética em Pesquisa com Seres Humanos, a ser regulamentado por ato do Poder Executivo, que se segmenta em: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - instância nacional de ética em pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - instância de análise ética em pesquisa, representada pelos CEPs. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;A pesquisa com seres humanos sujeitar-se-á a análise ética prévia, a ser realizada pela instância de análise ética em pesquisa, de forma a garantir a dignidade, a segurança e o bem-estar do participante. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;A análise ética da pesquisa com seres humanos será feita conforme definido nesta Lei e de acordo com as seguintes diretrizes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - proteção da dignidade, da segurança e do bem-estar do participante da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - incentivo ao desenvolvimento técnico-científico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - independência, transparência e publicidade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - isonomia na aplicação dos critérios e dos procedimentos de análise dos projetos de pesquisa, conforme a relação risco-benefício depreendida dos seus protocolos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - eficiência e agilidade na análise e na emissão de parecer; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - multidisciplinaridade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - controle social, com a participação de representante dos participantes da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - respeito às boas práticas clínicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O integrante de CEP que tenha interesse de qualquer natureza na pesquisa ou que mantenha vínculo com o patrocinador ou com os pesquisadores ficará impedido de participar da deliberação acerca da pesquisa na qual esteja envolvido. <BR><BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Da Instância Nacional de Ética em Pesquisa </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Incumbe à instância nacional de ética em pesquisa, prevista no inciso I do art. 5º, as seguintes atribuições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - editar normas regulamentadoras sobre ética em pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - avaliar a efetividade do Sistema Nacional de Ética em Pesquisa com Seres Humanos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - credenciar e acreditar os CEPs, para que estejam aptos a exercer a função de análise ética em pesquisas, de acordo com o grau de risco envolvido; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - acompanhar, apoiar e fiscalizar os CEPs em relação à análise dos protocolos de pesquisa e ao cumprimento das normas pertinentes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - promover e apoiar a capacitação dos integrantes dos CEPs, com especial ênfase nos aspectos éticos e metodológicos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - atuar como instância recursal das decisões proferidas pelos CEPs. <BR><BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Da Instância de Análise Ética em Pesquisa </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;O CEP, que representa a instância de análise ética em pesquisa, prevista no inciso II do art. 5º, atenderá às seguintes condições, entre outras dispostas em regulamento: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ser composto de equipe interdisciplinar, nas áreas médica, científica e não científica, de modo a assegurar que, no conjunto, os membros tenham a qualificação e a experiência necessárias para analisar todos os aspectos inerentes à pesquisa, inclusive os aspectos médicos, científicos, éticos e os relacionados às boas práticas clínicas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - estar credenciado na instância nacional de ética em pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - ter funcionamento regular; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - ter infraestrutura adequada à realização de suas atividades; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - manter disponível publicamente lista de seus membros, com as respectivas qualificações profissionais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - dispor de documento descritivo dos procedimentos operacionais adotados e manter registros escritos de suas atividades e reuniões; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - ter em sua composição 1 (um) representante dos participantes de pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Conforme o grau de risco envolvido na pesquisa, de acordo com o regulamento, a função de instância de análise ética em pesquisa será exercida: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - por CEP credenciado ou acreditado perante a instância nacional de ética em pesquisa, em caso de pesquisa de risco baixo ou moderado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - por CEP acreditado perante a instância nacional de ética em pesquisa, em caso de pesquisa de risco elevado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Em caso de pesquisa que envolva grupo especial, a ser estabelecido pelo regulamento, o CEP assegurará, sempre que possível, na discussão sobre o protocolo, a participação de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - 1 (um) representante do grupo especial, como membro <I>ad hoc</I>; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - 1 (um) consultor familiarizado com a língua, os costumes e as tradições da comunidade específica, quando a pesquisa envolver essa comunidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A deliberação sobre a adequação ética da pesquisa ocorrerá em reunião previamente marcada, que deverá contar com quórum mínimo, conforme definido no regimento interno do CEP. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Apenas aos membros efetivos do CEP é lícito emitir parecer e deliberar sobre a adequação ética de pesquisa submetida ao comitê. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Os membros do CEP poderão convidar especialistas externos e representantes de grupos vulneráveis para emitir opinião sobre questões específicas relacionadas aos projetos de pesquisa, mas que não terão direito a voto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Devidamente credenciados ou acreditados, os CEPs detêm completa autonomia para proferir seus pareceres, observadas as boas práticas clínicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;A instituição que abrigar o CEP promoverá e apoiará a capacitação dos integrantes de seu comitê, com ênfase nos aspectos éticos e metodológicos que se relacionarem com os direitos dos participantes da pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;A atuação do CEP fica sujeita a fiscalização e acompanhamento pela instância nacional de ética em pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A inobservância do disposto nesta Lei pelo CEP dá ensejo a seu descredenciamento pela instância nacional de ética em pesquisa, na forma de regulamento. <BR><BR><BR>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Das Responsabilidades do Comitê de Ética em Pesquisa </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;São responsabilidades do CEP: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - assegurar os direitos, a segurança e o bem-estar dos participantes da pesquisa, especialmente dos participantes em situação de vulnerabilidade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - considerar a qualificação do pesquisador para a pesquisa proposta, de acordo com seu currículo acadêmico e profissional e os documentos solicitados pelo colegiado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - conduzir a análise da pesquisa a ele submetida e o monitoramento de sua execução, observada a periodicidade mínima definida em regulamento, conforme a tipificação da pesquisa e as boas práticas clínicas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - solicitar o fornecimento de informações adicionais aos participantes da pesquisa, quando julgar serem indispensáveis para a proteção dos direitos, da segurança e do bem-estar dos participantes da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - assegurar que o projeto de pesquisa e os demais documentos tratem adequadamente dos assuntos éticos relevantes e satisfaçam as exigências regulatórias aplicáveis, inclusive as relacionadas às boas práticas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - assegurar que estejam previstos os meios adequados para a obtenção do consentimento do participante da pesquisa ou de seu representante legal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - assegurar que a informação referente ao ressarcimento ou ao provimento material prévio ao participante da pesquisa esteja claramente especificada no TCLE, incluídas as formas, as quantias e a respectiva periodicidade. <BR><BR><BR>
+<CENTER><B>Seção V </CENTER></B>
+<CENTER><B>Do Processo de Análise Ética de Pesquisa </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;O processo de análise ética de pesquisa será instruído com as informações e os documentos estabelecidos em regulamento específico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O CEP manterá em arquivo todos os documentos referentes ao projeto pelo período de 5 (cinco) anos após o encerramento da pesquisa, facultado o arquivamento por meio digital. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;A análise ética de pesquisa, realizada pelo CEP, com emissão do parecer, não poderá ultrapassar o prazo de 30 (trinta) dias úteis da data de aceitação da integralidade dos documentos da pesquisa, e essa aceitação, ou sua negativa, deverá ser feita pelo CEP em até 10 (dez) dias úteis a partir da data de submissão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Antes da emissão do parecer, o CEP poderá solicitar ao pesquisador ou ao patrocinador da pesquisa informações ou documentos adicionais ou a realização de ajustes na documentação da pesquisa, com suspensão do prazo previsto no <I>caput</I> deste artigo por, no máximo, 20 (vinte) dias úteis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O pesquisador terá o prazo de 10 (dez) dias úteis, prorrogável por igual período mediante justificativa, para atender às demandas solicitadas pelo CEP, e o processo de análise do estudo poderá ser cancelado em caso de não cumprimento do prazo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A critério do CEP, o pesquisador poderá participar da reunião do colegiado para prestar esclarecimentos sobre a pesquisa, vedada a sua presença no momento da tomada de decisão final. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O parecer de que trata o <I>caput</I> deste artigo concluirá, fundamentadamente, pela: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - aprovação da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - não aprovação da pesquisa; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - suspensão, quando a pesquisa aprovada, já em andamento, precisar ser interrompida por motivo de segurança. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Da decisão constante do parecer do CEP cabe recurso, em primeira instância, no prazo de 30 (trinta) dias úteis, ao próprio CEP que tenha emitido o parecer e, em segunda e última instância, no prazo de 30 (trinta) dias úteis, à instância nacional de ética em pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Os recursos previstos no § 5º serão decididos pela instância competente no prazo de até 30 (trinta) dias úteis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º A análise ética da pesquisa que envolva mais de um centro de pesquisa no País será realizada por um único CEP, preferencialmente aquele vinculado ao centro coordenador da pesquisa, que emitirá o parecer e notificará de sua decisão os CEPs dos demais centros participantes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º Todos os documentos requisitados pelo CEP deverão estar previstos em ato do Poder Executivo, em regulamento ou no regramento do próprio CEP e ter pertinência com a matéria analisada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;A pesquisa de interesse estratégico para o Sistema Único de Saúde (SUS) e relevante para o atendimento à emergência pública de saúde terá prioridade na análise ética e contará com procedimentos especiais de análise, inclusive de prazos, nos termos de regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O parecer referente à pesquisa especificada no <I>caput</I> será proferido em prazo não superior a 15 (quinze) dias úteis da data de recebimento dos documentos da pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Após o início da pesquisa, se houver necessidade de alteração que interfira na relação risco-benefício ou na documentação aprovada, o pesquisadorcoordenador submeterá, por escrito, emenda ao projeto de pesquisa, devidamente justificada, para análise e parecer do CEP que tenha analisado a pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A alteração promovida por meio de emenda somente poderá ser implementada após aprovação pelo CEP, nos termos do <I>caput</I> deste artigo, exceto quando a segurança do participante da pesquisa depender de sua imediata implementação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O disposto no art. 14 aplicar-se-á, no que couber, às emendas ao projeto de pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Todos os envolvidos na condução, no acompanhamento, na avaliação ou na aprovação da pesquisa que tiverem acesso direto aos registros dela, para verificar o cumprimento dos procedimentos e da legislação aplicável e a validade ou a integridade dos dados, deverão zelar pela preservação da confidencialidade dos dados e do anonimato do participante da pesquisa, de acordo com a legislação vigente. <BR><BR><BR>
+<CENTER>CAPÍTULO III <BR>DA PROTEÇÃO DO PARTICIPANTE DA PESQUISA </CENTER><BR><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Disposições Gerais </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;A participação em pesquisa é condicionada à autorização expressa do participante, ou de seu representante legal, mediante assinatura do TCLE. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O TCLE será escrito em linguagem de fácil compreensão e somente terá validade quando for datado e assinado pelo pesquisador responsável e pelo participante da pesquisa ou por seu representante legal ou, no caso do § 5º, por testemunha imparcial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O TCLE a que se refere o <I>caput</I> deste artigo deverá ser atualizado e submetido à apreciação do CEP que tenha aprovado a pesquisa sempre que surgirem novas informações relevantes capazes de alterar a decisão do participante da pesquisa quanto à sua participação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Informações, verbais ou por escrito, referentes à pesquisa, incluídas as constantes do TCLE, não poderão indicar ou sugerir: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a renúncia, pelo participante da pesquisa, de seus direitos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a isenção do pesquisador, da instituição, do patrocinador ou de seus agentes das responsabilidades relativas aos eventuais danos que possam ser causados ao participante da pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O pesquisador ou o profissional por ele designado deverá informar de forma completa ao participante ou a seu representante legal os aspectos relevantes da pesquisa, inclusive a aprovação pelo CEP. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Caso o participante da pesquisa ou seu representante legal não seja capaz de ler, testemunha imparcial estará presente durante todo o ato de leitura e de esclarecimento do TCLE, devendo, após o consentimento verbal do participante ou de seu representante legal, datar, escrever seu nome de forma legível e assinar o TCLE. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º A inclusão de participante em pesquisa em situação de emergência e sem o seu consentimento prévio seguirá o disposto no protocolo aprovado, devendo-se, na primeira oportunidade possível, informar o fato ao participante da pesquisa ou a seu representante legal e coletar a decisão quanto à sua permanência na pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º O participante da pesquisa ou seu representante legal poderá retirar seu consentimento a qualquer tempo, independentemente de justificativa, sem que sobre ele recaia qualquer ônus ou prejuízo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;A pesquisa será conduzida de forma a garantir o anonimato e a privacidade do participante, bem como o sigilo das informações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A privacidade do participante é questão de foro íntimo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O sigilo das informações técnicas da pesquisa deverá ser levantado no que for necessário à análise de eventos adversos graves. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Em caso de evento adverso grave, o participante, seus representantes legais ou seus sucessores poderão divulgar detalhes relativos à participação do primeiro na pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;É vedada a remuneração do participante ou a concessão de qualquer tipo de vantagem por sua participação em pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Não configuram remuneração ou vantagem para o participante da pesquisa: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o ressarcimento de despesas com transporte ou alimentação ou o provimento material prévio; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - outros tipos de ressarcimento necessários, conforme o projeto de pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Excetua-se do <I>caput</I> deste artigo a participação de indivíduos saudáveis em ensaios clínicos de fase I ou de bioequivalência, observadas as seguintes condições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o participante integrar cadastro nacional de voluntários em estudos de bioequivalência e de fase I, na forma de regulamento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o participante não integrar, simultaneamente, mais de uma pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - em caso de pesquisa para avaliação da dose máxima tolerada ou para avaliação da biodisponibilidade e da bioequivalência, o participante da pesquisa observar o prazo mínimo de 6 (seis) meses da data de encerramento da participação na pesquisa antes de ser incluído em novo ensaio clínico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;O uso exclusivo de placebo somente é admitido quando inexistirem métodos comprovados de profilaxia, diagnóstico ou tratamento para a doença objeto da pesquisa, conforme o caso, e desde que os riscos ou os danos decorrentes do uso de placebo não superem os benefícios da participação na pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>No caso de uso de placebo combinado com outro método de profilaxia, diagnóstico ou tratamento, o participante da pesquisa não poderá ser privado de receber o melhor tratamento disponível, ou o preconizado em Protocolos Clínicos e Diretrizes Terapêuticas do Ministério da Saúde, ou, subsidiariamente, em protocolos terapêuticos recomendados por sociedade médica especializada na área objeto de estudo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;Nos ensaios clínicos, tão logo constatada superioridade significativa da intervenção experimental sobre o produto de comparação ou placebo, o pesquisador-coordenador, o comitê independente de monitoramento ou o patrocinador avaliará a necessidade de adequar ou suspender o estudo em curso, de forma a atender ao melhor interesse do participante da pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;O participante será indenizado por eventuais danos sofridos em decorrência da sua participação na pesquisa e receberá a assistência à saúde necessária relacionada a esses danos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>São de responsabilidade do patrocinador a indenização e a assistência previstas no <I>caput</I>. <BR><BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Da Proteção dos Participantes em Situação de Vulnerabilidade </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Além do disposto na Seção I deste Capítulo, a inclusão de participantes em situação de vulnerabilidade em pesquisa, ainda que circunstancialmente, é condicionada ao atendimento das seguintes condições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - existir TCLE assinado por representante legal, ou constituído judicialmente, observadas as disposições do art. 18 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - ser a pesquisa essencial para a população representada pelo participante em situação de vulnerabilidade e não ser possível obter dados de validade comparável mediante a participação de indivíduos adultos e capazes de dar o seu consentimento ou mediante o emprego de outros métodos de investigação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O disposto no inciso I do <I>caput</I> deste artigo não eliminará a necessidade de prestar informações ao participante da pesquisa, quando possível e na medida de sua capacidade de compreensão, respeitada sua decisão de participação, expressa mediante termo de assentimento, sempre que tiver condições de avaliar e decidir sobre as informações recebidas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O pesquisador responsável e o representante do incapaz coassinarão comunicação ao Ministério Público, informando o roteiro de participação do incapaz na pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;A pesquisa com mulheres grávidas será precedida de pesquisa semelhante com mulheres fora do período gestacional, exceto quando a gestação ou o nascituro forem o objeto fundamental da pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A pesquisa de que trata o <I>caput</I> somente será admitida quando o risco previsível à saúde da gestante ou do nascituro seja mínimo. <BR><BR><BR>
+<CENTER>CAPÍTULO IV <BR>DAS RESPONSABILIDADES DO PATROCINADOR E DO PESQUISADOR </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Constituem responsabilidades do patrocinador: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a implementação e a manutenção da garantia de qualidade e dos sistemas de controle de qualidade, com base nos POPs, a fim de garantir que a pesquisa seja conduzida e os dados sejam gerados, documentados e relatados com observância ao protocolo, às boas práticas clínicas e às exigências do regulamento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o estabelecimento do contrato entre as partes envolvidas na pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - o controle de qualidade de cada estágio de tratamento dos dados, com vistas a garantir sua confiabilidade e seu correto processamento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - a manutenção da qualidade e da integralidade dos dados da pesquisa, ainda que tenham sido transferidas algumas ou todas as funções para terceiros; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - a seleção dos pesquisadores e das instituições executoras da pesquisa, considerada a qualificação necessária para a condução e para a supervisão da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - a garantia dos recursos adequados para a condução da pesquisa, incluído o custeio de todas as despesas relacionadas a procedimentos, a exames e a ações para a resolução de eventos adversos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - a indicação de pesquisador para ser o responsável pelas decisões clínicas relacionadas à pesquisa, quando se tratar de ensaio clínico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - a verificação de que o participante da pesquisa tenha autorizado o acesso direto a seus dados e a suas informações para fins de monitoramento, de auditoria, de revisão pelas entidades éticas competentes e de inspeção de agências reguladoras; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - a pronta notificação ao pesquisador, à instituição executora, às entidades de análise ética competentes e à autoridade sanitária sobre descobertas que possam afetar adversamente a segurança do participante da pesquisa, comprometer a condução da pesquisa ou afetar a aprovação concedida pelo CEP; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - a expedição, no caso de ensaios clínicos, de relatórios sobre as reações adversas ao medicamento ou aos produtos experimentais consideradas graves ou inesperadas, dos quais deverá ser dado conhecimento às instituições e aos pesquisadores envolvidos e à autoridade sanitária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - a pronta notificação à autoridade sanitária de todos os eventos adversos graves ou inesperados cuja causalidade seja possível, provável ou definida em relação ao produto sob investigação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XII - a seleção e a capacitação dos monitores e dos auditores; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIII - o monitoramento adequado da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIV - a pronta comunicação aos pesquisadores envolvidos, à instituição executora e à autoridade sanitária acerca das razões da suspensão ou do término prematuro da pesquisa, quando for o caso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XV - a indenização e a assistência à saúde do participante da pesquisa por eventuais danos sofridos em decorrência de sua participação na pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O patrocinador, responsável final pela pesquisa, poderá delegar a execução de determinadas funções às ORPCs, as quais assumirão responsabilidade compartilhada em relação ao objeto da delegação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Quando possível, deverá ser constituído comitê independente de monitoramento de dados para avaliar periodicamente o andamento da pesquisa, os dados de segurança e os pontos críticos de eficácia e recomendar ao patrocinador se deverá continuar, modificar ou interromper uma pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º As instituições e as organizações envolvidas nas pesquisas serão corresponsáveis pela sua condução e proporcionarão assistência integral aos participantes no que se refere às complicações e aos danos decorrentes da pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;São responsabilidades do pesquisador: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ter e comprovar a qualificação e a experiência necessárias para assumir a responsabilidade pela adequada condução da pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - obedecer às normas de boas práticas clínicas e científicas e às exigências regulatórias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - submeter a documentação da pesquisa, inclusive eventuais emendas, à aprovação do CEP; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - selecionar pessoas qualificadas para o desempenho das tarefas relacionadas à pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - assegurar, quando se tratar de ensaio clínico, o acompanhamento clínico dos participantes da pesquisa durante a condução do estudo e após o seu término, pelo prazo e nas condições definidos no protocolo aprovado pelo CEP; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - conduzir a pesquisa com observância do projeto aprovado pelo CEP; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - disponibilizar, quando solicitado, o acesso direto aos registros e documentos da pesquisa para o monitor, o auditor, os demais representantes do patrocinador, o CEP, a instância nacional de ética em pesquisa e a autoridade sanitária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - permitir o monitoramento e a auditoria da pesquisa pelo patrocinador, bem como as inspeções da autoridade sanitária, da instância nacional de ética em pesquisa e do CEP que a tenha aprovado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - apresentar relatórios parciais com informações sobre o andamento da pesquisa, anualmente e sempre que solicitado, ao CEP que a tenha analisado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - comunicar prontamente ao patrocinador, à autoridade sanitária, ao CEP e à instância nacional de ética em pesquisa todos os eventos adversos graves ou inesperados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - manter armazenados e sob sua guarda, em meio físico ou digital, os dados e os documentos essenciais da pesquisa pelo prazo de 5 (cinco) anos após o seu término ou descontinuação formal, e pelo prazo de 10 (dez) anos no caso de produtos de terapias avançadas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XII - assegurar os direitos dos participantes da pesquisa e zelar por seu bem-estar e sua segurança. <BR><BR><BR>
+<CENTER>CAPÍTULO V <BR>DA FABRICAÇÃO, DO USO, DA IMPORTAÇÃO E DA EXPORTAÇÃO DE BENS <BR>OU PRODUTOS PARA FINS DE PESQUISA CLÍNICA COM SERES HUMANOS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Para fins de ensaio clínico, a fabricação, o uso, a importação e a exportação de medicamentos, produtos e dispositivos médicos e produtos de terapias avançadas experimentais deverão ser autorizados pela autoridade sanitária, nos termos de regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O uso dos produtos referidos no <I>caput</I> deste artigo deverá ser feito na forma autorizada pela autoridade sanitária, de acordo com o protocolo da pesquisa aprovado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Para fins de ensaio clínico, a exportação e a importação de produtos de terapias avançadas experimentais deverão ser autorizadas pelas instâncias reguladoras, nos termos de regulamentação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Os medicamentos, os produtos, os dispositivos médicos e os produtos de terapias avançadas experimentais serão acondicionados, armazenados e descartados conforme regulamento. <BR><BR><BR>
+<CENTER>CAPÍTULO VI <BR>DA CONTINUIDADE DO TRATAMENTO PÓS-ENSAIO CLÍNICO </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Antes do início do ensaio clínico, o patrocinador e o pesquisador submeterão ao CEP plano de acesso pós-estudo, com apresentação e justificativa da necessidade ou não de fornecimento gratuito do medicamento experimental após o término do ensaio clínico aos participantes que dele necessitarem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Caso haja necessidade de fornecer o medicamento pós-ensaio clínico, deverá ser elaborado programa de fornecimento pós-estudo, nos termos de regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O programa de fornecimento pós-estudo deverá assegurar a continuidade do acompanhamento de segurança do participante, de forma a garantir o recebimento do tratamento experimental após o término do ensaio clínico, por prazo determinado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O programa de fornecimento pós-estudo deverá ser iniciado somente após aprovação regulatória, cuja solicitação deve ser submetida em tempo hábil a fim de que o participante da pesquisa faça a transição para o período pós-estudo sem prejuízo da continuidade do tratamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;Ao término do ensaio clínico, deverá ser realizada, individualmente, avaliação sobre a necessidade de continuidade do tratamento experimental para cada participante. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A avaliação a que se refere o <I>caput</I> deste artigo será realizada pelo pesquisador, ouvidos o patrocinador e o participante da pesquisa, nos termos de regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O fornecimento gratuito pós-ensaio clínico do medicamento experimental deverá ser realizado sempre que este for considerado a melhor terapia ou tratamento para a condição clínica do participante da pesquisa e apresentar relação risco-benefício mais favorável em comparação com os demais tratamentos disponíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O fornecimento gratuito pós-ensaio clínico do medicamento experimental, quando necessário, será garantido após o término da participação individual por meio de programa de fornecimento pós-estudo, para o qual o participante deverá migrar automaticamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Nos casos em que a manutenção do tratamento com medicamento experimental for necessária após o término do ensaio clínico, o fornecimento do medicamento será de responsabilidade do patrocinador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;A avaliação sobre a necessidade de continuidade do fornecimento do medicamento experimental pós-ensaio clínico deverá ser realizada de acordo com os seguintes critérios: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a gravidade da doença e sua ameaça à continuidade da vida do participante; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a disponibilidade de alternativas terapêuticas satisfatórias para o tratamento do participante da pesquisa, considerada sua localidade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - se o medicamento experimental contempla uma necessidade clínica não atendida; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - se a evidência de benefício para o participante supera a de risco com o uso do medicamento experimental. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;O fornecimento gratuito do medicamento experimental no âmbito do programa de fornecimento pós-estudo poderá ser interrompido, mediante submissão de justificativa ao CEP, para apreciação, apenas em alguma das seguintes situações: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - decisão do próprio participante da pesquisa ou, quando esse não puder expressar validamente sua vontade, pelos critérios especificados no art. 18 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - cura da doença ou agravo à saúde, alvos do ensaio clínico, ou introdução de alternativa terapêutica satisfatória, fato devidamente documentado pelo pesquisador; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - ausência de benefício do uso continuado do medicamento experimental ao participante da pesquisa, considerados a relação risco-benefício fora do contexto do ensaio clínico ou o aparecimento de novas evidências de riscos relativos ao perfil de segurança do medicamento experimental, fato devidamente documentado pelo pesquisador; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - ocorrência de reação adversa que, a critério do pesquisador, inviabilize a continuidade do medicamento experimental, mesmo diante de eventuais benefícios; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - impossibilidade de obtenção ou de fabricação do medicamento experimental por questões técnicas ou de segurança, devidamente justificadas, e desde que o patrocinador forneça alternativa terapêutica equivalente ou superior existente no mercado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - (VETADO); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - disponibilidade do medicamento experimental na rede pública de saúde. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;O pesquisador será responsável por solicitar ao patrocinador o início do fornecimento pós-ensaio clínico do medicamento experimental ao participante da pesquisa, conforme critérios definidos nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O patrocinador garantirá aos participantes da pesquisa o fornecimento gratuito pós-ensaio clínico do medicamento experimental sempre que este for considerado pelo pesquisador como a melhor terapêutica para a condição clínica do participante da pesquisa e apresentar relação risco-benefício mais favorável em comparação com os demais tratamentos disponíveis, nos termos desta Lei e de regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O fornecimento gratuito pós-estudo do medicamento experimental de que trata o § 1º deste artigo será garantido após o término da participação individual, por meio de programa de acesso pós-estudo, e o participante deverá migrar automaticamente para esse novo protocolo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Para atender ao disposto neste artigo, a importação e a dispensação de medicamento experimental durante o programa de acesso pós-estudo deverão ser previamente autorizadas pela autoridade sanitária competente, nos termos de regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;O pesquisador, o patrocinador e a instituição na qual houver ocorrido a pesquisa deverão fazer planos de transição dos participantes que continuarem a necessitar de cuidados ou medidas de saúde, após o término do ensaio clínico, para os serviços de saúde adequados, conforme disponibilidade, nos termos desta Lei, desde que tais cuidados não sejam relacionados a reações advindas do próprio estudo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Deverá ser considerada também a transição planejada dos participantes que tenham recebido o fornecimento gratuito de medicamento ou tratamento pós-ensaio clínico para outros meios de fornecimento disponíveis, caso necessário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No caso de reações advindas do próprio estudo, o patrocinador deverá garantir os cuidados ou as medidas de saúde adequados e necessários para o participante da pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;O uso de medicamento experimental durante programa de fornecimento pós-estudo obedecerá às normas estabelecidas em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;Aplicar-se-ão aos produtos e dispositivos médicos e aos produtos de terapias avançadas experimentais, objeto de ensaio clínico, as disposições deste Capítulo, no que couber. <BR><BR><BR>
+<CENTER>CAPÍTULO VII <BR>DO ARMAZENAMENTO E DA UTILIZAÇÃO DE DADOS <BR>E DE MATERIAL BIOLÓGICO HUMANO </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Os estudos com material biológico de origem humana devem evitar a discriminação e a estigmatização de pessoa, família ou grupo, quaisquer que sejam os benefícios alcançados com a pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Para os fins desta Lei, o consentimento para a disposição de material biológico humano e de seus dados, em vida ou <I>post mortem</I>, deverá ser formalizado por meio de TCLE e ocorrer de forma gratuita, altruísta e esclarecida, respeitadas as disposições da Lei nº 13.709, de 14 de agosto de 2018 (Lei Geral de Proteção de Dados Pessoais). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A disposição <I>post mortem</I> atenderá ao disposto na Lei nº 8.501, de 30 de novembro de 1992, e no art. 14 da Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;São direitos do participante de pesquisa: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ser devidamente informado e esclarecido, de forma clara e objetiva, sempre que julgar pertinente, sobre o objeto e os potenciais benefícios e riscos inerentes à disposição de seu material biológico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - ter a sua saúde e a sua integridade, física e mental, protegidas durante os procedimentos de coleta do material biológico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - retirar a qualquer tempo o consentimento de guarda e de utilização do material biológico humano armazenado, por escrito e assinado, sem ônus ou prejuízos, tendo direito à devolução das amostras; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - ter acesso, a qualquer tempo, sem ônus ou prejuízo, às informações sobre as finalidades do armazenamento, incluídos os nomes dos responsáveis técnicos e institucionais, os riscos e os benefícios potenciais, as garantias de qualidade da conservação e a integridade do seu material biológico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - ter acesso, a qualquer tempo, sem ônus ou prejuízo, às informações associadas a seu material biológico e ser informado e orientado pelos pesquisadores responsáveis por achados quando as implicações dessas informações puderem causar danos à sua saúde, incluído o aconselhamento genético quando cabível; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - ter garantidas a privacidade e a confidencialidade de suas informações pessoais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - ser prontamente informado sobre a dissolução do repositório no qual se encontra armazenado o seu material biológico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - ser prontamente informado sobre a transferência, a perda, a alteração ou o descarte do seu material biológico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - designar representantes legais que poderão consentir com a utilização e o descarte do seu material biológico e ter acesso a esses materiais e a suas informações associadas em caso de óbito ou de condição incapacitante; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - ser esclarecido, no momento da assinatura do TCLE, sobre a possibilidade de fornecer ou não seu consentimento para possíveis usos futuros em pesquisa de seus dados e material biológico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - ser esclarecido, no momento da assinatura do TCLE, sobre a possibilidade de autorizar ou não o envio de seus dados e material biológico para centro de pesquisa localizado fora do País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Todos os direitos do participante de pesquisa deverão, obrigatoriamente, constar do TCLE. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;O prazo de armazenamento do material biológico humano em biobanco é indeterminado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;O prazo de armazenamento do material biológico humano em biorrepositório deverá estar de acordo com o cronograma previsto no projeto de pesquisa aprovado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;O material biológico humano armazenado em biobanco ou biorrepositório pertence ao participante da pesquisa, observado que sua guarda se encontra sob a responsabilidade institucional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;O gerenciamento do material biológico humano armazenado caberá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - à instituição ao qual está vinculado, no caso de armazenamento em biobanco; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - ao pesquisador que coordena a pesquisa, no caso de armazenamento em biorrepositório. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Ao final da vigência do projeto de pesquisa de que trata o <I>caput</I> deste artigo, o material biológico humano poderá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - permanecer armazenado, se em conformidade com a legislação e as normas éticas e regulatórias vigentes e pertinentes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - ser transferido para outro biorrepositório ou biobanco; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - ser descartado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;O material biológico e os dados da pesquisa serão utilizados exclusivamente para a finalidade prevista no respectivo projeto, exceto quando, no TCLE, for concedida a autorização expressa para que eles possam ser utilizados em pesquisas futuras, para fins exclusivamente científicos, desde que observadas as disposições desta Lei e do regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;O material biológico humano e suas informações associadas armazenados em biorrepositório poderão ser formalmente transferidos para outro biorrepositório ou biobanco, em conformidade com o disposto no art. 45 desta Lei e nas demais normas vigentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;O material biológico humano e suas informações associadas armazenados em biobanco poderão ser formalmente transferidos para outro biobanco, em conformidade com o disposto no art. 45 desta Lei e nas demais normas vigentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;O material biológico humano e suas informações associadas poderão ser formalmente transferidos a pesquisadores, em conformidade com o disposto no art. 45 desta Lei e nas demais normas vigentes, mediante a celebração de Termo de Transferência de Material Biológico (TTMB) e a apresentação de comprovante de aprovação de projeto de pesquisa pelas instâncias éticas e regulatórias pertinentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As amostras e os componentes do material biológico humano e das informações associadas que tiverem sido transferidos não poderão ser repassados a terceiros pela instituição destinatária inicial, exceto quando celebrada a assinatura de novo TTMB entre a instituição remetente original e a nova instituição destinatária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A transferência de material biológico humano da instituição remetente para a destinatária deverá seguir as normas sanitárias vigentes, sem prejuízo de normas específicas a cada tipo de material biológico e ao modo de transporte. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O envio e o armazenamento de material biológico humano para centro de pesquisa localizado fora do País são de responsabilidade do patrocinador, observadas as seguintes condições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - observância da legislação sanitária nacional e internacional sobre remessa e armazenamento de material biológico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - garantia de acesso e de utilização de material biológico e de seus dados, para fins científicos, aos pesquisadores e às instituições nacionais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - observância da legislação nacional, especialmente no que se refere à vedação de patenteamento e de comercialização de material biológico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;O material biológico humano armazenado em biobanco ou biorrepositório, considerado material de partida, e as informações associadas não são passíveis de proteção de direitos relativos à propriedade intelectual, vedada expressamente a sua compra, venda ou qualquer outro tipo de comercialização, por pessoas físicas ou jurídicas, em caráter eventual ou permanente, em desacordo com a legislação e as normas vigentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Não se considera comercialização a cobrança de valores para fins de recuperação de custos com insumos, materiais, exames laboratoriais, processamento, armazenamento, transporte e honorários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;O local onde ocorrem a utilização e o armazenamento do material biológico deverá dispor de sistema de segurança que garanta o sigilo da identidade do participante da pesquisa e a confidencialidade dos dados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;Os dados da pesquisa serão armazenados pela instituição executora da pesquisa, sob responsabilidade do pesquisador, pelo prazo de 5 (cinco) anos após o término ou a descontinuidade da pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A instituição executora da pesquisa deverá estabelecer mecanismos para proteger a confidencialidade das informações vinculadas aos dados, compartilhando apenas dados anônimos ou codificados, e a chave para o código deve permanecer com o gestor de dados, observadas as disposições da Lei nº 12.527, de 18 de novembro de 2011 (Lei de Acesso à Informação), e da Lei nº 13.709, de 14 de agosto de 2018 (Lei Geral de Proteção de Dados Pessoais). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O armazenamento de dados em centro de pesquisa localizado fora do País é de responsabilidade da instituição executora da pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A alteração do prazo de armazenamento dos dados estabelecido no <I>caput</I> deste artigo poderá ser autorizada pelo CEP, mediante solicitação do pesquisador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º No caso de pesquisa com produtos de terapias avançadas, o prazo referido no <I>caput</I> será de 10 (dez) anos. <BR><BR><BR>
+<CENTER>CAPÍTULO VIII <BR>DA PUBLICIDADE, DA TRANSPARÊNCIA E DO MONITORAMENTO DA PESQUISA </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;A pesquisa será registrada junto à instância nacional de ética em pesquisa e terá seus dados atualizados em sítio eletrônico de acesso público, nos termos de regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;O pesquisador-coordenador enviará anualmente relatório sobre o andamento da pesquisa ao CEP que a houver aprovado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;Os participantes da pesquisa serão comunicados, pelo pesquisador, mediante o emprego de meios adequados e de linguagem clara e acessível a leigos, dos resultados da pesquisa de que tenham participado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;Os eventos adversos graves ocorridos durante a pesquisa serão de comunicação obrigatória ao CEP que houver aprovado a pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Em caso de ensaios clínicos com finalidade de registro de produtos sujeitos a avaliação sanitária, as reações ou os eventos adversos ocorridos durante a condução desses estudos devem ser comunicados também à autoridade sanitária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;As violações do protocolo de pesquisa serão de comunicação obrigatória aos CEPs e à autoridade sanitária que houverem aprovado a pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;A descontinuidade de pesquisa em andamento, em caráter temporário ou definitivo, será de comunicação obrigatória ao CEP que a houver aprovado, e o pesquisador-coordenador deverá apresentar, juntamente com a notificação da descontinuidade, as justificativas técnico-científicas que houverem embasado a decisão, além de entregar àquele colegiado, no prazo de 30 (trinta) dias úteis, relatório circunstanciado com os resultados obtidos até o momento da interrupção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Em caso de ensaio clínico, além da documentação especificada no <I>caput</I> deste artigo, o pesquisador-coordenador e o patrocinador apresentarão plano de acompanhamento e assistência necessário aos participantes da pesquisa descontinuada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A descontinuidade de pesquisa por motivos não relevantes, de acordo com a avaliação do CEP competente, será considerada infração ética e sujeitará o infrator às sanções previstas no art. 60 desta Lei. <BR><BR><BR>
+<CENTER>CAPÍTULO IX <BR>DISPOSIÇÕES FINAIS </CENTER>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;De forma a regulamentar o <I>caput</I> e o § 1º do art. 218 da Constituição Federal, a análise sanitária relacionada às petições primárias de ensaios clínicos com seres humanos, para fins de registro sanitário do produto sob investigação, não poderá superar o prazo de 90 (noventa) dias úteis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Se não houver manifestação da autoridade sanitária no prazo previsto no <I>caput</I> deste artigo, após regular recebimento da petição primária do ensaio clínico, o desenvolvimento clínico poderá ser iniciado, desde que contenha as aprovações éticas pertinentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A autoridade sanitária poderá solicitar esclarecimentos e documentos adicionais uma única vez, exigência que ensejará a suspensão do prazo de análise, vedada sua interrupção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Regulamento específico disporá sobre o cumprimento do prazo e das exigências previstos neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A autoridade sanitária fica autorizada a realizar inspeções de BPCs em centros de pesquisas clínicas, patrocinadores e ORPCs, conforme o regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;Conduzir pesquisa com seres humanos em desconformidade com o disposto nesta Lei constitui infração ética e sujeita o infrator às sanções disciplinares previstas na legislação do conselho profissional ao qual é vinculado, sem prejuízo das sanções civis e penais cabíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Para fins de aplicação das sanções disciplinares referidas no <I>caput</I>, os conselhos profissionais competentes serão notificados, pelo CEP ou pela instância nacional de ética em pesquisa, da infração ética cometida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;A inobservância do disposto nos arts. 26, 27, 35, 42, 51 e 55 desta Lei e o descumprimento das normas de BPCs, nos termos do regulamento, constitui infração sanitária e sujeita o infrator às penalidades previstas na Lei nº 6.437, de 20 de agosto de 1977, e em regulamentos sanitários específicos, sem prejuízo das sanções civis e penais cabíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;A proteção e o anonimato de dados pessoais dos participantes das pesquisas são regulados por esta Lei, aplicada subsidiariamente a Lei nº 13.709, de 14 de agosto de 2018 (Lei Geral de Proteção de Dados Pessoais). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;Aplicar-se-ão aos produtos e dispositivos médicos e aos produtos de terapias avançadas experimentais as disposições desta Lei, no que couber. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;Esta Lei e seus termos aplicar-se-ão às pesquisas com seres humanos em todas as áreas do conhecimento, no que couber, e conforme regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Regulamento disporá sobre eventuais especificidades das pesquisas em ciências humanas e sociais, com vistas ao progresso da ciência e à devida aplicação desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;Com vistas ao bem público, ao progresso da ciência em âmbito nacional e à obediência ao princípio da eficiência na administração pública, os órgãos e entidades, públicos ou privados, responsáveis pela análise e aprovação de pesquisas no País deverão aprimorar continuamente suas atividades e serviços, de modo a reduzir os prazos de suas análises e pareceres. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;Esta Lei entra em vigor após decorridos 90 (noventa) dias de sua publicação oficial. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 28 de maio de 2024; 203º da Independência e 136º da República. </P>
+<P>LUIZ INÁCIO LULA DA SILVA <BR>Camilo Sobreira de Santana <BR>Sonia Bone de Sousa Silva Santos <BR>Nísia Verônica Trindade Lima </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 29/05/2024
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 29/5/2024, Página 3 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,969 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>Lei nº 5.906, de 23 de Julho de 1973 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre a remuneração dos bombeiros - militares do Corpo de Bombeiros do Distrito Federal, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - Lei nº 5.906, de 23 de Julho de 1973 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                            <li>  	
+                                                <a href="lei-5906-23-julho-1973-375065-veto-37378-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-5906-23-julho-1973-375065-retificacao-37379-pl.html">Retificação</a>
+                                            </li>
+                                    <li>
+                                        <a href="lei-5906-23-julho-1973-375065-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>Lei nº 5.906, de 23 de Julho de 1973</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							<META name=GENERATOR content="MSHTML 6.00.2800.1491">Dispõe sobre a remuneração dos bombeiros - militares do Corpo de Bombeiros do Distrito Federal, e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA, <BR>Faço saber que o SENADO FEDERAL decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER><B>TÍTULO I </CENTER></B>
+<CENTER><B>Conceituações Gerais </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Esta Lei regula a remuneração dos bombeiros-militares do Corpo de Bombeiros do Distrito Federal, a qual compreende vencimentos ou proventos e indenizações, e dispõe sobre outros direitos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Para os efeitos desta Lei, adotam-se as seguintes conceituações: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Comandante - é o título genérico dado ao bombeiro-militar, correspondente ao de chefe ou outra denominação que tenha ou venha a ter aquele que, investido de autoridade decorrente de leis e regulamentos, for responsável pela adminstração, emprego, instrução e disciplina de uma organização de bombeiros-militares; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Missão, Tarefa ou Atividade - é o dever emergente de uma ordem específica de comando ou chefia; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Organização de Bombeiros-Militares - é a denominação genérica dada a unidade de tropa, escola, centro ou a qualquer outra unidade administrativa ou operativa do Corpo de Bombeiros do Distrito Federal; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Corporação - é a denominação dada, nesta Lei, ao Corpo de Bombeiros do Distrito Federal; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - Sede - é todo o território do Distrito Federal; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - Na ativa, da ativa, em serviço ativo, em serviço na ativa, em atividade - é a situação do bombeiro-militar do Corpo de Bombeiros do Distrito Federal capacitado para o exercício de cargo, comissão ou encargo; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - Efetivo serviço - é o efetivo desempenho de cargo, comissão, encargo, incumbência, serviço ou atividade de bombeiro-militar, pelo bombeiro-militar em serviço ativo; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - Cargo de bombeiro-militar - é aquele que só pode ser exercido por bombeiro-militar em serviço ativo e que se encontra especificado nos Quadros de Efetivo, ou previsto, caracterizado ou definido como tal em outras disposições legais. A cada cargo de bombeiro-militar corresponde um conjunto de atribuições, deveres e responsabilidades que se constituem em obrigações do respectivo titular; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - Comissão, Encargo, Incumbência, Serviço ou Atividade de Bombeiro-Militar - é o exercício das obrigações que, pela generalidade, peculiaridade, duração, vulto ou natureza das atribuições não são catalogadas como posições tituladas em Quadro de Efetivo, Quadro de Organização ou dispositivo legal; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - Função de bombeiro-militar - é o exercício das obrigações inerentes ao cargo ou comissão. <BR><BR>
+<CENTER><B>TÍTULO II </CENTER></B>
+<CENTER><B>Da Remuneração de Bombeiro-Militar na Ativa </CENTER></B><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Da Remuneração </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;A remuneração do bombeiro-militar na ativa compreende: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Vencimentos: quantitativo mensal em dinheiro devido ao bombeiro-militar na ativa, compreendendo o soldo e as gratificações; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Indenizações: de conformidade com o Capítulo IV, deste Título. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O bombeiro-militar na ativa faz jus, ainda, a outros direitos constantes do Capítulo V, deste Título. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Do Soldo </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Soldo é a parte básica dos vencimentos inerentes ao posto ou à graduação do bombeiro-militar da ativa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O soldo do bombeiro-militar é irredutível, não está sujeito a penhora, seqüestro ou arresto, exceto nos casos especificamente previstos em lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;O direito do bombeiro-militar ao soldo tem início na data: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - do ato de promoção, para o Oficial; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - do ato da declaração, para o Aspirante-a-Oficial; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - do ato de promoção, para o Subtenente e demais praças, <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - do ato de classificação, para o Soldado-Bombeiro de 2º Classe; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - da incorporação no Corpo de Bombeiros do Distrito Federal, para os voluntários; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - da apresentação no Corpo de Bombeiros, quando da nomeação inicial ou designação para qualquer posto ou graduação no Corpo de Bombeiros do Distrito Federal; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - do ato da matrícula, para os alunos da Escola de Formação de Oficiais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Nos casos com caráter retroativo, o soldo será devido a partir das datas declaradas nos respectivos atos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Suspende-se, temporariamente, o direito do bombeiro-militar ao soldo, quando: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - em licença para tratar de interesse particular; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - agregado para exercer atividades estranhas à Corporação, estiver em exercício de cargo público civil temporário e não eletivo ou em função de natureza civil, inclusive de administração indireta, respeitado o direito de opção; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - na situação de desertor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;O direito ao soldo cessa na data em que o bombeiro-militar for desligado da ativa do Corpo de Bombeiros do Distrito Federal por: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - anulação de incorporação, desincorporação, licenciamento ou demissão; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - exclusão a bem da disciplina ou perda do posto e patente; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - transferência para a reserva ou reforma; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - falecimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;O bombeiro-militar, considerado desaparecido ou extraviado em caso de calamidade pública, em viagem, ou no desempenho de qualquer serviço, terá o soldo pago aos que teriam direito à sua pensão militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º. No caso previsto neste artigo, decorridos 6 (seis) meses, far-se-á a habilitação dos beneficiários, na forma da lei, cessando o pagamento do soldo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º. Verificando-se o reaparecimento do bombeiro-militar, e apuradas as causas de seu afastamento, caber-lhe-á, se for o caso, o pagamento da diferença entre o soldo a que faria jus se tivesse permanecido em serviço e a pensão recebida pelos beneficiários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;O bombeiro-militar no exercício de cargo ou comissão, cujo desempenho seja privativo do posto ou graduação superior ao seu, percebe o soldo daquele posto ou graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Quando, na substituição prevista neste artigo, o cargo ou comissão for atribuível a mais de um posto ou graduação ao substituto cabe o soldo correspondente ao menor deles. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para os efeitos do disposto neste artigo, prevalecem os postos e graduações correspondentes aos cargos ou comissões estabelecidos em Quadro de Efetivo, Quadro de Organização ou dispositivo legal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O disposto neste artigo não se aplica às substituições por motivo de férias, núpcias, luto, dispensas do serviço ou licença para tratamento de saúde, até 30 (trinta) dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;O bombeiro-militar receberá o soldo de seu posto ou graduação, quando exercer cargo ou comissão atribuídos, indistintamente, a 2 (dois) ou mais postos ou graduações e possuir qualquer destes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;O bombeiro-militar continuará com direito ao soldo do seu posto ou graduação em todos os casos não previstos nos artigos 6º e 7º desta Lei. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Das Gratificações </CENTER></B><BR>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Disposições Preliminares </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Gratificações são as partes dos vencimentos atribuídas ao bombeiro-militar como estímulo por atividades profissionais e condições de desempenho peculiares, bem como pelo tempo de permanência em serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;O bombeiro-militar, em efetivo serviço, fará jus às seguintes gratificações:' <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Gratificação de Tempo de Serviço; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Gratificação de Habilitação de Bombeiro-Militar; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Gratificação de Serviço Ativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Suspende-se o pagamento das gratificações ao bombeiro-militar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - nos casos previstos no artigo 6º, desta Lei; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - no cumprimento de pena decorrente de sentença passada em julgado; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - em licença, por período superior a 6 (seis) meses contínuos, para tratamento de saúde de pessoa da família; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - que tiver excedido os prazos legais ou regulamentares de afastamento do serviço; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - afastado do cargo ou comissão, por incapacidade profissional ou moral, nos termos das leis e regulamentos vigentes; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - no período de ausência não justificada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;O direito às gratificações cessa nos casos do artigo 7º, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;O bombeiro-militar que, por sentença passada em julgado, for absolvido de crime que lhe tenha sido imputado, terá direito às gratificações que deixou de receber no período em que esteve afastado do serviço à disposição da Justiça. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Do indulto perdão, comutação ou livramento condicional, não decorre direito do bombeiro-militar a qualquer remuneração a que tenha deixado de fazer jus por força de dispositivo desta Lei ou legislação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Aplica-se ao bombeiro-militar desaparecido ou extraviado, quanto às gratificações, o previsto no artigo 8º, e seus parágrafos, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Para fins de concessão das gratificações, tomar-se-á por base o valor do soldo do posto ou graduação que efetivamente possua o bombeiro-militar, ressalvado o previsto, no artigo 9º e seus parágrafos, quando será considerado o valor do soldo do posto ou graduação correspondente ao cargo ou comissão eventualmente desempenhados. <BR><BR>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Da Gratificação de Tempo de Serviço </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;A Gratificação de Tempo de Serviço é devida por qüinqüênio de tempo de efetivo serviço prestado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;Ao completar cada qüinqüênio de tempo de efetivo serviço, o bombeiro-militar percebe a Gratificação de Tempo de Serviço, cujo valor é de tantas quotas de 5% (cinco por cento) do soldo do seu posto ou graduação, quantos forem os qüinqüênios de tempo de efetivo serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O direito a gratificação começa no dia seguinte em que o bombeiro-militar completar cada qüinqüênio, computado na forma da legislação vigente e reconhecido mediante publicação em boletim da Corporação. <BR><BR>
+<CENTER><B>SEÇÃO III </CENTER></B>
+<CENTER><B>Da Gratificação de Habilitação de Bombeiro-Militar </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;A Gratificação de Habilitação de Bombeiro-Militar é devida ao bombeiro-militar pelos cursos realizados com aproveitamento em qualquer posto ou graduação, com os percentuais a seguir fixados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - 20% (vinte por cento): Curso de Aperfeiçoamento de Oficiais e Sargentos; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - 15% (quinze por cento): Cursos de Especialização de Oficiais e Sargentos ou equivalentes; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - 10% (dez por cento): Cursos de Formação de Oficiais e Sargentos ou de Especialização de Praças de graduação inferior a Terceiro-Sargento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A equivalência dos cursos referidos neste artigo será estabelecida pelas Normas de EquivaIência de Cursos, baixadas às Polícias Militares e aos Corpos de Bombeiros Militares pelo Estado-Maior do Exército através da Inspetoria-Geral das Polícias Militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Somente os cursos de extensão, com duração igual ou superior a 6 (seis) meses, realizados no País ou no Exterior, são computados para os efeitos deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Ao bombeiro-militar que possuir mais de um curso, somente será atribuída a gratificação de maior valor percentual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º A gratificação estabelecida neste artigo é devida a partir da data de conclusão do respectivo curso. <BR><BR>
+<CENTER><B>SEÇÃO IV </CENTER></B>
+<CENTER><B>Da Gratificação de Serviço Ativo </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;A Gratificação de Serviço Ativo é devida ao bombeiro-militar pelo desempenho de atividades específicas de seu Corpo ou Quadro em uma das situações definidas nos artigos 24 e 25, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;A Gratificação de Serviço Ativo compreende 2 (dois) tipos: 1 e 2. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;A Gratificação de Serviço Ativo - Tipo 1 - é devida ao bombeiro-militar que serve em unidade de tropa ou em função de ensino ou instrução em estabelecimento de ensino ou instrução da Corporação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;A Gratificação de Serviço Ativo - Tipo 2 - é devida ao bombeiro-militar pelo efetivo desempenho de atividades não enquadradas no artigo 24, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Ao bombeiro-militar que se enquadrar, simultaneamente, em mais de uma das situações referidas nos artigos 24 e 25, desta Lei, somente é atribuído o tipo de gratificação de maior valor percentual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Os valores percentuais das gratificações referidas nos artigos 24 e 25 serão regulados pelo Governador do Distrito Federal. <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Das Indenizações </CENTER></B><BR>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Disposições Preliminares </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Indenização é o quantitativo em dinheiro, devido ao bombeiro-militar para ressarcimento de despesas impostas pelo exercício de sua atividade, bem como para compensar os desgastes orgânicos de que trata o artigo 56, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As indenizações compreendem:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>Diárias; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>Ajuda de Custo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>Transporte; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>Representação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>Moradia; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>Compensação Orgânica. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Aplica-se ao bombeiro-militar desaparecido ou extraviado, quanto às indenizações, o previsto no artigo 8º, e seus parágrafos, desta Lei. <BR><BR>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Das Diárias </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Diárias são indenizações destinadas a atender às despesas extraordinárias de alimentação e de pousada e são devidas ao bombeiro-militar durante seu afastamento, de sua sede, por motivo de serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;As diárias compreendem a Diária de Alimentação e a Diária de Pousada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A Diária de Alimentação é devida, inclusive, nos dias de partida e de chegada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;O valor da Diária de Alimentação será regulado pelo Governador do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O valor da Diária de Pousada é igual ao valor atribuído à Diária de Alimentação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;Compete ao Comandante-Geral do Corpo de Bombeiros do Distrito Federal providenciar o pagamento das diárias a que fizer jus o bombeiro-militar e, sempre que for julgado necessário, deve efetuá-lo adiantadamente, para ajuste de contas quando do pagamento da remuneração que se verificar após o regresso à Corporação, condicionando-se o adiantamento à existência dos recursos orçamentários próprios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;Não serão atribuídas diárias ao bombeiro-militar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - quando as despesas com alimentação e pousada forem asseguradas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - nos dias de viagem, quando do custo da passagem estiverem compreendidas a alimentação ou a pousada ou ambas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - cumulativamente com a Ajuda de Custo, exceto nos dias de viagem em que a alimentação ou a pousada ou ambas não estejam compreendidas no custo das passagens, devendo, neste caso, ser computado somente o prazo estipulado para o meio de transporte efetivamente requisitado; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - durante o afastamento da sede por menos de 8 (oito) horas, consecutivas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;No caso de falecimento do bombeiro-militar, seus herdeiros não restituirão as diárias que ele haja recebido, adiantadamente, segundo o artigo 33, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;O bombeiro-militar, quando receber diárias, indenizará a organização militar, policial-militar ou de bombeiros-militares em que se alojar ou se alimentar, de acordo com as normas em vigor nessas Organizações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;Quando as despesas de alimentação ou de pousada ou ambas, a que se refere o item I, do artigo 34 desta Lei, forem realizadas pelas organizações militares, policiais-militares ou de bombeiros-militares, a indenização respectiva será feita pela Corporação. <BR><BR>
+<CENTER><B>SEÇÃO III </CENTER></B>
+<CENTER><B>Da Ajuda de Custo </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Ajuda de Custo é a indenização para custeio de despesas de viagem, mudança e instalação, exceto as de transporte, paga adiantadamente ao bombeiro-militar, salvo quando houver interesse do mesmo em recebê-la no destino. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;O bombeiro-militar terá direito a Ajuda de Custo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - quando designado para curso ou estágio, de duração superior a 6 (seis) meses, cujo desempenho importe em mudança de sede, obedecido o disposto no artigo 40, desta Lei, na ida e na volta; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - quando designado para curso ou estágio superior a 3 (três) meses e inferior a 6 (seis) meses, cujo desempenho importe em mudança de sede, obedecido o disposto no artigo 40, desta Lei, na ida, e na metade dos valores dispostos no mesmo artigo, na volta; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - quando designado para curso ou estágio inferior ou igual a 3 (três) meses, cujo desempenho importe em mudança de sede, na metade dos valores dispostos no artigo 40, desta Lei, na ida e na volta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;A Ajuda de Custo devida ao bombeiro-militar será igual: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - ao valor correspondente ao soldo do posto ou graduação, quando não possuir dependente; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a 2 (duas) vezes o valor do soldo do posto ou graduação, quando possuir dependente expressamente declarado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;Não terá direito à Ajuda de Custo o bombeiro-militar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - designado para participar de operações de manutenção da ordem pública ou para prestar serviço de bombeiro-militar fora da sede da Corporação; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - desligado de curso ou escola por falta de aproveitamento ou trancamento voluntário de matrícula, ainda que preencha os requisitos do artigo 39, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Restituirá a Ajuda de Custo o bombeiro-militar que a houver recebido, nas formas e circunstâncias abaixo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - integralmente e de uma só vez, quando deixar de seguir destino a seu pedido; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - pela metade do valor recebido e de uma só vez, quando, até 6 (seis) meses após ter seguido para curso ou estágio, deste for, a pedido, desligado, licenciado, transferido para a inatividade ou entrar em licença; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - pela metade do valor, mediante desconto pela décima parte do soldo, quando não seguir destino por motivo independente de sua vontade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Não se enquadra nas disposições do item II, deste artigo, a licença para tratamento de saúde própria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O bombeiro-militar que estiver sujeito a desconto para restituição de Ajuda de Custo, ao adquirir o direito a nova Ajuda de Custo liquidará integralmente, no ato de recebimento desta, o débito anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Na concessão da Ajuda de Custo, para efeito de cálculo de seu valor, determinação do exercício financeiro, constatação de dependentes e Tabela em vigor, tomar-se-á como base a data do ajuste de contas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se o bombeiro-militar for promovido, contando antigüidade de data anterior a do Pagamento da Ajuda de Custo, fará jus à diferença entre o valor deste e daquele a que teria direito no posto ou graduação atingido pela promoção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;A Ajuda de Custo não será restituída pelo bombeiro-militar ou seus beneficiários, quando: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - após ter seguido destino for mandado regressar; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ocorrer o falecimento do bombeiro-militar, mesmo antes de seguir destino. <BR><BR>
+<CENTER><B>SEÇÃO IV </CENTER></B>
+<CENTER><B>Do Transporte </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;O bombeiro-militar, nos deslocamentos por interesse do serviço, tem direito a transporte, por conta do Distrito Federal, nele compreendidas a passagem e a translação da respectiva bagagem, de residência a residência, se mudar em observância a prescrições legais ou regulamentares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Se os deslocamentos importarem na mudança de sede com dependente, a este se estende o mesmo direito deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O bombeiro-militar com dependente, amparado por este artigo, terá ainda direito ao transporte de um empregado doméstico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O bombeiro-militar da ativa terá direito ainda a transporte por conta do Distrito Federal, quando tiver de efetuar deslocamentos fora da sede da Corporação, nos seguintes casos:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>interesse da Justiça; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>concurso para ingresso em Escolas, Cursos ou Centros de Formação, Especialização, Aperfeiçoamento ou Atualização, de interesse da Corporação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>por motivo de serviço, decorrente do desempenho de sua atividade; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>baixa a organização hospitalar ou alta desta, em virtude de prescrição médica competente. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Quando o transporte não for realizado sob a responsabilidade do Distrito Federal, o bombeiro-miIitar será indenizado da quantia correspondente às despesas decorrentes dos direitos a que se refere este artigo e seus parágrafos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º O disposto neste artigo aplica-se ao inativo, quando designado para exercer função na atividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Para efeito de concessão de transporte, consideram-se dependentes do bombeiro-militar os dispostos nos artigos 128 e 129, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os dependentes do bombeiro-militar, com direito ao transporte por conta do Distrito Federal, que não puderem acompanhá-lo na mesma viagem, por qualquer motivo, poderão fazê-lo a contar de 30 (trinta) dias antes e até 3 (três) meses após o deslocamento do bombeiro-militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;O Governador do Distrito Federal regulamentará o transporte dos bombeiros-militares e seus dependentes. <BR><BR>
+<CENTER><B>SEÇÃO V </CENTER></B>
+<CENTER><B>Da Representação </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;A Indenização de Representação destina-se a atender às despesas extraordinárias, decorrentes de compromissos de ordem social ou profissional, inerentes à apresentação e ao bom desempenho de atividades em determinadas condições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;As condições que dão direito à Indenização de Representação, bem como os seus valores, serão regulados pelo Governador do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;O direito à Indenização de Representação é devido ao bombeiro-militar desde o dia em que seja considerado em uma das condições a serem estabelecidas na regulamentação de que trata o artigo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No caso de cargo ou comissão, o direito à Indenização de Representação é devido ao bombeiro-militar desde o dia em que o assume e cessa quando dele se afastar em caráter definitivo ou por prazo superior a 30 (trinta) dias, excetuadas as férias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No caso de afastamento do ocupante efetivo do cargo ou comissão, por prazo superior a 30 (trinta) dias o direito à indenização de Representação é devido a partir desse limite apenas ao bombeiro-militar substituto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;Nos casos de representação especial e temporária, de caráter individual ou coletivo, as despesas correrão por conta de quantitativos postos à disposição da Corporação pelo Governador do Distrito Federal. <BR><BR>
+<CENTER><B>SEÇÃO VI </CENTER></B>
+<CENTER><B>Da Moradia </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;O bombeiro-militar em atividade faz jus a: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - alojamento, em sua organização, quando aquartelado; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - moradia, para si e seus dependentes, em imóvel sob a responsabilidade da Corporação, de acordo com a disponibilidade existente; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - indenização mensal para moradia, quando não se encontrar na situação prevista no item II, acima. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O pagamento da indenização referida no item III, deste artigo, será regulado pelo Governador do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Suspende-se, temporariamente, o direito do bombeiro-militar à indenização para moradia, enquanto se encontrar em uma das situações previstas no artigo 6º, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;O valor da indenização para moradia será regulado pelo Governador do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;Quando o bombeiro-militar ocupar imóvel sob a responsabilidade da Corporação, o quantitativo correspondente à indenização para moradia será sacado e recolhido pela Corporação, para atender à conservação, despesas de condomínio e a construção de novas residências para o pessoal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;Quando o bombeiro-militar ocupar imóvel sob a responsabilidade de outro órgão o quantitativo sacado na forma do artigo anterior terá o seguinte destino: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - O correspondente ao aluguel e ao condomínio, será recolhido ao órgão responsável pelo imóvel; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - O saldo, se houver, será empregado na forma estabelecida no artigo anterior. <BR><BR>
+<CENTER><B>SEÇÃO VII </CENTER></B>
+<CENTER><B>Da Compensação Orgânica </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;A Indenização de Compensação Orgânica, cujo valor corresponde a 20% (vinte por cento) do soldo do posto ou graduação, e destinada a compensar os desgastes orgânicos conseqüentes dos danos psicossomáticos resultantes do desempenho continuado da atividade especial de mergulho com escafandro ou com aparelho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;A atividade especial referida no artigo anterior deverá ser exercida em cumprimento de missão, planos de provas ou de exercícios determinados pelo Comandante-Geral da Corporação e devidamente homologados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;O Comandante-Geral da Corporação estabelecerá as missões, os planos de provas ou de exercícios, que definirão os requisitos que o bombeiro-militar deve satisfazer para que lhe seja assegurado o direito à percepção da Indenização de Compensação Orgânica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;A Indenização de Compensação Orgânica é devida: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Durante a aprendizagem da atividade especial, a partir da data do primeiro mergulho em escafandro ou com aparelho; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Durante o período em que estiver servindo na organização de bombeiros-militares responsável pelo cumprimento de missões de mergulho com escafandro ou com aparelho ao bombeiro-militar qualificado para a atividade, desde que cumpra as missões, planos de provas ou de exercícios estabelecidos para tal atividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Não perderá o direito à percepção dessa indenização o bombeiro-militar:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>hospitalizado ou em licença para tratamento de saúde própria: </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>afastado da sua organização para participar de curso ou estágio de especialização ou de aperfeiçoamento relacionado com a atividade, como instrutor, monitor ou aluno. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O aluno da Escola de Formação de Oficiais da Corporação, recrutado entre praças e que já tenha assegurado o direito à percepção da Indenização de Compensação Orgânica, continuará a recebê-la, até o desligamento da Escola, na mesma importância que recebia por ocasião da matrícula.<BR>&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;O plano de provas ou de exercícios da atividade especial regulará: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Duração do período de provas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - O número mínimo de mergulhos a ser cumprido em cada período; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - A forma, as condições e a maneira de calcular e homologar os exercícios realizados; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - O processo de reconhecimento do direito à percepção da Indenização de Compensação Orgânica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;É assegurado ao bombeiro-militar que tenha feito jus à Indenização de Compensação Orgânica, em decorrência de mergulho com escafandro ou com aparelho, o pagamento definitivo dessa indenização, por quotas correspondentes aos anos de efetivo desempenho da atividade, observadas as regras seguintes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - O direito à percepção de cada quota é adquirido ao fim de 1 (um) ano de desempenho da atividade desde que o bombeiro-militar cumpra os requisitos fixados no plano de provas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - O valor de cada quota é igual a 1/10 (um décimo) da indenização integral correspondente ao posto, ou graduação do bombeiro-militar ao concluir o último período de execução do plano de provas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - O número de quotas abonadas ao bombeiro-militar não pode exceder de 10 (dez). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Em função de futuras promoções, o bombeiro-militar terá assegurada a evolução dos cálculos para o pagamento definitivo da Indenização de Compensação Orgânica, desde que, após cada promoção, execute, pelo menos um novo plano de provas ou de exercícios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;O valor das quotas, que, nos termos do artigo 61, desta Lei, asseguram o pagamento definitivo da Indenização de Compensação Orgânica acompanha as variações da Tabela de Soldo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;O bombeiro-militar que ainda não tenha assegurado o pagamento definitivo da indenização integral de que trata o artigo 61, poderá ser beneficiado pelos artigos 56 e 59, desta Lei, até que complete o número mínimo de quotas previsto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;Poderá ser suspenso até 90 (noventa) dias, o pagamento da Indenização de Compensação Orgânica, quando o bombeiro-militar incorrer em infração da disciplina exigida para o exercício da atividade de mergulho com escafandro ou com aparelho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;Aplica-se ao bombeiro-militar, quanto à Indenização de Compensação Orgânica, o disposto no artigo 7º, desta Lei, exceto quanto ao seu item III. <BR><BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Dos outros Direitos </B><BR><BR></CENTER>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Salário-Família </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;Salário-Família é o auxílio em dinheiro pago ao bombeiro-militar para custear em parte, a educação e assistência a seus filhos e outros dependentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Salário-Família é devido ao bombeiro-militar no valor e nas condições previstas na legislação peculiar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;O Salário-Família é isento de tributação e não sofre desconto de qualquer natureza. <BR><BR>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Da Assistência Médico-Hospitalar </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;O Distrito Federal proporcionará ao bombeiro-militar e aos seus dependentes assistência médico-hospitalar através dos Serviços de Saúde e de Assistência Social da Corporação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;Em princípio, a organização de saúde da Corporação destina-se a atender o pessoal dela dependente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Em casos especiais, o bombeiro-militar poderá baixar à organização hospitalar de outro órgão, desde que seja por este facultada a internação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;O bombeiro-militar da ativa terá hospitalização e tratamento custeados pelo Distrito Federal em virtude dos motivos dispostos nos itens I, II e III, do artigo 104, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A hospitalização para o bombeiro-militar da ativa, não enquadrado neste artigo, será gratuita até 60 (sessenta) dias, consecutivos ou não, em cada ano civil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Todo bombeiro-militar terá tratamento por conta do Distrito Federal, ressalvadas as indenizações mencionadas em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;Para os efeitos do disposto no artigo anterior, a internação de bombeiro-militar em clínicas ou hospitais especializados, nacionais ou estrangeiros, estranhos aos serviços hospitalares da Corporação, será autorizada nos seguintes casos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Em casos de urgência, quando a organização hospitalar da Corporação não possa atender; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Quando a organização hospitalar da Corporação não dispuser de clínica especializada necessária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;A assistência médico-hospitalar do bombeiro-militar será prestada nas condições da presente seção, com os recursos próprios da Corporação.<BR>&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;Os recursos para a assistência médico-hospitalar aos dependentes dos bombeiros-militares provirão de verbas consignadas para a Corporação no Orçamento do Distrito Federal e de contribuições estabelecidas na forma do disposto no § 1º, deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Poderá ser estabelecida a contribuição de até 3% (três por cento) do soldo do bombeiro-militar, para a constituição de um Fundo de Saúde, regulamentado pelo Governador do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para efeito de aplicação deste artigo, são considerados dependentes do bombeiro-militar os definidos nos artigos 128 e 129, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;As normas, condições de atendimento e indenizações referentes à presente Seção serão reguladas por ato do Governo do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As praças especiais e as demais praças, da ativa, ficam isentas do pagamento de diárias de hospitalização. <BR><BR>
+<CENTER><B>SEÇÃO III </CENTER></B>
+<CENTER><B>Do Funeral <BR></CENTER></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;O Distrito Federal assegurará sepultamento condigno ao bombeiro-militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76.&nbsp;Auxílio-Funeral é o quantitativo concedido para custear as despesas com o sepultamento do bombeiro-militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77.&nbsp;O Auxílio-Funeral equivale a duas vezes o valor do soldo do posto ou graduação do bombeiro-militar falecido, não podendo ser inferior a duas vezes o valor do soldo de Cabo BM. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78.&nbsp;Ocorrendo o falecimento do bombeiro-militar, as seguintes providências devem ser observadas para a concessão do Auxílio-Funeral: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Antes de realizado o enterro, o pagamento do Auxílio Funeral será feito a quem de direito pela Corporação, independentemente de qualquer formalidade, exceto a da apresentação do atestado de óbito; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Após o sepultamento do bombeiro-militar, não se tendo verificado o caso do item anterior, deverá a pessoa que o custeou, mediante apresentação do atestado de óbito, solicitar o reembolso da despesa, comprovando-a com os recibos em seu nome dentro do prazo de 30 (trinta) dias, sendo-lhe, em seguida, reconhecido o crédito e paga a importância correspondente aos recibos, até o valor-limite estabelecido no artigo anterior; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Caso a despesa com o sepultamento, paga de acordo com item anterior, seja inferior ao valor do Auxílio-Funeral estabelecido, a diferença será paga aos beneficiários habilitados à pensão de bombeiro-militar mediante petição ao Comandante-Geral da Corporação; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Decorrido o prazo de 30 (trinta) dias, sem reclamação do Auxilio-Funeral por quem haja custeado o sepultamento do bombeiro-militar, será o mesmo pago aos beneficiários habilitados à pensão de bombeiro-militar mediante petição ao Comandante-Geral da Corporação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 79.&nbsp;Em casos especiais, e a critério do Comandante-Geral poderá a Corporação custear diretamente o sepultamento do bombeiro-militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Verificando-se a hipótese de que trata este artigo, não será pago aos beneficiários, o Auxílio-Funeral. <BR><BR>
+<CENTER><B>SEÇÃO IV </CENTER></B>
+<CENTER><B>Da Alimentação </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 80.&nbsp;Tem direito à alimentação por conta do Distrito Federal: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - O bombeiro-militar servindo, a serviço, ou vinculado à organização de bombeiros-militares com rancho próprio ou ainda, em missão de socorro ou em exercício; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - O aluno da Escola de Formação de Oficiais BM; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - O preso civil, quando recolhido à organização de bombeiros-militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O direito de que trata o presente artigo, observadas as prescrições do Distrito Federal, poderá ser estendido aos civis que prestem serviço na Corporação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 81.&nbsp;A etapa é a importância em dinheiro correspondente ao custeio da ração, sendo o seu valor fixado, semestralmente, pelo Governo do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 82.&nbsp;Os gêneros de subsistência serão, em princípio, fornecidos em espécie à organização de bombeiros-militares pelo Serviço de Aprovisionamento da Corporação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 83.&nbsp;Em princípio, toda organização de bombeiros-militares deverá ter Rancho próprio organizado, em condições de proporcionar rações preparadas aos seus integrantes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O bombeiro-militar, quando sua organização ou outra nas proximidades do local de serviço ou expediente não lhe possa fornecer alimentação por conta do Distrito Federal e por imposição do horário de trabalho e distância de sua residência, seja obrigada a fazer refeições fora da mesma, tendo despesas extraordinárias de alimentação, fará jus:<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>A 10 (dez) vezes o valor da etapa fixada, quando em serviço de duração de 24 (vinte e quatro) horas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>A metade do previsto na letra a, anterior, quando em serviço ou expediente de duração igual ou superior a 8 (oito) horas de efetivo trabalho, mas inferior a 24 (vinte e quatro) horas. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 84.&nbsp;A praça de graduação inferior a Terceiro-Sargento, quando servir em organização de bombeiros-militares que não tenha rancho organizado e não possa ser arranchada por outra organização nas proximidades terá direito à indenização do valor igual à etapa fixada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A praça da organização referida neste artigo que é alojada e arranchada em organização de bombeiros-militares, quando em férias regulamentares e não for alimentada por conta do Distrito Federal, receberá a indenização estipulada neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º É vedada a acumulação do direito previsto neste artigo com o disposto no parágrafo único do artigo 83, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 85.&nbsp;É vedado o desarranchamento para o pagamento de etapa em dinheiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 86.&nbsp;O Governador do Distrito Federal regulamentará a aplicação desta Seção. <BR><BR>
+<CENTER><B>SEÇÃO V </CENTER></B>
+<CENTER><B>Do Fardamento </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 87.&nbsp;O aluno da Escola de Formação de Oficiais BM e as praças de graduação inferior a Terceiro-Sargento têm direito, por conta do Distrito Federal, a uniformes e roupa de cama, de acordo com as tabelas de distribuição estabelecidas pela Corporação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 88.&nbsp;O bombeiro-militar ao ser declarado Aspirante-a-Oficial BM ou promovido a Terceiro-Sargento BM, faz jus a um auxílio para aquisição de uniformes no valor de 3 (três) vezes o soldo de sua graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Idêntico direito assiste aos nomeados oficiais BM ou sargentos BM mediante habilitação em concurso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 89.&nbsp;Ao Oficial BM, Subtenente ou Sargento BM que o requerer, quando promovido, será concedido um adiantamento correspondente ao valor de 1 (um) soldo do novo posto ou graduação, para aquisição de uniforme, desde que possua as condições de prazo para a reposição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A concessão prevista neste artigo far-se-á mediante despacho em requerimento do bombeiro-militar ao Comandante-Geral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A reposição do adiantamento será feita mediante desconto mensal no prazo de 24 (vinte e quatro) meses. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O adiantamento referido, neste artigo poderá ser requerido a cada 4 (quatro) anos, se o bombeiro-militar permanecer no mesmo posto ou graduação podendo ser renovado em caso de promoção, desde que liquide o saldo devedor do adiantamento anteriormente recebido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 90.&nbsp;O bombeiro-militar que perder seus uniformes em qualquer sinistro havido em organização de bombeiros-militares, ou em deslocamento a serviço, receberá um auxílio correspondente ao valor de até 3 (três) vezes o soldo de seu posto ou graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Ao Comandante-Geral da Corporação por participação do bombeiro-militar prejudicado, cabe providenciar sindicância e em solução, determinar, se for o caso o valor desse auxílio em função do prejuízo sofrido. <BR><BR>
+<CENTER><B>SEÇÃO VI </CENTER></B>
+<CENTER><B>Dos Serviços Reembolsáveis </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 91.&nbsp;A Corporação poderá assegurar serviços reembolsáveis sem prejuízo de sua atividade-fim, para o atendimento das necessidades em gêneros de alimentação, vestuário, utensílios, serviços de lavanderia, confecção e outros que se relacionem com as necessidades do bombeiro-militar, quando for julgado de conveniência para seus integrantes. <BR><BR>
+<CENTER><B>TÍTULO III </CENTER></B>
+<CENTER><B>Da Remuneração do Bombeiro-Militar na Inatividade </CENTER></B><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Da Remuneração e outros Direitos </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 92.&nbsp;A remuneração do bombeiro-militar na inatividade compreende: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Proventos: <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Auxílio-Invalidez; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Adicional de Inatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A remuneração dos bombeiros-militares na inatividade será revista sempre que, por motivo de alteração do poder aquisitivo da moeda, se modificar a remuneração dos bombeiros-militares da ativa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 93.&nbsp;O bombeiro-militar na inatividade faz jus, ainda, no que lhe for aplicável, aos direitos constantes das Seções I, II, III e VI, do Capítulo V, do Titulo II, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para fins de cálculo do valor do auxílio-funeral será considerado como posto ou graduação do bombeiro-militar na inatividade, o correspondente ao soldo que serviu de base para o cálculo de seus proventos. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Dos Proventos </CENTER></B><BR>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Disposições Preliminares </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 94.&nbsp;Proventos são o quantitativo em dinheiro que o bombeiro-militar percebe na inatividade, constituídos pelas seguintes parcelas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Soldo ou Quotas do Soldo; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Gratificações e Indenização incorporáveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 95.&nbsp;Os proventos são devidos ao bombeiro-militar, quando for desligado da ativa em virtude de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Transferência para a reserva remunerada; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Reforma; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Retorno à inatividade após designação para o serviço ativo, quando já se encontrava na reserva remunerada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O bombeiro-militar de que trata este artigo continuará a perceber sua remuneração, até a publicação de seu desligamento no boletim da Corporação, o que não poderá exceder de 45 (quarenta e cinco) dias à data da primeira publicação oficial do respectivo ato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Suspende-se, temporariamente, o direito do bombeiro-militar à percepção dos proventos na data da sua apresentação na Corporação, quando, na forma da legislação em vigor, for designado para o serviço ativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 96.&nbsp;Cessa o direito à percepção dos proventos, na data: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Do falecimento; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Para o oficial, do ato que o prive do posto e da patente; e, para a praça, do ato de sua exclusão a bem da disciplina do Corpo de Bombeiros do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 97.&nbsp;Na apostila de proventos será observado o disposto nos artigos 98 a 103, e § 2º, do artigo 108, desta Lei. <BR><BR>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Do Soldo e das Quotas de Soldo </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 98.&nbsp;O soldo constitui a parcela básica dos proventos a que faz jus o bombeiro-militar na inatividade, sendo o seu valor igual ao estabelecido para o soldo do bombeiro-militar da ativa do mesmo posto ou graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para efeito de cálculos, o soldo dividir-se-á em quotas de soldo, correspondente cada uma a 1/30 (um trigésimo) do seu valor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 99.&nbsp;Por ocasião de sua passagem para a inatividade, o bombeiro-militar tem direito a tantas quotas de soldo quantos forem os anos de serviço, computáveis para a inatividade, até o máximo de 30 (trinta) anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para efeito de contagem destas quotas, a fração do tempo igual ou superior a 180 (cento e oitenta) dias será considerada como 1 (um) ano. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 100.&nbsp;O oficial que contar mais de 35 (trinta e cinco) anos de serviço, quando transferido para a inatividade, terá o cálculo de seus proventos referidos ao soldo do posto imediatamente superior, de acordo com os artigos 99 e 103, desta Lei, se em seu Quadro existir posto superior ao seu. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O oficial nas condições deste artigo, se ocupante do último posto da hierarquia militar de seu Quadro, terá o cálculo dos proventos tomando-se por base o soldo do seu próprio posto acrescido de 20% (vinte por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 101.&nbsp;O Subtenente, quando transferido para a inatividade, terá o cálculo de seus proventos referido ao soldo de Segundo-Tenente, desde que conte mais de 30 (trinta) anos de serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 102.&nbsp;As demais praças que contem mais de 30 (trinta) anos de serviço, ao serem transferidos para a inatividade, terão o cálculo de seus proventos referido ao soldo da graduação imediatamente superior à que possuíam no serviço ativo. <BR><BR>
+<CENTER><B>SEÇÃO III </CENTER></B>
+<CENTER><B>Das Gratificações e Indenizações Incorporáveis </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 103.&nbsp;São consideradas Gratificações e Indenizações lncorporáveis: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Gratificação de Tempo de Serviço; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Gratificação de Habilitação de Bombeiro-Militar; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Indenização de Compensação Orgânica, na forma estabelecida nos artigos 61 e 104, § 1º, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A "base de cálculo" para o pagamento das gratificações previstas neste artigo, dos auxílios e de outros direitos dos bombeiros-militares na inatividade será o valor do soldo ou quotas de soldo a que o bombeiro-militar fizer jus na inatividade. <BR><BR>
+<CENTER><B>SEÇÃO IV </CENTER></B>
+<CENTER><B>Dos Incapacitados </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 104.&nbsp;O bombeiro-militar incapacitado terá seus proventos referidos ao soldo integral do posto ou graduação em que foi reformado, de acordo com a legislação em vigor, e as gratificações e indenização incorporáveis a que fizer jus, quando reformado pelos seguintes motivos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Ferimento recebido no exercício de missão profissional de bombeiro ou na manutenção da ordem pública ou por enfermidade contraída nessas situações ou que nelas tenham sua causa eficiente; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Acidente em serviço; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Doença, moléstia ou enfermidade adquirida em tempo de paz tendo relação de causa e efeito com o serviço; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Acidente, doença, moléstia ou enfermidade, embora sem relação de causa e efeito com o serviço, deste que seja considerado inválido, imposibilitado total e permanentemente para qualquer trabalho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A Indenização de Compensação Orgânica de que trata o artigo 103 é calculada em seu valor máximo para os fins deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Não se aplicam as disposições do presente artigo ao bombeiro-militar que, já na situação de inatividade, passe a se encontrar na situação referida no item IV, a não ser que fique comprovada, por junta de Saúde, relação de causa e efeito com o exercício de suas funções enquanto esteve na ativa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 105.&nbsp;O oficial ou a praça com estabilidade assegurada reformado por incapacidade definitiva, decorrente de acidente, doença, moléstia ou enfermidade sem relação de causa e efeito com o serviço, ressalvados os casos do item IV, do artigo anterior, perceberá os proventos nos limites impostos pelo tempo de serviço computável para a inatividade, observadas as condições estabelecidas nos artigos 99 e 103, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O oficial com mais de 5 (cinco) anos de serviço ou a praça com estabilidade assegurada, que se encontrar nas condições deste artigo, não pode receber, como proventos, quantia inferior ao soldo do posto ou graduação atingido na inatividade para fins de remuneração. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Do Auxílio-Invalidez </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 106.&nbsp;O bombeiro-militar, da ativa que foi ou venha a ser reformado por incapacidade definitiva e considerado inválido, impossibilitado total e permanentemente para qualquer trabalho, não podendo prover os meios de sua subsistência, fará jus a um Auxílio-Invalidez no valor de 25% (vinte e cinco por cento) da soma da "base de cálculo" com a Gratificação de Tempo de Serviço, ambas previstas no artigo 103, desde que satisfaça a uma das condições abaixo especificadas, devidamente declaradas por Junta de Saúde: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Necessitar internação em instituição apropriada do Corpo de Bombeiros do Distrito Federal, ou não; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Necessitar de assistência ou de cuidado permanente de enfermagem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Quando, por deficiência hospitalar ou prescrição médica comprovada por Junta de Saúde da Corporação, o bombeiro-militar nas condições acima receber tratamento na própria residência, também fará jus ao Auxílio-Invalidez. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para continuidade do direito ao recebimento do Auxílio-Invalidez, o bombeiro-militar ficará sujeito a apresentar, anualmente, declaração de que não exerce nenhuma atividade remunerada, pública ou privada, e, a critério da administração a submeter-se, periodicamente, à inspeção de saúde de controle, sendo que no caso de oficial mentalmente enfermo ou de praça, aquela declaração deverá ser firmada por dois oficiais da ativa do Corpo de Bombeiros do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O Auxílio-Invalidez será suspenso, automaticamente, pelo Comandante-Geral da Corporação, se for verificado que o bombeiro-militar beneficiado exerce ou tenha exercido, após o recebimento do auxílio, qualquer atividade remunerada, sem prejuízo de outras sanções cabíveis, bem como se em inspeção de saúde, for constatado não se encontrar nas condições previstas neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O Auxílio-Invalidez não poderá ser inferior ao valor do soldo de Cabo BM. <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Do Adicional de Inatividade </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 107.&nbsp;O Adicional de Inatividade mencionado no artigo 92 e calculado, mensalmente, sobre os respectivos proventos e em função da soma do tempo de efetivo serviço com os acréscimos assegurados, na legislação em vigor, para esse fim, nas seguintes condições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - 20% (vinte por cento), quando o tempo computado for de 40 (quarenta) anos; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - 15% (quinze por cento), quando o tempo computado for de 35 (trinta e cinco) anos; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - 10% (dez por cento), quando o tempo computado for de 30 (trinta) anos. <BR><BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Das Situações Especiais </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 108.&nbsp;O bombeiro-militar, na inatividade que, na forma da legislação em vigor, for designado para o serviço ativo, perceberá a remuneração da ativa do seu posto ou graduação a contar da data da apresentação na Corporação, podendo, a partir dessa data, o direito à remuneração da inatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Por ocasião de sua apresentação, o bombeiro-militar de que trata este artigo terá direito a um auxílio para a aquisição de uniformes, correspondente ao valor do soldo de seu posto ou graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O bombeiro-militar de que trata este artigo, ao retornar à inatividade, terá sua remuneração recalculada em função do novo cômputo de tempo de serviço e das novas situações alcançadas pelas atividades que exerceu, de acordo com a legislação em vigor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 109.&nbsp;Não estão compreendidas nas disposições do artigo 100 os bombeiros-militares amparados por legislação especial que lhes assegura, por ocasião da passagem para a inatividade, soldo, gratificações ou vencimentos integrais do posto ou graduação a que eles fazem jus, efetivamente, na inatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 110.&nbsp;O bombeiro-militar, que retornar à ativa ou for reincluído, faz jus à remuneração, na forma estipulada nesta Lei para as situações equivalentes, na conformidade do que for estabelecido no ato de retorno ou reinclusão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se o bombeiro-militar fizer jus a pagamentos relativos a períodos anteriores à data do retorno ou reinclusão, receberá a diferença entre a importância apurada no ato de ajuste de contas e a recebida dos cofres públicos a título de remuneração, pensão, ou vantagem, nos mesmos períodos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 111.&nbsp;No caso de retorno ou reinclusão com ressarcimento pecuniário, o bombeiro-militar indenizará os cofres públicos, mediante encontro de contas, das quantias que tenham sido pagas à sua família, a qualquer título. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 112.&nbsp;Aplicam-se as disposições deste Título, no que couber, ao bombeiro-militar na inatividade, designado para o serviço ativo, que for retomado por incapacidade definitiva, de acordo com a legislação em vigor. <BR><BR>
+<CENTER><B>TÍTULO IV </CENTER></B>
+<CENTER><B>Dos Descontos em Folha de Pagamento </B><BR><BR></CENTER>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Dos Descontos </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 113.&nbsp;Desconto em folha é o abatimento que, na forma deste Título, pode o bombeiro-militar sofrer em uma fração de vencimentos ou proventos para cumprimento de obrigações assumidas ou impostas em virtude de disposições de lei ou regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 114.&nbsp;Para os efeitos de descontos do bombeiro-militar, em folha de pagamento, são consideradas as seguintes importâncias mensais, denominadas "bases para desconto": <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - O soldo do posto ou da graduação efetivos, acrescido das gratificações de Tempo de Serviço e de Habilitação de Bombeiro-Militar, para bombeiro-militar da ativa; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Os proventos, para o bombeiro-militar na inatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 115.&nbsp;Os descontos em folha são classificados em: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Contribuições para: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a Pensão de Bombeiro-Militar; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>à Fazenda Nacional e à do Distrito Federal, quando fixada em lei. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Indenizações: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>à Fazenda Nacional e à do Distrito Federal, em decorrência de dívida; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>pela ocupação de próprio nacional ou do Distrito Federal. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Consignações para: <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>pagamento de mensalidade social, a favor das Entidades consideradas consignatárias, estabelecidas na forma do artigo 124; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>cumprimento de sentença judicial para pensão alimentícia; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o Serviço de Assistência Social da Corporação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>pagamento da indenização prevista nos artigos 54 e 55; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>pagamento de aluguel de casa para residência do consignante; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>outros fins do interesse da Corporação, e determinados por ato do Comandante Geral. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 116.&nbsp;Os descontos em folha descritos no artigo anterior são ainda: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Obrigatórios: - os constantes dos itens I e II; letras "b" e "d", do item III, artigo anterior. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Autorizados: - os demais descontos mencionados no item III, do artigo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Comandante Geral da Corporação regulamentará os descontos previstos no item II, deste artigo. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Dos Limites </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 117.&nbsp;Para os descontos em folha, a que se refere o Capítulo I, deste Título, são estabelecidos os seguintes limites, relativos às "bases para desconto" definidas no artigo 115: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Quando determinados por lei, regulamento e cumprimento de sentença judicial para pensão alimentícia: quantia estipulada nesses atos; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - 70% (setenta por cento): para os descontos previstos nas letras "c" e "e", do item III, do artigo 115; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Até 30% (trinta por cento): para os demais, não enquadrados nos itens anteriores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 118.&nbsp;Em nenhuma hipótese, o consignante poderá receber em folha de pagamento a quantia líquida inferior a 30% (trinta por cento) das bases estabelecidas no artigo 114, mesmo nos casos de suspensão do pagamento das gratificações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 119.&nbsp;Os descontos obrigatórios têm prioridade sobre os autorizados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A importância devida à Fazenda Nacional, à Fazenda do Distrito Federal ou à pensão judicial, superveniente à averbação já existente, será obrigatoriamente descontada dentro dos limites estabelecidos nos artigos 118 e 119. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Nas reduções dos descontos autorizados que se fizerem necessárias para garantir a dedução integral dos descontos referidos neste artigo, serão assegurados aos consignatários os juros de mora, as taxas legais vigentes, decorrentes da dilatação dos prazos estipulados nos respectivos contratos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Verificada a hipótese do parágrafo anterior, só será permitido novo desconto autorizado, quando este estiver dentro dos limites fixados neste Capítulo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 120.&nbsp;O desconto originário de crime previsto no Código Penal Militar não impede que, por decisão judicial a autoridade competente proceda a buscas, apreensões legais, confisco de bens e seqüestros no sentido de abreviar o prazo de indenização à Fazenda Nacional ou à Fazenda do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 121.&nbsp;A dívida para com a Fazenda do Distrito Federal, no caso do bombeiro-militar que é desligado da ativa, será obrigatoriamente cobrada, de preferência por meios amigáveis, e, na impossibilidade desses, pelo recurso ao processo de cobrança executiva na forma da legislação fiscal referente à Dívida Ativa do Distrito Federal. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Dos Consignantes e Consignatários </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 122.&nbsp;Podem ser consignantes todos os bombeiros-militares da ativa ou na inatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 123.&nbsp;O Governo do Distrito Federal especificará as Entidades que devem ser consideradas consignatárias, para efeito desta Lei. <BR><BR>
+<CENTER><B>TÍTULO V </CENTER></B>
+<CENTER><B>Disposições Diversas </CENTER></B><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Disposições Gerais </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 124.&nbsp;O valor do soldo será fixado, para cada posto ou graduação, com base no soldo do posto de Coronel BM, observados os índices estabelecidos na Tabela de Escalonamento Vertical, anexa a esta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A Tabela de Soldo, resultante da aplicação do Escalonamento Vertical, deverá ser constituída por valores arredondados de múltiplos de 30 (trinta). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 125.&nbsp;Qualquer que seja o mês considerado, o cálculo parcelado de vencimentos e indenizações terá o divisor igual a 30 (trinta). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Salário-Família é sempre pago integralmente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 126.&nbsp;A remuneração a que faria jus o bombeiro-militar falecido é calculada até o dia do falecimento, inclusive, e paga àqueles constantes da declaração de beneficiários habilitados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 127.&nbsp;Observar-se-á o disposto no artigo 5º e seu parágrafo único do Decreto-lei nº 1.258, de 13 de fevereiro de 1973, quanto ao limite máximo de retribuição mensal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 128.&nbsp;(Vetado). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 129.&nbsp;São ainda considerados dependentes do bombeiro-militar, para os fins do artigo anterior, desde que vivam sob a sua dependência econômica, sob o mesmo teto e quando expressamente declarados na Corporação: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Filha, enteada e tutelada, viúvas, desquitadas ou separadas, desde que não recebam remuneração; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Mãe solteira; madrasta viúva; sogra, viúva ou solteira; bem como separadas ou desquitadas, desde que, em qualquer dessas situações, não recebam remuneração; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Avós e pais, quando inválidos ou interditos; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Pai maior de 60 anos, desde que não receba remuneração; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - Irmãos, cunhados e sobrinhos, quando menores ou inválidos ou interditos, sem outro arrimo; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - Irmã, cunhada e sobrinha, solteiras, viúvas, separadas ou desquitadas, desde que não recebam remuneração; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - Netos, órfãos, menores ou inválidos ou interditos; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - Pessoa que viva sob a sua exclusiva dependência econômica no mínimo há cinco anos, comprovados mediante justificação judicial. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Disposições Transitórias </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 130.&nbsp;O Auxílio-Invalidez e as gratificações previstas nesta Lei são devidas aos bombeiros-militares, incluídos os que já se encontram na inatividade, a partir da data da vigência desta Lei, sem direito a percepção de atrasados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 131.&nbsp;A Tabela de Soldo para o cálculo de vencimentos, indenizações e outros direitos estipulados nesta Lei, é a resultante de aplicação dos artigos 1º, 2º e 7º, do Decreto-Iei nº 1.258, de 13 de fevereiro de 1973. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 132.&nbsp;O bombeiro-militar beneficiado por uma ou mais das Leis números 288, de 8 de junho de 1948; 616, de 2 de fevereiro de 1949, 1.156, de 12 de julho de 1950; e 1.267, de 9 de dezembro de 1950, e que, em virtude de dispositivos legais, não mais faz jus às promoções previstas nas mencionadas leis, terá considerado como base para o cálculo dos proventos o soldo do posto ou graduação a que seria promovido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O direito assegurado neste artigo não poderá exceder, em nenhum caso, ao que caberia ao bombeiro-militar, se fosse ele promovido até 2 (dois) graus hierárquicos acima daquele que tinha por ocasião do processamento de sua transferência para a inatividade, incluíndo-se nesta limitação os demais direitos previstos em lei que assegurem proventos de grau hierárquico superior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O Oficial BM, se ocupante do último posto da hierarquia militar de seu Quadro, na ativa, beneficiado por uma ou mais das leis a que se refere este artigo, terá, ressalvado o disposto no parágrafo único, do artigo 100, o cálculo dos proventos referido ao soldo do seu próprio posto aumentado de 20% (vinte por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 133.&nbsp;Fica assegurado o pagamento das diárias previstas na Lei nº 4.019, de 20 de dezembro de 1961, observada a legislação própria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 134.&nbsp;Em qualquer hipótese o bombeiro-militar que, em virtude da aplicação desta Lei, venha a fazer jus, mensalmente, a uma remuneração inferior a que vinha recebendo, terá direito a um complemento igual ao valor da diferença encontrada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O complemento de que trata este artigo decrescerá, progressivamente, até a sua completa extinção, em fase dos futuros reajustes de soldo, promoções ou novas condições alcançadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 135.&nbsp;A despesa com a execução desta Lei será atendida com os recursos orçamentários do Governo do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 136.&nbsp;Esta Lei entrará em vigor na data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 137.&nbsp;Revogam-se as disposições em contrário. </P>
+<P>Brasília, 23 de julho de 1973; 152º da Independência e 85º da República.<BR><BR>EMÍLIO G. MÉDICI <BR>Alfredo Buzaid <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 24/07/1973
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 24/7/1973, Página 7217 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1973, Página 42 
+                                                        Vol. 5          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,994 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 4.118, DE 27 DE AGOSTO DE 1962 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre a política nacional de energia nuclear, cria a Comissão Nacional de Energia Nuclear, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 4.118, DE 27 DE AGOSTO DE 1962 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-4118-27-agosto-1962-353840-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-4118-27-agosto-1962-353840-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-4118-27-agosto-1962-353840-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-4118-27-agosto-1962-353840-retificacao-46470-pl.html">Retificação</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=184861">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-4118-27-agosto-1962-353840-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 4.118, DE 27 DE AGOSTO DE 1962</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							<META name=GENERATOR content="MSHTML 5.50.4807.2300">Dispõe sobre a política nacional de energia nuclear, cria a Comissão Nacional de Energia Nuclear, e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							<P>O PRESIDENTE DA REPÚBLICA;&nbsp;<BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei: <BR><BR></P>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Disposições Preliminares </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Constituem monopólio da União: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - A pesquisa e lavra das jazidas de minérios nucleares localizados no território nacional; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - O comércio dos minérios nucleares e seus concentrados; dos elementos nucleares e seus compostos; dos materiais fisseis e férteis, dos radioisótopos artificiais e substanciais e substâncias radioativas das três séries naturais; dos subprodutos nucleares; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - A produção de materiais nucleares e suas industrializações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Compete ao Poder Executivo, VETADO, orientar a Política Nacional de Energia Nuclear. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Para os efeitos da presente lei são adotadas as seguintes definições: Elemento nuclear: É todo elemento químico que possa ser utilizado na libertação de energia em reatores nucleares ou que possa dar origem a elementos químicos que possa ser utilizados para esse fim. Periòdicamente, o Poder Executivo, por proposta da Comissão Nacional de Energia Nucleares, especificará os elementos que devem ser considerados nucleares, além do urânio natural e do tório. Mineral nuclear: É todo mineral que contenham em sua composição um ou mais elementos nucleares. Minério nuclear: É toda concentração natural de mineral nuclear na qual o elemento ou elementos nucleares socorrem em proporção e condições tais que permitam sua exploração econômica. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Urânio enriquecido nos isótopos 235 ou 233: É o Urânio que contém o isótopo 235, o isótopo 233, ou ambos, em tal quantidade que a razão entre a soma das quantidades desses isótopos e a do isótopo 238 seja superior à razão entre a quantidade do isótopo 235 e a do isótopo 238 existente no urânio natural. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Material nuclear: com esta designação se compreendem os elementos nucleares ou seus subprodutos (elementos transurânicos, U-233) em qualquer forma de associação (i.e. metal, liga ou combinação química). </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Material fértil: com essa designação se compreendem: o urânio natural; o urânio cujo teor em isótopo 235 é inferior ao que se encontra na natureza: o tório; qualquer dos materiais anteriormente citados sob a forma de metal, liga, composto químico ou concentrado; qualquer outro material que contenha um ou mais dos materiais supracitados em concentração que venha a ser estabelecida pela Comissão Nacional de Energia Nuclear; e qualquer outro material que venha a ser subseqüentemente considerado como material fértil pela Comissão Nacional de Energia Nuclear. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Material físsil especial: Com essa designação se compreendem: o plutônio 239; o urânio 233; o urânio enriquecido nos isótopos 235 ou 233; qualquer material que contenham um ou mais dos materiais supracitados; qualquer material físsil que venha a ser subseqüentemente classificado como material físsil especial pela Comissão Nacional de Energia Nuclear. A expressão material físsil especial não se aplica porém ao material fértil. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Subproduto nuclear: É todo material (radioativo ou não) resultante de processo destinado à produção ou utilização de material físsil especial, ou todo material (com exceção do material físsil especial), formado por exposição de quaisquer elementos químicos à radiação libertada nos processos de produção ou de utilização de materiais físseis especiais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A Comissão Nacional de Energia Nuclear classificará (quando necessário) os minérios nucleares para os efeitos do disposto neste artigo. <BR><BR></P>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Da Comissão Nacional de Energia Nuclear </CENTER></B><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Dos Fins </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Fica criada a Comissão Nacional de Energia Nuclear (C.N.E.N.), como autarquia federal, com autonomia administrativa e financeira, VETADO.<BR>&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Compete à CNEN: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Estudar e propôr as medidas necessárias à orientação da Política Nacional de Energia Nuclear; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Promover: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a pesquisa das jazidas de minerais nucleares e o estudo dos processos de seu aproveitamento e utilização; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>a lavra das jazidas dos minérios nucleares; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o beneficiamento, refino e tratamento químico dos minérios nucleares e seus associados; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>o levantamento dos recursos bem como o contrôle da prospecção e pesquisa das disponibilidades minerais do País que interessem às aplicações da energia nuclear; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>a produção e o comércio dos minérios nucleares, materiais férteis, materiais físseis especiais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>a produção e o comércio de subprodutos nucleares e radioisótopos, cuja compra, venda troca, empréstimo, arrendamento, transporte e armazenamento dependam de licença por ela expedida nos têrmos desta lei. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Promover e incentivar a preparação de cientistas, técnicos e especialistas nos diversos setôres relativos à energia nuclear. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Estabelecer regulamentos e normas de segurança relativas ao uso das radiações e dos materiais nucleares e à instalação e operação dos estabelecimentos destinados a produzir materiais nucleares ou a utilizar a energia nuclear e suas aplicações e fiscalizar o cumprimento dos referidos regulamentos e normas. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - Realizar estudos, projetos, construção e operação de usinas nucleares. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - Opinar sôbre a concessão de patentes e licenças relacionadas com o processo para a utilização da energia nuclear. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - Pronunciar-se sôbre projetos de acôrdos, convênios ou compromissos internacionais de qualquer espécie, relativos à energia nuclear. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - Firmar contratos no País ou no estrangeiro para financiamento das atividades prevista nesta lei, mediante autorização do Poder Executivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;Para a execução das medidas previstas no artigo anterior, a CNEN operará diretamente, ou através de sociedades anônimas subsidiárias que organizar, mediante prévia autorização, em decreto do Poder Executivo, para as finalidades previstas nos itens II e III do art. 4º desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A CNEN terá, pelo menos, 51% (cinqüenta e um por cento) do capital votante das sociedades por ações que vier a organizar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As subsidiárias obedecerão aos princípios gerais desta lei e gozarão de tôdas as vantagens e isenções de impostos e taxas atribuídos à CNEN. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A Diretoria das emprêsas subsidiárias será nomeada pela CNEN, de acôrdo com os preceitos desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;A Comissão Nacional de Energia Nuclear poderá contratar os serviços de pessoas físicas ou jurídicas, públicas ou privadas para a execução das medidas previstas nos itens II e V do art. 4º desta lei, exceto para a operação de reatores de potência, mantendo em todos os casos a fiscalização e contrôle de execução. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Fica o Poder Executivo autorizado a garantir, diretamente, ou por intermédio do Banco Nacional de Desenvolvimento Econômico, os créditos externos obtidos na conformidade do inciso VIII do art. 4º desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Para realização de seus objetivos, a Comissão é autorizada a promover a organização de laboratórios, institutos e outros estabelecimentos de pesquisa científica a ela subordinadas técnica e administrativamente, bem como a operar em regime de cooperação com outras instituições existentes no País. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Da Constituição da Comissão </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;A Comissão Nacional de Energia Nuclear será constituída por cinco (5) Membros, dos quais um será o Presidente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Presidente e os demais Membros da CNEN serão nomeados pelo Poder Executivo, dentre pessoas de reconhecida idoneidade moral e capacidade administrativa em setôres científicos ou técnicos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Os Membros da CNEN serão nomeados por um período de cinco (5) anos, sendo facultada sua recondução. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Na composição da CNEN efetuada logo após a promulgação desta lei, as nomeações serão feitas por períodos iniciais diferentes de um, dois, três, quatro e cinco anos. Os decretos de nomeação deverão estabelecer para cada Membro nomeado o período e a data na qual o mesmo terá início. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O Membro da CNEN designado para ocupar vaga ocorrida durante os períodos acima estabelecidos terminará o período de Membro substituído.<BR>&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Mediante representação motivada da CNEN que deliberará por maioria absoluta de seus componentes, o Poder Executivo poderá demitir, por ineficiência, negligência no cumprimento do dever ou malversação, qualquer de seus Membros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;São condições para nomeação de Membros da CNEN:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>ser brasileiro (art. 129, itens I e II da Constituição Federal); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>ter elevada conduta moral e reconhecida capacidade técnica; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>não ter interêsses particulares diretos ou indiretos, na prospecção, pesquisa, lavra, industrialização e comércio de materiais nucleares no uso industrial da energia nuclear e suas aplicações; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>não ter tido nos últimos três anos, a qualquer título, interêsses financeiros - ligados às atividades da CNEN; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>não possuir, quando de sua posse, ações de quaisquer emprêsas subsidiárias criadas pela CNEN: </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>deixar de exercer qualquer outro tipo de atividade, VETADO, particular. Não se inclui nesta proibição o magistério superior (Constituição Federal art. 185). </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;O Presidente da CNEN representa-la-á em tôdas as suas relações externas e será substituído, em seus impedimentos, por um dos Membros da Comissão por êle designado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os trabalhos da CNEN serão regulados no Regimento Interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;As deliberações da CNEN serão tomadas por maioria de votos de seus Membros cabendo ao Presidente, além do voto comum o de desempate. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Os servidores públicos civis e os empregados de autarquias e sociedades de economia mista nomeados Membros da Comissão ou designados para nela servirem, serão licenciados, contando como de efetivo serviço o período que servirem na Comissão para todos os efeitos. VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os militares designados para servir na CNEN, serão considerados em função da natureza ou interêsse militar para os fins dispostos nos arts. 24, letra "e" e 29, letra "i", da Lei nº 1.316, de 20 de janeiro de 1951 e o tempo que os mesmos passarem na referida Comissão será considerado de efetivo serviço para efeito do art. 54 da lei número 2.370 de 9-12-54. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Os membros da CNEN perceberão vencimentos correspondentes ao símbolo 1-C. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Para a elaboração de seus estudos e planos, a CNEN poderá requisitar, na forma da legislação em vigor, ou contratar, pessoal científico e técnico especializado nacional ou estrangeiro, bem como constituir comissões consultivas para assuntos especializados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único - </I>VETADO. <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Do Patrimônio e sua utilização </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;O patrimônio da CNEN será formado:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>pelos bens e direitos que lhe forem doados ou por ela adquiridos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>pelo saldo de rendas próprias ou de recursos orçamentários, quando transferidos para a conta patrimonial. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Serão transferidos para o patrimônio da CNEN os bens do Conselho Nacional de Pesquisas que de comum acôrdo entre os dois órgãos, devam sê-lo em razão da atividade anterior da Comissão de Energia Atômica do mesmo Conselho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;A CNEN poderá adquirir os bens necessários à realização de seus fins, mas só poderá vendê-lo, mediante autorização do Poder Executivo. <BR><BR>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Do Fundo Nacional de Energia Nuclear </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;É instituído um Fundo Nacional de Energia Nuclear destinado ao desenvolvimento das aplicações da Energia Nuclear, e que será administrado e movimentado pela Comissão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;Constituirão o Fundo Nacional de Energia Nuclear:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>doze por cento (12%) do produto da arrecadação do Fundo Federal de Eletrificação criado pela Lei número 2.308, de 31 de agôsto de 1954; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>os créditos especialmente concedidos para tal fim; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o saldo de dotações orçamentárias da CNEN; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>o saldo de créditos especiais abertos por lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>quaisquer rendas e receitas eventuais. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A parcela do Fundo Federal de Eletrificação, de que trata a letra (a) dêste artigo será entregue pelo Banco Nacional do Desenvolvimento Econômico à CNEN - em quotas trimestrais. <BR><BR>
+<CENTER><B>Seção V </CENTER></B>
+<CENTER><B>Do Regime Financeiro da CNEN </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;Os recursos destinados às atividades da CNEN serão provenientes de: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>dotações orçamentárias que lhe forem atribuídas pela União; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>arrecadação do Fundo Nacional de Energia Nuclear; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>renda da aplicação de bens patrimoniais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>receita resultante de tôdas as operações e atividades da Comissão; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>créditos especiais abertos por Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>produtos de alienação de bens patrimoniais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>legados, donativos e outras rendas, que por natureza ou fôrça de lei, lhe devam competir: </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>quantias provenientes de empréstimos bancários de entidades oficiais ou privadas e de qualquer outra forma de crédito ou financiamento. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;A dotação correspondente a cada exercício financeiro constará do orçamento da União, com título próprio, para ser entregue à Comissão em quotas, semestrais antecipadas e que serão depositadas, para movimentação, em conta corrente em instituição oficial de crédito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;A CNEN organizará anualmente sua proposta de orçamento, justificando-a com indicação do plano de trabalho correspondente e submetendo-a à aprovação do Poder Executivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;A CNEN prestará contas, anualmente, ao Tribunal de Contas da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A prestação de contas das despesas efetuadas com atividades que tenham sido consideradas de caráter sigiloso, poderá ser feita sigilosamente, a critério da CNEN, adotando-se um processo especial que o resguarde. <BR><BR>
+<CENTER><B>Seção VI </CENTER></B>
+<CENTER><B>Disposições Gerais </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Os serviços da CNEN serão atendidos por funcionários integrantes de quadro próprio e por pessoal contratado e requisitado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os atuais servidores integrarão o quadro próprio de funcionários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Ao pessoal requisitado, servindo atualmente à CNEN, é concedida opção para aproveitamento no quadro de funcionários, dentro dos limites do cargo ou da função que ocupar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Competirá à CNEN.&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>organizar o seu quadro de funcionários, submetendo-o à aprovação do Poder Executivo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>estabelecer normas de contrato de pessoal fixando prazos, vencimentos e vantagens, mediante aprovação do Poder Executivo. </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As admissões de pessoal para o quadro de funcionários serão feitas mediante concurso de provas ou de títulos e provas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;O caráter sigiloso das atividades da CNEN será estabelecido pela Comissão, quando julgar necessário, caso não tenha sido determinado préviamente por órgãos com autoridade para fazê-lo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A desclassificação do caráter sigiloso poderá ser feita pelo órgão que a tiver estabelecido, por sua própria iniciativa ou por solicitação fundamentada pela Comissão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;As atividades da CNEN que não se revistam de caráter sigiloso, poderão ser divulgadas sob a forma que a Comissão julgar mais apropriada à informação e ao setor da opinião pública a que esta se destina. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A divulgação de informações que posam afetar a segurança nacional, só será feita após consulta ao Conselho de Segurança Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Serão isentos de impostos e taxas, os aparelhos, instrumentos, máquinas, instalações, matérias primas, produtos semi-manufaturados ou manufaturados e quaisquer outros materiais importados pela CNEN em conseqüência de seu programa de trabalho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A isenção só se tornará efetiva após a publicação no Diário Oficial, de Portaria do Ministro da Fazenda, discriminando a quantidade, qualidade, valor e procedência dos bens isentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;A CNEN gozará dos seguintes privilégios: </P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>seus bens e rendas não serão passíveis de penhora, arresto, sequestro ou embargo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>serão extensivos às suas obrigações, dívidas ou encargos passivos, os prazos de prescrição de que goza a Fazenda Nacional; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>poderá adquirir, por compra ou permuta, bens da União, independente de hasta pública; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>ser-lhe-á assegurada a via executiva fiscal da União, bem como gozará de quaisquer processos especiais a essa extensivos na cobrança de seus créditos, gozando seus representantes dos privilégios e prazos atribuídos aos procuradores da União, com exclusão, entretanto, de quaisquer percentagens, e sendo idêntico ao da União o regime de custas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>as certidões, cópias autênticas, ofícios e todos os atos dela emanados terão fé pública; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>gozará de isenção tributária. </TD></TR></TBODY></TABLE><BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Dos Minerais e Minérios Nucleares </CENTER></B>
+<CENTER><B>Disposições Gerais </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;As minas e jazidas de substâncias de interêsse para a produção de energia atômica constituem reservas nacionais, consideradas essenciais à segurança do País e são mantidas no domínio da União como bens imprescritíveis e inalienáveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;No caso de ocorrência de elementos nucleares em coexistência com minerais cuja autorização para pesquisa ou lavra tiver sido concedida pelo Ministério das Minas e Energia, o permissionário fica obrigado a notificar imediatamente, a respeito, à Comissão Nacional de Energia Nuclear e ao Departamento Nacional de Produção Mineral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A Comissão Nacional de Energia Nuclear e o Departamento Nacional de Produção Mineral, em colaboração, exercerão sobre as atividades do permissionário, a fiscalização prevista nesta lei e na Lei nº 1.985, de 29 de janeiro de 1940 (Código de Minas). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;No caso dos minerais nucleares e das ocorrências de que trata o artigo anterior, a concessão da lavra será mantida ou concedida pelo Ministério das Minas e Energia, constituindo pressuposto essencial para tal manutenção ou concessão, que o plano de aproveitamento da jazida, inclua, quando a CNEN o exigir, a separação do rejeito radioativo, que será posto à disposição da Comissão, segundo método previamente aprovado por êste órgão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A não observância do disposto neste artigo, implica na revogação da concessão da lavra, declarada por decreto não cabendo qualquer indenização ao concessionário da lavra. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A separação do rejeito radioativo será feita e operada por conta do concessionário da lavra, que a entregará à CNEN, sem nenhum ônus para êste órgão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Por autorização expressa da CNEN a concessão da lavra poderá ser dada, independentemente da necessidade de separação do rejeito radioativo mencionado neste artigo, desde que o concessionário devolva à CNEN, por aquisição no mercado internacional, compostos químicos em grau de pureza técnica, contendo uma quantidade de materiais físseis ou férteis igual ao existente no material extraído, sem ônus para a CNEN. <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Do Comércio de Materiais Nucleares </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;A CNEN terá a exclusividade de tôdas as operações referentes à compra, venda, empréstimos, arrendamento, exportação e importação de minerais e minérios nucleares, materiais férteis, materiais físseis e materiais físseis especial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Cabe à CNEN estabelecer os preços em moeda nacional dos minérios nucleares, materiais férteis, materiais físseis e físseis especiais subprodutos nucleares e radioisótopos para as operações no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;A CNEN manterá um registro das reservas e estoques de minérios nucleares, materiais férteis, materiais físseis e físseis especiais e subprodutos nucleares, com a previsão das quantidades necessárias à execução do programa Nacional de Energia Nuclear. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;Após a determinação prevista no artigo anterior a CNEN poderá negociar, de Govêrno para o Govêrno, mediante assentimento do Conselho de Segurança Nacional, quantidades dêsses materiais, no mais alto grau de beneficiamento possível à indústria nacional e preferencialmente para obtenção de compensações específicas, instrumentos e técnica, visando desenvolver a aplicação industrial da energia nuclear no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;A CNEN é autorizada a adquirir fora do País os materiais ou equipamentos que interessem ao desenvolvimento e utilização da energia nuclear, ou contratar serviços com o mesmo fim, podendo para isso, utilizar os fundos de que disponha ou outros que lhe sejam atribuídos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para atender às importações de que trata a presente lei, o Conselho de Superintendência da Moeda e do Crédito reservará verba especial nos orçamentos de câmbio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;A exportação ou importação clandestina dos materiais nucleares enumerados no artigo 34, constitui crime contra a Segurança Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;É proibida a posse ou transferência de material nuclear, inclusive subprodutos, sem autorização expressa da CNEN, mesmo no comércio interno; pena de perda das vantagens ou produtos e reclusão de um (1) a quatro (4) anos para os responsáveis. <BR><BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Disposições Transitórias </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;A CNEN poderá celebrar convênios com órgãos de pesquisa para auxiliar-lhes a atividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;O Poder Executivo promoverá a revisão dos acôrdos ou convênios internacionais em vigor e dos contratos existentes com emprêsas particulares, para adaptá-los aos têrmos desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;É autorizado o Poder Executivo a abrir, VETADO, um crédito especial de três bilhões de cruzeiros (Cr$3.000.000.000,00), a fim de atender, no corrente exercício, às despesas decorrentes da execução do programa da CNEN. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;Esta lei entrará em vigor na data de sua publicação, revogadas as disposições em contrário.</P>
+<P>Brasília, 27 de agôsto de 1962; 141º da Independência e 74º da República. </P>
+<P>JOÃO GOULART <BR>F. Brochado da Rocha <BR>João Mangabeira <BR>Renato Costa Lima <BR>Miguel Calmon <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 19/09/1962
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 19/9/1962, Página 9701 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1962, Página 90 
+                                                        Vol. 5          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

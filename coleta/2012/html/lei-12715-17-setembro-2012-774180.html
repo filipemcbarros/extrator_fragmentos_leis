@@ -1,0 +1,910 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 12.715, DE 17 DE SETEMBRO DE 2012 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Altera a alíquota das contribuições previdenciárias sobre a folha de salários devidas pelas empresas que especifica; institui o Programa de Incentivo à Inovação Tecnológica e Adensamento da Cadeia Produtiva de Veículos Automotores, o Regime Especial de Tributação do Programa Nacional de Banda Larga para Implantação de Redes de Telecomunicações, o Regime Especial de Incentivo a Computadores para Uso Educacional, o Programa Nacional de Apoio à Atenção Oncológica e o Programa Nacional de Apoio à Atenção da Saúde da Pessoa com Deficiência; restabelece o Programa Um Computador por Aluno; altera o Programa de Apoio ao Desenvolvimento Tecnológico da Indústria de Semicondutores, instituído pela Lei nº 11.484, de 31 de maio de 2007; altera as Leis nºs 9.250, de 26 de dezembro de 1995, 11.033, de 21 de dezembro de 2004, 9.430, de 27 de dezembro de 1996, 10.865, de 30 de abril de 2004, 11.774, de 17 de setembro de 2008, 12.546, de 14 de dezembro de 2011, 11.484, de 31 de maio de 2007, 10.637, de 30 de dezembro de 2002, 11.196, de 21 de novembro de 2005, 10.406, de 10 de janeiro de 2002, 9.532, de 10 de dezembro de 1997, 12.431, de 24 de junho de 2011, 12.414, de 9 de junho de 2011, 8.666, de 21 de junho de 1993, 10.925, de 23 de julho de 2004, os Decretos-Leis nºs 1.455, de 7 de abril de 1976, 1.593, de 21 de dezembro de 1977, e a Medida Provisória nº 2.199-14, de 24 de agosto de 2001; e dá outras providências. " />
+
+<!-- CSS do portal-tema: necessário para o botão de compartilhamento -->
+<link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T3NRZN7V');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T3NRZN7V"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 12.715, DE 17 DE SETEMBRO DE 2012 - Publicação Original</h2>
+
+			<div class="g-contexto-compartilhamento g-contexto-compartilhamento--extendido g-impressao">
+				<!-- Elemento propositalmente vazio, preenchido pelo JS de compartilhamento do portal -->
+			</div>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-12715-17-setembro-2012-774180-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-12715-17-setembro-2012-774180-normaatualizada-pl.docx">formato docx</a>)
+                                                &nbsp;
+                                                    (<a href="lei-12715-17-setembro-2012-774180-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-12715-17-setembro-2012-774180-veto-137604-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-12715-17-setembro-2012-774180-retificacao-137634-pl.html">Retificação</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=540142">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-12715-17-setembro-2012-774180-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 12.715, DE 17 DE SETEMBRO DE 2012</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							<P>Altera a alíquota das contribuições previdenciárias sobre a folha de salários devidas pelas empresas que especifica; institui o Programa de Incentivo à Inovação Tecnológica e Adensamento da Cadeia Produtiva de Veículos Automotores, o Regime Especial de Tributação do Programa Nacional de Banda Larga para Implantação de Redes de Telecomunicações, o Regime Especial de Incentivo a Computadores para Uso Educacional, o Programa Nacional de Apoio à Atenção Oncológica e o Programa Nacional de Apoio à Atenção da Saúde da Pessoa com Deficiência; restabelece o Programa Um Computador por Aluno; altera o Programa de Apoio ao Desenvolvimento Tecnológico da Indústria de Semicondutores, instituído pela Lei nº 11.484, de 31 de maio de 2007; altera as Leis nºs 9.250, de 26 de dezembro de 1995, 11.033, de 21 de dezembro de 2004, 9.430, de 27 de dezembro de 1996, 10.865, de 30 de abril de 2004, 11.774, de 17 de setembro de 2008, 12.546, de 14 de dezembro de 2011, 11.484, de 31 de maio de 2007, 10.637, de 30 de dezembro de 2002, 11.196, de 21 de novembro de 2005, 10.406, de 10 de janeiro de 2002, 9.532, de 10 de dezembro de 1997, 12.431, de 24 de junho de 2011, 12.414, de 9 de junho de 2011, 8.666, de 21 de junho de 1993, 10.925, de 23 de julho de 2004, os Decretos-Leis nºs 1.455, de 7 de abril de 1976, 1.593, de 21 de dezembro de 1977, e a Medida Provisória nº 2.199-14, de 24 de agosto de 2001; e dá outras providências. </P>
+						</p>
+				
+						<div class="texto">
+							<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; A PRESIDENTA DA REPÚBLICA</STRONG> <BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Fica instituído o Programa Nacional de Apoio à Atenção Oncológica - PRONON, com a finalidade de captar e canalizar recursos para a prevenção e o combate ao câncer. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A prevenção e o combate ao câncer englobam, para os fins desta Lei, a promoção da informação, a pesquisa, o rastreamento, o diagnóstico, o tratamento, os cuidados paliativos e a reabilitação referentes às neoplasias malignas e afecções correlatas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;O Pronon será implementado mediante incentivo fiscal a ações e serviços de atenção oncológica, desenvolvidos por instituições de prevenção e combate ao câncer. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As ações e os serviços de atenção oncológica a serem apoiados com os recursos captados por meio do Pronon compreendem: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a prestação de serviços médico-assistenciais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a formação, o treinamento e o aperfeiçoamento de recursos humanos em todos os níveis; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - a realização de pesquisas clínicas, epidemiológicas e experimentais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Para os fins do disposto nesta Lei, consideram-se instituições de prevenção e combate ao câncer as pessoas jurídicas de direito privado, associativas ou fundacionais, sem fins lucrativos, que sejam: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - certificadas como entidades beneficentes de assistência social, na forma da Lei nº 12.101, de 27 de novembro de 2009; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - qualificadas como organizações sociais, na forma da Lei nº 9.637, de 15 de maio de 1998; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - qualificadas como Organizações da Sociedade Civil de Interesse Público, na forma da Lei nº 9.790, de 23 de março de 1999. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Fica instituído o Programa Nacional de Apoio à Atenção da Saúde da Pessoa com Deficiência - PRONAS/PCD. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O Pronas/PCD tem a finalidade de captar e canalizar recursos destinados a estimular e desenvolver a prevenção e a reabilitação da pessoa com deficiência, incluindo-se promoção, prevenção, diagnóstico precoce, tratamento, reabilitação e indicação e adaptação de órteses, próteses e meios auxiliares de locomoção, em todo o ciclo de vida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O Pronas/PCD será implementado mediante incentivo fiscal a ações e serviços de reabilitação da pessoa com deficiência desenvolvidos por pessoas jurídicas de direito privado sem fins lucrativos que se destinam ao tratamento de deficiências físicas, motoras, auditivas, visuais, mentais, intelectuais, múltiplas e de autismo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Para efeito do Pronas/PCD, as pessoas jurídicas referidas no § 2º devem: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ser certificadas como entidades beneficentes de assistência social que atendam ao disposto na Lei nº 12.101, de 27 de novembro de 2009; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - atender aos requisitos de que trata a Lei nº 9.637, de 15 de maio de 1998; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - constituir-se como Organizações da Sociedade Civil de Interesse Público que atenda aos requisitos de que trata a Lei nº 9.790, de 23 de março de 1999; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - prestar atendimento direto e gratuito às pessoas com deficiência, cadastradas no Cadastro Nacional de Estabelecimentos de Saúde - CNES do Ministério da Saúde. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º As ações e os serviços de reabilitação apoiados com as doações e os patrocínios captados por meio do Pronas/PCD compreendem: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - prestação de serviços médico-assistenciais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - formação, treinamento e aperfeiçoamento de recursos humanos em todos os níveis; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - realização de pesquisas clínicas, epidemiológicas e experimentais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;A União facultará às pessoas físicas, a partir do ano-calendário de 2012 até o ano-calendário de 2015, e às pessoas jurídicas, a partir do ano-calendário de 2013 até o ano-calendário de 2016, na qualidade de incentivadoras, a opção de deduzirem do imposto sobre a renda os valores correspondentes às doações e aos patrocínios diretamente efetuados em prol de ações e serviços de que tratam os arts. 1º a 3º, previamente aprovados pelo Ministério da Saúde e desenvolvidos pelas instituições destinatárias a que se referem os arts. 2º e 3º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As doações poderão assumir as seguintes espécies de atos gratuitos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - transferência de quantias em dinheiro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - transferência de bens móveis ou imóveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - comodato ou cessão de uso de bens imóveis ou equipamentos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - realização de despesas em conservação, manutenção ou reparos nos bens móveis, imóveis e equipamentos, inclusive os referidos no inciso III; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - fornecimento de material de consumo, hospitalar ou clínico, de medicamentos ou de produtos de alimentação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Considera-se patrocínio a prestação do incentivo com finalidade promocional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A pessoa física incentivadora poderá deduzir do imposto sobre a renda devido, apurado na Declaração de Ajuste Anual, o valor total das doações e dos patrocínios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A pessoa jurídica incentivadora tributada com base no lucro real poderá deduzir do imposto sobre a renda devido, em cada período de apuração, trimestral ou anual, o valor total das doações e dos patrocínios, vedada a dedução como despesa operacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º O valor global máximo das deduções de que trata este artigo será fixado anualmente pelo Poder Executivo, com base em um percentual da renda tributável das pessoas físicas e do imposto sobre a renda devido por pessoas jurídicas tributadas com base no lucro real. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º As deduções de que trata este artigo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - relativamente às pessoas físicas: </P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>a)</EM></TD>
+<TD>ficam limitadas ao valor das doações efetuadas no ano-calendário a que se referir a Declaração de Ajuste Anual do Imposto sobre a Renda da Pessoa Física; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>b)</EM></TD>
+<TD>(VETADO); e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>c)</EM></TD>
+<TD>aplicam-se à declaração de ajuste anual utilizando-se a opção pelas deduções legais; e </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - relativamente às pessoas jurídicas tributadas com base no lucro real: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>a)</EM></TD>
+<TD>(VETADO); e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>b)</EM></TD>
+<TD>deverão corresponder às doações e aos patrocínios efetuados dentro do período de apuração trimestral ou anual do imposto. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º Os benefícios de que trata este artigo não excluem outros benefícios, abatimentos e deduções em vigor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;Na hipótese da doação em bens, o doador deverá considerar como valor dos bens doados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - para as pessoas físicas, o valor constante da última declaração do imposto sobre a renda; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - para as pessoas jurídicas, o valor contábil dos bens. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Em qualquer das hipóteses previstas no § 1º do art. 4º, o valor da dedução não poderá ultrapassar o valor de mercado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;A instituição destinatária titular da ação ou serviço definido no § 1º do art. 2º e no § 4º do art. 3º deve emitir recibo em favor do doador ou patrocinador, na forma e condições estabelecidas em ato da Secretaria da Receita Federal do Brasil do Ministério da Fazenda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Para a aplicação do disposto no art. 4º, as ações e serviços definidos no § 1º do art. 2º e no § 4º do art. 3º deverão ser aprovados previamente pelo Ministério da Saúde, segundo a forma e o procedimento estabelecidos em ato do Poder Executivo, e devem estar em consonância com a política definida para o setor no Plano Nacional de Saúde e nas diretrizes do Ministério da Saúde. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;As ações e serviços definidos no § 1º do art. 2º e no&nbsp;§ 4º do art. 3º deverão ter seu desenvolvimento acompanhado e avaliado pelo Ministério da Saúde, na forma estabelecida em ato do Poder Executivo, observada a necessidade de participação do controle social, nos termos da Lei nº 8.142, de 28 de dezembro de 1990. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A avaliação pelo Ministério da Saúde da correta aplicação dos recursos recebidos terá lugar ao final do desenvolvimento das ações e serviços, ou ocorrerá anualmente, se permanentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os incentivadores e instituições destinatárias deverão, na forma de instruções expedidas pelo Ministério da Saúde, comunicar-lhe os incentivos realizados e recebidos, cabendo aos destinatários a comprovação de sua aplicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Deverá ser elaborado relatório de avaliação e acompanhamento das ações e serviços previstos no <I>caput</I> e publicado em sítio eletrônico do Ministério da Saúde na Rede Mundial de Computadores - Internet. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Em caso de execução de má qualidade ou de inexecução parcial ou completa das ações e serviços de que tratam os arts. 1º a 3º, o Ministério da Saúde poderá inabilitar, por até 3 (três) anos, a instituição destinatária, mediante decisão motivada e da qual caberá recurso para o Ministro de Estado da Saúde. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Ato do Poder Executivo estabelecerá os critérios para a inabilitação e os procedimentos de que trata o <I>caput</I>, assegurada a ampla defesa e o contraditório. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Os recursos objeto de doação ou patrocínio deverão ser depositados e movimentados em conta bancária específica em nome do destinatário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Não serão considerados, para fim de comprovação do incentivo, os aportes em relação aos quais não se cumpra o disposto neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Nenhuma aplicação dos recursos poderá ser efetuada mediante intermediação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Não configura intermediação a contratação de serviços de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - elaboração de projetos de ações ou serviços para a obtenção de doação ou patrocínio; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - captação de recursos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Constitui infração ao disposto nesta Lei o recebimento pelo patrocinador de vantagem financeira ou bem, em razão do patrocínio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;As infrações ao disposto nesta Lei, sem prejuízo das sanções penais cabíveis, sujeitarão o doador ou patrocinador ao pagamento do valor atualizado do imposto sobre a renda devido em relação a cada exercício financeiro e das penalidades e demais acréscimos previstos na legislação vigente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Na hipótese de dolo, fraude ou simulação, inclusive no caso de desvio de finalidade, será aplicada ao doador e ao beneficiário multa correspondente a 2 (duas) vezes o valor da vantagem auferida indevidamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;O art. 12 da Lei nº 9.250, de 26 de dezembro de 1995, passa a vigorar acrescido do seguinte inciso VIII: <BR><BR>
+<DIR>"Art. 12......................................................................................&nbsp; <BR>........................................................................................................... <BR><BR>VIII - doações e patrocínios diretamente efetuados por pessoas físicas no âmbito do Programa Nacional de Apoio à Atenção Oncológica - PRONON e do Programa Nacional de Apoio à Atenção da Saúde da Pessoa com Deficiência - PRONAS/PCD, previamente aprovados pelo Ministério da Saúde.<BR>..............................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Fica restabelecido o Programa Um Computador por Aluno - PROUCA e instituído o Regime Especial de Incentivo a Computadores para Uso Educacional - REICOMP, nos termos e condições estabelecidos nos arts. 16 a 23 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;O Prouca tem o objetivo de promover a inclusão digital nas escolas das redes públicas de ensino federal, estadual, distrital, municipal e nas escolas sem fins lucrativos de atendimento a pessoas com deficiência, mediante a aquisição e a utilização de soluções de informática, constituídas de equipamentos de informática, de programas de computador - <EM>software </EM>- neles instalados e de suporte e assistência técnica necessários ao seu funcionamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Ato conjunto dos Ministros de Estado da Educação, da Ciência, Tecnologia e Inovação e da Fazenda estabelecerá definições, especificações e características técnicas mínimas dos equipamentos referidos no <I>caput</I>, podendo inclusive determinar os valores mínimos e máximos alcançados pelo Prouca. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Compete ao Poder Executivo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - relacionar os equipamentos de informática de que trata o <I>caput</I>; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - estabelecer Processo Produtivo Básico - PPB específico, definindo etapas mínimas e condicionantes de fabricação dos equipamentos de que trata o <I>caput</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Os equipamentos mencionados no <I>caput</I> destinam-se ao uso educacional por alunos e professores das escolas das redes públicas de ensino federal, estadual, distrital, municipal e das escolas sem fins lucrativos de atendimento a pessoas com deficiência, exclusivamente como instrumento de aprendizagem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A aquisição e a assistência técnica necessária ao funcionamento dos equipamentos especificados no <I>caput</I> serão realizadas por meio de licitação pública, observada a legislação vigente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º As soluções de informática a serem adquiridas e utilizadas no âmbito do Prouca deverão obrigatoriamente contar com um percentual mínimo de equipamentos de informática e programas de computador adaptados ou desenvolvidos especificamente para pessoas com deficiência, nos termos do regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;É beneficiária do Reicomp a pessoa jurídica habilitada que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - exerça atividade de fabricação dos equipamentos mencionados no <I>caput</I> do art. 16; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - seja vencedora do processo de licitação de que trata o § 4º do art. 16. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Também será considerada beneficiária do Reicomp a pessoa jurídica que exerça a atividade de manufatura terceirizada para a vencedora do processo de licitação a que se refere o § 4º do art. 16. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º As pessoas jurídicas optantes pelo Regime Especial Unificado de Arrecadação de Tributos e Contribuições devidos pelas Microempresas e Empresas de Pequeno Porte - Simples Nacional, de que trata a Lei Complementar nº 123, de 14 de dezembro de 2006, e as pessoas jurídicas de que tratam o inciso II do <I>caput</I> do art. 8º da Lei nº 10.637, de 30 de dezembro de 2002, e o inciso II do <I>caput</I> do art. 10 da Lei nº 10.833, de 29 de dezembro de 2003, não podem aderir ao Reicomp. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O Poder Executivo regulamentará o regime de que trata o <I>caput</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;O Reicomp suspende, conforme o caso, a exigência: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - do Imposto sobre Produtos Industrializados - IPI incidente sobre a saída do estabelecimento industrial de matérias-primas e produtos intermediários destinados à industrialização dos equipamentos mencionados no art. 16, quando adquiridos por pessoa jurídica habilitada ao regime; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - da Contribuição para o PIS/Pasep e da Contribuição para o Financiamento da Seguridade Social - COFINS incidentes sobre a receita decorrente da: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>a)</EM></TD>
+<TD>venda de matérias-primas e produtos intermediários destinados à industrialização dos equipamentos mencionados no art. 16, quando adquiridos por pessoa jurídica habilitada ao regime; ou </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>b)</EM></TD>
+<TD>prestação de serviços por pessoa jurídica estabelecida no País a pessoa jurídica habilitada ao regime, quando destinados aos equipamentos mencionados no art. 16; e </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - do IPI, da Contribuição para o PIS/Pasep-Importação, da Cofins-Importação, do Imposto de Importação e da Contribuição de Intervenção no Domínio Econômico destinada a financiar o Programa de Estímulo à Interação Universidade-Empresa para o Apoio à Inovação incidentes sobre: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>a)</EM></TD>
+<TD>matérias-primas e produtos intermediários destinados à industrialização dos equipamentos mencionados no art. 16, quando importados diretamente por pessoa jurídica habilitada ao regime; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>b)</EM></TD>
+<TD>o pagamento de serviços importados diretamente por pessoa jurídica habilitada ao regime, quando destinados aos equipamentos mencionados no art. 16. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;Ficam isentos de IPI os equipamentos de informática saídos da pessoa jurídica beneficiária do Reicomp diretamente para as escolas referidas no art. 16. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;As operações de importação efetuadas com os benefícios previstos no Reicomp dependem de anuência prévia do Ministério da Ciência, Tecnologia e Inovação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>As notas fiscais relativas às operações de venda no mercado interno de bens e serviços adquiridos com os benefícios previstos no Reicomp devem: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - estar acompanhadas de documento emitido pelo Ministério da Ciência, Tecnologia e Inovação, atestando que a operação é destinada ao Prouca; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - conter a expressão "Venda efetuada com suspensão da exigência do IPI, da Contribuição para o PIS/Pasep e da Cofins", com a especificação do dispositivo legal correspondente e do número do atestado emitido pelo Ministério da Ciência, Tecnologia e Inovação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;A fruição dos benefícios do Reicomp fica condicionada à regularidade fiscal da pessoa jurídica em relação aos tributos e contribuições administrados pela Secretaria da Receita Federal do Brasil do Ministério da Fazenda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;A pessoa jurídica beneficiária do Reicomp terá a habilitação cancelada: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - na hipótese de não atender ou deixar de atender ao processo produtivo básico específico referido no inciso II do § 2º do art. 16; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - sempre que se apure que não satisfazia ou deixou de satisfazer, não cumpria ou deixou de cumprir os requisitos para habilitação ao regime; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - a pedido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;Após a incorporação ou utilização dos bens ou dos serviços adquiridos ou importados com os benefícios do Reicomp nos equipamentos mencionados no art. 16, a suspensão de que trata o art. 18 converte-se em alíquota 0 (zero). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Na hipótese de não se efetuar a incorporação ou utilização de que trata o <I>caput</I>, a pessoa jurídica beneficiária do Reicomp fica obrigada a recolher os tributos não pagos em função da suspensão de que trata o art. 18, acrescidos de juros e multa, de mora ou de ofício, na forma da Lei, contados a partir da data de aquisição ou do registro da Declaração de Importação - DI, na condição de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - contribuinte, em relação ao IPI vinculado à importação, à Contribuição para o PIS/Pasep-Importação e à Cofins-Importação; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - responsável, em relação ao IPI, à Contribuição para o PIS/Pasep, à Cofins e à Contribuição de Intervenção no Domínio Econômico destinada a financiar o Programa de Estímulo à Interação Universidade-Empresa para o Apoio à Inovação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Fica instituído regime especial de tributação aplicável à construção ou reforma de estabelecimentos de educação infantil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O regime especial previsto no <I>caput</I> deste artigo aplicase até 31 de dezembro de 2018 aos projetos de construção ou reforma de creches e pré-escolas cujas obras tenham sido iniciadas ou contratadas a partir de 1º de janeiro de 2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O regime especial tem caráter opcional e irretratável enquanto perdurarem as obrigações da construtora com os contratantes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A forma, o prazo e as condições para a opção pelo regime especial de tributação serão estabelecidos pela Secretaria da Receita Federal do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A opção de que trata o § 3º depende da prévia aprovação do projeto de construção ou reforma de creches e pré-escolas pelo Ministério da Educação, onde deve constar o prazo mínimo de 5 (cinco) anos de utilização do imóvel como creche ou pré-escola. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Os estabelecimentos de educação infantil a que se refere este artigo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - deverão seguir parâmetros e especificações técnicas definidos em regulamento; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - não poderão ter a sua destinação alterada pelo prazo mínimo de 5 (cinco) anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º O descumprimento do disposto no § 5º sujeitará o ente público ou privado proprietário do estabelecimento de educação infantil beneficiário ao pagamento da diferença dos tributos a que se refere o art. 25 que deixou de ser paga pela construtora, com os devidos acréscimos legais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Para cada obra submetida ao regime especial de tributação, a construtora ficará sujeita ao pagamento equivalente a 1% (um por cento) da receita mensal recebida, que corresponderá ao pagamento mensal unificado dos seguintes impostos e contribuições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - Imposto de Renda das Pessoas Jurídicas - IRPJ; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - Contribuição para PIS/Pasep; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - Contribuição Social sobre o Lucro Líquido - CSLL; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - Cofins. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para fins do disposto no <I>caput</I> deste artigo, considerase receita mensal a totalidade das receitas auferidas pela construtora em virtude da realização da obra. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O percentual de 1% (um por cento) de que trata o <I>caput</I> deste artigo será considerado: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - 0,44% (quarenta e quatro centésimos por cento) como Cofins; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - 0,09% (nove centésimos por cento) como Contribuição para o PIS/Pasep; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - 0,31% (trinta e um centésimos por cento) como IRPJ; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - 0,16% (dezesseis centésimos por cento) como CSLL. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º As receitas, custos e despesas próprios da obra sujeita a tributação na forma deste artigo não deverão ser computados na apuração das bases de cálculo dos tributos e contribuições de que trata o <I>caput</I> devidos pela construtora em virtude de suas outras atividades empresariais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Para fins do disposto no § 3º deste artigo, os custos e despesas indiretos pagos pela construtora no mês serão apropriados a cada obra na mesma proporção representada pelos custos diretos próprios da obra, em relação ao custo direto total da construtora, assim entendido como a soma de todos os custos diretos de todas as obras e o de outras atividades exercidas pela construtora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;A opção pelo regime especial de tributação previsto no art. 24 desta Lei obriga o contribuinte a fazer o recolhimento dos tributos a partir do mês da opção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O pagamento unificado de impostos e contribuições deverá ser feito até o 20º (vigésimo) dia do mês subsequente àquele em que houver sido auferida a receita. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O pagamento dos tributos e contribuições na forma deste artigo será considerado definitivo, não gerando, em qualquer hipótese, direito à restituição ou à compensação com o que for apurado pela construtora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;A construtora fica obrigada a manter escrituração contábil segregada para cada obra submetida ao regime especial de tributação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Fica instituído o Regime Especial de Tributação do Programa Nacional de Banda Larga para Implantação de Redes de Telecomunicações - REPNBL-Redes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O REPNBL-Redes destina-se a projetos de implantação, ampliação ou modernização de redes de telecomunicações que suportam acesso à internet em banda larga, incluindo estações terrenas satelitais que contribuam com os objetivos de implantação do Programa Nacional de Banda Larga - PNBL, nos termos desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O Poder Executivo regulamentará a forma e os critérios de habilitação e co-habilitação ao regime de que trata o <I>caput</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;É beneficiária do REPNBL-Redes a pessoa jurídica habilitada que tenha projeto aprovado para a consecução dos objetivos estabelecidos no § 1º do art. 28, bem como a pessoa jurídica co-habilitada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O Poder Executivo disciplinará o procedimento e os critérios de aprovação do projeto de que trata o <I>caput</I>, observadas as seguintes diretrizes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - os critérios de aprovação deverão ser estabelecidos tendo em vista o objetivo de: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>reduzir as diferenças regionais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>modernizar as redes de telecomunicações e elevar os padrões de qualidade propiciados aos usuários; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>massificar o acesso às redes e aos serviços de telecomunicações que suportam acesso à internet em banda larga; </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o projeto deverá contemplar, além das necessárias obras civis, as especificações e a cotação de preços de todos os equipamentos e componentes de rede vinculados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - o projeto não poderá relacionar como serviços associados às obras civis referidas no inciso II os serviços de operação, manutenção, aluguel, comodato e arrendamento mercantil de equipamentos e componentes de rede de telecomunicações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - o projeto deverá contemplar a aquisição de equipamentos e componentes de rede produzidos de acordo com o respectivo processo produtivo básico, conforme percentual mínimo definido em regulamento; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - o projeto deverá contemplar a aquisição de equipamentos e componentes de rede desenvolvidos com tecnologia nacional, conforme percentual mínimo definido em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Compete ao Ministro de Estado das Comunicações aprovar, em ato próprio, o projeto que se enquadre nas diretrizes do § 1º, observada a regulamentação de que trata o § 2º do art. 28. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O projeto de que trata o <I>caput</I> deverá ser apresentado ao Ministério das Comunicações até o dia 30 de junho de 2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Os equipamentos e componentes de rede de telecomunicações de que tratam os incisos IV e V do § 1º serão relacionados em ato do Poder Executivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º As pessoas jurídicas optantes pelo Simples Nacional, de que trata a Lei Complementar nº 123, de 14 de dezembro de 2006, não poderão aderir ao REPNBL-Redes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Deverá ser dada ampla publicidade à avaliação dos projetos apresentados no Ministério das Comunicações, nos termos da Lei nº 12.527, de 18 de novembro de 2011.&nbsp;<BR></P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;No caso de venda no mercado interno de máquinas, aparelhos, instrumentos e equipamentos novos e de materiais de construção para utilização ou incorporação nas obras civis abrangidas no projeto de que trata o <I>caput</I> do art. 29, ficam suspensos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a exigência da Contribuição para o PIS/Pasep e da Contribuição para o Financiamento da Seguridade Social - COFINS incidentes sobre a receita da pessoa jurídica vendedora, quando a aquisição for efetuada por pessoa jurídica beneficiária do REPNBL-Redes; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o Imposto sobre Produtos Industrializados - IPI incidente na saída do estabelecimento industrial ou equiparado, quando a aquisição no mercado interno for efetuada por pessoa jurídica beneficiária do REPNBL-Redes. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Nas notas fiscais relativas: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - às vendas de que trata o inciso I do <I>caput</I> deverá constar a expressão "Venda efetuada com suspensão da exigibilidade da Contribuição para o PIS/Pasep e da Cofins", com a especificação do dispositivo legal correspondente; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - às saídas de que trata o inciso II do <I>caput</I> deverá constar a expressão "Saída com suspensão do IPI", com a especificação do dispositivo legal correspondente, vedado o registro do imposto nas referidas notas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º As suspensões de que trata este artigo convertem-se em alíquota 0 (zero) após a utilização ou incorporação do bem ou material de construção à obra de que trata o <I>caput</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A pessoa jurídica que não utilizar ou incorporar o bem ou material de construção à obra de que trata o <I>caput</I> fica obrigada a recolher as contribuições e os impostos não pagos em decorrência da suspensão de que trata este artigo, acrescidos de juros e multa de mora, na forma da Lei, contados a partir da data da aquisição, na condição de responsável ou contribuinte, em relação à Contribuição para o PIS/Pasep, à Cofins e ao IPI. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º As máquinas, aparelhos, instrumentos e equipamentos que possuam processo produtivo básico definido nos termos da Lei nº 8.248, de 23 de outubro de 1991, ou no Decreto-Lei nº 288, de 28 de fevereiro de 1967, somente farão jus à suspensão de que tratam os incisos I e II do <I>caput</I> quando produzidos conforme os respectivos PPBs. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;No caso de venda de serviços destinados às obras civis abrangidas no projeto de que trata o art. 29, fica suspensa a exigência da Contribuição para o PIS/Pasep e da Cofins incidentes sobre a prestação de serviços efetuada por pessoa jurídica estabelecida no País, a pessoa jurídica beneficiária do REPNBL-Redes. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Nas vendas de serviços de que trata o <I>caput</I>, aplica-se, no que couber, o disposto nos §§ 1º a 3º do art. 30. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O disposto no <I>caput</I> aplica-se também na hipótese de receita de aluguel de máquinas, aparelhos, instrumentos e equipamentos para utilização em obras civis abrangidas no projeto de que trata o art. 29, e que serão desmobilizados após sua conclusão, quando contratados por pessoa jurídica beneficiária do REPNBL-Redes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Os benefícios de que tratam os arts. 28 a 31 alcançam apenas as construções, implantações, ampliações ou modernizações de redes de telecomunicações realizadas entre a data de publicação da Medida Provisória nº 563, de 3 de abril de 2012, e 31 de dezembro de 2016. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Os benefícios de que trata o <I>caput</I> somente poderão ser usufruídos nas aquisições, construções, implantações, ampliações ou modernizações realizadas a partir da data de habilitação ou co-habilitação da pessoa jurídica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;A fruição dos benefícios de que trata o REPNBLRedes fica condicionada à regularidade fiscal da pessoa jurídica em relação às contribuições e aos impostos administrados pela Secretaria da Receita Federal do Brasil do Ministério da Fazenda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Para as prestadoras de serviços de telecomunicações sujeitas à certificação da Agência Nacional de Telecomunicações - ANATEL, a fruição de que trata o <I>caput</I> fica também condicionada à regularidade fiscal em relação às receitas que constituem o Fundo de Fiscalização das Telecomunicações - FISTEL. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Os serviços de telecomunicações prestados por meio das subfaixas de radiofrequência de 451 MHz a 458 MHz e de 461 MHz a 468 MHz, assim como por meio de estações terrenas satelitais de pequeno porte que contribuam com os objetivos de implantação do PNBL, ficam isentos de tributos federais incidentes sobre o seu faturamento até 31 de dezembro de 2018, nos termos definidos em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;Ficam isentas das taxas de fiscalização previstas no art. 6º da Lei nº 5.070, de 7 de julho de 1966, até 31 de dezembro de 2018, as estações de telecomunicações que operem nas subfaixas de radiofrequência de 451 MHz a 458 MHz e de 461 MHz a 468 MHz, assim como as estações terrenas satelitais de pequeno porte que contribuam com os objetivos de implantação do PNBL, e atendam aos critérios estabelecidos em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;Fica isenta de tributos federais, até 31 de dezembro de 2018, a receita bruta de venda a varejo dos componentes e equipamentos de rede, terminais e transceptores definidos em regulamento que sejam dedicados aos serviços de telecomunicações prestados por meio das subfaixas de radiofrequência de 451 MHz a 458 MHz e de 461 MHz a 468 MHz, assim como por meio de estações terrenas satelitais de pequeno porte que contribuam com os objetivos de implantação do PNBL. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;O valor da Taxa de Fiscalização de Instalação das estações móveis do Serviço Móvel Pessoal, do Serviço Móvel Celular ou de outra modalidade de serviço de telecomunicações, nos termos da Lei nº 5.070, de 7 de julho de 1966, e suas alterações, que integrem sistemas de comunicação máquina a máquina, definidos nos termos da regulamentação a ser editada pelo Poder Executivo, fica fixado em R$ 5,68 (cinco reais e sessenta e oito centavos). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A Taxa de Fiscalização de Funcionamento será paga, anualmente, até o dia 31 de março, e seus valores serão os correspondentes a 33% (trinta e três por cento) dos fixados para a Taxa de Fiscalização de Instalação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;A Lei nº 11.033, de 21 de dezembro de 2004, passa a vigorar com as seguintes alterações: <BR></P>
+<DIR>"Art. 14.&nbsp;Serão efetuadas com suspensão do Imposto sobre Produtos Industrializados - IPI, da Contribuição para o PIS/Pasep, da Contribuição para o Financiamento da Seguridade Social - COFINS e, quando for o caso, do Imposto de Importação - II, as vendas e as importações de máquinas, equipamentos, peças de reposição e outros bens, no mercado interno, quando adquiridos ou importados diretamente pelos beneficiários do Reporto e destinados ao seu ativo imobilizado para utilização exclusiva na execução de serviços de: <BR><BR>I - carga, descarga, armazenagem e movimentação de mercadorias e produtos; <BR><BR>II - sistemas suplementares de apoio operacional; <BR><BR>III - proteção ambiental; <BR><BR>IV - sistemas de segurança e de monitoramento de fluxo de pessoas, mercadorias, produtos, veículos e embarcações; <BR><BR>V - dragagens; e <BR><BR>VI - treinamento e formação de trabalhadores, inclusive na implantação de Centros de Treinamento Profissional. <BR>.......................................................................................................... <BR><BR>§ 10. Os veículos adquiridos com o benefício do Reporto deverão receber identificação visual externa a ser definida pelo órgão competente do Poder Executivo. <BR>..............................................................................................." (NR)</DIR>
+<DIR>"Art. 15.&nbsp;São beneficiários do Reporto o operador portuário, o concessionário de porto organizado, o arrendatário de instalação portuária de uso público e a empresa autorizada a explorar instalação portuária de uso privativo misto ou exclusivo, inclusive aquelas que operam com embarcações de <EM>offshore</EM> .<BR>..............................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Fica criado o Programa de Incentivo à Inovação Tecnológica e Adensamento da Cadeia Produtiva de Veículos Automotores - INOVAR-AUTO com objetivo de apoiar o desenvolvimento tecnológico, a inovação, a segurança, a proteção ao meio ambiente, a eficiência energética e a qualidade dos automóveis, caminhões, ônibus e autopeças. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O Inovar-Auto aplicar-se-á até 31 de dezembro de 2017, data em que todas habilitações vigentes serão consideradas canceladas e cessarão seus efeitos, exceto quanto ao cumprimento dos compromissos assumidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Poderão habilitar-se ao INOVAR-AUTO: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - as empresas que produzam, no País, os produtos classificados nas posições 87.01 a 87.06 da Tabela de Incidência do Imposto sobre Produtos Industrializados - TIPI, aprovada pelo Decreto nº 7.660, de 23 de dezembro de 2011; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - as empresas que comercializem, no País, os produtos referidos no inciso I; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - as empresas que tenham projeto aprovado para instalação, no País, de fábrica ou, no caso das empresas já instaladas, de novas plantas ou projetos industriais para produção de novos modelos desses produtos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A habilitação ao Inovar-Auto será concedida em ato conjunto pelos Ministérios do Desenvolvimento, Indústria e Comércio Exterior e da Ciência, Tecnologia e Inovação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Somente poderá habilitar-se ao regime a empresa que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - estiver regular em relação aos tributos federais; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - assumir o compromisso de atingir níveis mínimos de eficiência energética relativamente a todos os veículos comercializados no País, conforme regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º A habilitação fica condicionada à: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - realização pela empresa, no País, de atividades fabris e de infraestrutura de engenharia, diretamente ou por terceiros; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - realização pela empresa, no País, de investimentos em pesquisa, desenvolvimento e inovação, diretamente ou por terceiros; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - realização pela empresa, no País, de dispêndio em engenharia, tecnologia industrial básica e de capacitação de fornecedores, diretamente ou por terceiros; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - adesão da empresa a programa de etiquetagem veicular de âmbito nacional, nos termos de regulamento, exceto quanto aos veículos com motor de pistão, de ignição por compressão (<EM>diesel </EM>ou semidiesel). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º A empresa deverá cumprir pelo menos 3 (três) dos 4 (quatro) requisitos estabelecidos no § 5º, com exceção das fabricantes que produzam exclusivamente veículos com motor de pistão, de ignição por compressão (<EM>diesel </EM>ou semidiesel), as quais deverão cumprir pelo menos 2 (dois) dos requisitos estabelecidos nos incisos I a III do mencionado § 5º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º A habilitação terá validade de 12 (doze) meses, contados a partir de sua concessão, podendo ser renovada, por solicitação da empresa, por novo período de 12 (doze) meses, desde que tenham sido cumpridos todas condições e compromissos assumidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º No caso do inciso III do § 2º, a empresa deverá solicitar habilitação específica para cada fábrica ou planta industrial que pretenda instalar, a qual poderá ser renovada somente uma vez, desde que tenha sido cumprido o cronograma do projeto de instalação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º O Poder Executivo estabelecerá termos, limites e condições para a habilitação ao Inovar-Auto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;As empresas habilitadas ao Inovar-Auto poderão apurar crédito presumido de IPI, com base nos dispêndios realizados no País em cada mês-calendário com: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - pesquisa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - desenvolvimento tecnológico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - inovação tecnológica; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - insumos estratégicos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - ferramentaria; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - recolhimentos ao Fundo Nacional de Desenvolvimento Científico e Tecnológico - FNDCT na forma do regulamento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - capacitação de fornecedores; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - engenharia e tecnologia industrial básica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para efeito do <I>caput</I>, serão considerados os dispêndios realizados no segundo mês-calendário anterior ao mês de apuração do crédito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os dispêndios realizados em novembro e dezembro de 2017 não darão direito ao crédito de que trata o <I>caput</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º As empresas de que trata o inciso III do § 2º do art. 40, habilitadas ao Inovar-Auto, poderão, ainda, apurar crédito presumido do IPI relativamente aos veículos por elas importados, mediante a aplicação de percentual estabelecido pelo Poder Executivo sobre a base de cálculo do IPI na saída do estabelecimento importador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O crédito presumido de IPI de que tratam o <I>caput</I> e o&nbsp;§ 3º poderão ser apurados a partir da habilitação da empresa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º O Poder Executivo estabelecerá termos, limites e condições para a utilização do crédito presumido de IPI de que trata este artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Fica suspenso o IPI incidente no desembaraço aduaneiro dos veículos importados nos termos do § 3º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º Os créditos presumidos de IPI de que trata este artigo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - não estão sujeitos a incidência da Contribuição para o PIS/Pasep e da Cofins; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - não devem ser computados para fins de apuração do Imposto de Renda da Pessoa Jurídica e da Contribuição Social sobre o Lucro Líquido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Acarretará o cancelamento da habilitação ao Inovar-Auto: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o descumprimento dos requisitos estabelecidos por esta Lei ou pelos atos complementares do Poder Executivo; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O cancelamento da habilitação ao Inovar-Auto implicará a exigência do imposto que deixou de ser pago desde a primeira habilitação em função da utilização do crédito presumido do IPI, com os acréscimos previstos na legislação tributária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O Poder Executivo poderá dispor em regulamento que a exigência do IPI e dos acréscimos de que trata o § 1º será proporcional ao descumprimento dos compromissos assumidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º No caso de a empresa possuir mais de uma habilitação ao Inovar-Auto, o cancelamento de uma delas não afetará as demais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Fica sujeita à multa de 10% (dez por cento) do valor do crédito presumido apurado a empresa que descumprir obrigação acessória relativa ao Inovar-Auto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O percentual de que trata o <I>caput</I> deverá ser aplicado sobre o valor do crédito presumido referente ao mês anterior ao da verificação da infração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;O crédito presumido de IPI de que trata o art. 41 não exclui os benefícios previstos nos arts. 11-A e 11-B da Lei nº 9.440, de 14 de março de 1997, e no art. 1º da Lei nº 9.826, de 23 de agosto de 1999, e o regime especial de tributação de que trata o art. 56 da Medida Provisória nº 2.158-35, de 24 de agosto de 2001, nos termos, limites e condições estabelecidos em ato do Poder Executivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;A importação de mercadoria estrangeira não autorizada com fundamento na legislação de proteção ao meio ambiente, saúde, segurança pública ou em atendimento a controles sanitários, fitossanitários e zoossanitários obriga o importador, imediatamente após a ciência de que não será autorizada a importação, a destruir ou a devolver diretamente a mercadoria ao local onde originalmente foi embarcada, quando sua destruição no País não for autorizada pelo órgão competente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A obrigação referida no <I>caput</I> será do transportador internacional da mercadoria importada, na hipótese de mercadoria acobertada por conhecimento de carga à ordem ou consignada a pessoa inexistente ou com domicílio desconhecido no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No caso de descumprimento da obrigação de destruir ou de devolver a mercadoria a que se referem o <I>caput</I> e o § 1º, a autoridade aduaneira, no prazo de 5 (cinco) dias da ciência de que não será autorizada a importação: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - determinará ao depositário ou ao operador portuário, a quem tenha sido confiada a mercadoria, que proceda à sua devolução ou destruição, ouvido o órgão competente a que se refere o <I>caput</I>, em 5 (cinco) dias úteis; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - aplicará ao responsável, importador ou transportador internacional, multa no valor de R$ 10,00 (dez reais) por quilograma. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Na hipótese a que se refere o § 2º, o importador ou o transportador internacional, conforme o caso, fica obrigado a proceder à indenização civil do depositário ou operador portuário que devolver ao exterior ou destruir a mercadoria, pelas despesas incorridas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Na hipótese de autorização para destruição da mercadoria em território brasileiro, aplica-se ainda ao responsável, importador ou transportador internacional, multa no valor de R$ 10,00 (dez reais) por quilograma. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º No caso de extravio das mercadorias, será aplicada ao responsável multa no valor de R$ 30,00 (trinta reais) por quilograma. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Na hipótese de descumprimento da determinação prevista no inciso I do § 2º pelo depositário ou operador portuário, aplica-se a sanção administrativa de suspensão da autorização para movimentação de cargas no recinto ou local, cabendo recurso com efeito meramente devolutivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º A suspensão a que se refere o § 6º produzirá efeitos até que seja efetuada a devolução ou destruição da mercadoria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º Na hipótese de não ser destruída ou devolvida a mercadoria, no prazo de 60 (sessenta) dias da ciência a que se refere o § 2º ou da determinação a que se refere o inciso I do § 2º: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - será aplicada ao responsável pelo descumprimento da obrigação ou determinação multa no valor de R$ 20,00 (vinte reais) por quilograma, sem prejuízo das penalidades previstas nos §§ 2º, 4º e 6º; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - poderá a devolução ou destruição ser efetuada de ofício, recaindo todos os custos sobre o responsável pela infração, importador ou transportador internacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º O representante legal no País do transportador estrangeiro sujeita-se às obrigações previstas nos §§ 1º e 3º e responderá pelas multas e pelos ressarcimentos previstos neste artigo, quando lhe forem atribuídos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 10. A apuração das infrações para efeito de aplicação das penalidades previstas neste artigo terá início com a lavratura do correspondente auto de infração por auditor-fiscal da Receita Federal do Brasil, observados o rito e as competências para julgamento estabelecidos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - no Decreto nº 70.235, de 6 de março de 1972, no caso das multas; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - no art. 76 da Lei nº 10.833, de 29 de dezembro de 2003, no caso da sanção administrativa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 11. O disposto neste artigo não prejudica a aplicação de outras penalidades, nem a representação fiscal para fins penais, quando cabível. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 12. O Poder Executivo poderá regulamentar o disposto neste artigo e estabelecer casos em que a devolução ou destruição de ofício deva ocorrer antes do prazo a que se refere o § 8º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 13. Para efeitos do disposto no § 9º, fica estabelecido que os agentes marítimos não se equiparam ao representante legal no País do transportador internacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;O art. 29 do Decreto-Lei nº 1.455, de 7 de abril de 1976, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 29.&nbsp;............................................................................................ <BR>.......................................................................................................... <BR><BR>§ 1º-A. (VETADO). <BR><BR>§ 1º-B. (VETADO). <BR><BR>§ 13. A alienação mediante licitação prevista na alínea <EM>a</EM> do inciso I do <I>caput</I> será realizada mediante leilão, preferencialmente por meio eletrônico." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;Os arts. 12, 18, 19 e 22 da Lei nº 9.430, de 27 de dezembro de 1996, passam a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 12.&nbsp;............................................................................................. <BR>.......................................................................................................... <BR><BR>§ 2º Nas operações de crédito realizadas por instituições financeiras autorizadas a funcionar pelo Banco Central do Brasil, nos casos de renegociação de dívida, o reconhecimento da receita para fins de incidência de imposto sobre a renda e da Contribuição Social sobre o Lucro Líquido ocorrerá no momento do efetivo recebimento do crédito."(NR)</DIR>
+<DIR>"Art. 18.&nbsp;.......................................................................................... <BR><BR>I - Método dos Preços Independentes Comparados - PIC: definido como a média aritmética ponderada dos preços de bens, serviços ou direitos, idênticos ou similares, apurados no mercado brasileiro ou de outros países, em operações de compra e venda empreendidas pela própria interessada ou por terceiros, em condições de pagamento semelhantes; <BR><BR>II - Método do Preço de Revenda menos Lucro - PRL: definido como a média aritmética ponderada dos preços de venda, no País, dos bens, direitos ou serviços importados, em condições de pagamento semelhantes e calculados conforme a metodologia a seguir: </DIR>
+<DIR><EM>a) </EM>preço líquido de venda: a média aritmética ponderada dos preços de venda do bem, direito ou serviço produzido, diminuídos dos descontos incondicionais concedidos, dos impostos e contribuições sobre as vendas e das comissões e corretagens pagas; <BR><EM>b) </EM>percentual de participação dos bens, direitos ou serviços importados no custo total do bem, direito ou serviço vendido: a relação percentual entre o custo médio ponderado do bem, direito ou serviço importado e o custo total médio ponderado do bem, direito ou serviço vendido, calculado em conformidade com a planilha de custos da empresa;<BR><EM>c) </EM>participação dos bens, direitos ou serviços importados no preço de venda do bem, direito ou serviço vendido: aplicação do percentual de participação do bem, direito ou serviço importado no custo total, apurada conforme a alínea <EM>b</EM>, sobre o preço líquido de venda calculado de acordo com a alínea <EM>a</EM>;<BR><EM>d) </EM>margem de lucro: a aplicação dos percentuais previstos no § 12, conforme setor econômico da pessoa jurídica sujeita ao controle de preços de transferência, sobre a participação do bem, direito ou serviço importado no preço de venda do bem, direito ou serviço vendido, calculado de acordo com a alínea <EM>c</EM>; e </DIR>
+<DIR>1. (revogado); <BR>2. (revogado);</DIR>
+<DIR><EM>e) </EM>preço parâmetro: a diferença entre o valor da participação do bem, direito ou serviço importado no preço de venda do bem, direito ou serviço vendido, calculado conforme a alínea <EM>c;</EM> e a "margem de lucro", calculada de acordo com a alínea <EM>d</EM>; e<BR><BR>III - Método do Custo de Produção mais Lucro - CPL: definido como o custo médio ponderado de produção de bens, serviços ou direitos, idênticos ou similares, acrescido dos impostos e taxas cobrados na exportação no país onde tiverem sido originariamente produzidos, e de margem de lucro de 20% (vinte por cento), calculada sobre o custo apurado.&nbsp;<BR><BR>§ 1º As médias aritméticas ponderadas dos preços de que tratam os incisos I e II do <I>caput</I> e o custo médio ponderado de produção de que trata o inciso III do <I>caput</I> serão calculados considerando- se os preços praticados e os custos incorridos durante todo o período de apuração da base de cálculo do imposto sobre a renda a que se referirem os custos, despesas ou encargos. <BR>..........................................................................................................&nbsp;<BR><BR>§ 6º Não integram o custo, para efeito do cálculo disposto na alínea <EM>b</EM> do inciso II do <I>caput</I>, o valor do frete e do seguro, cujo ônus tenha sido do importador, desde que tenham sido contratados com pessoas:&nbsp;<BR><BR>I - não vinculadas; e&nbsp;<BR><BR>II - que não sejam residentes ou domiciliadas em países ou dependências de tributação favorecida, ou que não estejam amparados por regimes fiscais privilegiados.&nbsp;<BR><BR>§ 6º-A. Não integram o custo, para efeito do cálculo disposto na alínea <EM>b</EM> do inciso II do <I>caput</I>, os tributos incidentes na importação e os gastos no desembaraço aduaneiro. <BR>..........................................................................................................&nbsp;<BR><BR>§ 10. Relativamente ao método previsto no inciso I do <I>caput</I>, as operações utilizadas para fins de cálculo devem:&nbsp;<BR><BR>I - representar, ao menos, 5% (cinco por cento) do valor das operações de importação sujeitas ao controle de preços de transferência, empreendidas pela pessoa jurídica, no período de apuração, quanto ao tipo de bem, direito ou serviço importado, na hipótese em que os dados utilizados para fins de cálculo digam respeito às suas próprias operações; e&nbsp;<BR><BR>II - corresponder a preços independentes realizados no mesmo ano-calendário das respectivas operações de importações sujeitas ao controle de preços de transferência.&nbsp;<BR><BR>§ 11. Na hipótese do inciso II do § 10, não havendo preço independente no ano-calendário da importação, poderá ser utilizado preço independente relativo à operação efetuada no ano-calendário imediatamente anterior ao da importação, ajustado pela variação cambial do período.&nbsp;<BR><BR>§ 12. As margens a que se refere a alínea <EM>d</EM> do inciso II do <I>caput</I> serão aplicadas de acordo com o setor da atividade econômica da pessoa jurídica brasileira sujeita aos controles de preços de transferência e incidirão, independentemente de submissão a processo produtivo ou não no Brasil, nos seguintes percentuais:&nbsp;<BR><BR>I - 40% (quarenta por cento), para os setores de: </DIR>
+<DIR><EM>a) </EM>produtos farmoquímicos e farmacêuticos;<BR><EM>b) </EM>produtos do fumo;<BR><EM>c) </EM>equipamentos e instrumentos ópticos, fotográficos e cinematográficos;<BR><EM>d) </EM>máquinas, aparelhos e equipamentos para uso odontomédico- hospitalar;<BR><EM>e) </EM>extração de petróleo e gás natural; e<EM>&nbsp;<BR>f) </EM>produtos derivados do petróleo;<BR></DIR>
+<DIR>II - 30% (trinta por cento) para os setores de:<BR><BR><EM>a) </EM>produtos químicos;<BR><EM>b) </EM>vidros e de produtos do vidro;<BR><EM>c) </EM>celulose, papel e produtos de papel; e<BR><EM>d) </EM>metalurgia; e<BR><BR>III - 20% (vinte por cento) para os demais setores.&nbsp;<BR><BR>§ 13. Na hipótese em que a pessoa jurídica desenvolva atividades enquadradas em mais de um inciso do § 12, deverá ser adotada para fins de cálculo do PRL a margem correspondente ao setor da atividade para o qual o bem importado tenha sido destinado, observado o disposto no § 14.&nbsp;<BR><BR>§ 14. Na hipótese de um mesmo bem importado ser revendido e aplicado na produção de um ou mais produtos, ou na hipótese de o bem importado ser submetido a diferentes processos produtivos no Brasil, o preço parâmetro final será a média ponderada dos valores encontrados mediante a aplicação do método PRL, de acordo com suas respectivas destinações.&nbsp;<BR><BR>§ 15. No caso de ser utilizado o método PRL, o preço parâmetro deverá ser apurado considerando-se os preços de venda no período em que os produtos forem baixados dos estoques para resultado.&nbsp;<BR><BR>§ 16. Na hipótese de importação de <EM>commodities</EM> sujeitas à cotação em bolsas de mercadorias e futuros internacionalmente reconhecidas, deverá ser utilizado o Método do Preço sob Cotação na Importação - PCI definido no art. 18-A. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </DIR>
+<DIR>§ 17. Na hipótese do inciso I do § 10, não havendo operações que representem 5% (cinco por cento) do valor das importações sujeitas ao controle de preços de transferência no período de apuração, o percentual poderá ser complementado com as importações efetuadas no ano-calendário imediatamente anterior, ajustado pela variação cambial do período." <BR><BR>"Art. 19.&nbsp;............................................................................................ <BR>.......................................................................................................... <BR><BR>§ 9º Na hipótese de exportação de <EM>commodities</EM> sujeitas à cotação em bolsas de mercadorias e futuros internacionalmente reconhecidas, deverá ser utilizado o Método do Preço sob Cotação na Exportação - PECEX, definido no art. 19-A." (NR)</DIR>
+<DIR>"Art. 22.&nbsp;Os juros pagos ou creditados a pessoa vinculada, quando decorrentes de contrato de mútuo, somente serão dedutíveis para fins de determinação do lucro real até o montante que não exceda ao valor calculado com base na taxa <EM>London lnterbank Offered Rate - LIBOR</EM>, para depósitos em dólares dos Estados Unidos da América pelo prazo de 6 (seis) meses, acrescida de 3% (três por cento) anuais a título de spread, proporcionalizados em função do período a que se referirem os juros. .......................................................................................................... <BR><BR>§ 5º O Ministro de Estado da Fazenda poderá reduzir o percentual de <EM>spread </EM>, bem como restabelecê-lo até o valor fixado no <I>caput</I>." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;Os arts. 20 e 28 da Lei nº 9.430, de 27 de dezembro de 1996, passam a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 20.&nbsp;O Ministro de Estado da Fazenda poderá, em circunstâncias justificadas, alterar os percentuais de que tratam os arts. 18 e 19, de ofício ou mediante requerimento conforme o § 2º do art. 21." (NR)</DIR>
+<DIR>"Art. 28.&nbsp;Aplicam-se à apuração da base de cálculo e ao pagamento da contribuição social sobre o lucro líquido as normas da legislação vigente e as correspondentes aos arts. 1º a 3º, 5º a 14, 17 a 24-B, 26, 55 e 71." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;A Lei nº 9.430, de 27 de dezembro de 1996, passa a vigorar acrescida dos arts. 18-A e 19-A: <BR><BR>
+<DIR>"Art. 18-A.&nbsp;O Método do Preço sob Cotação na Importação - PCI é definido como os valores médios diários da cotação de bens ou direitos sujeitos a preços públicos em bolsas de mercadorias e futuros internacionalmente reconhecidas. <BR><BR>§ 1º Os preços dos bens importados e declarados por pessoas físicas ou jurídicas residentes ou domiciliadas no País serão comparados com os preços de cotação desses bens, constantes em bolsas de mercadorias e futuros internacionalmente reconhecidas, ajustados para mais ou para menos do prêmio médio de mercado, na data da transação, nos casos de importação de: <BR><BR>I - pessoas físicas ou jurídicas vinculadas; <BR><BR>II - residentes ou domiciliadas em países ou dependências com tributação favorecida; ou <BR><BR>III - pessoas físicas ou jurídicas beneficiadas por regimes fiscais privilegiados. <BR><BR>§ 2º Não havendo cotação disponível para o dia da transação, deverá ser utilizada a última cotação conhecida. <BR><BR>§ 3º Na hipótese de ausência de identificação da data da transação, a conversão será efetuada considerando-se a data do registro da declaração de importação de mercadoria. <BR><BR>§ 4º Na hipótese de não haver cotação dos bens em bolsas de mercadorias e futuros internacionalmente reconhecidas, os preços dos bens importados a que se refere o § 1º poderão ser comparados com os obtidos a partir de fontes de dados independentes fornecidas por instituições de pesquisa setoriais internacionalmente reconhecidas. <BR><BR>§ 5º A Secretaria da Receita Federal do Brasil do Ministério da Fazenda disciplinará a aplicação do disposto neste artigo, inclusive a divulgação das bolsas de mercadorias e futuros e das instituições de pesquisas setoriais internacionalmente reconhecidas para cotação de preços."</DIR>
+<DIR>"Art. 19-A.&nbsp;O Método do Preço sob Cotação na Exportação - PECEX é definido como os valores médios diários da cotação de bens ou direitos sujeitos a preços públicos em bolsas de mercadorias e futuros internacionalmente reconhecidas. <BR><BR>§ 1º Os preços dos bens exportados e declarados por pessoas físicas ou jurídicas residentes ou domiciliadas no País serão comparados com os preços de cotação dos bens, constantes em bolsas de mercadorias e futuros internacionalmente reconhecidas, ajustados para mais ou para menos do prêmio médio de mercado, na data da transação, nos casos de exportação para: <BR><BR>I - pessoas físicas ou jurídicas vinculadas; <BR><BR>II - residentes ou domiciliadas em países ou dependências com tributação favorecida; ou <BR><BR>III - pessoas físicas ou jurídicas beneficiadas por regimes fiscais privilegiados. <BR><BR>§ 2º Não havendo cotação disponível para o dia da transação, deverá ser utilizada a última cotação conhecida. <BR><BR>§ 3º Na hipótese de ausência de identificação da data da transação, a conversão será efetuada considerando-se a data de embarque dos bens exportados. <BR><BR>§ 4º As receitas auferidas nas operações de que trata o <I>caput</I> ficam sujeitas ao arbitramento de preços de transferência, não se aplicando o percentual de 90% (noventa por cento) previsto no <I>caput</I> do art. 19. <BR><BR>§ 5º Na hipótese de não haver cotação dos bens em bolsas de mercadorias e futuros internacionalmente reconhecidas, os preços dos bens exportados a que se refere o § 1º poderão ser comparados: <BR><BR>I - com os obtidos a partir de fontes de dados independentes fornecidas por instituições de pesquisa setoriais internacionalmente reconhecidas; ou <BR><BR>II - com os preços definidos por agências ou órgãos reguladores e publicados no Diário Oficial da União. <BR><BR>§ 6º A Secretaria da Receita Federal do Brasil do Ministério da Fazenda disciplinará o disposto neste artigo, inclusive a divulgação das bolsas de mercadorias e futuros e das instituições de pesquisas setoriais internacionalmente reconhecidas para cotação de preços. <BR><BR>§ 7º (VETADO)."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;A Lei nº 9.430, de 27 de dezembro de 1996, passa a vigorar acrescida dos seguintes arts. 20-A e 20-B: <BR><BR>
+<DIR>"Art. 20-A.&nbsp;A partir do ano-calendário de 2012, a opção por um dos métodos previstos nos arts. 18 e 19 será efetuada para o ano-calendário e não poderá ser alterada pelo contribuinte uma vez iniciado o procedimento fiscal, salvo quando, em seu curso, o método ou algum de seus critérios de cálculo venha a ser desqualificado pela fiscalização, situação esta em que deverá ser intimado o sujeito passivo para, no prazo de 30 (trinta) dias, apresentar novo cálculo de acordo com qualquer outro método previsto na legislação. <BR><BR>§ 1º A fiscalização deverá motivar o ato caso desqualifique o método eleito pela pessoa jurídica. <BR><BR>§ 2º A autoridade fiscal responsável pela verificação poderá determinar o preço parâmetro, com base nos documentos de que dispuser, e aplicar um dos métodos previstos nos arts. 18 e 19, quando o sujeito passivo, após decorrido o prazo de que trata o <I>caput</I>: <BR><BR>I - não apresentar os documentos que deem suporte à determinação do preço praticado nem às respectivas memórias de cálculo para apuração do preço parâmetro, segundo o método escolhido; <BR><BR>II - apresentar documentos imprestáveis ou insuficientes para demonstrar a correção do cálculo do preço parâmetro pelo método escolhido; ou <BR><BR>III - deixar de oferecer quaisquer elementos úteis à verificação dos cálculos para apuração do preço parâmetro, pelo método escolhido, quando solicitados pela autoridade fiscal. <BR><BR>§ 3º A Secretaria da Receita Federal do Brasil do Ministério da Fazenda definirá o prazo e a forma de opção de que trata o <I>caput</I>."</DIR>
+<DIR>"Art. 20-B.&nbsp;A utilização do método de cálculo de preço parâmetro, de que tratam os arts. 18 e 19, deve ser consistente por bem, serviço ou direito, para todo o ano-calendário."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;A pessoa jurídica poderá optar pela aplicação das disposições contidas nos arts. 48 e 50 desta Lei para fins de aplicação das regras de preços de transferência para o ano-calendário de 2012. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A opção será irretratável e acarretará a observância de todas as alterações trazidas pelos arts. 48 e 50 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A Secretaria da Receita Federal do Brasil do Ministério da Fazenda definirá a forma, o prazo e as condições de opção de que trata o <I>caput</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;Os arts. 8º e 28 da Lei nº 10.865, de 30 de abril de 2004, passam a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 8º&nbsp;............................................................................................. <BR>.......................................................................................................... <BR><BR>§ 15. Na importação de etano, propano e butano, destinados à produção de eteno e propeno, de nafta petroquímica e de condensado destinado a centrais petroquímicas, quando efetuada por centrais petroquímicas, as alíquotas são de: <BR>........................................................................................................... <BR><BR>§ 21. A alíquota de que trata o inciso II do <I>caput</I> é acrescida de um ponto percentual, na hipótese de importação dos bens classificados na Tipi, aprovada pelo Decreto nº 7.660, de 23 de dezembro de 2011, relacionados no Anexo da Lei nº 12.546, de 14 de dezembro de 2011. <BR>.......................................................................................................... <BR><BR>§ 23. Aplica-se ao condensado destinado a centrais petroquímicas o disposto nos arts. 56 e 57 da Lei nº 11.196, de 21 de novembro de 2005. <BR><BR>§ 24. (VETADO)." (NR)</DIR>
+<DIR>"Art. 28.&nbsp;............................................................................................ <BR>.......................................................................................................... <BR><BR>XXXVI - (VETADO). <BR>..............................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;O art. 14 da Lei nº 11.774, de 17 de setembro de 2008, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 14.&nbsp;............................................................................................ <BR>.......................................................................................................... <BR><BR>§ 5º O disposto neste artigo aplica-se também a empresas que prestam serviços de <EM>call center</EM> e àquelas que exercem atividades de concepção, desenvolvimento ou projeto de circuitos integrados. <BR>..............................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;A Lei nº 12.546, de 14 de dezembro de 2011, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 7º&nbsp;Até 31 de dezembro de 2014, contribuirão sobre o valor da receita bruta, excluídas as vendas canceladas e os descontos incondicionais concedidos, em substituição às contribuições previstas nos incisos I e III do art. 22 da Lei nº 8.212, de 24 de julho de 1991, à alíquota de 2% (dois por cento): <BR><BR>I - as empresas que prestam os serviços referidos nos §§ 4º e 5º do art. 14 da Lei nº 11.774, de 17 de setembro de 2008; <BR><BR>II - as empresas do setor hoteleiro enquadradas na subclasse 5510-8/01 da Classificação Nacional de Atividades Econômicas - CNAE 2.0; <BR><BR>III - as empresas de transporte rodoviário coletivo de passageiros, com itinerário fixo, municipal, intermunicipal em região metropolitana, intermunicipal, interestadual e internacional enquadradas nas classes 4921-3 e 4922-1 da CNAE 2.0. <BR>.......................................................................................................... <BR><BR>§ 2º O disposto neste artigo não se aplica a empresas que exerçam as atividades de representante, distribuidor ou revendedor de programas de computador, cuja receita bruta decorrente dessas atividades seja igual ou superior a 95% (noventa e cinco por cento) da receita bruta total. <BR>.......................................................................................................... <BR><BR>§ 6º No caso de contratação de empresas para a execução dos serviços referidos no <I>caput</I>, mediante cessão de mão de obra, na forma definida pelo art. 31 da Lei nº 8.212, de 24 de julho de 1991, a empresa contratante deverá reter 3,5% (três inteiros e cinco décimos por cento) do valor bruto da nota fiscal ou fatura de prestação de serviços." (NR)</DIR>
+<DIR>"Art. 8º&nbsp;Até 31 de dezembro de 2014, contribuirão sobre o valor da receita bruta, excluídas as vendas canceladas e os descontos incondicionais concedidos, à alíquota de 1% (um por cento), em substituição às contribuições previstas nos incisos I e III do art. 22 da Lei nº 8.212, de 24 de julho de 1991, as empresas que fabricam os produtos classificados na Tipi, aprovada pelo Decreto nº 7.660, de 23 de dezembro de 2011, nos códigos referidos no Anexo desta Lei. <BR><BR>I - (revogado); <BR><BR>II - (revogado); <BR><BR>III - (revogado); <BR><BR>IV - (revogado); <BR><BR>V - (revogado). <BR><BR>§ 1º O disposto no <I>caput</I>: <BR><BR>I - aplica-se apenas em relação aos produtos industrializados pela empresa; <BR><BR>II - não se aplica: </DIR>
+<DIR><EM>a) </EM>a empresas que se dediquem a outras atividades, além das previstas no <EM><I>caput</I></EM>, cuja receita bruta decorrente dessas outras atividades seja igual ou superior a 95% (noventa e cinco por cento) da receita bruta total; e<BR><EM>b) </EM>aos fabricantes de automóveis, comerciais leves (camionetas, picapes, utilitários, vans e furgões), caminhões e chassis com motor para caminhões, chassis com motor para ônibus, caminhões- tratores, tratores agrícolas e colheitadeiras agrícolas autopropelidas.<BR><BR>§ 2º Para efeito do inciso I do § 1º, devem ser considerados os conceitos de industrialização e de industrialização por encomenda previstos na legislação do Imposto sobre Produtos Industrializados - IPI. <BR><BR>§ 3º O disposto no <I>caput</I> também se aplica às empresas: <BR><BR>I - de manutenção e reparação de aeronaves, motores, componentes e equipamentos correlatos; <BR><BR>II - de transporte aéreo de carga; <BR><BR>III - de transporte aéreo de passageiros regular; <BR><BR>IV - de transporte marítimo de carga na navegação de cabotagem; <BR><BR>V - de transporte marítimo de passageiros na navegação de cabotagem; <BR><BR>VI - de transporte marítimo de carga na navegação de longo curso; <BR><BR>VII - de transporte marítimo de passageiros na navegação de longo curso; <BR><BR>VIII - de transporte por navegação interior de carga; <BR><BR>IX - de transporte por navegação interior de passageiros em linhas regulares; e <BR><BR>X - de navegação de apoio marítimo e de apoio portuário. <BR><BR>§ 4º A partir de 1º de janeiro de 2013, ficam incluídos no Anexo referido no <I>caput</I> os produtos classificados nos seguintes códigos da Tipi: <BR><BR>I - 9503.00.10, 9503.00.21, 9503.00.22, 9503.00.29, 9503.00.31, 9503.00.39, 9503.00.40, 9503.00.50, 9503.00.60, 9503.00.70, 9503.00.80, 9503.00.91, 9503.00.97, 9503.00.98, 9503.00.99; <BR><BR>II - (VETADO)." (NR)</DIR>
+<DIR>"Art. 9º&nbsp;.............................................................................................<BR>.......................................................................................................... <BR><BR>VI - (VETADO). <BR><BR>§ 1º No caso de empresas que se dedicam a outras atividades além das previstas nos arts. 7º e 8º, até 31 de dezembro de 2014, o cálculo da contribuição obedecerá: <BR><BR>I - ao disposto no <I>caput</I> desses artigos quanto à parcela da receita bruta correspondente às atividades neles referidas; e <BR><BR>II - ao disposto no art. 22 da Lei nº 8.212, de 24 de julho de 1991, reduzindo-se o valor da contribuição a recolher ao percentual resultante da razão entre a receita bruta de atividades não relacionadas aos serviços de que trata o <I>caput</I> do art. 7º ou à fabricação dos produtos de que trata o <I>caput</I> do art. 8º e a receita bruta total, apuradas no mês. <BR><BR>§ 2º A compensação de que trata o inciso IV do <I>caput</I> será feita na forma regulamentada em ato conjunto da Secretaria da Receita Federal do Brasil, Secretaria do Tesouro Nacional do Ministério da Fazenda, Instituto Nacional do Seguro Social - INSS e Ministério da Previdência Social, mediante transferências do Orçamento Fiscal. <BR><BR>§ 3º Relativamente aos períodos anteriores à tributação da empresa nas formas instituídas pelos arts. 7º e 8º desta Lei, mantém-se a incidência das contribuições previstas no art. 22 da Lei nº 8.212, de 24 de julho de 1991, aplicada de forma proporcional sobre o 13º (décimo terceiro) salário. <BR><BR>§ 4º Para fins de cálculo da razão a que se refere o inciso II do § 1º, aplicada ao 13º (décimo terceiro) salário, será considerada a receita bruta acumulada nos 12 (doze) meses anteriores ao mês de dezembro de cada ano-calendário. <BR><BR>§ 5º O disposto no § 1º aplica-se às empresas que se dediquem a outras atividades, além das previstas nos arts. 7º e 8º, somente se a receita bruta decorrente de outras atividades for superior a 5% (cinco por cento) da receita bruta total. <BR><BR>§ 6º Não ultrapassado o limite previsto no § 5º, a contribuição a que se refere o <I>caput</I> dos arts. 7º e 8º será calculada sobre a receita bruta total auferida no mês. <BR><BR>§ 7º Para efeito da determinação da base de cálculo, podem ser excluídos da receita bruta: <BR><BR>I - as vendas canceladas e os descontos incondicionais concedidos; <BR><BR>II - (VETADO); <BR><BR>III - o Imposto sobre Produtos Industrializados - IPI, se incluído na receita bruta; e <BR><BR>IV - o Imposto sobre Operações relativas à Circulação de Mercadorias e sobre Prestações de Serviços de Transporte Interestadual e Intermunicipal e de Comunicação - ICMS, quando cobrado pelo vendedor dos bens ou prestador dos serviços na condição de substituto tributário. <BR><BR>§ 8º (VETADO)." (NR)</DIR>
+<DIR>"Art. 10.&nbsp;................................................................................... <BR><BR><I>Parágrafo único. </I>Os setores econômicos referidos nos arts. 7º e 8º serão representados na comissão tripartite de que trata o <I>caput</I>." (NR)</DIR>
+<DIR>"Art. 47.&nbsp;................................................................................... <BR><BR>§ 1º O disposto no <I>caput</I> deste artigo aplica-se também às aquisições de matérias-primas de origem vegetal, de pessoa jurídica que exerça atividade agropecuária, de cooperativa de produção agropecuária ou de cerealista que exerça cumulativamente as atividades de limpar, padronizar, armazenar e comercializar a matéria-prima destinada à produção de biodiesel. <BR>..............................................................................................." (NR)</DIR>
+<DIR>"Art. 47-A.&nbsp;Fica suspensa a incidência da Contribuição para o PIS/Pasep e da Cofins sobre as receitas decorrentes da venda de matéria-prima <EM>in natura</EM> de origem vegetal, destinada à produção de biodiesel, quando efetuada por pessoa jurídica ou cooperativa referida no § 1º do art. 47 desta Lei."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;A Lei nº 12.546, de 14 de dezembro de 2011, passa a vigorar acrescida do Anexo desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;A Lei nº 11.484, de 31 de maio de 2007, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 2º&nbsp;É beneficiária do Padis a pessoa jurídica que realize investimento em Pesquisa e Desenvolvimento - P&amp;D na forma do art. 6º e que exerça isoladamente ou em conjunto, em relação a: <BR><BR>I - dispositivos eletrônicos semicondutores classificados nas posições 85.41 e 85.42 da Nomenclatura Comum do Mercosul - NCM, as atividades de: <BR>.......................................................................................................... <BR><BR><EM>c) </EM>corte, encapsulamento e teste; <BR>..........................................................................................................<EM>&nbsp;</EM><BR><BR>III - insumos e equipamentos dedicados e destinados à fabricação dos produtos descritos nos incisos I e II do <I>caput</I>, relacionados em ato do Poder Executivo e fabricados conforme Processo Produtivo Básico estabelecido pelos Ministérios do Desenvolvimento, Indústria e Comércio Exterior e da Ciência, Tecnologia e Inovação. <BR>.......................................................................................................... <BR><BR>§ 4º O investimento em pesquisa e desenvolvimento referido no <I>caput</I> e o exercício das atividades de que tratam os incisos I a III do <I>caput</I> devem ser efetuados de acordo com projetos aprovados na forma do art. 5º. <BR><BR>§ 5º O disposto no inciso I do <I>caput</I> alcança os dispositivos eletrônicos semicondutores, montados e encapsulados diretamente sob placa de circuito impresso - chip on board, classificada no código 8523.51 da Tabela de Incidência do Imposto sobre Produtos Industrializados - TIPI." (NR)</DIR>
+<DIR>"Art. 5º&nbsp;Os projetos referidos no § 4º do art. 2º devem ser aprovados em ato conjunto dos Ministros de Estado da Ciência, Tecnologia e Inovação e do Desenvolvimento, Indústria e Comércio Exterior, nos termos e condições estabelecidos pelo Poder Executivo.<BR>..............................................................................................." (NR)</DIR>
+<DIR>"Art. 6º&nbsp;............................................................................................. <BR>.......................................................................................................... <BR><BR>§ 4º O Poder Executivo fixará condições e prazo para alteração do percentual previsto no <I>caput</I>, não inferior a 2% (dois por cento)." (NR)</DIR>
+<DIR>"Art. 65.&nbsp;............................................................................................ <BR>.......................................................................................................... <BR><BR>III - 14 (quatorze) anos, contados da data de aprovação do projeto, no caso dos projetos que cumpram o Processo Produtivo Básico referido no inciso III do <I>caput</I> do art. 2º." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;A etapa de corte prevista na alínea <EM>c</EM> do inciso I do <I>caput</I> do art. 2º da Lei nº 11.484, de 31 de maio de 2007, será obrigatória a partir de 12 (doze) meses após a regulamentação desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;Os arts. 8º e 29 da Lei nº 10.637, de 30 de dezembro de 2002, passam a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 8º&nbsp;.............................................................................................. <BR>.......................................................................................................... <BR><BR>XII - (VETADO)." (NR)</DIR>
+<DIR>"Art. 29.&nbsp;...........................................................................................<BR>.......................................................................................................... <BR><BR>§ 3º Para fins do disposto no inciso II do § 1º, considera-se pessoa jurídica preponderantemente exportadora aquela cuja receita bruta decorrente de exportação para o exterior, no anocalendário imediatamente anterior ao da aquisição, tenha sido superior a 50% (cinquenta por cento) de sua receita bruta total de venda de bens e serviços no mesmo período, após excluídos os impostos e contribuições incidentes sobre a venda.<BR>..............................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;O art. 40 da Lei nº 10.865, de 30 de abril de 2004, passa a vigorar com a seguinte alteração: <BR><BR>
+<DIR>"Art. 40.&nbsp;................................................................................... <BR><BR>§ 1º Para fins do disposto no <I>caput</I>, considera-se pessoa jurídica preponderantemente exportadora aquela cuja receita bruta decorrente de exportação para o exterior, no ano-calendário imediatamente anterior ao da aquisição, houver sido igual ou superior a 50% (cinquenta por cento) de sua receita bruta total de venda de bens e serviços no mesmo período, após excluídos os impostos e contribuições incidentes sobre a venda.<BR>..............................................................................................." (NR)</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;Os arts. 2º e 13 da Lei nº 11.196, de 21 de novembro de 2005, passam a vigorar com as seguintes alterações: </P>
+<DIR>"Art. 2º&nbsp;É beneficiária do Repes a pessoa jurídica que exerça preponderantemente as atividades de desenvolvimento de <EM>software</EM> ou de prestação de serviços de tecnologia da informação e que, por ocasião da sua opção pelo Repes, assuma compromisso de exportação igual ou superior a 50% (cinquenta por cento) de sua receita bruta anual decorrente da venda dos bens e serviços de que trata este artigo. <BR>..............................................................................................." (NR)</DIR>
+<DIR>"Art. 13.&nbsp;É beneficiária do Recap a pessoa jurídica preponderantemente exportadora, assim considerada aquela cuja receita bruta decorrente de exportação para o exterior, no ano-calendário imediatamente anterior à adesão ao Recap, houver sido igual ou superior a 50% (cinquenta por cento) de sua receita bruta total de venda de bens e serviços no período e que assuma compromisso de manter esse percentual de exportação durante o período de 2 (dois) anos-calendário. <BR>.......................................................................................................... <BR><BR>§ 2º A pessoa jurídica em início de atividade ou que não tenha atingido no ano anterior o percentual de receita de exportação exigido no <I>caput</I> deste artigo poderá habilitar-se ao Recap desde que assuma compromisso de auferir, no período de 3 (três) anos-calendário, receita bruta decorrente de exportação para o exterior de, no mínimo, 50% (cinquenta por cento) de sua receita bruta total de venda de bens e serviços. <BR>....................................................................................................." (NR)</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 62.&nbsp;O art. 28 da Lei nº 11.196, de 21 de novembro de 2005, passa a vigorar com as seguintes alterações: </P>
+<DIR>"Art. 28.&nbsp;...................................................................................... <BR><BR>I - de unidades de processamento digital classificadas no código 8471.50.10 da Tabela de Incidência do IPI - TIPI, produzidas no País conforme processo produtivo básico estabelecido pelo Poder Executivo; <BR><BR>II - de máquinas automáticas para processamento de dados, digitais, portáteis, de peso inferior a 3,5Kg (três quilos e meio), com tela (écran) de área superior a 140cm² (cento e quarenta centímetros quadrados), classificadas nos códigos 8471.30.12, 8471.30.19 ou 8471.30.90 da Tipi, produzidas no País conforme processo produtivo básico estabelecido pelo Poder Executivo; <BR><BR>III - de máquinas automáticas de processamento de dados, apresentadas sob a forma de sistemas, do código 8471.49 da Tipi, contendo exclusivamente 1 (uma) unidade de processamento digital, 1 (uma) unidade de saída por vídeo (monitor), 1 (um) teclado (unidade de entrada), 1 (um) mouse (unidade de entrada), classificados, respectivamente, nos códigos 8471.50.10, 8471.60.7, 8471.60.52 e 8471.60.53 da Tipi produzidas no País conforme processo produtivo básico estabelecido pelo Poder Executivo; <BR>.......................................................................................................... <BR><BR>VII - telefones portáteis de redes celulares que possibilitem o acesso à internet em alta velocidade do tipo smartphone classificados na posição 8517.12.31 da Tipi, produzidos no País conforme processo produtivo básico estabelecido pelo Poder Executivo; <BR><BR>VIII - equipamentos terminais de clientes (roteadores digitais) classificados nas posições 8517.62.41 e 8517.62.77 da Tipi, desenvolvidos no País conforme processo produtivo básico estabelecido pelo Poder Executivo. <BR>.......................................................................................................... <BR><BR>§ 4º Nas notas fiscais emitidas pelo produtor, pelo atacadista e pelo varejista relativas à venda dos produtos de que tratam os incisos I, II, III e VI do <I>caput</I>, deverá constar a expressão"Produto fabricado conforme processo produtivo básico", com a especificação do ato que aprova o processo produtivo básico respectivo. <BR><BR>§ 5º As aquisições de máquinas automáticas de processamento de dados, nos termos do inciso III do <I>caput</I>, realizadas por órgãos e entidades da administração pública federal, estadual ou municipal e do Distrito Federal, direta ou indireta, às fundações instituídas e mantidas pelo poder público e às demais organizações sob o controle direto ou indireto da União, dos Estados e dos Municípios ou do Distrito Federal, poderão estar acompanhadas de mais de uma unidade de saída por vídeo (monitor), mais de um teclado (unidade de entrada), e mais de um mouse (unidade de entrada). <BR><BR>§ 6º O disposto no § 5º será regulamentado pelo Poder Executivo, inclusive no que se refere à quantidade de vídeos, teclados e <EM><I>mouses</I> </EM>que poderão ser adquiridos com benefício."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;O art. 2º do Decreto-Lei nº 1.593, de 21 de dezembro de 1977, passa a vigorar com a seguinte redação: </P>
+<DIR>"Art. 2º&nbsp;............................................................................................... <BR>.......................................................................................................... <BR><BR>III - prática de conluio ou fraude, como definidos na Lei nº 4.502, de 30 de novembro de 1964, ou de crime contra a ordem tributária previsto na Lei nº 8.137, de 27 de dezembro de 1990, ou de crime de falsificação de selos de controle tributário previsto no art. 293 do Decreto-Lei nº 2.848, de 7 de dezembro de 1940 - Código Penal, ou de qualquer outra infração cuja tipificação decorra do descumprimento de normas reguladoras da produção, importação e comercialização de cigarros e outros derivados de tabaco, após decisão transitada em julgado. <BR><BR>§ 1º Para os fins de aplicação do disposto no inciso II do <I>caput</I>, deverão ser consideradas as seguintes práticas reiteradas por parte da pessoa jurídica detentora do registro especial: <BR><BR>I - comercialização de cigarros sem a emissão de nota fiscal; <BR><BR>II - não recolhimento ou recolhimento de tributos menor que o devido; <BR><BR>III - omissão ou erro nas declarações de informações exigidas pela Secretaria da Receita Federal do Brasil.<BR>.......................................................................................................... <BR><BR>§ 10. Para fins do disposto no § 1º, considera-se prática reiterada a reincidência das hipóteses ali elencadas, independentemente de ordem ou cumulatividade."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;O Decreto-Lei nº 1.593, de 21 de dezembro de 1977, passa a vigorar acrescido dos arts. 2º-A a 2º-D com a seguinte redação: <BR></P>
+<DIR>"Art. 2º-A.&nbsp;A caracterização das práticas descritas nos incisos II e III do art. 2º, para fins de cancelamento do registro especial, independe da prova de regularidade fiscal da pessoa jurídica perante a Fazenda Nacional."</DIR>
+<DIR>"Art. 2º-B.&nbsp;Fica vedada a concessão de novo registro especial, pelo prazo de 5 (cinco) anos-calendário, à pessoa jurídica que teve registro especial cancelado conforme disposto no art. 2º. <BR><BR><I>Parágrafo único. </I>A vedação de que trata o <I>caput</I> também se aplica à concessão de registro especial a pessoas jurídicas que possuam em seu quadro societário: <BR><BR>I - pessoa física que tenha participado, na qualidade de sócio, diretor, gerente ou administrador, de pessoa jurídica que teve registro especial cancelado conforme disposto no art. 2º; <BR><BR>II - cônjuge, companheiro ou parente em linha reta ou colateral, por consanguinidade ou afinidade, até o terceiro grau, das pessoas físicas mencionadas no inciso I; <BR><BR>III - pessoa jurídica que teve registro especial cancelado conforme disposto no art. 2º."</DIR>
+<DIR>"Art. 2º-C.&nbsp;(VETADO)."</DIR>
+<DIR>"Art. 2º-D.&nbsp;É vedada a produção e importação de marcas de cigarros anteriormente comercializadas por fabricantes ou importadores que tiveram o registro especial cancelado conforme disposto no art. 2º. <BR><BR><I>Parágrafo único. </I>Aplicar-se-á a pena de perdimento aos cigarros produzidos ou importados em desacordo com o disposto no <I>caput</I>."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;Os arts. 1º e 3º da Medida Provisória nº 2.199-14, de 24 de agosto de 2001, passam a vigorar com a seguinte redação: <BR></P>
+<DIR>"Art. 1º&nbsp;Sem prejuízo das demais normas em vigor aplicáveis à matéria, a partir do ano-calendário de 2000, as pessoas jurídicas que tenham projeto protocolizado e aprovado até 31 de dezembro de 2018 para instalação, ampliação, modernização ou diversificação enquadrado em setores da economia considerados, em ato do Poder Executivo, prioritários para o desenvolvimento regional, nas áreas de atuação da Superintendência de Desenvolvimento do Nordeste - SUDENE e da Superintendência de Desenvolvimento da Amazônia - SUDAM, terão direito à redução de 75% (setenta e cinco por cento) do imposto sobre a renda e adicionais calculados com base no lucro da exploração.<BR>..................................................................................................." (NR)</DIR>
+<DIR>"Art. 3º&nbsp;Sem prejuízo das demais normas em vigor sobre a matéria, fica mantido, até 31 de dezembro de 2018, o percentual de 30% (trinta por cento) previsto no inciso I do art. 2º da Lei nº 9.532, de 10 de dezembro de 1997, para aqueles empreendimentos dos setores da economia que venham a ser considerados, em ato do Poder Executivo, prioritários para o desenvolvimento regional."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;Para fins de incidência de tributos federais, inclusive contribuições previdenciárias, ficam submetidas às regras de tributação aplicáveis aos bancos de desenvolvimento as agências de fomento referidas no art. 1º da Medida Provisória nº 2.192-70, de 24 de agosto de 2001. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O disposto no <I>caput</I> aplica-se a partir de 1º de janeiro de 2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As agências de fomento poderão, opcionalmente, submeter- se ao disposto no <I>caput</I> a partir de 1º de janeiro de 2012. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;Os arts. 1º, 2º e 3º da Lei nº 12.431, de 24 de junho de 2011, passam a vigorar com a seguinte redação: </P>
+<DIR>"Art. 1º&nbsp;............................................................................................ <BR><BR>§ 1º .................................................................................................. <BR>.......................................................................................................... <BR><BR>II - vedação à recompra do título ou valor mobiliário pelo emissor ou parte a ele relacionada nos 2 (dois) primeiros anos após a sua emissão e à liquidação antecipada por meio de resgate ou pré-pagamento, salvo na forma a ser regulamentada pelo Conselho Monetário Nacional; <BR>........................................................................................................... <BR><BR>V - comprovação de que o título ou valor mobiliário esteja registrado em sistema de registro devidamente autorizado pelo Banco Central do Brasil ou pela CVM, nas suas respectivas áreas de competência; e <BR><BR>VI - procedimento simplificado que demonstre o compromisso de alocar os recursos captados no pagamento futuro ou no reembolso de gastos, despesas ou dívidas relacionados aos projetos de investimento, inclusive os voltados à pesquisa, desenvolvimento e inovação. </DIR>
+<DIR>§ 1º-A. Para fins do disposto no <I>caput</I>, os certificados de recebíveis imobiliários deverão ser remunerados por taxa de juros prefixada, vinculada a índice de preço ou à Taxa Referencial - TR, vedada a pactuação total ou parcial de taxa de juros pós-fixada, e ainda, cumulativamente, apresentar os seguintes requisitos: <BR><BR>I - prazo médio ponderado superior a 4 (quatro) anos; <BR><BR>II - vedação à recompra dos certificados de recebíveis imobiliários pelo emissor ou parte a ele relacionada e o cedente ou originador nos 2 (dois) primeiros anos após a sua emissão e à liquidação antecipada por meio de resgate ou pré-pagamento, salvo na forma a ser regulamentada pelo Conselho Monetário Nacional; <BR><BR>III - inexistência de compromisso de revenda assumido pelo comprador; <BR><BR>IV - prazo de pagamento periódico de rendimentos, se existente, com intervalos de, no mínimo, 180 (cento e oitenta) dias; <BR><BR>V - comprovação de que os certificados de recebíveis imobiliários estejam registrados em sistema de registro, devidamente autorizado pelo Banco Central do Brasil ou pela CVM, nas respectivas áreas de competência; e <BR><BR>VI - procedimento simplificado que demonstre o compromisso de alocar os recursos captados no pagamento futuro ou no reembolso de gastos, despesas ou dívidas relacionados a projetos de investimento, inclusive os voltados à pesquisa, desenvolvimento e inovação. <BR><BR>§ 1º-B. O procedimento simplificado previsto no inciso VI dos §§ 1º e 1º-A deve demonstrar que os gastos, despesas ou dívidas passíveis de reembolso ocorreram em prazo igual ou inferior a 24 (vinte e quatro) meses da data de encerramento da oferta pública. <BR><BR>§ 2º O Conselho Monetário Nacional definirá a fórmula de cômputo do prazo médio a que se refere o inciso I dos §§ 1º e 1º- A, bem como o procedimento simplificado a que se refere o inciso VI dos §§ 1º e 1º-A.<BR>.......................................................................................................... <BR><BR>§ 4º ................................................................................................... <BR>.......................................................................................................... <BR><BR>II - às cotas de fundos de investimento exclusivos para investidores não residentes que possuam no mínimo 85% (oitenta e cinco por cento) do valor do patrimônio líquido do fundo aplicado em títulos de que trata o <I>caput</I>. <BR><BR>§ 4º-A. O percentual mínimo a que se refere o inciso II poderá ser de, no mínimo, 67% (sessenta e sete por cento) do valor do patrimônio líquido do fundo aplicado em títulos de que trata o <I>caput</I>, nos primeiros 2 (dois) anos a partir da data de encerramento da oferta pública de distribuição de cotas constitutivas do patrimônio inicial do fundo. <BR>.......................................................................................................... <BR><BR>§ 8º Fica sujeito à multa equivalente a 20% (vinte por cento) do valor captado na forma deste artigo não alocado no projeto de investimento, a ser aplicada pela Secretaria da Receita Federal do Brasil - RFB: <BR><BR>I - o emissor dos títulos e valores mobiliários; ou <BR><BR>II - o originador, no caso de certificados de recebíveis imobiliários. <BR><BR>§ 9º Os rendimentos produzidos pelos títulos ou valores mobiliários a que se refere este artigo sujeitam-se à alíquota reduzida de imposto de renda ainda que ocorra a hipótese prevista no § 8º, sem prejuízo da multa nele estabelecida."<BR><BR>&nbsp;"Art. 2º&nbsp;No caso de debêntures emitidas por sociedade de propósito específico, constituída sob a forma de sociedade por ações, para captar recursos com vistas em implementar projetos de investimento na área de infraestrutura, ou de produção econômica intensiva em pesquisa, desenvolvimento e inovação, considerados como prioritários na forma regulamentada pelo Poder Executivo federal, os rendimentos auferidos por pessoas físicas ou jurídicas residentes ou domiciliadas no País sujeitam-se à incidência do imposto sobre a renda, exclusivamente na fonte, às seguintes alíquotas: <BR>.......................................................................................................... <BR><BR>§ 1º O disposto neste artigo aplica-se somente aos ativos que atendam ao disposto nos §§ 1º, 1º-B e 2º do art. 1º, emitidos entre a data da publicação da regulamentação mencionada no § 2º do art. 1º e a data de 31 de dezembro de 2015. </DIR>
+<DIR>§ 1º-A. Fazem jus aos benefícios dispostos no <I>caput</I>, respeitado o disposto no § 1º, as debêntures objeto de distribuição pública, emitidas por concessionária, permissionária ou autorizatária de serviços públicos, constituídas sob a forma de sociedade por ações, para captar recursos com vistas em implementar projetos de investimento na área de infraestrutura, ou de produção econômica intensiva em pesquisa, desenvolvimento e inovação, considerados como prioritários na forma regulamentada pelo Poder Executivo federal.</DIR>
+<DIR>§ 1º-B. As debêntures mencionadas no <I>caput</I> e no § 1º-A poderão ser emitidas por sociedades controladoras das pessoas jurídicas mencionadas neste artigo, desde que constituídas sob a forma de sociedade por ações. <BR>.......................................................................................................... <BR><BR>§ 4º As perdas apuradas nas operações com os ativos a que se refere este artigo, quando realizadas por pessoa jurídica tributada com base no lucro real, não serão dedutíveis na apuração do lucro real. <BR><BR>§ 5º O emissor que deixar de alocar, no todo ou em parte, os recursos captados nos projetos de investimento na área de infraestrutura ou de produção econômica intensiva em pesquisa, desenvolvimento e inovação mencionados neste artigo durante o prazo previsto nos documentos da oferta, fica sujeito à multa equivalente a 20% (vinte por cento) do valor não alocado no projeto de investimento, a ser aplicada pela Secretaria da Receita Federal do Brasil - RFB. <BR><BR>§ 6º O controlador da sociedade de propósito específico criada para implementar o projeto de investimento na forma deste artigo responderá de forma subsidiária com relação ao pagamento da multa estabelecida no § 5º. <BR><BR>§ 7º Os rendimentos produzidos pelos valores mobiliários a que se refere este artigo sujeitam-se à alíquota reduzida de imposto de renda ainda que ocorra a hipótese prevista no § 5º, sem prejuízo da multa nele estabelecida. <BR><BR>§ 8º Para fins do disposto neste artigo, consideram-se rendimentos quaisquer valores que constituam remuneração do capital aplicado, inclusive ganho de capital auferido na alienação." (NR)<BR><BR>"Art. 3º&nbsp;As instituições autorizadas pela Comissão de Valores Mobiliários ao exercício da administração de carteira de títulos e valores mobiliários poderão constituir fundo de investimento, que disponha em seu regulamento que a aplicação de seus recursos nos ativos de que trata o art. 2º não poderá ser inferior a 85% (oitenta e cinco por cento) do valor do patrimônio líquido do fundo. <BR>........................................................................................................... </DIR>
+<DIR>§ 1º-A. O percentual mínimo a que se refere o <I>caput</I> poderá ser de, no mínimo, 67% (sessenta e sete por cento) do valor do patrimônio líquido do fundo aplicado nos ativos nos 2 (dois) primeiros anos a partir da data de encerramento da oferta pública de distribuição de cotas constitutivas do patrimônio inicial do fundo.<BR>..............................................................................................." (NR)</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;O art. 24 da Lei nº 8.666, de 21 de junho de 1993, passa a vigorar com a seguinte redação: <BR></P>
+<DIR>"Art. 24.&nbsp;........................................................................................... <BR>......................................................................................................... <BR><BR>XXXII - na contratação em que houver transferência de tecnologia de produtos estratégicos para o Sistema Único de Saúde - SUS, no âmbito da Lei nº 8.080, de 19 de setembro de 1990, conforme elencados em ato da direção nacional do SUS, inclusive por ocasião da aquisição destes produtos durante as etapas de absorção tecnológica. <BR><BR>§ 1º Os percentuais referidos nos incisos I e II do <I>caput</I> deste artigo serão 20% (vinte por cento) para compras, obras e serviços contratados por consórcios públicos, sociedade de economia mista, empresa pública e por autarquia ou fundação qualificadas, na forma da lei, como Agências Executivas. <BR><BR>§ 2º O limite temporal de criação do órgão ou entidade que integre a administração pública estabelecido no inciso VIII do <I>caput</I> deste artigo não se aplica aos órgãos ou entidades que produzem produtos estratégicos para o SUS, no âmbito da Lei nº 8.080, de 19 de setembro de 1990, conforme elencados em ato da direção nacional do SUS."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76.&nbsp;Ficam reduzidas a 0 (zero) as alíquotas da Contribuição para o PIS/Pasep e da Cofins incidentes sobre a receita decorrente da venda de águas minerais naturais comercializadas em recipientes com capacidade nominal inferior a 10 (dez) litros ou igual ou superior a 10 (dez) litros classificadas no código 2201.10.00 Ex 01 e Ex 02 da Tipi, aprovada pelo Decreto nº 7.660, de 23 de dezembro de 2011. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78.&nbsp;Esta Lei entra em vigor na data de sua publicação, produzindo efeitos:&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - em relação aos arts. 15 a 23, a partir de sua regulamentação, até 31 de dezembro de 2015; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - em relação aos arts. 40 a 44 e 62, a partir de sua regulamentação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os arts. 48 e 50 entram em vigor em 1º de janeiro de 2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os arts. 53 a 56 entram em vigor no 1º (primeiro) dia do 4º (quarto) mês subsequente à data de publicação da Medida Provisória nº 563, de 3 de abril de 2012, produzindo efeitos a partir de sua regulamentação, à exceção: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - da nova redação dada ao § 15 e ao novo § 23 do art. 8º da Lei nº 10.865, de 30 de abril de 2004, que entram em vigor na data de publicação desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - do disposto no inciso III do <I>caput</I> do art. 7º e no § 3º do art. 8º da Lei nº 12.546, de 14 de dezembro de 2011, que entra em vigor em 1º de janeiro de 2013; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - da contribuição sobre o valor da receita bruta relativa às empresas que fabricam os produtos classificados nas posições 2515.11.00, 2515.12.10, 2516.11.00, 2516.12.00, 6801.00.00, 6802.10.00, 6802.21.00, 6802.23.00, 6802.29.00, 6802.91.00, 6802.92.00, 6802.93.10, 6802.93.90, 6802.99.90, 6803.00.00, 8473.30.99, 8504.90.10, 8518.90.90 e 8522.90.20 da Tipi, que entra em vigor no 1º (primeiro) dia do 4º (quarto) mês subsequente à data de publicação desta Lei; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - da contribuição sobre o valor da receita bruta relativa às empresas que fabricam os produtos classificados nas posições 01.03, 02.06, 02.09, 05.04, 05.05, 05.07, 05.10, 05.11, 10.05, 11.06, 12.01, 12.08, 12.13, no Capítulo 15, no Capítulo 16, no Capítulo 19, nas posições 23.01, 23.04, 23.06, 2309.90, 30.02, 30.03, 30.04 da Tipi, que entra em vigor no 1º (primeiro) dia do 4º (quarto) mês subsequente à data de publicação desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 79.&nbsp;Ficam revogados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o § 4º do art. 22 da Lei nº 9.430, de 27 de dezembro de 1996, a partir de 1º de janeiro de 2013; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a partir do 1º (primeiro) dia do 4º (quarto) mês subsequente à data de publicação da Medida Provisória nº 563, de 3 de abril de 2012, ou da data da regulamentação referida no § 2º do art. 78 desta Lei, o que ocorrer depois, os incisos I a VI do § 21 do art. 8º da Lei nº 10.865, de 30 de abril de 2004; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a partir do 1º (primeiro) dia do 4º (quarto) mês subsequente à data de publicação da Medida Provisória nº 563, de 3 de abril de 2012, ou da data da regulamentação referida no § 2º do art. 78 desta Lei, o que ocorrer depois, os §§ 3º e 4º do art. 7º da Lei nº 12.546, de 14 de dezembro de 2011; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - (VETADO). </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 17 de setembro de 2012; 191º da Independência e 124º da República. </P>
+<P>DILMA ROUSSEFF <BR>Alessandro de Oliveira Soares <BR>Antonio de Aguiar Patriota <BR>Nelson Henrique Barbosa Filho <BR>Aloizio Mercadante <BR>Alexandre Rocha Santos Padilha <BR>Fernando Damata Pimentel <BR>Edison Lobão <BR>Paulo Bernardo Silva <BR>Garibaldi Alves Filho <BR>Marta Suplicy <BR>Marco Antonio Raupp <BR>Luís Inácio Lucena Adams <BR>Leônidas Cristino </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 18/09/2012
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 18/9/2012, Página 1 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+
+<!-- JS do portal-tema: necessário para o botão de compartilhamento -->
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/vendor-bundle.js"></script>
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/camara-bundle.js"></script>
+
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

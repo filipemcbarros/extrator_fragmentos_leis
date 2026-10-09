@@ -1,0 +1,909 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 7.087, DE 29 DE DEZEMBRO DE 1982 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre o Instituto de Previdência dos Congressistas - IPC. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 7.087, DE 29 DE DEZEMBRO DE 1982 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-7087-29-dezembro-1982-356722-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-7087-29-dezembro-1982-356722-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-7087-29-dezembro-1982-356722-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-7087-29-dezembro-1982-356722-veto-33987-pl.html">Veto</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=227986">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-7087-29-dezembro-1982-356722-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 7.087, DE 29 DE DEZEMBRO DE 1982</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre o Instituto de Previdência dos Congressistas - IPC. <BR>
+						</p>
+				
+						<div class="texto">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<STRONG>O PRESIDENTE DA REPÚBLICA</STRONG><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER>Capítulo I <BR>Das Características </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;O Instituto de Previdência dos Congressistas - IPC, com personalidade jurídica própria, autonomia administrativa, sede e atuação na Capital da República, passa a reger-se por esta Lei, pelo seu Regimento Básico, planos de ação e demais atos baixados pelos órgãos competentes de sua administração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O IPC funcionará no Edifício do Congresso Nacional. <BR><BR>
+<CENTER>Capítulo II <BR>Da Organização </CENTER><BR><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Da Administração do IPC </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;A administração do lPC será constituída de um Presidente e um Vice-Presidente; e um Conselho Deliberativo de nove membros e igual número de suplentes, integrado por três Senadores e seis Deputados Federais; de um Conselho Consultivo, constituído pelos Presidentes do Senado Federal, da Câmara dos Deputados, do IPC e dos ex-Presidentes do Instituto; e de um Tesoureiro efetivo e dois substitutos. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Da Escolha dos Membros da Administração do IPC </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Compete: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - ao Senado Federal e à Câmara dos Deputados, alternadamente, eleger o Presidente e o Vice-Presidente do IPC; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - à Assembléia Geral, a escolha do Conselho Deliberativo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - ao Conselho Deliberativo, a escolha do Tesoureiro efetivo e de seus substitutos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;A eleição dos componentes da administração do IPC dar-se-á na segunda quinzena do mês de março do primeiro e do terceiro anos de cada Legislatura. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;O mandato dos membros da administração do IPC é de dois anos, permitida a reeleição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Na hipótese da ocorrência de fato impeditivo da realização das eleições dentro dos prazos previstos nesta Lei, ficam automaticamente prorrogados os mandatos do Presidente, do Vice-Presidente, dos Conselheiros e dos Tesoureiros, até que seja possível a realização de novo pleito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Os cargos eletivos serão exercidos sem quaisquer ônus para o IPC. <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Da Presidência e da Vice-Presidência </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;O Presidente, em caso de ausência ou impedimento, será substituído pelo Vice-Presidente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;No caso de falta ou impedimento do Presidente e do Vice-Presidente, a Presidência será exercida pelo membro mais idoso do Conselho Deliberativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O impedimento do Presidente por período superior a noventa dias implicará na vacância do respectivo cargo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No caso de vacância do cargo de Presidente, deverá realizar-se eleição dentro de trinta dias da ocorrência da vaga, cabendo ao Conselho Deliberativo eleger, dentre os seus membros, o substituto para o restante do período. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A eleição de que trata o § 2º deste artigo não será realizada se a vaga ocorrer a menos de três meses do final do mandato, caso em que o membro mais idoso do Conselho Deliberativo assumirá a Presidência, em caráter definitivo, até o final do biênio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Compete ao Presidente do IPC: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - presidir as Assembléias Gerais e as reuniões do Conselho Deliberativo, com voto apenas de desempate; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - dar execução aos atos e negócios da Instituição, deles prestando contas ao Conselho Deliberativo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - administrar o pecúlio instituído pelo Decreto Legislativo nº 96, de 14 de novembro de 1975; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - fornecer ao Conselho Deliberativo e ao Conselho Consultivo todas as informações por eles requeridas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - convocar suplente de Conselheiro no caso de renúncia ou no do impedimento do titular do respectivo colegiado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - administrar o Fundo Assistencial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - requisitar aos Presidentes do Senado Federal e da Câmara dos Deputados os servidores necessários ao funcionamento do Instituto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - representar o IPC em juízo e fora dele. <BR><BR>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Do Conselho Deliberativo </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;As decisões do Conselho Deliberativo serão tomadas pelo voto da maioria dos seus membros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Compete ao Conselho Deliberativo do IPC: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - fiscalizar a administração; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - votar os orçamentos do Instituto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - aprovar as contas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - autorizar o Presidente a fazer operações de crédito, adquirir e alienar bens; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - examinar, e julgar todos os processos referentes aos segurados, seus dependentes, e de admissão no quadro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - julgar os recursos interpostos contra os atos do Presidente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - resolver todos os assuntos de interesse do IPC não afetos à competência do Presidente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - regulamentar o Pecúlio Parlamentar instituído pelo Decreto Legislativo nº 96, de 14 de novembro de 1975; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - arbitrar gratificações de função em favor dos funcionários requisitados, consoante os encargos que lhes forem atribuídos. <BR><BR>
+<CENTER><B>Seção V </CENTER></B>
+<CENTER><B>Do Conselho Consultivo </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;O Conselho Consultivo reunir-se-á, ordinariamente, em conjunto com o Conselho Deliberativo, na última quinzena de cada sessão legislativa, para traçar a programação administrativo-financeira do IPC para o ano subseqüente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Para tratar de assuntos não compreendidos na previsão do art. 13 desta Lei e que não se insiram na competência dos demais órgãos da Administração do IPC, o Conselho Consultivo reunir-se-á em qualquer época, mediante deliberação da maioria de seus membros ou por convocação do Conselho Deliberativo. <BR><BR>
+<CENTER><B>Seção VI </CENTER></B>
+<CENTER><B>Da Tesouraria </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Compete ao Tesoureiro: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a escrituração e a guarda dos livros do IPC; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - assinar, com o Presidente, os cheques, balanços e balancetes do IPC; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - prestar informações sobre a receita e a despesa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - proceder ao pagamento dos pensionistas e dos outros credores, na forma desta Lei. <BR><BR>
+<CENTER><B>Seção VII </CENTER></B>
+<CENTER><B>Da Assembléia Geral </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;&nbsp;Assembléia Geral, constituída pelos segurados do IPC, reunir-se-á, ordinariamente, independentemente de convocação, na última quarta-feira do mês de março para: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - anualmente, tomar conhecimento do relatório do Presidente e deliberar sobre casos omissos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - no primeiro e no terceiro ano de cada legislatura, eleger os membros do Conselho Deliberativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As Assembléias realizar-se-ão no Edifício do Congresso Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Havendo motivo grave e urgente, a Assembléia poderá reunir-se extraordinariamente, em qualquer época convocada pelo Presidente, pelo Conselho Deliberativo, pelo Conselho Consultivo ou por um terço dos segurados. <BR><BR>
+<CENTER><B>Seção VIII </CENTER></B>
+<CENTER><B>Da Infra-estrutura Administrativa do IPC </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Junto à Presidência do IPC funcionarão uma Assessoria e uma Secretaria Executiva, com atribuições e constituição previstas em resolução do Conselho Deliberativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Vedada a admissão de funcionários pelo IPC, para o exercício de funções na Assessoria e Secretaria, os Presidentes do Senado Federal e da Câmara dos Deputados colocarão à disposição do IPC, sem ônus para este, os servidores que lhes forem requisitados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19. O Senado Federal e a Câmara dos Deputados colocarão à disposição do IPC, mediante requisição do seu Presidente, as instalações, o mobiliário e todo o material necessário ao seu funcionamento, bem como os artigos de consumo requisitados pela Secretaria do IPC. <BR><BR>
+<CENTER>Capítulo III <BR>Da Receita do IPC </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;A receita do IPC constituir-se-á das seguintes contribuições e rendas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - contribuição dos segurados, descontada mensalmente em folha, correspondente a: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>10% (dez por cento) dos subsídios dos Congressistas (partes fixa e variável); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>10% (dez por cento) do vencimento efetivo ou salário básico dos servidores; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - contribuição do Senado Federal e da Câmara dos Deputados correspondente a 16% (dezesseis por cento) dos subsídios fixo e variável e das diárias pagas aos Congressistas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - contribuição, dos órgãos aos quais pertençam os segurados facultativos correspondente a 20% (vinte por cento) dos vencimentos efetivos e salários básicos pagos em cada mês aos mesmos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - desconto mensal correspondente a 7% (sete por cento) das pensões pagas a ex-contribuintes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - saldo das diárias descontadas dos Congressistas que faltarem às sessões; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - juros e outras rendas auferidas pelo Instituto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - auxílios e subvenções da União, independentemente de registro do IPC no Conselho Nacional de Serviço Social ou em qualquer outro órgão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As dotações necessárias à execução do disposto nos incisos II e III deste artigo serão incluídas nos orçamentos dos órgãos aos quais estão vinculados os segurados. <BR><BR>
+<CENTER>Capítulo IV <BR>Dos Segurados </CENTER><BR><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Disposições Gerais </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;São segurados obrigatórios do IPC, independentemente de idade e de exame de saúde, os Congressistas e, quando em exercício, os suplentes de Deputado e Senador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;São segurados facultativos do IPC os servidores atualmente integrantes do quadro de filiados e os servidores do Senado Federal e de seus órgãos supervisionados, e os da Câmara dos Deputados, que venham a se inscrever como filiados a partir da data da entrada em vigor desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;O período de carência para concessão de pensão é de oito anos de contribuição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;O segurado obrigatório que, ao término do exercício do mandato, não haja cumprido o período de 8 (oito) anos, consecutivos, ou alternados, e o segurado facultativo que se desligar do órgão ao qual pertença poderão continuar contribuindo mensalmente, com as partes correspondentes ao segurado e ao órgão, até completar o período de carência, devendo estas contribuições integrais sofrer os reajustes proporcionais à majoração do valor base de cálculo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O prazo para habilitação à continuidade da contribuição de carência é de 6 (seis) meses, improrrogável, a contar do dia imediato ao fim do mandato ou exercício de mandato ou do dia do desligamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Ao segurado que desistir de pagar o restante da carência, que cancelar ou tiver cancelada sua inscrição, não serão restituídas as contribuições já feitas, podendo, no entanto, reinscrever-se no IPC. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os que se tornarem segurados mediante reinscrição, inclusive os pensionistas serão considerados para todos os efeitos legais, como se inscritos pela primeira vez no IPC. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O disposto no parágrafo anterior não se aplica aos antigos segurados obrigatórios que venham a ser reinscritos na mesma categoria, que terão as contribuições anteriores consideradas para todos os efeitos legais, desde que satisfeitas as exigências constantes do art. 26 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As contribuições pagas pelos filiados que mudarem de categoria não se comunicarão, garantidos, no entanto, os direitos assegurados nesta Lei em relação a cada uma delas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º No caso de afastamento temporário que não permita desconto em folha, o segurado pagará, mensalmente, sua contribuição e a do órgão a que pertencer, enquanto perdurar o impedimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Perderá a qualidade de segurado aquele que deixar de pagar as contribuições durante seis meses. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Dos Segurados Obrigatórios </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;As contribuições efetuadas a partir da vigência desta Lei, pelo suplente com período de carência quitado anteriormente à entrada em vigor da Lei nº 6.497, de 7 de dezembro de 1977, serão computadas apenas para efeito de cálculo de tempo de mandato, permanecendo como básico, no reajuste, o valor do subsídio fixo da época da concessão da primeira pensão. Complementando, porém, no novo período, um mínimo de quarenta e oito contribuições sobre os subsídios (partes fixa e variável) vigentes na legislatura, terá direito ao reajuste da pensão nos termos do art. 35 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As contribuições efetuadas pelo suplente sem carência quitada serão computadas para efeito de concessão de auxílio-doença e somadas, caso o segurado o requeira, às efetuadas nos termos previstos no art. 24 desta Lei para efeito da aquisição do direito à pensão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;É permitida a averbação, pelos Deputados Federais e Senadores em exercício, de até um mandato estadual ou municipal para efeito de cálculo de pensão dos segurados obrigatórios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os recolhimentos correspondentes aos anos averbados, que poderão ser pagos de uma só vez ou mensalmente, serão calculados em 24% (vinte e quatro por cento) sobre o valor do subsídio federal (partes fixa e variável), vigente durante o período em que se processarem os pagamentos. <BR><BR>
+<CENTER>Capítulo V <BR>Dos Dependentes </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Consideram-se dependentes do segurado, desde que vivam economicamente sob a sua responsabilidade: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a esposa, salvo se houver abandonado o lar sem justo motivo; o marido com mais de 60 (sessenta) anos ou inválido; a companheira mantida há mais de 5 (cinco) anos; os filhos de qualquer condição, menores de 21 (vinte e um) anos ou inválidos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a pessoa designada, que, se do sexo masculino, só poderá ser menor de 21 (vinte e um) anos ou maior de 60 (sessenta) anos ou inválida; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o pai inválido e a mãe; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - os irmãos de qualquer condição, menores de 21 (vinte e um) anos ou inválidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A existência de dependentes de qualquer das classes enumeradas nos incisos deste artigo exclui do direito às prestações os dependentes enumerados nos incisos subseqüentes, ressalvado o disposto no § 3º deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Equiparam-se aos filhos, nas condições estabelecidas no inciso I e mediante declaração escrita do segurado: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>o enteado; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o menor que, por determinação judicial, se ache sob sua guarda; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o menor que se ache sob sua tutela e não possua bens para o próprio sustento e educação. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Inexistindo esposa ou marido inválido com direito às prestações, a pessoa designada poderá, mediante declaração estrita do segurado, concorrer com os filhos deste. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º A dependência econômica das pessoas indicadas no inciso I deste artigo e dos equiparados aos filhos (§ 2º) é presumida, devendo a dos demais ser comprovada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;O casamento da viúva ou da companheira do segurado falecido importa na perda da sua condição de dependente, para os efeitos desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Não se enquadra na situação de dependente do segurado, para os efeitos desta Lei, o cônjuge dele separado consensualmente, desquitado ou divorciado, a quem não tenha sido assegurada a percepção de alimentos, nem o que, voluntariamente, tenha abandonado o lar há mais de cinco anos ou que, mesmo por tempo inferior, se encontre nas condições disciplinadas pelo Código Civil Brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Mediante declaração escrita do segurado, os dependentes indicados no inciso III do art. 28 desta Lei poderão concorrer com a esposa, a companheira ou o marido com mais de 60 (sessenta) anos ou inválido, ou com a pessoa designada de que trata o inciso II desse mesmo artigo, salvo se existirem filhos com direito à prestação. <BR><BR>
+<CENTER>Capítulo VI<BR>Dos Benefícios </CENTER><BR><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Dos Benefícios em Geral </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;O IPC concederá os seguintes benefícios: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - pensão: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>por tempo de mandato; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>por tempo de contribuição; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>por tempo de serviço; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>por invalidez; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>por morte; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - auxílio-doença; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - auxílio-funeral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Os benefícios concedidos aos segurados ou seus dependentes, salvo quanto às importâncias devidas ao próprio IPC, aos descontos autorizados por lei e derivados da obrigação de prestar alimentos reconhecida por via judicial, não poderão ser objeto de penhora, arresto ou seqüestro, sendo nula de pleno direito qualquer venda ou cessão e a constituição de quaisquer ônus, bem como a outorga de poderes irrevogáveis ou em causa própria para a respectiva percepção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;Não se adiará a concessão do benefício pela falta de habilitação de outros possíveis dependentes. Concedido o benefício, qualquer habilitação posterior, que implique exclusão ou inclusão de dependentes, só produzirá efeitos após decorridos 30 (trinta) dias da data da entrada no IPC do requerimento respectivo, devidamente anexados os documentos necessários. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Da pensão </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;O segurado só fará jus à pensão, salvo o disposto no art. 37 desta Lei, depois de pagas as contribuições relativas ao período de carência, exigida, ainda, dos segurados obrigatórios ou facultativos filiados após a data da entrada em vigor desta Lei, idade mínima de 50 (cinqüenta) anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Ressalvado o disposto no parágrafo único do art. 37 desta Lei, a pensão devida aos segurados obrigatórios será proporcional aos anos de mandato ou exercício de mandato federal somados ao tempo de mandato estadual ou municipal que for averbado nos termos do art. 27 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Pagas as contribuições equivalentes a 8 (oito) anos de mandato, a pensão corresponderá a 26% (vinte e seis por cento) dos subsídios (partes fixa e variável), acrescidos, por ano de mandato subseqüente, exercício de mandato, contribuição correspondente ou fração superior a 6 (seis) meses de contribuição, dos seguintes percentuais: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>do 9º ao 16º ano, mais 3,25% por ano; b)do 17º ao 28º ano, mais 3,40% por ano; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>do 29º ao 30º ano, mais 3,60% por ano. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36. O valor da pensão do segurado facultativo, ressalvado o disposto no parágrafo único do art. 37 desta Lei, observado o limite fixado no parágrafo único deste artigo, será igual ao resultado da multiplicação: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - do número de anos de contribuição: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>pela diária extraída da média aritmética dos 12 (doze) últimos vencimentos ou salários básicos relativamente aos que ingressarem no IPC a partir da data da entrada em vigor desta Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>por 1/30 (um trinta avos) do último vencimento básico para os admitidos no IPC a partir da data da entrada em vigor da Lei nº 6.017, de 31 de dezembro de 1973, com exclusão dos compreendidos na alínea <EM>a</EM> deste inciso; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - do número de anos de serviço prestado à Câmara dos Deputados ou ao Senado Federal, vedada a contagem de qualquer período em dobro, por 1/30 (um trinta avos) do último vencimento básico, relativamente aos filiados ao IPC anteriormente à data da entrada em vigor da Lei nº 6.017, de 31 de dezembro de 1973. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O valor máximo da pensão paga ao segurado facultativo será igual ao do vencimento ou salário básico percebido mensalmente pelo segurado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;A pensão por invalidez, inexigida a satisfação do período de carência, será: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - integral, se decorrente de acidente em serviço; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - proporcional, assegurado o valor mínimo previsto no parágrafo único deste artigo: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>ao tempo de mandato federal somado ao de mandato estadual ou municipal averbado nos termos do art. 27 desta Lei e, relativamente ao suplente, ao tempo de exercício do mandato, calculada na forma do parágrafo único do art. 35 desta Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>ao tempo de contribuição e calculada na forma: <BR>1. da alínea <EM>a</EM> do inciso I do art. 36 desta Lei, em relação aos segurados que ingressarem no IPC a partir da data da entrada em vigor desta Lei; <BR>2. da alínea <EM>b</EM> do inciso I do art. 36 desta Lei, em relação aos admitidos, após o início da vigência da Lei nº 6.017, de 31 de dezembro de 1973, excluídos os admitidos após a vigência desta Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>ao tempo de serviço na Câmara dos Deputados ou no Senado Federal relativamente aos segurados filiados antes da entrada em vigor da Lei nº 6.017, de 31 de dezembro de 1973. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O valor mínimo da pensão por invalidez corresponderá a 26% (vinte e seis por cento) dos subsídios (partes fixa e variável), vencimento ou salário básico mensal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;A pensão dos dependentes do segurado falecido no exercício do cargo, relevada a carência, será paga na base de 50% (cinqüenta por cento) do valor a que teria direito o extinto nos termos dos arts. 35 e 36 desta Lei. No caso de falecimento de segurado pensionista, a pensão corresponderá à metade da que ele vinha percebendo, acrescida de tantas parcelas de 10% (dez por cento) de seu valor quantos forem os dependentes até o máximo de 5 (cinco). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O valor mínimo da pensão de dependentes será 50% (cinqüenta por cento) de 26% (vinte e seis por cento) dos subsídios (partes fixa e variável), vencimento ou salário básico percebido pelo segurado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Deixando o segurado viúva e companheira, a pensão será dividida igualmente entre elas, devendo o montante que couber às duas dependentes correspondera 50% (cinqüenta por cento) do valor da pensão, se houver filhos habilitados como dependentes, ou, não os havendo, se houver pessoa designada (inciso II do art. 28 desta Lei). A parcela da pensão devida aos filhos será dividida igualmente entre eles. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Havendo viúva e companheira, a que se habilitar ao pagamento da pensão terá direito à parte da outra, cessando o direito a essa parte no mês subseqüente ao da habilitação da segunda dependente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Ocorrendo a morte do segurado antes de pagas as contribuições relativas ao período de carência, o respectivo débito será havido como quitado para efeito dos direitos assegurados aos dependentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;É permitida a acumulação da pensão do IPC com pensão e provento concedidos por outras instituições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;No caso de falecimento da viúva ou companheira, a pensão a que tinha direito a extinta reverterá em favor da outra dependente, e, se não existir, dos filhos do respectivo segurado, menores de 21 (vinte e um) anos de idade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;As pensões serão devidas a partir do dia da publicação da aposentadoria, do dia imediato ao óbito, do término do mandato ou de seu exercício, e o prazo para requerê-las é de 12 (doze) meses após o fato gerador de seu direito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;O reajuste das pensões ou de qualquer outro benefício obedecerá aos índices do reajustamento geral deferido ao funcionalismo civil da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;Fica vedado ao Conselho Deliberativo reajustar, anualmente, os valores das pensões em índice superior a 30% (trinta por cento) sobre o valor global da folha já atualizada nos termos de artigo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Aprovado o reajustamento, o Conselho Deliberativo disciplinará a distribuição do produto resultante. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;O direito ao recebimento da pensão será: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - suspenso, enquanto o segurado estiver investido em mandato legislativo federal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - reduzido de 2/3 (dois terços), quando o pensionista venha a perceber, no exercício de funções, empregos, cargos públicos, ou no exercício de mandato, exceto o legislativo federal, vencimentos, salários, remunerações ou gratificações de qualquer espécie, mensalmente, em montante igual ou superior à soma de subsídios, média das diárias e ajuda de custo dos membros do Congresso Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O disposto neste artigo não se aplica aos pensionistas com direito adquirido na forma da legislação anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para efeito do disposto no <I>caput</I> deste artigo, o pensionista deverá declarar, entre 1º e 31 de março de cada ano, ou quando da ocorrência de fato que justifique à redução ou a suspensão da pensão: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>estar, ou não, investido no mandato legislativo federal; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>exercer, ou não, outro mandato, função, emprego ou cargo público e, em caso afirmativo, anexar documento comprobatório dos rendimentos auferidos, expedido pelo órgão pagador; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>estado civil e domicílio. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A omissão do pensionista quanto à obrigação fixada no parágrafo anterior implicará na suspensão automática da pensão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Perderá o direito à pensão, salvo a ocorrência da incapacidade, o dependente, de qualquer sexo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - ao atingir a maioridade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ao contrair matrimônio; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - condenado por crime de natureza dolosa e de que tenha resultado a morte do respectivo segurado. <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Do Auxílio-Funeral </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;A pessoa que custear o funeral de segurado do IPC receberá auxílio-funeral de valor não excedente a 5 (cinco) salários mínimos vigentes na localidade em que se der o sepultamento, desde que nenhuma outra entidade haja concedido semelhante auxílio ao custeante da despesa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O prazo para habilitação ao recebimento do auxílio-funeral será de 60 (sessenta) dias, a contar da data do falecimento do segurado do IPC. <BR><BR>
+<CENTER>Capítulo VII <BR>Das Medidas de Natureza Financeira e Contábil </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;Poderá o IPC promover diretamente como empresa - ou por estipulação, plano de poupança, seguros e pecúlio, mediante contribuição específica dos interessados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;Fica o IPC autorizado a conceder, mediante consignação em folha e garantias suplementares, empréstimos aos seus segurados obrigatórios e facultativos que recebam dos Cofres Públicos da União, aos seus pensionistas e aos servidores do Senado Federal e de seus órgãos supervisionados e da Câmara dos Deputados, de acordo com as normas estabelecidas em resolução do Conselho Deliberativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;O Fundo Assistencial do IPC, distinto da Previdência, se constitui dos seguintes recursos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - dotação específica arbitrada pelo Conselho Deliberativo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - percentual de juros obtidos através de empréstimos concedidos pelo IPC; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - rendas diversas, doações, auxílios e subvenções. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A aplicação desses recursos será gerida pelo Presidente do Instituto, com a aprovação do Conselho Deliberativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;O IPC poderá, através do Fundo Assistencial, realizar e administrar serviços assistênciais, desde que lhe sejam fornecidos os meios e recursos necessários destinados especialmente a tais finalidades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;Fica criada a Caixa de Pecúlio do Fundo Assistencial, que será regulamentada por Resolução do Conselho Deliberativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;Nenhuma prestação de caráter assistencial ou previdenciário poderá ser criada ou modificada sem que seja estabelecida a respectiva receita. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;Os recursos disponíveis do IPC poderão ser aplicados em investimentos por deliberação do Presidente, autorizado pelo Conselho Deliberativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55. Fica o IPC autorizado a destinar recursos do Fundo Assistencial para constituição de patrimônio de fundação de caráter filantrópico e beneficente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;O IPC manterá conta especial no Banco do Brasil S.A., onde, mensalmente, serão recolhidas as contribuições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O saldo da conta de que trata este artigo, após deduzido o valor da folha de pensionistas, poderá ser aplicado em bancos oficiais, empréstimos aos segurados ou nos termos do inciso I do art. 50 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;Deverão ser levantado: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - mensalmente: balancete patrimonial e demonstrativo da receita e despesa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - anualmente: balanço patrimonial, ao final do exercício financeiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os Presidentes da Câmara dos Deputados e do Senado Federal farão publicar tais instrumentos de controle do Instituto de Previdência dos Congressistas no Diário do Congresso Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;Os bens, negócios, rendas, atos e serviços do IPC estão isentos de impostos e taxas de quaisquer espécies. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;O pagamento aos segurados e outros credores deverá ser feito em cheque nominal, ordem de crédito ou ordem de pagamento, visados pelo Presidente. <BR><BR>
+<CENTER>Capítulo VIII <BR>Disposições Gerais e Transitórias </CENTER>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60. Aplicam-se ao IPC os mesmos prazos de prescrição de que goza a União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;(VETADO) </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.O Conselho Deliberativo do IPC expedirá Resolução destinada a regulamentar a execução da presente Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;Esta Lei entra em vigor na data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;Ficam revogadas as Leis nº 4.284, de 20 de novembro de 1963, 4.937, de 18 de março de 1966; 5.896, de 5 de julho de 1973; 6.017, de 31 de dezembro de 1973; 6.311, de 16 de dezembro de 1975; 6.497, de 7 dezembro de 1977; 6.677, de 24 de julho de 1979, e demais disposições em contrário. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Brasília, em 29 de dezembro de 1982;161º da Independência e 94º da República. </P>
+<P>JOÃO FIGUEIREDO<BR>Ibrahim Abi-Ackel </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 30/12/1982
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 30/12/1982, Página 24649 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1982, Página 138 
+                                                        Vol. 7          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

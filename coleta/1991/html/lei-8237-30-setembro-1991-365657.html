@@ -1,0 +1,943 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 8.237, DE 30 DE SETEMBRO DE 1991 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre a remuneração dos Servidores Militares Federais das Forças Armadas e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 8.237, DE 30 DE SETEMBRO DE 1991 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=196269">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-8237-30-setembro-1991-365657-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 8.237, DE 30 DE SETEMBRO DE 1991</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre a remuneração dos Servidores Militares Federais das Forças Armadas e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							<P>&nbsp;&nbsp;&nbsp;&nbsp; <STRONG>O PRESIDENTE DA REPÚBLICA</STRONG> <BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte lei: <BR><BR></P>
+<CENTER><B>TÍTULO I </CENTER></B>
+<CENTER><B>Das Disposições Preliminares </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Esta lei regula a remuneração dos servidores militares federais da ativa e na inatividade remunerada, integrantes das Forças Armadas - Marinha, Exército e Aeronáutica, no País em tempo de paz. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;A estrutura remuneratória dos servidores militares federais da ativa tem a seguinte constituição: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - soldo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - gratificações:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>Gratificação de Tempo de Serviço; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>Gratificação de Compensação Orgânica; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>Gratificação de Habitação Militar; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Indenizações: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>regulares: 1. Indenização de Representação; 2. Indenização de Moradia; 3. Indenização de Localidade Especial; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>eventuais: 1. Diária; 2. Transporte; 3. Ajuda-de-Custo; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - adicionais: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>Adicional de Férias; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>Adicional Natalino; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>Adicional de Natalidade; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>Salário-Família; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>Adicional de Funeral. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;A estrutura remuneratória dos servidores militares federais, na inatividade, tem a seguinte constituição: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - proventos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - adicionais: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>Adicional de Inatividade; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>Adicional de Invalidez; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>Adicional Natalino; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>Adicional de Natalidade; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>Salário - Família; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>Adicional de Funeral. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Remuneração é o somatório das parcelas devidas mensal e regularmente, ao militar, pelo efetivo exercício da atividade militar, ou, em decorrência deste, quando na inatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;A remuneração do militar não está sujeita a penhora, seqüestro ou arresto, exceto nos casos especificamente previsto em lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Soldo é a parte básica da remuneração, inerente ao posto ou à graduação do militar, e é irredutível. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Gratificações são parcelas remuneratórias devidas ao militar pelo exercício, ou por condições reunidas ou adquiridas em virtude do exercício de atividades militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As gratificações são incorporadas aos proventos do militar, quando da passagem para inatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Indenizações são parcelas remuneratórias regulares ou eventuais, devidas ao militar, para compensar despesas realizadas em decorrência do exercício de suas funções. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Indenizações regulares são aquelas de natureza continuada, devidas, mensal e regularmente, ao militar, enquanto preencher ou estiver sujeito às condições que lhe dão direito à sua percepção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Indenizações eventuais são aquelas de natureza esporádica ou de freqüência não continuada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; §3º As indenizações não se incorporam aos proventos do militar, quando de sua passagem para a inatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Adicionais são parcelas pecuniárias de natureza eventual ou especial, devidas, em razão de legislação específica, aos militares da ativa ou na inatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Proventos são o somatório das parcelas remuneratórias, constituído de soldo ou quotas de soldo e das gratificações incorporadas, devidos regularmente ao militar, quer na reserva remunerada, quer na situação de reformado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;O direito do militar à remuneração tem início na data: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - do ato da promoção, da apresentação atendendo convocação ou designação para o serviço ativo, para o Oficial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - do ato da designação ou declaração, da apresentação atendendo convocação para o serviço ativo, para a Guarda-Marinha ou Aspirante-a-Oficial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - do ato da nomeação ou promoção a Oficial, para o Suboficial ou Subtenente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - do ato da promoção, classificação ou engajamento, para as demais praças; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - da incorporação às Forças Armadas, para os convocados e voluntários; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - da apresentação à organização competente do respectivo ministério, quando da nomeação inicial para qualquer posto ou graduação das Forças Armadas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - do ato da matrícula, para os alunos das escolas ou centros de formação de oficiais e de praças e das escolas preparatórias e suas congêneres. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Nos casos de retroatividade, a remuneração será devida a partir das datas declaradas nos respectivos atos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Suspende-se temporariamente o direito do militar à remuneração, com exceção do salário-família, quando: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - em licença para tratar de interesse particular;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - na situação de desertor; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - agregado, para exercer atividades estranhas às Forças Armadas, estiver em cargo, emprego ou função pública temporária não eletiva, ainda que na Administração Pública indireta, respeitado o direito de opção pela remuneração do posto ou graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O militar que usar do direito de opção fará jus à representação mensal do cargo, emprego ou função pública temporária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;O direito à remuneração em atividade cessa, quando o militar for desligado do serviço ativo das Forças Armadas por: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - anulação de incorporação, desincorporação, licenciamento ou demissão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - exclusão a bem da disciplina ou perda do posto e patente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - transferência para a reserva remunerada ou reforma; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - falecimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A remuneração a que faria jus, em vida, o militar falecido será paga aos seus beneficiários, habilitados até a conclusão do processo referente à pensão militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Quando o militar for considerado desaparecido ou extraviado em casos de calamidade pública, em viagem, no desempenho de qualquer serviço ou em manobra, sua remuneração será paga aos que teriam direito à sua pensão militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No caso previsto neste artigo, decorridos seis meses, far-se-á a habilitação dos beneficiários à pensão militar, cessando o pagamento da remuneração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Reaparecendo o militar, e apuradas as causas de seu afastamento, caber-lhe-á, se for o caso, o pagamento da diferença entre a remuneração, a que faria jus se tivesse permanecido em serviço, e a pensão paga aos seus beneficiários. <BR><BR>
+<CENTER><B>TÍTULO II </CENTER></B>
+<CENTER><B>Da Remuneração do Militar da Ativa </CENTER></B><BR>
+<CENTER>CAPÍTULO I<BR>Do Soldo </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;As tabelas do soldo são as constantes do Anexo I desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As tabelas de que trata este artigo deverão ser constituídas por valores arredondados para múltiplos de trinta. <BR><BR>
+<CENTER>CAPÍTULO II<BR>Das Gratificações </CENTER><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Da Gratificação de Tempo de Serviço </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;A Gratificação de Tempo de Serviço é devida à razão de um por cento por ano de serviço público, incidindo sobre o soldo do posto ou graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O militar fará jus à gratificação de que trata este artigo a partir do mês em que completar cada anuênio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;É contado, para todos os efeitos, o tempo de serviço público, mesmo o prestado com servidor civil. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Da Gratificação de Compensação Orgânica </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;A Gratificação de Compensação Orgânica é destinada a compensar os desgastes orgânicos conseqüentes das variações de altitude, das acelerações, das variações barométricas, dos danos psicossomáticos e da exposição a radiações resultantes do desempenho continuado das atividades especiais seguintes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - vôo em aeronave militar como tripulante orgânico, observador meteorológico, observador aéreo e fotogramétrico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - salto em pára-quedas, cumprindo missão militar; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - imersão no exercício de funções regulamentares a bordo de submarino; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - mergulho com escafandro ou com aparelhos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - trabalho com raios X ou substâncias radioativas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - controle de tráfego aéreo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A um mesmo militar somente será atribuída gratificação correspondente a uma atividade especial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;A Gratificação de Compensação Orgânica é devida: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - durante a aprendizagem da respectiva atividade especial, a partir da data: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>do primeiro exercício de vôo em aeronave militar; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>do primeiro salto de pára-quedas de aeronave militar em vôo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>da primeira imersão em submarino; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>do primeiro mergulho em escafandro ou com aparelho; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>do início efetivo da atividade de controlador de tráfego aéreo; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - no exercício financeiro subseqüente ao cumprimento do plano de provas ou de exercícios, ao militar qualificado para a atividade especial de vôo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - durante o período em que estiver servindo em organização militar específica da atividade considerada, ao militar qualificado para as atividades especiais de salto, submarino ou mergulho, e desde que cumpra as missões, planos de provas ou de exercícios estabelecidos para as referidas atividades. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A Gratificação de Compensação Orgânica, por trabalho com raios X ou substâncias radioativas, será concedida na forma da legislação pertinente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;Não perderá o direito à percepção da Gratificação de Compensação Orgânica o militar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - hospitalizado ou em licença para tratamento de saúde própria; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - afastado da sua organização para participar de curso ou estágio de especialização ou aperfeiçoamento relacionado com a respectiva atividade especial, como instrutor, monitor ou aluno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O aluno da escola de formação de oficiais, recrutado entre praças, e que já tenha assegurado o direito à percepção da Gratificação de Compensação Orgânica, continuará a recebê-la nas mesmas condições em que a recebia por ocasião da matrícula. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;É assegurado ao militar que tenha feito jus à Gratificação de Compensação Orgânica o seu pagamento definitivo, por quotas correspondentes aos anos de efetivo desempenho da atividade especial considerada, na forma da legislação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os Ministros militares, no âmbito das respectivas forças, estabelecerão os planos de provas ou de exercícios de cada atividade especial que darão direito ao pagamento definitivo de quotas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;Em função de futuras promoções, o militar terá assegurada a evolução dos cálculos para o pagamento definitivo da Gratificação de Compensação Orgânica, desde que, após a promoção, execute, pelo menos, um novo plano de provas ou de exercícios no posto ou graduação considerados. <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Da Gratificação de Habilitação Militar </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;A Gratificação de Habilitação Militar é devida ao militar pelos cursos realizados, com aproveitamento, inerentes à sua progressão na carreira militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os cursos que dão direito à Gratificação de Habilitação Militar, bem como sua equivalência, serão estabelecidos pelo Estado-Maior das Forças Armadas, em ato comum às três forças. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Ao militar que possuir mais de um curso, somente lhe será atribuída a gratificação de maior valor percentual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A gratificação estabelecida neste artigo é devida a partir da data de conclusão do curso correspondente. <BR><BR>
+<CENTER>CAPÍTULO III <BR>Das Indenizações Regulares </CENTER><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Da Indenização de Representação </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;A Indenização de Representação destina-se a atender às despesas extraordinárias decorrentes de compromissos de ordem profissional, protocolar, social ou diplomática, inerentes ao desempenho da atividade militar em condições determinadas por ato do Poder Executivo. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Da Indenização de Moradia </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;A Indenização de Moradia é o quantitativo mensal em dinheiro destinado a auxiliar as despesas com habitação do militar e seus dependentes, em razão das condições obrigatórias de mudanças freqüentes de residência a que está sujeito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;A ocupação de próprio nacional residencial, sob responsabilidade de órgãos militares, importará no pagamento mensal, pelo militar, de uma taxa de uso, descontada de sua remuneração, que será igual ao valor da Indenização de Moradia percebida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A destinação da taxa de uso, a cobrança de multas por ocupações irregulares e de outras despesas decorrentes da ocupação serão reguladas pelos Ministros militares, no âmbito das respectivas forças. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Quando o militar for casado com militar de quadro feminino, a taxa de uso será paga apenas pelo cônjuge responsável pelo imóvel. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Quando o militar ocupar imóvel da União, sob a responsabilidade de outros órgão, descontará em favor deste, a importância correspondente à respectiva taxa, nos termos da legislação específica. <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Da Indenização de Localidade Especial </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;O militar em serviço ativo fará jus à Indenização de Localidade Especial, quando servir em regiões inóspitas, seja pelas condições precárias de vida, seja pela insalubridade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A Indenização de Localidade Especial terá valores correspondentes às categorias em que forem classificadas as regiões consideradas localidades especiais, de acordo com a variação das condições de vida e insalubridade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º É assegurado ao militar o direito à Indenização de Localidade Especial nos afastamentos da sua organização militar por motivo de serviço, férias, luto, núpcias, dispensa do serviço e hospitalização ou licença por motivo de acidentes em serviço ou de moléstia adquirida em conseqüência da inospitalidade da região. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O direito à indenização começa no dia da apresentação do militar pronto para o serviço e cessa no dia do seu desligamento da organização militar. <BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Das Indenizações Eventuais </CENTER></B><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Da diária </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;O militar que se afastar da sede, em serviço de caráter eventual ou transitório, para outro ponto do território nacional, fará jus a diárias para cobrir as correspondentes despesas de pousada, alimentação e locomoção urbana. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A diária será concedida por dia de afastamento, sendo devida pela metade, quando o deslocamento não exigir pernoite fora da sede.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;O militar que receber diárias e não se afastar da sede, por qualquer motivo, fica obrigado, de imediato, a restituí-las integralmente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Na hipótese de o militar retornar à sede em prazo menor do que o previsto para o seu afastamento, restituirá as diárias recebidas em excesso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;Não serão atribuídas diárias quando as despesas decorrentes das viagens forem custeadas pela União, Estados, Distrito Federal, Municípios ou instituições públicas ou privadas, nem quando o afastamento for inferior a oito horas consecutivas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;O valor da diária será estabelecido mediante ato do Estado-Maior das Forças Armadas, comum às forças singulares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;As condições de concessão, percepção e restituição de diárias serão estabelecidas pelo Ministros militares no âmbito das respectivas forças. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Do transporte </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;O militar da ativa, quando movimentado por interesse do serviço, será indenizado das despesas de transportes, nelas compreendidas a passagem e a translação da respectiva bagagem, para si, seus dependentes, e um empregado doméstico, da localidade onde residir para outra, onde fixará residência dentro do território nacional, quando o transporte não for realizado por conta da União. <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Da Ajuda-de-Custo </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Ajuda-de-Custo é a indenização paga adiantadamente, para custeio das despesas de locomoção e instalação, exceto transporte, nas movimentações com mudança de sede. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;O valor da Ajuda-de-Custo para o militar que possuir dependente correspondente: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a duas vezes o valor da remuneração nas movimentações com desligamento da organização militar; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a duas vezes o valor da remuneração na ida e uma vez na volta, nas movimentações para comissão superior a três e igual ou inferior a seis meses, sem desligamento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - ao valor da remuneração na ida e outro na volta, nas movimentações para comissão superior a quinze dias e igual ou inferior a três meses, sem desligamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O militar, quando transferido para localidade especial categoria A ou de uma localidade especial categoria A para qualquer outra organização militar, terá direito à Ajuda-de-Custo de que trata o inciso I, em dobro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;A Ajuda-de-Custo referida no artigo anterior será paga pela metade, quando o militar não possuir dependente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Fará jus à Ajuda-de-Custo o militar deslocado com a organização militar que tenha sido transferida de sede, desde que, com isso, seja obrigado a mudar de residência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Para efeito de cálculo do seu valor, determinação do exercício financeiro e constatação de dependentes, tomar-se-á como base a data do ajuste de contas do militar beneficiado na concessão da Ajuda-de-Custo. <BR><BR>
+<CENTER>CAPÍTULO V<BR>Das Adicionais </CENTER><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Do Adicional de Férias </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Independentemente de solicitação, será pago ao militar, por ocasião de suas férias regulamentares, antecipadamente, um adicional correspondente a 1/3 da remuneração do mês de início das férias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;É facultado ao militar converter 1/3 das férias em abono pecuniário, desde que o requeira com, pelo menos, sessenta dias de antecedência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No cálculo do abono pecuniário, será considerado o valor do Adicional de Férias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Não poderá ser convertido em abono pecuniário o período de vinte dias de férias relativas aos militares que trabalham com raios X ou substâncias radioativas. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Do Adicional Natalino </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;O Adicional Natalino corresponde a 1/12 da remuneração a que o militar fizer jus no mês de dezembro, por mês de serviço, no respectivo ano, de acordo com o estabelecido na legislação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O militar excluído do serviço ativo e desligado da organização militar a que estiver vinculado, por motivo de demissão, licenciamento ou desincorporação, receberá o adicional de forma proporcional, calculado sobre a remuneração do mês do desligamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A fração igual ou superior a quinze dias será considerada como mês integral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;O Adicional Natalino será pago em duas parcelas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a primeira parcela, correspondente à metade da remuneração percebida no mês anterior às férias, será paga, como adiantamento, conforme dispuser o regulamento: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>mediante requerimento do interessado, ao ensejo das férias; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>até o mês de novembro, nos demais casos; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a segunda parcela será paga até vinte de dezembro de cada ano, nos termos do <I>caput</I> do artigo anterior, descontado o adiantamento da primeira parcela. <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Do Adicional de Natalidade </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;O Adicional de Natalidade é devido à militar por motivo de nascimento de filho, no valor correspondente ao soldo de seu posto ou graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Na hipótese de parto múltiplo, o valor será acrescido de cinqüenta por cento por recém-nascido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O adicional será pago ao cônjuge ou companheiro militar, quando a parturiente não for militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Se a parturiente for servidora civil, far-se-á o pagamento na forma do parágrafo anterior, mediante sua renúncia expressa ao mesmo benefício previsto na legislação específica. <BR><BR>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Do Salário-Família </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;O Salário-Família é devido ao militar por dependente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Consideram-se dependentes do militar, para efeito de percepção do Salário-Família, aqueles estabelecidos no Estatuto dos militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;A concessão e as condições de percepção do Salário-Família são as estabelecidas na legislação pertinente. <BR><BR>
+<CENTER><B>Seção V </CENTER></B>
+<CENTER><B>Do Adicional de Funeral </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;O Adicional de Funeral é devido ao militar por morte do cônjuge, companheira ou dependente, em valor equivalente ao soldo efetivamente percebido, não podendo ser inferior ao do soldo de Terceiro-Sargento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Em caso de falecimento do militar, o Adicional de Funeral será devido ao beneficiário, obedecida a ordem de habilitação para a pensão militar. <BR><BR>
+<CENTER>CAPÍTULO VI <BR>Dos outros direitos remuneratórios </CENTER><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Da indenização de alimentação </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;O militar, quando sua organização, ou outra nas proximidades do local de serviço ou expediente, não lhe possa fornecer alimentação por conta da União e, por imposição do horário de trabalho e distância de sua residência, seja obrigado a fazer refeições fora dela, tendo, para tanto, despesas extraordinárias, fará jus: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a dez vezes o valor da etapa comum fixada para a localidade, quando em serviço de escala de duração de 24 horas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - à metade do previsto no inciso anterior, quando em serviço ou expediente de duração igual ou superior a oito horas de efetivo trabalho, porém inferior a 24 horas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;O militar, quando servir em organização militar que não tenha rancho organizado e não possa ser arranchado por outra organização nas proximidades, terá direito à indenização do valor igual à etapa comum fixada para a localidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;A praça, de graduação inferior a Terceiro-Sargento, quando em férias regulamentares e não for alimentada por conta da por conta da União, receberá a indenização estipulada no art. 50. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Idêntica indenização receberá a praça de graduação inferior a Terceiro-Sargento, quando servir em localidade especial de categoria correspondente à indenização de maior valor e seja acompanhada de dependente . <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;É vedada a acumulação das indenizações previstas nos arts. 49 a 51 desta lei. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Do Auxílio-Fardamento </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;O aspirante, o cadete, o aluno do colégio naval ou das escolas preparatórias de cadetes, o aluno gratuito ou órfão de colégio militar e as praças de graduação inferior a Terceiro-Sargento têm direito, por conta da União, a uniformes, roupa branca e roupa de cama, de acordo com as tabelas de distribuição estabelecidas pelos respectivos Ministérios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;O militar, ao ser declarado Guarda-Marinha ou Aspirante-a-Oficial da ativa, ou promovido a Terceiro-Sargento, faz jus a um auxílio para aquisição de uniformes, no valor de três vezes o soldo do seu posto ou graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Idêntico direito ao previsto neste artigo assiste aos nomeados Oficiais ou Sargentos, ou matriculados em escolas de formação mediante habilitação em concurso e aos nomeados capelães militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os Aspirantes-a-Oficial, oriundos dos órgãos de formação de oficiais da reserva, convocados para a prestação do serviço militar, bem como os médicos, farmacêuticos, dentistas e veterinários, quando convocados para o serviço militar inicial, fazem jus ao mesmo auxilio, no valor de dois soldos do seu posto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;Ao Oficial, Suboficial ou Subtenente e Sargento, ao ser promovido, será concedido um Auxílio-Fardamento correspondente ao valor de dois soldos do novo posto ou graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Quando a promoção for ao primeiro posto de Oficial-General, o auxílio a que se refere este artigo será de três vezes o valor do soldo do militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O auxílio poderá ser renovado a cada quatro anos se o militar permanecer no mesmo posto ou graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Ocorrendo a promoção do militar até um ano após o recebimento do auxílio, ser-lhe-á devida a diferença entre o valor do auxílio, referente ao novo posto ou graduação, e o do efetivamente recebido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;O militar que perder seus uniformes em sinistro havido em organização militar, a bordo de embarcação ou aeronave militar, ou em deslocamento a serviço, receberá um auxílio correspondente a até três vezes o valor do soldo de seu posto ou graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O auxílio será avaliado mediante sindicância sobre o sinistro, determinada pelo comandante do militar, por solicitação do sinistrado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;O militar, ao retornar à ativa em virtude de convocação, designação ou reinclusão, terá direito ao mesmo auxílio, no valor de um soldo, desde que tenha permanecido mais de seis meses na inatividade. <BR><BR>
+<CENTER><B>TÍTULO III </CENTER></B>
+<CENTER><B>Dos Direitos do Militar ao Passar para a Inatividade </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;O militar da ativa, ao ser transferido para a inatividade remunerada, faz jus aos seguintes direitos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - ao valor de uma remuneração do último posto ou graduação que possuía na ativa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - ao transporte para si, seus dependentes e um empregado doméstico, bem como à translação da respectiva bagagem, do local onde servia para outra localidade do território nacional onde declarou fixar residência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O direito ao transporte prescreve após decorridos 180 dias da data da primeira publicação oficial do ato da transferência para a reserva remunerada ou reforma. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os militares transferidos para a reserva remunerada e designados para o serviço ativo antes de esgotado o prazo previsto no parágrafo anterior, ou que tenham que permanecer em atividade por força de dispositivo legal, terão o mesmo prazo assegurado, a contar da dispensa do cargo ou exclusão do serviço ativo. <BR><BR>
+<CENTER><B>TÍTULO IV </CENTER></B>
+<CENTER><B>Da Remuneração do Militar na Inatividade </CENTER></B><BR>
+<CENTER>CAPÍTULO I <BR>Da Remuneração e dos Proventos </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;A remuneração do militar na inatividade é constituída do somatório dos proventos e adicionais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os proventos são constituídos das seguintes parcelas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - soldo ou quotas de soldo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Gratificação de Tempo de Serviço incorporada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Gratificação de Habilitação Militar incorporada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Gratificação de Compensação Orgânica incorporada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;A remuneração é devida ao militar na inatividade a partir da data de seu desligamento do serviço ativo, em razão de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - transferência para a reserva remunerada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - reforma; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - retorno à inatividade após convocação ou designação para o serviço ativo, quando já se encontrava na reserva remunerada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O militar, enquanto não for desligado, continuará a perceber remuneração da ativa até a publicação de seu desligamento, que não poderá ultrapassar de 45 dias da data da primeira publicação oficial de seu respectivo ato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;Suspende-se, temporariamente, o direito do militar à percepção da remuneração na inatividade, na data da sua apresentação à organização militar competente, quando, na forma da legislação em vigor, retornar à ativa, for convocado ou designado para o desempenho de cargo ou comissão nas Forças Armadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;Cessa o direito à percepção da remuneração na inatividade na data: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - do falecimento do militar; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - do ato que prive o Oficial do posto e da patente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - do ato da exclusão a bem da disciplina das Forças Armadas, para a praça. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;A remuneração do militar na inatividade, considerado desaparecido ou extraviado, será paga aos que teriam direito à sua pensão militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No caso previsto no <I>caput</I> deste artigo, decorridos seis meses, far-se-á a habilitação dos beneficiários à pensão militar na forma da lei, cessando o pagamento da remuneração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Verificando-se o reaparecimento do militar, caber-lhe-á, se for o caso, o pagamento da diferença entre a remuneração a que faria jus e a pensão militar recebida pelos beneficiários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;O militar que contar mais de trinta anos de serviço, ao passar para a inatividade remunerada, terá o cálculo da sua remuneração referido no soldo do posto ou graduação imediatamente superior ao seu. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O oficial, nas condições deste artigo, se ocupante do último posto da hierarquia militar de sua Força Armada, em tempo de paz, terá o cálculo dos proventos, tomando-se por base o soldo do seu próprio posto, acrescido da diferença entre o soldo desde posto e o soldo do posto imediatamente anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;O militar na inatividade, convocado ou designado para o serviço ativo, ao retornar à Inatividade, terá sua remuneração recalculada em função do novo cômputo de tempo de serviço e das novas situações alcançados como convocado, designado ou reincluído. <BR><BR>
+<CENTER>CAPÍTULO II <BR>Das Quotas de Soldo e Gratificações </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;O soldo constitui o valor básico do cálculo da remuneração a que faz jus o militar na inatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para efeito de cálculos, a quotas de soldo corresponde a 1/30 de seu valor, por ano de serviço computável para a inatividade, até o máximo de trinta anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para efeitos de contagem de quotas, a fração do tempo igual ou superior a 180 dias será considerada como um ano. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O militar transferido para a reserva remunerada ex officio , por haver atingido a idade limite de permanência, em atividade, no posto ou graduação, ou não haver preenchido as condições de escolha para acesso ao generalato, tem direito ao soldo integral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;As gratificações incorporadas pelo militar, ao passar para a inatividade remunerada, serão pagas nas mesmas condições previstas para o militar da ativa. <BR><BR>
+<CENTER>CAPÍTULO III<BR>Dos Adicionais </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;O Adicional de Inatividade incide mensalmente sobre o valor do soldo ou das quotas de soldo a que o militar fizer jus na inatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;O militar na inatividade remunerada, reformado como inválido, por incapacidade para o serviço ativo, faz jus, mensalmente, a um Adicional de Invalidez no valor de sete quotas e meia do soldo, desde que satisfaça a uma das condições abaixo especificadas, devidamente constatada por junta militar de saúde, quando necessitar de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - internação especializada, militar ou não; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - assistência ou cuidados prementes de enfermagem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Também faz jus ao Adicional de Invalidez o militar que, por prescrição médica homologada por junta militar de saúde, receber tratamento na própria residência, nas condições do inciso II. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para continuidade do direito ao recebimento do Adicional de Invalidez, o militar apresentará, anualmente, declaração de que não exerce nenhuma atividade remunerada, pública ou privada e, a critério da administração, submeter-se-á periodicamente à inspeção de saúde. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O direito ao Adicional de Invalidez será suspenso automaticamente pela autoridade competente, se for verificado que o militar beneficiado exerce ou tenha exercido, após a concessão do adicional, qualquer atividade remunerada, sem prejuízo de outras sanções cabíveis, bem como se, em inspeção de saúde, for constatado não se encontrar nas condições previstas neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O militar de que trata este artigo terá direito ao transporte, dentro do território nacional, pessoal e para acompanhante, se for o caso, quando obrigado a se afastar do seu domicílio para ser submetido à inspeção de saúde de controle, prevista no parágrafo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º O valor do Adicional de Invalidez não poderá ser inferior ao soldo de cabo engajado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;Os Adicionais de Natalidade e de Funeral serão concedidos ao militar na inatividade nas mesmas condições previstas para o militar da ativa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;O Adicional Natalino será pago integralmente sobre a remuneração na inatividade, nas mesmas condições previstas nos incisos I, b , e II do art. 43. <BR><BR>
+<CENTER><B>TÍTULO V </CENTER></B>
+<CENTER><B>Do Limite da Remuneração </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;Nenhum servidor militar federal, da ativa ou na inatividade, poderá perceber, mensalmente, a título de remuneração, importância superior à soma dos valores percebidos como remuneração, em espécie, a qualquer título, pelos Ministros de Estado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Excluem-se do teto da remuneração, para os fins deste artigo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Gratificação de Tempo de Serviço; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Gratificação de Compensação Orgânica; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Indenização de Moradia; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Indenização de Localidade Especial;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - Ajuda de Custo, Diárias e Indenização de Transporte; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - Adicionais de Férias, Natalino, de Natalidade e de Funeral;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - Auxílio-Fardamento e Alimentação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - Importâncias correspondentes à conversão de férias em pecúnia; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - Quaisquer parcelas remuneratórias atrasadas, devidas em função de promoções, sentenças judiciais ou acertos de contas administrativos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;Nenhum militar da ativa, ou na inatividade remunerada, bem como o beneficiário de pensão militar, poderá receber, como remuneração mensal ou pensão militar, valor inferior ao do salário mínimo mensal vigente, sendo-lhe paga, como complemento, a diferença encontrada. <BR><BR>
+<CENTER><B>TÍTULO VI </CENTER></B>
+<CENTER><B>Dos Descontos, Consignantes e Consignatários </CENTER></B><BR>
+<CENTER>CAPÍTULO I<BR>Dos Descontos </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;Desconto é o abatimento que pode sofrer a remuneração do militar para cumprimento das obrigações assumidas ou impostas em virtude de disposição de lei ou de regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os descontos são classificados em obrigatórios e autorizados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os descontos obrigatórios têm prioridade sobre os autorizados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;São descontos obrigatórios: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - contribuição para a pensão militar; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - contribuição para assistência médico-hospitalar militar; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - impostos incidentes sobre a remuneração, de acordo com a lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - indenização à Fazenda Nacional, em decorrência de dívida; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - indenização pela prestação de assistência médico-hospitalar, por intermédio de organização militar; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - pensão alimentícia ou judicial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - taxa de uso por ocupação de Próprio Nacional Residencial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76.&nbsp;São descontos autorizados os efetuados em favor de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - entidades consideradas consignatárias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - serviços de assistência social dos Ministérios militares; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - agentes do Sistema Financeiro da Habitação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - locador de casa para residência do consignatário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - outros fins de interesse de cada Ministério militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os Ministros militares regulamentarão os descontos autorizados no âmbito das respectivas forças. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77.&nbsp;Efetuados os descontos obrigatórios, serão consideradas, para efeito dos demais, as seguintes parcelas mensais, denominadas bases para descontos, para os militares da ativa e na inatividade: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - soldo ou quotas de soldo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Gratificação de Tempo de Serviço; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Gratificação de Habitação Militar. <BR><BR>
+<CENTER>CAPÍTULO II<BR>Dos Consignantes e Consignatários </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78.&nbsp;Podem ser consignantes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o Oficial, o Guarda-Marinha, o Aspirante-a-Oficial, o Suboficial, o Subtenente e o Sargento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o Cabo, o Taifeiro, o Marinheiro e o Soldado da ativa com mais de cinco anos de serviço;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o militar da reserva remunerada ou reformado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 79.&nbsp;Em nenhuma hipótese, o consignante poderá receber, em folha de pagamento, quantia líquida inferior a trinta por centro das bases para descontos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 80.&nbsp;Os Ministros militares, no âmbito de cada força singular, especificarão as entidades que devam ser consideradas consignatárias, para os efeitos desta lei. <BR><BR>
+<CENTER><B>TÍTULO VII </CENTER></B>
+<CENTER><B>Das Disposições Diversas </CENTER></B><BR>
+<CENTER>CAPÍTULO I <BR>Das Disposições Especiais </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 81.&nbsp;O militar que, na data da publicação desta lei, encontrar-se reformado com fundamento no Decreto-Lei nº 8.795, de 23 de janeiro de 1946, terá o cálculo de seus proventos referidos ao soldo do posto de Segundo-Tenente, ou, se mais benéfico, do posto a que ele faz jus, na inatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 82.&nbsp;Os militares nomeados Ministros de Estado ou Ministros do Supremo Tribunal Militar têm remuneração estabelecidas em legislação própria, assegurado aos Ministros de Estado o direito de opção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 83.&nbsp;A remuneração dos militares da ativa, em campanha, no País ou no exterior, será estabelecida em lei específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 84.&nbsp;O convocado para manobra, exercício ou manutenção da ordem interna não faz jus à remuneração prevista nesta lei, quando optar pela remuneração ou salário a que tiver direito como servidor público federal, estadual ou municipal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 85.&nbsp;Aos militares que participarem de trabalhos de construção de estradas, aeródromos e obras públicas, mapeamento e levantamento cartográfico e hidrográfico e construção de instalações de rede de proteção ao vôo poderão ser conferidas gratificações pro labore na forma estabelecida em convênio com os órgãos públicos ou privados interessados nos referidos trabalhos, à conta dos recursos a estes destinados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 86.&nbsp;Ao militar da reserva remunerada, exceto quando convocado, reincluído, designado ou mobilizado, que prestar tarefa por tempo certo a qualquer que efetivamente estiver percebendo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 87.&nbsp;Os militares que, na data da promulgação desta lei, estiverem em gozo de vantagens nela não previstas, resultantes de sentenças judiciais, poderão optar pela nova situação, ou permanecer no regime em que se encontram, caso não façam a opção no prazo de sessenta dias a contar da publicação desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 88.&nbsp;O militar que, até 1º de março de 1976, fez jus a quotas da Indenização de Compensação Orgânica, calculadas pela metade de seu valor, continua com os seus direitos assegurados nos termos do Decreto-Lei nº 1.447, de 13 de fevereiro de 1976. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 89.&nbsp;Os descontos em folha das consignações referidas nesta lei não sofrerão, em decorrência da reestruturação da composição da remuneração dos militares, majorações dos respectivos valores em proporção superior às variações da remuneração efetivamente ocorridas em decorrência desta lei. <BR><BR>
+<CENTER>CAPÍTULO II<BR>Das Disposições Gerais </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 90.&nbsp;Fica assegurada a remuneração integral ao militar em gozo de licença especial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 91.&nbsp;A licença, por motivo de afastamento do cônjuge, será concedida sem remuneração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 92.&nbsp;Na aplicação desta lei, os casos suscetíveis de interpretação serão resolvidos pelo Estado-Maior das Forças Armadas, ouvidos os Ministérios militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 93.&nbsp;Ficam extintas qualquer outras vantagens remuneratórias que vinham sendo pagas aos militares da ativa e na inatividade, que não tenham sido mantidas por esta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 94.&nbsp;O militar que, em virtude da aplicação desta lei, venha a fazer jus a uma remuneração inferior à que vinha recebendo, terá direito a um complemento igual ao valor da diferença encontrada, pago como vantagem individual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 95.&nbsp;Os valores das Gratificações de Compensação Orgânica e Habilitação Militar das indenizações regulares e do Adicional de Inatividade são os estabelecidos nas tabelas constantes do anexo II desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 96.&nbsp;O valor da contribuição para a pensão militar será igual a dois dias de soldo, arredondado em cruzeiros para a importância imediatamente superior. <BR><BR>
+<CENTER>CAPÍTULO III <BR>Das Disposições Transitórias </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 97.&nbsp;Enquanto não entrar em vigor a lei especial que trata da remuneração em campanha no País e no exterior, permanecerão em vigor os arts. 101 a 109 da Lei nº 5.787, de 27 de junho de 1972. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 98.&nbsp;Ao militar na inatividade fica assegurada a aplicação do disposto no § 3º do art. 66, desde que tenha passado para a inatividade nas condições ali previstas. <BR><BR>
+<CENTER>CAPÍTULO IV <BR>Das Disposições Finais </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 99.&nbsp;O Poder Executivo, em decreto comum às Forças Armadas, regulamentará a presente lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 100.&nbsp;Fica acrescentado à alínea b do § 1º do art. 3º da Lei nº 6.880, de 9 de dezembro de 1980, o seguinte inciso: <BR><BR>
+<DIR>"III - os da reserva remunerada, executando tarefa por tempo certo, segundo regulamentação para cada Força Armada."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 101.&nbsp;O art. 53 da Lei nº 6.880, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 53.&nbsp;A remuneração dos militares será estabelecida em legislação específica, comum às Forças Armadas, e compreende: <BR><BR>I - na ativa; <BR><BR><EM>a) </EM>soldo, gratificações e indenizações regulares; <BR><BR>II - na inatividade: <BR><BR><EM>a) </EM>proventos, constituídos de soldo os quotas de soldo e gratificações incorporáveis; <BR><EM>b) </EM>adicionais."<BR></DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 102.&nbsp;Ficam revogados: a Lei nº 5.787, de 27 de junho de 1972, ressalvado o disposto no art. 97 desta lei; a Lei nº 5.844, de 6 de dezembro de 1972; o Decreto-Lei nº 1.447, de 13 de fevereiro de 1976; o Decreto-Lei nº 1.603, de 22 de fevereiro de 1978; o Decreto-Lei nº 1.693, de 30 de agosto de 1979; o Decreto-Lei nº 1.824, de 22 de dezembro de 1980; o Decreto-Lei nº 1.848, de 6 de janeiro de 1981; o Decreto-Lei nº 1.901, de 22 de dezembro de 1981; o Decreto-Lei nº 2.201, de 27 de dezembro de 1984; a Lei nº 7.594, de 8 de abril de 1987; o Decreto-Lei nº 2.409, de 7 de janeiro de 1988; o <I>caput</I> do art. 3º da Lei nº 3.765, de 4 de maio de 1960, com a redação dada pelo art. 29 da Lei nº 8.216, de 13 de agosto de 1991; e demais disposições em contrário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 103.&nbsp;Esta lei entra em vigor na data de sua publicação, com efeitos financeiros a partir do primeiro dia do mês subseqüente. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 30 de setembro de 1991; 170º da Independência e 103º da República. </P>
+<P>FERNANDO COLLOR <BR>Jarbas Passarinho <BR>Mário César Flores <BR>Carlos Tinoco Ribeiro Gomes <BR>Sócrates da Costa Monteiro <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 30/09/1991
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 30/9/1991, Página 21013 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1991, Página 2082 
+                                                        Vol. 5          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

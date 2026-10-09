@@ -1,0 +1,981 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>Lei nº 5.619, de 3 de Novembro de 1970 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sôbre vencimentos, indenizações, proventos e outros direitos da Polícia Militar do Distrito Federal, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - Lei nº 5.619, de 3 de Novembro de 1970 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                            <li>  	
+                                                <a href="lei-5619-3-novembro-1970-358665-retificacao-73403-pl.html">Retificação</a>
+                                            </li>
+                                    <li>
+                                        <a href="lei-5619-3-novembro-1970-358665-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>Lei nº 5.619, de 3 de Novembro de 1970</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							<META name=GENERATOR content="MSHTML 6.00.2800.1106">Dispõe sôbre vencimentos, indenizações, proventos e outros direitos da Polícia Militar do Distrito Federal, e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA:&nbsp; <BR>Faço saber que o SENADO FEDERAL decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER><B>TÍTULO I </CENTER></B>
+<CENTER><B>Disposições Preliminares </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Esta Lei regula os vencimentos, indenizações, proventos e dispõe sôbre outros direitos dos Policiais Militares da Polícia Militar do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Para os efeitos desta Lei, adotam-se as seguintes conceituações: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) Comandante - é o titulo genérico correspondente ao de diretor, chefe ou outra denominação que tenha ou venha a ter aquêle que, investido de autoridade decorrente de leis e regulamentos, fôr responsável pela administração, instrução e disciplina de uma organização policial militar; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) Missão, Tarefa ou Atividade - é o dever emergente de uma ordem específica de comando, direção ou chefia; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) Organização Policial Militar - é a denominação genérica dada a corpo de tropa, repartição, estabelecimento ou a qualquer outra unidade administrativa da Polícia Militar do Distrito Federal; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 4) Corporação - é a denominação dada, nesta Lei, à Polícia Militar do Distrito Federal; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 5) Sede - no País - é todo o território do Distrito Federal; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 6) Sede - no Exterior - é todo território situado em país estrangeiro, no qual o Policial militar desempenha as atribuições, missões, tarefas ou atividades inerentes ao cargo, comissão, função ou encargo que lhe foi cometido; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 7) Serviço Ativo - é a situação do policial militar da Polícia Militar do Distrito Federal capacitado legalmente para o exercício de cargo, comissão, função ou encargo; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 8) Cargo, Função ou Comissão - é o conjunto de atribuições definidas por lei, regulamento ou ato do Govêrno do Distrito Federal e cometidas, em caráter permanente ou não, ao policial militar; <BR>9) Encargo - é a missão ou atribuição de serviço cometida a um policial militar. <BR><BR>
+<CENTER><B>TÍTULO II </CENTER></B>
+<CENTER><B>Do Policial Militar em Atividade </CENTER></B><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Dos Vencimentos </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Vencimentos são o quantitativo mensal em dinheiro devido ao policial militar em serviço ativo e compreendem o sôldo e as gratificações. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Do Soldo </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Soldo é a parte básica dos vencimentos inerentes ao oficial ou praça policial militar da ativa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O soldo do policial militar é irredutível, não está sujeito a penhora, seqüestro ou arresto, senão nos casos especìficamente previstos em lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;O direito do policial militar ao soldo tem início na data:<BR> <BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) do ato de promoção, para os oficiais PM; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) do ato de declaração, para o aspirante-a-oficial PM; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) do ato de promoção, para o subtenente PM; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 4) do ato de promoção, classificação ou engajamento, para as demais praças PM; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 5) do ingresso na Polícia Militar do Distrito Federal, para os voluntários; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 6) da apresentação, quando da nomeação inicial para qualquer posto ou graduação na Polícia Militar do Distrito Federal; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 7) do ato da matrícula, para os alunos das Escolas de Formação de Oficiais PM. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Excetuam-se das condições dêste artigo os casos com caráter retroativo, quando o sôldo será devido a partir das datas declaradas nos respectivos atos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Suspende-se, temporàriamente, o direito do policial militar ao sôldo quando:<BR> <BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) agregado para tratar de interêsse particular; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) em licença para exercer atividades ou função estranha à Polícia Militar do Distrito Federal; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) estiver em efetivo exercício de cargo público civil, temporário e não eletivo, ou em autarquia, emprêsa pública ou sociedade de economia mista, respeitado o direito de opção; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 4) em licença para o exercício de atividade técnica de sua especialidade em organização civil; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 5) em estado de deserção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;O direito ao sôldo cessa na data em que o policial militar fôr desligado do serviço ativo da Polícia Militar do Distrito Federal por:<BR> <BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) baixa do serviço ativo ou demissão voluntária; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) exclusão, expulsão ou perda do pôsto ou graduação; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) transferência para a reserva ou reforma; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 4) óbito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;O policial militar, considerado desaparecido ou extraviado em caso de calamidade pública ou no desempenho de qualquer serviço ou manobra, terá o soldo pago aos herdeiros que teriam direito a sua pensão militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No caso previsto neste artigo, decorridos 6 (seis) meses, far-se-á habilitação dos herdeiros na forma da lei, cessando o pagamento do sôldo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Verificando-se o reaparecimento do policial militar, e apuradas as causas do seu afastamento, caber-lhe-á, se fôr o caso, o pagamento da diferença entre o sôldo, a que faria jus se tivesse permanecido em serviço, e a pensão recebida pelos herdeiros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;O policial militar no exercício de cargo, comissão ou função, cujo desempenho seja privativo de pôsto ou graduação superior ao seu, percebe o saldo dêsse pôsto ou graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Quando, na substituição prevista neste artigo, o cargo, comissão ou função fôr atribuição de mais de um pôsto ou graduação, ao substituto cabe o sôldo correspondente ao menor dêles. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para os efeitos do disposto neste artigo, prevalecem os postos e graduações, correspondentes aos cargos, comissões ou funções, estabelecidos em lei, regulamento, regimento interno, quadro de organização e distribuição de efetivo ou lotação, nesta ordem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O disposto neste artigo não se aplica às substituições, por motivos de férias, gala, nojo e outras dispensas até 30 (trinta) dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;O policial militar perceberá o sôldo de seu pôsto ou graduação quando exercer o cargo, comissão ou função atribuídos, indistintamente, a 2 (dois) ou mais postos ou graduações e possuir qualquer dêstes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;O policial militar continuará com direito ao seu sôldo em todos os casos não previstos nos artigos 6º e 7º desta Lei. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Das Gratificações </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Gratificações são as partes dos vencimentos atribuídos ao policial militar como estímulo por atividades profissionais e condições de desempenho peculiares, bem como pelo tempo de permanência em serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;O policial militar, pelo efetivo exercício de suas funções, fará jus às gratificações seguintes:<BR> <BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) Gratificação de tempo de serviço; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) Gratificação de função policial militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Suspende-se o pagamento das gratificações, ao policial militar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) nos casos previstos no art. 6º desta Lei; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) no cumprimento de pena igual ou menor de 2 (dois) anos, decorrente de sentença transitada em julgado; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) em licença, por período superior a 6 (seis) meses, para tratamento de saúde, de dependente; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 4) em licença para aperfeiçoar seus conhecimentos técnicos, ou realizar estudos, por conta própria; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 5) que tiver excedido os prazos legais ou regulamentares de afastamento do serviço; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 6) afastado das funções por incompatibilidade profissional ou moral, nos têrmos das leis e regulamentos vigentes; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 7) no período de ausência não justificada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;O direito às gratificações cessa nos casos do art. 7º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;O policial militar que, por sentença passada em julgado, fôr declarado livre de culpa em crime que lhe tenha sido imputado, terá direito às gratificações que deixou de receber no período em que estêve afastado do serviço, à disposição da Justiça. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Do indulto, perdão ou livramento condicional, não decorre direito do policial militar a qualquer remuneração a que tenha deixado de fazer jus por fôrça de dispositivo desta Lei ou de legislação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Aplica-se ao policial militar desaparecido ou extraviado, quanto às gratificações, o previsto no art. 8º e seus parágrafos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Para os fins de concessão das gratificações, tomar-se-á por base o valor do sôldo de oficial ou praça, que efetivamente perceba o policial militar, ressalvado o caso previsto no art. 9º, quando será considerado o valor do sôldo do pôsto ou graduação correspondente ao cargo, comissão ou função eventualmente desempenhados. <BR><BR>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Da Gratificação de Tempo de Serviço </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;A gratificação de tempo de serviço é devida ao policial militar por qüinqüênio de efetivo serviço prestado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;Ao completar cada qüinqüênio de efetivo serviço, o policial militar percebe a Gratificação de Tempo de Serviço, cujo valor é de tantas cotas de 5% (cinco por certo) do respectivo sôldo quantos forem os qüinqüênios de efetivo serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O direito à gratificação começa no dia seguinte em que o policial militar completar cada qüinqüênio, computado na forma da legislação vigente e reconhecido mediante publicação em boletim do órgão de pessoal ou da organização policial militar. <BR><BR>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Da Gratificação de Função Policial Militar </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;A Gratificação de Função é atribuída ao policial militar pelo efetivo desempenho de atividades específicas de sua organização, na forma do estabelecido nesta Seção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A gratificação de que trata êste artigo é classificada em duas categorias: I e II. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;A Gratificação de Função - Categoria I - é devida ao policial militar pelos cursos realizados com aproveitamento em qualquer pôsto ou graduação, com os percentuais a seguir fixados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) 25% (vinte e cinco por cento): Cursos - Superior de Polícia; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) 20% (vinte por cento): Cursos De Aperfeiçoamento; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) 15% (quinze por cento): Cursos - De Especialização de Oficiais e Sargentos ou equivalentes; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 4) 10% (dez por cento): Cursos De Formação de Oficiais e Sargentos ou de Especialização de Praças de graduação inferior a 3º Sargento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A equivalência dos Cursos referidos neste artigo será estabelecida pelas Normas de Equivalência de Cursos baixadas às Polícias Militares pelo Estado-Maior do Exército através da Inspetoria-Geral das Polícias Militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Ao policial militar que possuir mais de um curso sòmente será atribuída a gratificação de maior valor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A gratificação estabelecida neste artigo é devida a partir da data de conclusão do respectivo curso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;A Gratificação de Função - Categoria II - é devida ao policial militar, no exercício de funções, em uma das situações definidas nos artigos 24, 25 e 26 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A gratificação de que trata êste artigo compreende três tipos: 1, 2 e 3. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Ao policial militar que se enquadra símultâneamente, em mais de uma das situações referidas nos artigos 24, 25 e 26, sòmente é atribuído o tipo de gratificação de maior valor percentual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;A Gratificação de Função - Categoria II, tipo 1 - é devida ao oficial PM possuidor do Curso Superior de Polícia e em efetivo desempenho de sua função específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Govêrno do Distrito Federal estabelecerá quais as funções a que se refere êste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;A Gratificação de Função Categoria II, tipo 2 - é devida ao policial militar em função em unidade de tropa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Percebe também esta gratificação o policial militar em função de ensino ou instrução em estabelecimento de ensino ou de instrução policiais militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;A Gratificação de Função - Categoria II, tipo 3 - é devida ao militar em efetivo desempenho de funções policiais militares não enquadradas nos arts. 24 e 25 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Os valôres percentuais das gratificações referidas nos arts. 24, 25 e 26 serão fixados ou reajustados, por Decreto do Govêrno do Distrito Federal, observado o disposto no artigo 24 do Decreto-lei nº 667, de 2 de julho de 1969. <BR><BR>
+<CENTER><B>TÍTULO III </CENTER></B>
+<CENTER><B>Das Indenizações </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Indenização é o quantitativo em dinheiro devido ao policial militar para ressarcimento de despesas decorrentes de obrigações impostas para o exercício de cargo, comissão, função, encargo ou missão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As indenizações compreendem:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>diárias; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>ajuda de custo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>transporte; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>moradia. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Para fins de cálculos das indenizações, tomar-se-á por base o valor do soldo que o policial militar percebe na forma do art. 18. <BR><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Das Diárias </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Diárias são indenizações destinadas a atender às despesas extraordinárias de alimentação e de pousada e são devidas ao policial militar durante seu afastamento da organização militar a que pertence, por motivo de serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As diárias compreendem a Diária de Alimentação e a Diária de Pousada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A Diária de Alimentação é devida, inclusive, nos dias de partida e de chegada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;O valor da Diária de Alimentação é igual a um dia de sôldo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) de Coronel PM, para os Oficiais superiores; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) de Capitão PM, para os Capitães, Oficiais Subalternos e Aspirantes-a-Oficial; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) de Subtenente PM, para Subtenentes, Sargentos e alunos das Escolas de Formação de Oficiais; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 4) de Cabo PM, para Cabos e Soldados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;O valor da Diária de Pousada é igual ao valor atribuído à Diária de Alimentação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;Compete ao Comandante da Organização Policial Militar providenciar o pagamento das Diárias a que fizer jus o policial militar e, sempre que fôr julgado necessário, poderá concedê-las adiantadamente para ajuste de contas quando do pagamento dos vencimentos que se verificar após o regresso à organização policial militar, condicionando-se o adiantamento à existência de meios e à reserva dos recursos orçamentários próprios nos órgãos competentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;Não serão atribuídas diárias ao policial militar:<BR> <BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) nos dias de viagem, quando no custo da passagem estiverem compreendidos a alimentação e o alojamento ou o pagamento das despesas correr por conta da Corporação; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) durante o afastamento da organização policial militar por menos de 8 (oito) horas consecutivas; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) cumulativamente com a ajuda de custo, exceto nos dias de viagens por qualquer meio de transporte, quando a alimentação ou a pousada ou ambas, não estejam compreendidas no custo das passagens; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 4) quando as despesas com alimentação e alojamento forem asseguradas pela Corporação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Ao policial militar em serviço de duração continuada de 24 (vinte e quatro) horas, estende-se a diária prevista no art. 31 desta Lei, desde que sua organização, ou outra nas proximidades do local do serviço não lhe possa fornecer alimentação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O policial militar, nos dias em que permanecer em serviço nas condições dêste artigo, por prazo igual ou superior a 8 (oito) horas consecutivas, mas inferior a 24 (vinte e quatro) horas, faz jus à metade da diária de alimentação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;No caso de falecimento do policial militar, seus herdeiros não restituirão, as diárias que êle haja recebido adiantadamente, segundo o art. 33 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;O policial militar que receber diárias, quando em deslocamento ou em serviço, fora do Distrito Federal, indenizará à organização em que se alojar ou se alimentar, de acôrdo com as normas em vigor nessa organização. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Da Ajuda de Custo </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Ajuda de Custo é a indenização para custeio de despesas de viagem, mudança e instalação, exceto as de transporte paga ao policial militar, quando, por interêsse do serviço, fôr nomeado, designado, matriculado em Escola, Centro de Instrução ou Curso, fora do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A indenização de que trata êste artigo será paga adiantadamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;O policial militar terá direito à Ajuda de Custo sempre que fôr designado para comissão cujo desempenho importe na obrigação da mudança de domicílio, concomitantemente com seu afastamento da sede da corporação, onde exercia suas atribuições, missões, tarefas ou atividades policiais militares, obedecidas as prescrições do art. 40. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;A Ajuda de Custo devida ao policial militar será igual: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) ao valor correspondente ao respectivo sôldo quando não possuir dependentes; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) a 2 (duas) vêzes o valor do respectivo sôldo quando possuir dependentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;Não terá direito à Ajuda de Custo o policial militar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) movimentado por interêsse próprio, operações de guerra ou de manutenção da ordem pública; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) desligado de curso ou escola por falta de aproveitamento ou trancamento voluntário, de matrícula, ainda que preencha os requisitos do art. 39 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Restituirá ajuda de custo o policial militar que a houver recebido, nas formas e circunstâncias abaixo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) integralmente e de uma só vez, quando deixar de seguir destino a seu pedido; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) pela metade do valor recebido e de uma só vez, quando até 6 (seis) meses após ter seguido para a nova comissão, desta fôr, a pedido, dispensado, licenciado ou exonerado; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) pela metade do valor, mediante desconto pela décima parte do sôldo, quando não seguir para a nova comissão por motivo independente de sua vontade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Não se enquadra nas disposições do item 2 dêste artigo a licença para tratamento da própria saúde. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O policial militar que estiver sujeito a desconto para restituição de ajuda de custo, ao adquirir direito a nova, liquidará integralmente, no ato do recebimento desta, o débito anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Na concessão da Ajuda de Custo, para efeito de cálculo de seu valor, determinação do exercício financeiro, estado civil e tabela em vigor, tomar-se-á como base a data do ajuste de contas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se o policial militar fôr promovido, contando antigüidade da data anterior à do pagamento da Ajuda de Custo, fará jus à diferença entre o valor dêste e daquele a que teria direito no pôsto ou graduação atingido pela promoção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;A Ajuda de Custo não será restituída pelo policial militar ou seus herdeiros quando: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) após ter seguido destino, fôr mandado regressar; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) ocorrer o falecimento do policial militar, mesmo antes de seguir destino. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Do Transporte </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;O policial militar, nas movimentações por interêsse do serviço, tem direito a transporte, de domicílio a domicílio, por conta da Corporação, nêle compreendidas a passagem e a translação da respectiva bagagem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Se as movimentações importarem na mudança da sede do policial militar com dependentes, a êstes se estendem os mesmos direitos dêste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O policial militar com dependentes amparados por êste artigo terá ainda direito ao transporte de um empregado doméstico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Quando o transporte não fôr realizado por responsabilidade da Corporação, o policial militar será indenizado da quantia correspondente às despesas decorrentes dos direitos a que se refere êste artigo e seus §§ 1º e 2º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O policial militar da ativa terá direito ainda a transporte por conta da Corporação quando tiver de efetuar deslocamentos fora da sede da Corporação, nos seguintes casos:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>deslocamento no interêsse da Justiça ou da Disciplina; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>concurso para ingresso em Escolas, Cursos ou Centros de Formação, Especialização, Aperfeiçoamento ou Atualização, de interêsse da Corporação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>outros deslocamentos, em objeto de serviço, decorrentes do desempenho da função policial militar; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>baixa em organização hospitalar ou alta desta, em virtude de prescrição médica competente. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Para efeito de concessão de transporte, consideram-se pessoas da família do policial militar, os seus dependentes na forma do disposto nos arts. 125 e 126, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os dependentes do policial militar, com direito ao transporte, por conta do estado, que não puderem acompanhá-lo na mesma viagem, por qualquer motivo, poderão usar o direito a partir de 30 (trinta) dias até 9 (nove) meses após a movimentação do policial militar, desde que tenha sido feita por êste, sob sua responsabilidade, a necessária declaração à autoridade competente, para requisitar o transporte. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A família do policial militar que falecer em serviço ativo, terá direito dentro de 6 (seis) meses após o óbito, ao transporte para a localidade, no território nacional, em que fixar residência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;O policial militar da ativa oriundo da Polícia Militar do antigo Distrito Federal quando transferido para a reserva remunerada ou reformado terá direito ao transporte para o Estado da Guanabara, desde que ali vá fixar residência, prescrevendo o direito após decorridos 120 (cento e vinte) dias da data de publicação do ato oficial de transferência para a inatividade. <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Da Moradia </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;O policial militar em atividade faz jus a: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) alojamento, em sua organização policial militar, quando aquartelado; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) moradia, em imóvel sob responsabilidade da Corporação, de acôrdo com a disponibilidade existente; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) indenização mensal, para moradia, quando não se encontrar na situação prevista no item 2, acima. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;O valor da indenização para moradia é anualmente fixado por Decreto do Governo do Distrito Federal, levando em consideração os encargos de família. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º "Encargos de Família", para os fins previstos neste artigo, são os dependentes do policial militar na forma do disposto nos arts. 125 e 126 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Suspende-se, temporàriamente, o direito do policial militar à indenização para moradia, enquanto se encontrar em uma das situações previstas no art. 6º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;Quando o policial militar ocupar imóvel sob responsabilidade da respectiva Corporação, o quantitativo correspondente à indenização para moradia será sacado pela organização policial militar competente e recolhido à Corporação para atender à conservação e construção de novas residências para pessoal ou dependências para assistência social. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;Quando o policial militar ocupar imóvel sob a responsabilidade de outro órgão, o quantitativo sacado na forma do artigo anterior terá o seguinte destino:<BR> <BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) o correspondente ao aluguel, recolhido ao órgão responsável pelo imóvel; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) o saldo, se houver, empregado na forma estabelecida no artigo anterior. <BR><BR>
+<CENTER><B>TÍTULO IV </CENTER></B>
+<CENTER><B>Outros Direitos </CENTER></B><BR>
+<CENTER><B>CAPíTULO I </CENTER></B>
+<CENTER><B>Do Salário-Família </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;Salário-Família é o auxílio em dinheiro pago ao policial militar para custear, em parte, a educação e assistência a seus filhos e outros dependentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Salário-Família é devido ao policial militar no valor e nas condições previstas na legislação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;O Salário-Família é isento de tributação e não sofre desconto de qualquer natureza. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Da Assistência Médico-Hospitalar </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;Será proporcionada ao policial militar e aos seus dependentes assistência médico-hospitalar através das organizações do Serviço de Saúde e de Assistência Social da Corporação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;Em principio, a organização de saúde da Corporação destina-se a atender o pessoal da Polícia Militar e seus dependentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Em certos casos o policial militar poderá baixar à organização hospitalar de outra Corporação, desde que seja por esta facultada a internação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;A internação do policial militar em hospital ou clínica especializados, nacionais ou estrangeiros, estranhos aos serviços hospitalares da Corporação, será autorizada nos seguintes casos:<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) quando não houver organização hospitalar militar da Corporação; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) em casos de urgência, quando a organização hospitalar da Corporação não possa atender; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) quando a organização hospitalar da Corporação não dispuser de clínica especializada necessária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;O policial militar em serviço ativo terá hospitalização e tratamento custeados pelo Distrito Federal, quando acidentado em serviço ou acometido de doença adquirida em serviço ou dêle decorrente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O policial militar da ativa não enquadrado neste artigo terá tratamento por conta do Distrito Federal, ressalvadas as indenizações mencionadas na respectiva regulamentação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A hospitalização para o policial militar da ativa será gratuita até 60 (sessenta) dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O policial militar na inatividade remunerada terá tratamento por conta do Distrito Federal, ressalvadas as indenizações mencionadas na respectiva regulamentação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;A assistência médico-hospitalar ao policial militar da ativa ou da inatividade remunerada será prestada pelas organizações de saúde da Corporação, dentro das limitações dos recursos próprios colocados à disposição das mesmas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;A Corporação prestará assistência médico-hospitalar, através dos serviços especializados, aos dependentes dos policiais militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os recursos para assistência de que trata êste artigo, provirão de verbas consignadas para a Corporação no orçamento do Distrito Federal e de contribuições estabelecidas na forma do disposto no parágrafo seguinte. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Fica estabelecida a contribuição de 3% (três por cento) do sôldo do policial militar, para constituição do Fundo de Saúde. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Para efeito de aplicação dêste artigo, são considerados dependentes os definidos nos artigos 125 e 126 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Continuarão compreendidos nas disposições dêste artigo a viúva do policial militar, enquanto permanecer neste estado, e os demais dependentes mencionados no parágrafo anterior, desde que vivam sob a responsabilidade legal da viúva. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;As Normas, Condições de atendimento e Indenizações serão reguladas por ato do Govêrno do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As praças especiais e as demais praças da ativa ficam isentas do pagamento das diárias de hospitalização. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Do Funeral </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Art. 61.&nbsp;O Distrito Federal assegurará sepultamento condigno ao policial militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; Art. 62. Auxílio-Funeral é o quantitativo concedido para as despesa com o sepultamento do policial militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;O Auxílio-Funeral equivale a duas vezes o valor do sôldo do policial militar falecido, não podendo ser inferior a duas vêzes o valor do sôldo de Cabo PM. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;Ocorrendo o falecimento do policial militar, as seguintes providências devem ser observadas para a concessão do Auxílio-Funeral: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) antes de realizado o entêrro, o pagamento do Auxílio-Funeral será feito a quem de direito pela organização policial militar, independentemente de qualquer formalidade, exceto a da apresentação do Atestado de Óbito; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) após o sepultamento do policial militar, não se tendo verificado o caso do item anterior, dêste artigo, deverá a pessoa que o custeou, mediante apresentação do Atestado de Óbito, solicitar o reembôlso das despesas, comprovando-as com os recibos em seu nome, dentro do prazo de 30 (trinta) dias, sendo-lhe em seguida reconhecido o crédito e paga a importância correspondente aos recibos, até o valor-limite estabelecido no artigo 63 desta Lei; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) caso a despesa com o sepultamento, paga de acôrdo com o item anterior, seja inferior ao valor do Auxílio-Funeral estabelecido, a diferença será paga aos herdeiros habilitados à pensão militar, mediante petição à autoridade competente; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 4) decorrido o prazo do item 2, sem reclamação do Auxílio-Funeral por quem haja custeado o sepultamento do policial militar, será o mesmo pago aos herdeiros habilitados à pensão militar, mediante petição à autoridade competente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; Art. 65. Em casos especiais, e a critério da autoridade competente, poderá a Corporação custear diretamente o sepultamento do policial militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Verificando-se a hipótese de que trata êste artigo, não será pago, aos herdeiros, o Auxílio-Funeral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;Cabe à Corporação a transladação do corpo do policial militar para sua localidade de origem, quando por motivos devidamente justificáveis fôr solicitado pela família. <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Da Alimentação </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;Tem direito à alimentação por conta do Distrito Federal: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) o policial militar servindo ou quando a serviço em organização policial militar com rancho próprio ou ainda, em campanha, manobra ou exercício; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) o aluno da Escola de Formação de Oficiais PM, de Sargentos PM, de Cabos PM e de Soldados PM, ou de cursos de especialização de praças policiais militares; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) o preso civil quando recolhido à organização policial militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Poderá o Distrito Federal estender o direito de que trata êste artigo aos civis que prestem serviços nas organizações policiais militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;Em princípio tôda organização policial militar deverá ter rancho próprio organizado, em condições de proporcionar rações preparadas aos seus integrantes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se a organização policial militar não possuir rancho, o policial militar quando em serviço de duração continuada de 24 (vinte e quatro) horas, fará jus à diária de alimentação prevista no artigo 31 desta Lei, desde que outra organização nas proximidades do local de serviço não possa fornecer alimentação por conta do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;A etapa é a importância em dinheiro correspondente ao custeio da ração, sendo o seu valor estabelecido, semestralmente, pelo Govêrno do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;Os gêneros de paiol ou de subsistência serão fornecidos, em espécie, à organização policial militar, pelos estabelecimentos ou organizações de subsistência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;O Cabo PM e o Soldado PM quando servirem em organização policial militar que não tenha rancho organizado e não possam ser arranchados por outras vizinhas, terão direito à indenização do valor igual à importância correspondente à ração comun. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As praças referidas neste artigo que são alojadas e arranchadas em organizações policiais militares, quando em férias regulamentares, e não forem alimentadas por conta do Distrito Federal, receberão a indenização estipulada neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;É vedado o desarranchamento para o pagamento de etapas em dinheiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;A aplicação dêste Capítulo será regulada pelo Govêrno do Distrito Federal por proposta do Comandante-Geral. <BR><BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Do Fardamento </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;O aluno da Escola de Formação de Oficiais PM, o Cabo PM e o soldado PM têm direito, por conta do Distrito Federal, a uniforme, roupa branca e roupa de cama, de acôrdo com as também de distribuição estabelecidas pela Corporação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;O policial militar ao ser declarado Aspirante-a-Oficial PM ou promovido a Terceiro Sargento PM, faz jus a um auxílio para aquisição de uniforme no valor de 3 (três) vêzes o sôldo de sua graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Idêntico direito assiste aos nomeados Oficiais PM ou Sargentos PM mediante habilitação em concurso e aos nomeados Capelães policiais militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76.&nbsp;Ao Oficial PM, Subtenente ou Sargento PM, que o requerer quando promovido, será concedido um adiantamento correspondente ao valor de 1 (um) sôldo do nôvo pôsto ou graduação, para aquisição de uniforme. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A concessão prevista neste artigo far-se-á mediante despacho em requerimento do policial militar ao Comandante-Geral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A reposição do adiantamento será feita mediante desconto mensal no prazo de 24 (vinte e quatro) meses. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O adiantamento referido neste artigo poderá ser requerido novamente se o policial militar permanecer mais de 4 (quatro) anos no mesmo pôsto ou graduação, podendo ser repetido em caso de promoção, desde que liquide o saldo devedor do que tenha recebido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77.&nbsp;O policial militar que perder seus uniformes em qualquer sinistro havido em organização policial militar ou viagem a serviço, receberá um auxílio correspondente ao valor de até 3 (três) vêzes o valor do sôldo de seu pôsto ou graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Ao Comandante do policial militar prejudicado, por comunicação dêste, cabe providenciar sindicância e, em solução, propôr ao Comandante-Geral, se fôr o caso, o valor dêsse auxílio em função do prejuízo sofrido. <BR><BR>
+<CENTER><B>CAPÍTULO VI </CENTER></B>
+<CENTER><B>Dos Serviços Reembolsáveis </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78.&nbsp;A Corporação assegurará serviços reembolsáveis para o atendimento das necessidades em gêneros de alimentação, vestuário, utensílios, serviços de lavanderia, confecção e outros que se relacionem com as necessidades domésticas do policial militar, quando fôr julgado de conveniência para seus integrantes. <BR><BR>
+<CENTER><B>TÍTULO V </CENTER></B>
+<CENTER><B>Do Policial Militar na Ativa em Serviço no Estrangeiro </CENTER></B><BR><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Disposições Preliminares<BR><BR></CENTER></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Art. 79.&nbsp;Considera-se em serviço no estrangeiro o policial militar em atividade fora do País, designado para desempenhar funções enquadradas em uma das missões seguintes:&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 - Missão Especial:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>instrutor, monitor, estagiário ou aluno de estágios ou cursos no estrangeiro; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>participantes de viagens de instrução;</TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>encarregado de missões especiais.</TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 - Missão Transitória: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>estagiário ou aluno de estágios ou cursos no estrangeiro;</TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>membro de delegação, comitiva ou representação de natureza policial militar, técnico-profíssional ou desportiva;</TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c) </I></TD>
+<TD>encarregado de missões ocasionais.</TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A missão especial poderá importar ou não na mudança de sede do policial militar para o exterior e a missão transitória não desvincula o policial militar de sua sede no território nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O ato oficial de designação do policial militar para serviço no estrangeiro enquadará a missão que lhe fôr atribuída em uma das situações dêste artigo e, no caso de missão especial, dirá se importa ou não em mudança de sede.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 80.&nbsp;O policial militar em missão especial no exterior percebe os vencimentos, indenizações e demais direitos previstos nesta Lei, pagos em moeda estrangeira, observadas as prescrições dêste Titulo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 81.&nbsp;O policial militar em missão transitória no exterior continua percebendo os vencimentos, indenizações e demais direitos em moeda nacional, pela organização policial militar a que pertença. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Da regra deste artigo exclui-se o pagamento das diárias de alimentação e pousada, que será feito em moeda estrangeira na forma prevista neste Título, quando couber. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 82.&nbsp;Em casos especiais, o policial militar poderá ser designado pelo Governador do Distrito Federal, para cumprir missões especiais no exterior, sem ônus em moeda estrangeira, abonando-se-lhe, em moeda nacional, os vencimentos, indenizações e outros direitos normais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O policial militar designado para missão especial no exterior, de duração até 60 (sessenta) dias, sem mudança de sede no território nacional, terá direito a uma indenização diária, paga em moeda nacional, equivalente ao valor de um dia do sôldo de seu pôsto ou graduação, quando as despesas com alojamento e alimentação forem asseguradas pelo Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para o policial militar em missão decorrente de viagem de representação, compreendido no disposto no parágrafo anterior, poderá também ser abonada uma ajuda de custo correspondente a um mês de sôldo de seu pôsto ou graduação, paga em moeda nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 83.&nbsp;O policial militar no exterior, em licença para aperfeiçoar conhecimentos técnicos ou realizar estudos por conta própria, perceberá mensalmente apenas o valor de um sôldo do seu pôsto ou graduação, pago em moeda nacional no Brasil, a procurador capaz. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 84.&nbsp;O policial militar em missão oficial no exterior, vindo ao País em objeto de serviço ou de férias, continuará percebendo a sua remuneração em moeda estrangeira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 85.&nbsp;O pagamento em moeda estrangeira é devido a partir do dia em que o policial militar deixar a última localidade nacional e termina no dia em que deixar a última localidade estrangeira no regresso. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Dos Vencimentos </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 86.&nbsp;O policial militar no exterior, em missão que assegure o pagamento em moeda estrangeira, percebe os vencimentos a que faz jus pelo Título II desta Lei, podendo ser os mesmos acrescidos de uma indenização especial de representação exterior, a ser fixada, se fôr o caso, pelo Governo do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A indenização de representação exterior tem por fim assegurar em moeda estrangeira níveis de vencimentos compatíveis com as missões e garantir a sua estabilidade em face das variações cambiais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O Governo do Distrito Federal fixará, através de Decreto, a tabela de vencimentos dos policiais militares, em moeda estrangeira, constituída na forma dêste artigo, observado o que prescreve o § 4º do artigo 13 da Constituição. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Das Indenizações </CENTER></B><BR><BR>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Das Diárias </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 87.&nbsp;O policial militar, em missão oficial especial, com sede no exterior, quando se afastar de sua sede em objeto de serviço, perceberá diárias de alimentação e de pousada, em moeda estrangeira, nos valôres fixados na tabela referida no artigo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Perceberá as diárias dêste artigo o policial militar no exterior, quando em missão especial, que não acarrete mudança de sede do território nacional ou quando em missão transitória, desde que não tenha alojamento e alimentação por conta do Distrito Federal e que não esteja na situação do artigo 82. <BR><BR>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Da Ajuda de Custo </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 88.&nbsp;O policial militar designado para missão especial com mudança de sede para o exterior faz jus à ajuda de custo em conformidade com o estabelecido nos artigos 38 e 44 desta Lei, paga em moeda estrangeira, nos valôres fixados na tabela de que trata o artigo 86. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>É facultado ao policial militar receber, em moeda nacional no Brasil, a metade da ajuda de custo a que tenha direito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 89.&nbsp;É concedida ajuda de custo idêntica à da ida, paga em moeda estrangeira, ao policial militar que regressar ao País por término de missão oficial de duração superior a 6 (seis) meses. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Igual direito é assegurado ao policial militar que regressar ao País antes do prazo mencionado, de missão prevista para mais de 6 (seis) meses, por motivo alheio à sua vontade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 90.&nbsp;No caso do falecimento do policial militar, em missão no exterior, a ajuda de custo do regresso se transfere aos dependentes, a quem será paga ao regressarem ao País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Permanecendo os dependentes no exterior, decorridos 6 (seis) meses do falecimento do policial militar, extingue-se o direito de que trata êste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 91.&nbsp;O policial militar em missão especial com sede no exterior, que receba ordem para mudar de sede no estrangeiro, receberá a ajuda de custo de que trata o artigo 88. <BR><BR>
+<CENTER><B>SEÇÃO III </CENTER></B>
+<CENTER><B>Outras Disposições </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 92.&nbsp;São assegurados aos policiais militares em missão no exterior os direitos estabelecidos nos artigos 45 e 48 desta Lei, quando aplicáveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O salário-família é integralmente pago em moeda estrangeira, quer no mês da partida, quer no de regresso do policial militar. <BR><BR>
+<CENTER><B>TÍTULO VI </CENTER></B>
+<CENTER><B>Do Policial Militar na Inatividade <BR><BR></CENTER></B>
+<CENTER><B>CAPÍTTULO I </CENTER></B>
+<CENTER><B>Da Remuneração </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 93.&nbsp;O Policial militar na inatividade remunerada, satisfeitas as condições estabelecidas neste Título, faz jus: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) aos proventos; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) ao auxílio-invalidez; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) ao adicional de inatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>São extensivos ao policial militar na inatividade remunerada, no que lhe fôr aplicável, os direito constantes dos artigos 52 a 66 e 78 desta Lei. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Dos Proventos </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 94.&nbsp;Proventos são o quantitativo em dinheiro que o policial militar percebe na inatividade, quer na reserva remunerada, quer na situação de reformado, constituídos pelas seguintes parcelas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) soldo ou cotas do soldo; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) gratificações incorporáveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 95.&nbsp;Os proventos serão revistos sempre que forem modificados os vencimentos do policial militar em serviço ativo. <BR><BR>
+<CENTER><B>SEÇÃO I </CENTER></B>
+<CENTER><B>Do Direito à Percepção </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 96.&nbsp;Os proventos são devidos ao policial militar na inatividade remunerada, quando deixar efetivamente o exercício do serviço ativo em virtude de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) transferência para a reserva remunerada; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) reforma; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) dispensa de cargo, comissão ou função para que tenha sido convocado ou designado quando já se encontrava na reserva remunerada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O policial militar de que trata êste artigo continuará a perceber seus vencimentos, até a publicação de seu desligamento no boletim interno de sua organização policial militar, o que não poderá exceder de 45 (quarenta e cinco) dias à data da publicação no Órgão Oficial do Poder Executivo do Distrito Federal do ato oficial de transferência para a reserva remunerada, reforma ou dispensa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Suspende-se, temporariamente, o direito do policial militar à percepção dos proventos na data de sua apresentação na Ajudância Geral, quando, na forma da legislação em vigor, reverter ao serviço ativo como convocado ou fôr designado para o desempenho de cargo, comissão ou função na Polícia Militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 97.&nbsp;Cessa o direito à percepção dos proventos na data: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) do óbito; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) da sentença passada em julgado, para o oficial PM por crime que o prive do pôsto e patente; e, para a praça PM por crime que implique nas sua exclusão ou expulsão da Polícia Militar do Distrito Federal. <BR><BR>
+<CENTER><B>SEÇÃO II </CENTER></B>
+<CENTER><B>Do Soldo e das Cotas de Sôldo </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 98.&nbsp;O soldo constitui a parte básica dos proventos a que faz jus o policial militar na inatividade, sendo o seu valor igual ao estabelecido para o sôldo do policial militar da ativa do mesmo pôsto ou graduação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para efeito de cálculo, o soldo dividir-se-á em cotas de soldo, correspondendo cada uma a um trigésimo do seu valor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 99.&nbsp; Por ocasião de sua passagem para a inatividade, o policial militar tem direto a tantas cotas do sôldo quantos forem os anos de serviços, computáveis para a inatividade, até o máximo de 30 (trinta) anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para efeito de contagem destas cotas, a fração de tempo igual ou superior a 180 (cento e oitenta) dias será considerada como um ano. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 100.&nbsp;O oficial PM que contar mais de 35 (trinta e cinco) anos de serviço, quando transferido para a inatividade, terá o cálculo de seus proventos referido ao sôldo do pôsto imediatamente superior, de acôrdo com os arts. 99 e 103 deste Título, se em seu Quadro ou Corpo existir pôsto superior ao seu. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O oficial PM nas condições dêste artigo, se ocupante do último pôsto da hierarquia militar de seu Quadro ou Corpo na ativa, terá o cálculo dos proventos referido ao sôldo do seu próprio pôsto aumentado de 20% (vinte por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 101.&nbsp;O subtenente PM quando transferido para a reserva terá o cálculo de seus proventos referido ao sôldo de Segundo-Tenente PM desde que conte mais de 30 (trinta) anos de efetivo serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 102.&nbsp;As demais praças PM que contem mais de 30 (trinta) anos de efetivo serviço, ao serem transferidas para a reserva, terão o cálculo dos seus proventos referido ao sôldo, da graduação imediatamente superior à que possuíam no serviço ativo. <BR><BR>
+<CENTER><B>SEÇÃO III </CENTER></B>
+<CENTER><B>Das Gratificações Incorporáveis </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 103.&nbsp;São consideradas gratificações incorporáveis: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) Gratificação de Tempo de Serviço; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) Gratificação de Função Policial Militar - Categoria I. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A "base de cálculo" para o pagamento das gratificações previstas neste artigo dos auxílios e de outros direitos dos policiais militares na inatividade remunerada será o valor do sôldo ou das cotas de sôldo. <BR><BR>
+<CENTER><B>SEÇÃO IV </CENTER></B>
+<CENTER><B>Dos Incapacitados </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 104.&nbsp;O policial militar incapacitado terá seus proventos referidos ao sôldo integral, do pôsto ou graduação em que foi reformado na forma da legislação em vigor, e as gratificações incorporáveis a que fizer jus, quando reformado pelos seguintes motivos:<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) ferimento recebido em campanha ou na manutenção da ordem pública ou por enfermidade contraída nessas situações ou que nelas tenham sua causa eficiente; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) acidente em serviço; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) doença adquirida em tempo de paz, tendo relação de causa e efeito com o serviço;&nbsp; <BR>&nbsp;&nbsp;&nbsp; &nbsp;4) por doença, moléstia ou enfermidade, embora sem relação de causa e efeito com o serviço, desde que torne o policial militar total e permanentemente inválido para qualquer trabalho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Não se aplicam as disposições do presente artigo ao policial militar que, já na situação de inatividade adquira uma das doenças referidas no item 4, a não ser que fique comprovada, por Junta Médica da Polícia Militar do Distrito Federal, relação de causa e efeito entre a moléstia e o exercício de suas funções, enquanto esteve no serviço ativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 105.&nbsp;O policial militar, reformado por incapacidade decorrente de acidente ou enfermidade sem relação de causa e efeito com o serviço, ressalvados os casos do item 4 do artigo anterior, perceberá os proventos nos limites impostos pelo tempo de serviço computável para a inatividade, observadas as condições estabelecidas nos arts. 99 e 103 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O policial militar de que trata êste artigo não pode receber, como proventos, quantia inferior ao sôldo do pôsto ou graduação da ativa, atingindo na inatividade para fins de remuneração. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Do Auxílio-lnvalidez </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 106.&nbsp;O policial militar em atividade, julgado incapaz definitivamente por um dos motivos constantes do art. 104, terá direito ao Auxílio-Invalidez no valor de 20% (vinte por cento) da "base de cálculo" de que trata o art. 103, ao passar para a inatividade, desde que considerado total e permanentemente inválido para qualquer trabalho e satisfaça ainda a uma das condições abaixo especificadas, devidamente declaradas pela Junta Médica da Polícia Militar do Distrito Federal: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) necessitar de hospitalização permanente; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) necessitar de assistência ou de cuidados permanentes de efermagem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para continuidade do direito ao recebimento do Auxílio-Invalidez, o policial militar ficará sujeito a apresentar anualmente declaração de que não exerce nenhuma atividade remunerada pública ou privada e, a critério da administração, a submeter-se, periòdicamente, à inspeção de saúde de contrôle. No caso de oficial PM, mentalmente enfêrmo ou de praça PM, aquela declaração deverá ser firmada por dois oficiais da ativa da Polícia Militar do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O Auxilio-Invalidez será suspenso automàticamente, pela autoridade competente, se fôr verificado que o policial militar beneficiado exerce ou tenha exercido, após recebimento do auxílio, qualquer atividade remunerada, sem prejuízo de outras sanções cabíveis, bem como se, em inspeção de saúde, fôr constatado não se encontrar nas condições citadas neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O Auxílio-Invalidez não poderá ser inferior ao valor do sôldo de cabo PM. <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Do Adicional de Inatividade </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 107.&nbsp;O adicional de que trata o item 3 do art. 93 é calculado mensalmente sôbre o respectivo provento e em função do tempo de serviço efetivamente prestado nas seguintes condições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) de 20% (vinte dor cento), quando o tempo de efetivo serviço computado for de 40 (quarenta) anos; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) de 15% (quinze por cento), quando o tempo de efetivo serviço computado fôr de 35 (trinta e cinco) anos; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) de 10 % (dez por cento), quando o tempo de efetivo serviço computado for de 30 (trinta) anos. <BR><BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Das Situações Especiais </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 108.&nbsp;Não estão compreendidos nas disposições do art. 99 os policiais militares amparados por legislação especial que lhes assegura, por ocasião da passagem para a inatividade, sôldo, gratificações ou vencimentos integrais do pôsto ou graduação a que eles fazem jus, efetivamente, na inatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 109.&nbsp;O policial militar que reverter ao serviço ativo e for reincluído ou reabilitado faz jus aos vencimentos na forma estipulada nesta Lei para as situações equivalentes, na conformidade do que for estabelecido no ato de reversão, reinclusão ou reabilitação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Se o policial militar fizer jus a pagamentos relativos a períodos anteriores à data da reversão, reinclusão ou reabilitação, receberá a diferença entre a importância apurada no ato de ajuste de contas e a recebida dos cofres públicos a título de vencimentos, proventos, pensão, remuneração, salário ou vantagem, nos mesmos períodos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 110.&nbsp;No caso de reversão ou reinclusão com ressarcimento, pecuniário, o policial militar indenizará os cofres públicos, mediante encontro de contas, das quantias que tenham sido pagas à sua família, a título de pensão militar. <BR><BR>
+<CENTER><B>TÍTULO VII </CENTER></B>
+<CENTER><B>Dos Descontos em Folha de Pagamento </CENTER></B><BR><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Dos Descontos </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 111.&nbsp;Desconto em folha é o abatimento que, na forma dêste Título, pode o policial militar sofrer em uma fração de vencimentos ou proventos para cumprimento de obrigações assumidas ou impostas em virtude de disposições de lei ou regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 112.&nbsp;Para os efeitos de descontos em fôlha de pagamento do policial militar, são consideradas as seguintes importâncias mensais, denominadas "bases para desconto": <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) o sôldo do pôsto ou graduação efetiva acrescido das gratificações de tempo de serviço e de função policial militar Categoria I, para o policial militar da ativa; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) os proventos para o policial militar na inatividade remunerada.&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp; Art. 113.&nbsp;Os descontos em folha são classificados em:&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 - Contribuições para: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a pensão militar;</TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I> </TD>
+<TD>a Fazenda Nacional e a do Distrito Federal, quando fixado em lei. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 -Indenização para:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a Fazenda Nacional e a do Distrito Federal, decorrente de dívida;</TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>pagamento de bem imóvel público; 3 -Consignações para: </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I> </TD>
+<TD>pagamento por transações comerciais feitas através dos reembolsáveis da Polícia Militar, conforme o regulamento da Corporação;</TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>pagamento de mensalidades social, pecúlio, empréstimo, seguro ou pensão a favor das Entidades consideradas consignatárias, na forma a ser estabelecida, na conformidade do artigo 121;</TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>cumprimento de sentença Judicial para manutenção da família;</TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d) </I></TD>
+<TD>os Serviços de Assistência Social da Corporação;</TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>pagamento das indenizações previstas nos artigos 50 e 51;</TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>pagamento de aluguel de casa para residência do consignante;</TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>outros fins, do interesse da Corporação e determinados por ato do Comandante Geral.</TD></TR></TBODY></TABLE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;Art. 114.&nbsp;Os descontos em fôlha descritos no artigo anterior são ainda: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) Obrigatórios: os constantes dos itens 1 e 2, letras c e e do item 3 do artigo precedente. <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) Autorizados: os demais descontos mencionados no item 3 do artigo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Comandante Geral regulamentará os descontos previstos no item 2 dêste artigo. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Dos Consignantes </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 115.&nbsp;Podem ser consignantes todos os policiais militares da ativa ou da inatividade remunerada. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Dos Limites </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 116.&nbsp;Para os descontos em fôlha, a que se refere o capítulo dêste Título, são estabelecidos os seguintes limites relativos às"bases para desconto" definidas no artigo 112: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) quando determinados por lei ou regulamento: quantia estipulada nesses atos; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) 70% (setenta por cento): para os descontos previstos nas letras c e e do item 3 do artigo 113; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) até 30% (trinta por cento): para os demais não enquadrados nos itens anteriores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 117.&nbsp;Em nenhuma hipótese o consignante poderá receber em folhas de pagamento a quantia líquida inferior a 30% (trinta por cento) das bases estabelecidas no artigo 112, mesmo nos casos de privação das gratificações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 118.&nbsp;Os descontos obrigatórios têm prioridade sôbre os autorizados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A importância devida à Fazenda Nacional ou à do Distrito Federal ou à Pensão Judicial, superveniente à averbações já existentes será obrigatòriamente descontada dentro dos limites estabelecidos nos artigos 116 e 117. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Nas reduções dos descontos autorizados que se fizerem necessárias para garantir a dedução integral dos descontos referidos neste artigo serão assegurados aos consignatários os juros de mora, as taxas legais vigentes, decorrentes da dilatação dos prazos estipulados nos respectivos contratos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Verificada a hipótese do parágrafo anterior, só será permitido nôvo desconto autorizado quando êste estiver dentro dos limites fixados neste Capítulo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 119.&nbsp;O desconto originado de crime previsto no Código Penal Militar não impede que, por decisão judicial, a autoridade competente proceda a buscas, apreensões legais confisco de bens e seqüestros no sentido de abreviar o prazo de indenização à Fazenda Nacional ou à do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 120.&nbsp;A dívida para com a Fazenda do Distrito Federal, no caso do policial militar que é desincorporado, será obrigatòriamente cobrada, de preferência por meios amigáveis, e na impossibilidade dêsses, pelo recurso ao processo de cobrança executiva, na forma da legislação fiscal referente à Dívida Ativa do Distrito Federal. <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Dos Consignatários </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 121.&nbsp;O Govêrno do Distrito Federal especificará as entidades que devam ser consideradas consignatárias para efeito desta Lei. <BR><BR>
+<CENTER><B>TÍTULO VIII </CENTER></B>
+<CENTER><B>Disposições Diversas </CENTER></B><BR><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Disposições Gerais </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 122.&nbsp;O valor do sôldo será fixado, para cada pôsto ou graduação, com base no sôldo do pôsto de Coronel PM, observados os índices estabelecidos na Tabela de Escalonamento Vertical, anexa a esta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A tabela de sôldo, resultante da aplicação do Escalonamento Vertical, deverá ser constituída por valôres arredondados de múltiplos de 30 (trinta). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 123.&nbsp;O valor do sôldo do pôsto de coronel PM para aplicação da Tabela de Escalonamento Vertical, de que trata o artigo anterior, é o constante da Tabela de Soldos anexa a esta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 124.&nbsp;Qualquer que seja o mês considerado, o cálculo parcelado de vencimentos e indenização terá o divisor igual a 30 (trinta). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Salário-Família é sempre pago integralmente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 125.&nbsp;São considerados dependentes do policial militar, para todos os efeitos desta Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) esposa; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) filhos menores de 21 anos ou inválidos; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) filha solteira, desde que não receba remuneração; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 4) filho estudante, menor de 24 anos, desde que não receba remuneração; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 5) mãe viúva, desde que não receba remuneração; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 6) enteados, adotivos e tutelados, nas mesmas condições dos itens 2, 3 e 4. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Continuarão compreendidos nas disposições dêste artigo a viúva do policial militar, enquanto permanecer neste estado, e os demais dependentes mencionados neste artigo desde que vivam sob a responsabilidade da viúva. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 126.&nbsp;São ainda consideradas dependentes do policial militar, para fins do artigo anterior, desde que vivam à suas expensas, sob o mesmo teto e quando expressamente declarados na organização policial militar competente: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) filha, enteada e tutelada, viúvas, desquitadas ou separadas, desde que não recebam remuneração; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) mãe, solteira, madrasta, viúva; sogra, viúva ou solteira; bem como separadas ou desquitadas, desde que, em qualquer dessas situações, não recebam remuneração; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) avós e pais, quando inválidos; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 4) pai maior de 55 anos, desde que não receba remuneração; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 5) irmãos, cunhados e sobrinhos, quando menores ou inválidos, sem outro arrimo; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 6) irmã, cunhada e sobrinha, solteiras, viúvas, separadas ou desquitadas desde que não recebam remuneração; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 7) netos órfãos, menores ou Inválidos; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 8) pessoa que viva sob sua exclusiva dependência econômica no mínimo há cinco anos, comprovados mediante justificação judicial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 127.&nbsp;Os vencimentos ou os proventos devidos ao policial militar falecido serão calculados até o dia do óbito, inclusive, e pagos àqueles constantes da declaração de herdeiros habilitados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para fins de cálculo do valor do Auxílio-Funeral para os inativos será considerado como pôsto ou graduação do policial militar, na inatividade, o correspondente ao sôldo que serviu de referência para o cálculo de seus proventos. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Disposições Especiais </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 128.&nbsp;Aplicam-se ao policial militar da ativa que opera com Raio X e substâncias radioativas as disposições da Lei nº 1.234, de 14 de novembro de 1950. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 129.&nbsp;É assegurado ao policial militar, que faz jus à gratificação prevista no artigo anterior, o pagamento definitivo dessa gratificação, por cotas correspondentes aos anos de efetivo desempenho em Raio X e substâncias radioativas, observadas as disposições seguintes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; 1) O direito à percepção de cada cota é adquirido ao fim de um ano de desempenho na função considerada. <BR>&nbsp;&nbsp;&nbsp;&nbsp; 2) O valor de cada cota é igual a 1/10 da gratificação integral correspondente ao último pôsto ou graduação em que o policial militar exerceu a referida atividade. <BR>&nbsp;&nbsp;&nbsp;&nbsp; 3) Para fins dêste artigo, o número de cotas abonadas a um mesmo policial militar não poderá exceder de 10 (dez). <BR>&nbsp;&nbsp;&nbsp;&nbsp; 4) O policial militar reformado por moléstia contraída no exercício da referida função terá assegurado na inatividade o pagamento definitivo da gratificação de que trata este artigo, pelo seu valor integral, dispensadas outras considerações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 130.&nbsp;Ao policial militar poderá ser concedida indenização de representação, de acordo com regulamentação a ser baixada pelo Governador do Distrito Federal, para atender às despesas extraordinárias decorrentes de compromissos de ordem social exigidos pelo cargo ou função que exercer. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Das Disposições Transitórias </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 131.&nbsp;O policial militar, que já tenha completado os qüinqüênios de que trata o artigo 20, faz jus, a contar da data da vigência desta Lei, à gratificação de tempo de serviço correspondente aos qüinqüênios efetivamente cumpridos, sem direito à retroatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 132.&nbsp;Ao policial militar que já se encontrar na inatividade remunerada na data da vigência desta Lei, é devida a gratificação a que se refere o artigo 22, sem direito entretanto, à percepção de atrasados, desde que tenha realizado com aproveitamento, quando em atividade, um dos cursos previstos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 133.&nbsp;Os proventos do policial militar, que se encontrava na inatividade a 31 de dezembro de 1968, serão reajustados tendo por "base de cálculo" os valôres do sôldo, resultante da aplicação dos artigos 1º e 2º da Lei nº 5.552, de 4 de dezembro de 1968, correspondente ao respectivo pôsto ou graduação a contar da data da vigência desta Lei, sem direito a retroatividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No reajustamento dêsses proventos, observar-se-á o disposto nos artigos 98 a 103, inclusive, desta Lei, ficando abolida a parcela correspondente à Gratificação de Função Militar Categoria "A", de acôrdo com o artigo 2º da Lei nº 5.552, de 4 de dezembro de 1968. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Com a execução do disposto neste artigo, fica sem aplicação à Polícia Militar do Distrito Federal o que estabelece o artigo 4º e seu parágrafo único, da Lei nº 5.552, de 4 de dezembro de 1968. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os policiais militares que estiverem em gôzo de gratificações não previstas nesta Lei, resultantes de sentenças judiciais, deverão optar entre a situação definida nesta Lei e a anterior. Os que não o fizerem dentro do prazo de 60 (sessenta) dias, a contar da vigência desta Lei, terão sua remuneração regulada pelos dispositivos da presente Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 134.&nbsp;O policial militar que se encontrar reformado na data da vigência desta Lei e que vinha percebendo a "diária de asilado" de que trata o artigo 148 da Lei nº 4.328, de 30 de abril de 1964, passará a perceber o Auxílio-lnvalidez previsto na presente Lei, na forma do artigo 106 e seus parágrafos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 135.&nbsp;Em qualquer hipótese, o policial militar que, em virtude da aplicação desta Lei, venha a fazer jus mensalmente a um total de vencimentos ou proventos inferior ao que vinha recebendo, terá direito a um complemento igual ao valor da diferença encontrada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O complemento de que trata êste artigo decrescerá, progressivamente, até a sua completa extinção em face dos futuros reajustamentos de sôldo, promoções ou novas condições alcançadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 136.&nbsp;Fica assegurado ao policial militar, à época de sua passagem para a inatividade o direito ao pagamento definitivo na inatividade das cotas totalizadas até o ano de 1966 inclusive, de acôrdo com a letra b do artigo 17 do Decreto-lei nº 81, de 21 de dezembro de 1966, e nos têrmos dêste artigo, a partir de 1ºde janeiro de 1967. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 137.&nbsp;O policial militar beneficiado por uma ou mais das seguintes Leis: 288, de 8 de junho de 1948; 616, de 2 de fevereiro de 1949; 1.156, de 12 de julho de 1950, e 1.267, de 9 de dezembro de 1950, não mais usufruirá as promoções previstas nessas Leis, por ocasião de sua transferência para a reserva ou reforma, ficando-lhe, no entanto, assegurados os proventos relativos ao pôsto, ou graduação a que seria promovido em decorrência da aplicação das referidas leis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Na aplicação do disposto no artigo 100 e seu parágrafo único, para o policial militar de que trata este artigo, será considerado como base para o cálculo dos proveitos o sôldo do pôsto ou graduação a que seria prèviamente promovido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O oficial PM, se ocupante do último pôsto da hierarquia militar de seu Quadro ou Corpo, na ativa, beneficiado por uma ou mais das leis a que se refere êste artigo, terá, ressalvado o disposto no parágrafo único do artigo 100, o cálculo dos proventos referido ao sôldo do seu próprio pôsto aumentado de 20% (vinte por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os proventos assegurados neste artigo não poderão exceder, em nenhum caso, os que caberiam ao policial militar, se fôsse êle promovido até dois postos acima do que tinha por ocasião do processamento de sua transferência para a reserva ou reforma incluindo-se nesta limitação a aplicação de disposições que assegurem reforma com proventos calculados na base do sôldo correspondente ao pôsto ou graduação imediato ao que possuía na ativa e o disposto no parágrafo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 138.&nbsp;Fica assegurado o pagamento das diárias previstas na Lei nº 4.019, de 20 de dezembro de 1961, observada a legislação própria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 139.&nbsp;O Govêrno do Distrito Federal baixará as Normas de Equivalência de Cursos previstas no artigo 22 desta Lei, que vigorarão até serem reguladas pelo Estado-Maior do Exército através da Inspetoria-Geral das Polícias Militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 140.&nbsp;As despesas decorrentes da aplicação da presente Lei correrão à conta de dotações orçamentárias do Govêrno do Distrito Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 141.&nbsp;Esta Lei entrará em vigor a partir de 1º de novembro de 1970. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 142.&nbsp;Revogam-se o Decreto-lei no 792, de 27 de agôsto de 1969, e todas as disposições em contrário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ANEXO I <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Tabela de Escalonamento Vertical Artigo nº 122 <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Oficiais e Praças&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Índices <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.OFICIAIS PM SUPERIORES <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Coronel PM ..................................................................................................100 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Tenente Coronel PM .......................................................................................92 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Major PM .......................................................................................................85 <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.CAPITÃES PM <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Capitão PM ....................................................................................................77 <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3.OFICIAIS PM SUBALTERNOS <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Primeiro - Tenente PM ....................................................................................69 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Segundo - Tenente PM ....................................................................................61 <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4.PRAÇAS ESPECIAIS-PM <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Aspirante-a-Oficial PM ....................................................................................56 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Aluno da Escola de Formação de Oficiais PM (último ano) .............................. 16 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Aluno da Escola de Formação de Oficiais PM (demais anos) ........................... 11 <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5.PRAÇAS PM <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Subtenente PM ................................................................................................56 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Primeiro - Sargento PM ...................................................................................51 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Segundo - Sargento PM ..................................................................................46 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Terceiro - Sargento PM ...................................................................................41 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Cabo PM ........................................................................................................31&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Soldado PM com curso policial (1ª Classe) ..................................................... 22 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Soldado PM recruta sem curso policial (2ª Classe) .......................................... 10&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ANEXO II <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TABELA DE SÔLDOS ARTIGO Nº 123 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Oficiais&nbsp;e Praças&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Valor&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Cr$ <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1OFICIAIS PM SUPERIORES <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Coronel PM ...........................................................................................1.289,79 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Tenente Coronel PM ..............................................................................1.190,25 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Major PM ..............................................................................................1.091,76 <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.CAPITÃES PM <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Capitão PM ..............................................................................................992,22 <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3.OFICIAIS PM SUBALTERNOS <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Primeiro - Tenente PM ..............................................................................893,73&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Segundo - Tenente PM .............................................................................793,17 <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4.PRAÇAS ESPECIAIS PM <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Aspirante - a - Oficial PM .........................................................................727,83 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Aluno da Escola de Formação de Oficiais PM (último ano) ....................... 210.00&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Aluno da Escola de Formação de Oficiais PM (demais anos) .................... 144,00 <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5.PRAÇAS PM Subtenente PM ...............................................................727,83 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Primeiro - Sargento PM ............................................................................661,47 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Segundo - Sargento PM ...........................................................................595,14 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Terceiro - Sargento PM ...........................................................................528,78 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Cabo PM .................................................................................................397,11 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Soldado PM com curso policial (1ª Classe) ...............................................290,31 <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Soldado PM recruta sem curso policial (2ª Classe) ................................... 132,21 </P>
+<P>Brasília, 13 de novembro de 1970;149º da Independência e 82ª da República. </P>
+<P>EMÍLIO G. MÉDICI <BR>Alfredo Buzaid Orlando Geisel <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 04/11/1970
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 4/11/1970, Página 9353       
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1970, Página 38 
+                                                        Vol. 7          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

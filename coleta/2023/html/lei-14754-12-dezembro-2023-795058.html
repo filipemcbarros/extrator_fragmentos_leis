@@ -1,0 +1,982 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 14.754, DE 12 DE DEZEMBRO DE 2023 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre a tributação de aplicações em fundos de investimento no País e da renda auferida por pessoas físicas residentes no País em aplicações financeiras, entidades controladas e trusts no exterior; altera as Leis nºs 11.033, de 21 de dezembro de 2004, 8.668, de 25 de junho de 1993, e 10.406, de 10 de janeiro de 2002 (Código Civil); revoga dispositivos das Leis nºs 4.728, de 14 de julho de 1965, 9.250, de 26 de dezembro de 1995, 9.532, de 10 de dezembro de 1997, 10.426, de 24 de abril de 2002, 10.892, de 13 de julho de 2004, e 11.033, de 21 de dezembro de 2004, do Decreto-Lei nº 2.287, de 23 de julho de 1986, e das Medidas Provisórias nºs 2.189-49, de 23 de agosto de 2001, e 2.158-35, de 24 de agosto de 2001; e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 14.754, DE 12 DE DEZEMBRO DE 2023 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-14754-12-dezembro-2023-795058-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-14754-12-dezembro-2023-795058-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-14754-12-dezembro-2023-795058-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-14754-12-dezembro-2023-795058-veto-170422-pl.html">Veto</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=2383287">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-14754-12-dezembro-2023-795058-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 14.754, DE 12 DE DEZEMBRO DE 2023</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre a tributação de aplicações em fundos de investimento no País e da renda auferida por pessoas físicas residentes no País em aplicações financeiras, entidades controladas e trusts no exterior; altera as Leis nºs 11.033, de 21 de dezembro de 2004, 8.668, de 25 de junho de 1993, e 10.406, de 10 de janeiro de 2002 (Código Civil); revoga dispositivos das Leis nºs 4.728, de 14 de julho de 1965, 9.250, de 26 de dezembro de 1995, 9.532, de 10 de dezembro de 1997, 10.426, de 24 de abril de 2002, 10.892, de 13 de julho de 2004, e 11.033, de 21 de dezembro de 2004, do Decreto-Lei nº 2.287, de 23 de julho de 1986, e das Medidas Provisórias nºs 2.189-49, de 23 de agosto de 2001, e 2.158-35, de 24 de agosto de 2001; e dá outras providências. <BR>
+						</p>
+				
+						<div class="texto">
+							&nbsp;&nbsp;&nbsp;&nbsp;<STRONG> O PRESIDENTE DA REPÚBLICA</STRONG><BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Esta Lei dispõe sobre a tributação de aplicações em fundos de investimento no País e da renda auferida por pessoas físicas residentes no País em aplicações financeiras, entidades controladas e <I>trust</I>s no exterior. <BR><BR>
+<CENTER>CAPÍTULO I <BR>DA TRIBUTAÇÃO DE RENDIMENTOS NO EXTERIOR DE PESSOAS FÍSICAS<BR>DOMICILIADAS NO PAÍS </CENTER><BR><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Disposições Gerais </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;A pessoa física residente no País declarará, de forma separada dos demais rendimentos e dos ganhos de capital, na Declaração de Ajuste Anual (DAA), os rendimentos do capital aplicado no exterior, nas modalidades de aplicações financeiras e de lucros e dividendos de entidades controladas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os rendimentos de que trata o <I>caput</I> deste artigo ficarão sujeitos à incidência do Imposto sobre a Renda das Pessoas Físicas (IRPF), no ajuste anual, à alíquota de 15% (quinze por cento) sobre a parcela anual dos rendimentos, hipótese em que não será aplicada nenhuma dedução da base de cálculo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os ganhos de capital percebidos pela pessoa física residente no País na alienação, na baixa ou na liquidação de bens e direitos localizados no exterior que não constituam aplicações financeiras no exterior nos termos desta Lei permanecem sujeitos às regras específicas de tributação previstas no art. 21 da Lei nº 8.981, de 20 de janeiro de 1995. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A variação cambial de depósitos em conta-corrente ou em cartão de débito ou crédito no exterior não ficará sujeita à incidência do IRPF, desde que os depósitos não sejam remunerados e sejam mantidos em instituição financeira no exterior reconhecida e autorizada a funcionar pela autoridade monetária do país em que estiver situada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A variação cambial de moeda estrangeira em espécie não ficará sujeita à incidência do IRPF até o limite de alienação de moeda no ano-calendário equivalente a US$ 5.000,00 (cinco mil dólares americanos). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Os ganhos de variação cambial percebidos na alienação de moeda estrangeira em espécie cujo valor de alienação exceder o limite previsto no § 4º deste artigo ficarão sujeitos integralmente à incidência do IRPF conforme as regras previstas neste artigo. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Das Aplicações Financeiras no Exterior </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Os rendimentos auferidos em aplicações financeiras no exterior pelas pessoas físicas residentes no País serão tributados na forma prevista no art. 2º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para fins do disposto neste artigo, consideram-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - aplicações financeiras no exterior: quaisquer operações financeiras fora do País, incluídos, de forma exemplificativa, depósitos bancários remunerados, certificados de depósitos remunerados, ativos virtuais, carteiras digitais ou contas-correntes com rendimentos, cotas de fundos de investimento, com exceção daqueles tratados como entidades controladas no exterior, instrumentos financeiros, apólices de seguro cujo principal e cujos rendimentos sejam resgatáveis pelo segurado ou pelos seus beneficiários, certificados de investimento ou operações de capitalização, fundos de aposentadoria ou pensão, títulos de renda fixa e de renda variável, operações de crédito, inclusive mútuo de recursos financeiros, em que o devedor seja residente ou domiciliado no exterior, derivativos e participações societárias, com exceção daquelas tratadas como entidades controladas no exterior, incluindo os direitos de aquisição; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - rendimentos: remuneração produzida pelas aplicações financeiras no exterior, incluídos, de forma exemplificativa, variação cambial da moeda estrangeira ou variação da criptomoeda em relação à moeda nacional, rendimentos em depósitos em carteiras digitais ou contas-correntes remuneradas, juros, prêmios, comissões, ágio, deságio, participações nos lucros, dividendos e ganhos em negociações no mercado secundário, inclusive ganhos na venda de ações das entidades não controladas em bolsa de valores no exterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os rendimentos de que trata o <I>caput</I> deste artigo serão computados na DAA e submetidos à incidência do IRPF no período de apuração em que forem efetivamente percebidos pela pessoa física, como no recebimento de juros e outras espécies de remuneração e, em relação aos ganhos, inclusive de variação cambial sobre o principal, no resgate, na amortização, na alienação, no vencimento ou na liquidação das aplicações financeiras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O enquadramento de ativos virtuais e de carteiras digitais como aplicações financeiras no exterior constará da regulamentação da Secretaria Especial da Receita Federal do Brasil do Ministério da Fazenda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;As pessoas físicas que declararem rendimentos de que trata esta Seção poderão deduzir do IRPF devido, na ficha da DAA de que trata o art. 2º desta Lei, o imposto sobre a renda pago no país de origem dos rendimentos, desde que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - esteja prevista a compensação em acordo, tratado e convenção internacionais firmados com o país de origem dos rendimentos com a finalidade de evitar a dupla tributação; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - haja reciprocidade de tratamento em relação aos rendimentos produzidos no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A dedução não poderá exceder a diferença entre o IRPF calculado com a inclusão do respectivo rendimento e o IRPF devido sem a sua inclusão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O imposto pago no exterior será convertido de moeda estrangeira para moeda nacional por meio da utilização da cotação de fechamento da moeda estrangeira divulgada, para compra, pelo Banco Central do Brasil, para o dia do pagamento do imposto no exterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Não poderá ser deduzido do IRPF devido o imposto sobre a renda pago no exterior que for passível de reembolso, de restituição, de ressarcimento ou de compensação, sob qualquer forma, no exterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O imposto pago no exterior não deduzido no ano-calendário não poderá ser deduzido do IRPF devido em anos-calendários posteriores ou anteriores. <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Das Entidades Controladas no Exterior </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;Os lucros apurados pelas entidades controladas no exterior por pessoas físicas residentes no País, enquadradas nas hipóteses previstas neste artigo, serão tributados em 31 de dezembro de cada ano, na forma prevista no art. 2º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para fins do disposto nesta Lei, serão consideradas como controladas as sociedades e as demais entidades, personificadas ou não, incluídos os fundos de investimento e as fundações, em que a pessoa física: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - detiver, direta ou indiretamente, de forma isolada ou em conjunto com outras partes, inclusive em razão da existência de acordos de votos, direitos que lhe assegurem preponderância nas deliberações sociais ou poder de eleger ou destituir a maioria dos seus administradores; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - possuir, direta ou indiretamente, de forma isolada ou em conjunto com pessoas vinculadas, mais de 50% (cinquenta por cento) de participação no capital social, ou equivalente, ou nos direitos à percepção de seus lucros ou ao recebimento de seus ativos na hipótese de sua liquidação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No caso das sociedades, dos fundos de investimento e das demais entidades no exterior com classes de cotas ou ações com patrimônios segregados, cada classe será considerada como uma entidade separada, para fins do disposto nesta Lei, inclusive para efeitos de determinação da relação de controle de que trata o § 1º deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Para fins do disposto no inciso II do § 1º deste artigo, será considerada pessoa vinculada à pessoa física residente no País: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a pessoa física que for cônjuge, companheiro ou parente, consanguíneo ou afim, até o terceiro grau, da pessoa física residente no País; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a pessoa jurídica cujo diretor ou administrador for cônjuge, companheiro ou parente, consanguíneo ou afim, até o terceiro grau, da pessoa física residente no País; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - a pessoa jurídica da qual a pessoa física residente no País for sócia, titular ou cotista; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - a pessoa física que for sócia da pessoa jurídica da qual a pessoa física residente no País seja sócia, titular ou cotista. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Para fins de aplicação do disposto nos incisos III e IV do § 3º deste artigo, serão consideradas as participações que representarem mais de 10% (dez por cento) do capital social votante. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Sujeitam-se ao regime tributário previsto neste artigo somente as controladas, diretas ou indiretas, que se enquadrarem em uma ou mais das seguintes hipóteses: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - estejam localizadas em país ou em dependência com tributação favorecida ou sejam beneficiárias de regime fiscal privilegiado de que tratam os arts. 24 e 24-A da Lei nº 9.430, de 27 de dezembro de 1996; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - apurem renda ativa própria inferior a 60% (sessenta por cento) da renda total. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Para fins do disposto neste artigo, considera-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - renda ativa própria: as receitas obtidas diretamente pela entidade controlada mediante a exploração de atividade econômica própria, excluídas as receitas decorrentes exclusivamente de: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD><EM>royalties</EM>; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>juros; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>dividendos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>participações societárias; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>aluguéis; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>ganhos de capital, exceto na alienação de participações societárias ou ativos de caráter permanente adquiridos há mais de 2 (dois) anos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>aplicações financeiras; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>intermediação financeira; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - renda total: somatório de todas as receitas, incluídas as não operacionais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º As alíneas "<EM>b</EM>", "<EM>g</EM>" e "<EM>h</EM>" do inciso I do § 6º deste artigo não se aplicam às instituições financeiras reconhecidas e autorizadas a funcionar pela autoridade monetária do país em que estiverem situadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º As alíneas "<EM>c</EM>" e "<EM>d</EM>" do inciso I do § 6º deste artigo não se aplicam às participações diretas ou indiretas em entidades controladas ou coligadas que apurem renda ativa própria superior a 60% (sessenta por cento) da renda total. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º A alínea "<EM>e</EM>" do inciso I do § 6º deste artigo não se aplica às empresas que exerçam, efetivamente, como atividade principal, a atividade comercial de incorporação imobiliária ou construção civil no país em que estiverem situadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 10. Os lucros das controladas enquadradas nas hipóteses previstas no § 5º deste artigo serão: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - apurados de forma individualizada, em balanço anual da controlada, direta ou indireta, no exterior, com exclusão dos resultados da controlada, direta ou indireta, da parcela relativa às participações desta controlada em outras controladas, inclusive quando a entidade for organizada como um fundo de investimento, o qual deverá ser elaborado com observância: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>aos padrões internacionais de contabilidade (International Financial Reporting Standards - IFRS), ou aos padrões contábeis brasileiros, a critério do contribuinte; ou </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>aos padrões contábeis brasileiros, caso esteja localizada em país ou em dependência com tributação favorecida ou seja beneficiária de regime fiscal privilegiado de que tratam os arts. 24 e 24-A da Lei nº 9.430, de 27 de dezembro de 1996; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - convertidos em moeda nacional pela cotação de fechamento da moeda estrangeira divulgada, para venda, pelo Banco Central do Brasil, para o último dia útil do mês de dezembro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - computados na DAA, em 31 de dezembro do ano em que forem apurados no balanço, independentemente de qualquer deliberação acerca da sua distribuição, na proporção da participação da pessoa física nos lucros da controlada, direta ou indireta, no exterior, e submetidos à incidência do IRPF no respectivo período de apuração; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - incluídos na DAA, na ficha de bens e direitos, como custo de aquisição de crédito de dividendo a receber da controlada, direta ou indireta, com a indicação do respectivo ano de origem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 11. Na distribuição dos lucros das controladas enquadradas nas hipóteses previstas no § 5º que já tiverem sido tributados na forma prevista no § 10 deste artigo para a pessoa física controladora, deverão ser indicados na DAA a controlada e o ano de origem dos lucros distribuídos, os quais deverão reduzir o custo de aquisição do crédito do dividendo a receber, pelo valor originalmente declarado em moeda nacional, e não serão tributados novamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 12. O ganho ou a perda decorrente de variação cambial entre o valor em moeda nacional do lucro tributado em 31 de dezembro e registrado como custo de aquisição do crédito do dividendo a receber, na forma prevista no § 10, e o valor em moeda nacional do dividendo percebido posteriormente, na forma prevista no § 11 deste artigo, não será tributado ou deduzida, respectivamente, na apuração do IRPF. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 13. Poderão ser deduzidos do lucro da pessoa jurídica controlada, direta ou indireta, a parcela correspondente aos lucros e aos dividendos de suas investidas que forem pessoas jurídicas domiciliadas no País e os rendimentos e os ganhos de capital dos demais investimentos feitos no País, desde que sejam tributados pelo Imposto sobre a Renda Retido na Fonte (IRRF) à alíquota igual ou superior a 15% (quinze por cento), aplicado o disposto neste artigo também no momento da distribuição de dividendos pela entidade controlada para a pessoa física residente no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 14. Poderão ser deduzidos do lucro da controlada, direta ou indireta, os prejuízos apurados em balanço, pela própria controlada, a partir da data em que se enquadrar nas hipóteses de que trata o § 1º deste artigo, desde que sejam referentes a períodos a partir de 1º de janeiro de 2024 e anteriores à data da apuração dos lucros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 15. Na determinação do imposto devido, a pessoa física poderá deduzir, na proporção de sua participação nos lucros da controlada, direta ou indireta, o imposto sobre a renda que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - seja devido no exterior pela controlada e pelas suas investidas não controladas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - incida sobre o lucro da controlada e das suas investidas não controladas ou sobre os rendimentos por elas apurados no exterior, quando tais lucros e rendimentos tenham sido computados no lucro da controlada tributado na forma prevista neste artigo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - tenha sido pago no país de domicílio da controlada ou em outro país no exterior; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - não supere o imposto devido no País sobre o lucro da entidade controlada que tenha sido computado na base de cálculo do IRPF; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - não se enquadre na vedação prevista no § 3º do art. 4º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 16. Caso a entidade controlada no exterior aufira rendimentos ou ganhos de capital no País que não tenham sido excluídos do lucro sujeito ao imposto sobre a renda nos termos do disposto no § 13, o IRRF pago no País sobre esses rendimentos e ganhos de capital poderá ser deduzido do imposto sobre a renda devido sobre o lucro da entidade controlada no exterior, observado o disposto no § 15 deste artigo no que for aplicável. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Serão tributados no momento da efetiva disponibilização para a pessoa física residente no País, na forma prevista no art. 2º desta Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - os lucros apurados até 31 de dezembro de 2023 pelas controladas no exterior de pessoas físicas residentes no País, enquadradas ou não nas hipóteses previstas no § 5º do art. 5º desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - os lucros apurados a partir de 1º de janeiro de 2024 pelas controladas no exterior de pessoas físicas residentes no País que não se enquadrarem nas hipóteses previstas no § 5º do art. 5º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Para fins do disposto neste artigo, os lucros serão considerados efetivamente disponibilizados para a pessoa física residente no País: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - no pagamento, no crédito, na entrega, no emprego ou na remessa dos lucros, o que ocorrer primeiro; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - em quaisquer operações de crédito realizadas com a pessoa física ou com pessoa a ela vinculada, conforme o disposto no § 3º do art. 5º desta Lei, se a credora possuir lucros ou reservas de lucros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;A variação cambial do principal aplicado nas controladas no exterior, enquadradas ou não nas hipóteses previstas no § 5º do art. 5º desta Lei, comporá o ganho de capital percebido pela pessoa física no momento da alienação, da baixa ou da liquidação do investimento, inclusive por meio de devolução de capital, a ser tributado de acordo com o disposto no art. 21 da Lei nº 8.981, de 20 de janeiro de 1995. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O ganho de capital corresponderá à diferença positiva entre o valor percebido em moeda nacional e o custo de aquisição médio por cota ou ação alienada, baixada ou liquidada, em moeda nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Caso não haja cancelamento de cota ou de ação na devolução do capital, o custo de aquisição médio deverá ser calculado levando em consideração a proporção que o valor da devolução de capital representará do capital total aplicado na entidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Alternativamente ao disposto nos arts. 5º, 6º e 7º desta Lei, a pessoa física poderá optar por declarar os bens, direitos e obrigações detidos pela entidade controlada, direta ou indireta, no exterior como se fossem detidos diretamente pela pessoa física. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A opção de que trata este artigo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - poderá ser exercida em relação a cada entidade controlada, direta ou indireta, separadamente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - será irrevogável e irretratável durante todo o prazo em que a pessoa física detiver aquela entidade controlada no exterior; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - deverá ser exercida, quando houver mais de um sócio ou acionista, por todos aqueles que forem pessoas físicas residentes no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A pessoa física que optar pelo regime tributário previsto neste artigo em relação às participações detidas em 31 de dezembro de 2023 deverá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - indicar a sua opção na DAA a ser entregue em 2024, dentro do prazo, relativa ao ano-calendário de 2023, para produzir efeitos a partir de 1º de janeiro de 2024; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - substituir, na ficha de bens e direitos da mesma DAA, a participação na entidade pelos bens e direitos subjacentes e alocar o custo de aquisição para cada um desses bens e direitos, considerada a proporção do valor de cada bem ou direito em relação ao valor total do ativo da entidade, em 31 de dezembro de 2023; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - informar na ficha de dívidas e ônus reais da DAA as obrigações subjacentes, a valor 0 (zero); e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - tributar a renda auferida a partir de 1º de janeiro de 2024 com os bens e direitos e aplicar as regras previstas na Seção II desta Lei, quando se tratar de aplicações financeiras no exterior, ou as disposições específicas previstas na legislação em conformidade com a natureza da renda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A pessoa física que optar pelo regime tributário previsto neste artigo em relação às participações em entidades controladas adquiridas a partir de 1º de janeiro de 2024 deverá exercer a sua opção na primeira DAA após a aquisição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Os bens e direitos transferidos a qualquer título pela pessoa física ou por entidade controlada detida pela pessoa física sob o regime tributário previsto neste artigo para outra entidade controlada enquadrada nas hipóteses previstas no § 5º do art. 5º desta Lei em relação à qual a opção de que trata este artigo não tenha sido exercida deverão ser avaliados a valor de mercado no momento da transferência, e o valor da diferença apurada em relação ao seu custo de aquisição será considerado renda da pessoa física sujeito à tributação pelo IRPF no momento da transferência, hipótese em que será aplicada a alíquota prevista na legislação em conformidade com a natureza da renda. <BR><BR>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Da Compensação de Perdas </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;A pessoa física residente no País poderá compensar as perdas realizadas em aplicações financeiras no exterior a que se refere o art. 3º, quando devidamente comprovadas por documentação hábil e idônea, com rendimentos auferidos em aplicações financeiras no exterior, na ficha da DAA de que trata o art. 2º desta Lei, no mesmo período de apuração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Caso o valor das perdas no período de apuração supere o dos ganhos, esta parcela das perdas poderá ser compensada com lucros e dividendos de entidades controladas no exterior, enquadradas ou não nas hipóteses previstas no § 5º do art. 5º desta Lei, que tenham sido computados na DAA no mesmo período de apuração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Caso no final do período de apuração haja acúmulo de perdas não compensadas, essas perdas poderão ser compensadas com rendimentos computados na ficha da DAA de que trata o art. 2º desta Lei em períodos de apuração posteriores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º As perdas poderão ser compensadas uma única vez. <BR><BR>
+<CENTER><B>Seção V </CENTER></B>
+<CENTER><B>Dos <I>Trust</I>s no Exterior </CENTER></B>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Para fins do disposto nesta Lei, os bens e direitos objeto de <I>trust</I> no exterior serão considerados da seguinte forma: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - permanecerão sob titularidade do instituidor após a instituição do <I>trust</I>; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - passarão à titularidade do beneficiário no momento da distribuição pelo <I>trust</I> para o beneficiário ou do falecimento do instituidor, o que ocorrer primeiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A transmissão ao beneficiário poderá ser reputada ocorrida em momento anterior àquele previsto no inciso II do <I>caput</I> deste artigo caso o instituidor abdique, em caráter irrevogável, do direito sobre parcela do patrimônio do <I>trust</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Para fins do disposto nesta Lei, a mudança de titularidade sobre o patrimônio do <I>trust</I> será considerada como transmissão a título gratuito pelo instituidor para o beneficiário e consistirá em doação, se ocorrida durante a vida do instituidor, ou em transmissão <I>causa mortis</I>, se decorrente do falecimento do instituidor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Os rendimentos e os ganhos de capital relativos aos bens e direitos objeto do <I>trust</I> serão: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - considerados auferidos pelo titular de tais bens e direitos na respectiva data, conforme o disposto nos incisos I e II do <I>caput</I> deste artigo; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - submetidos à incidência do IRPF, conforme as regras aplicáveis ao titular. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Caso o <I>trust</I> detenha uma controlada no exterior, esta será considerada como detida diretamente pelo titular dos bens e direitos objeto do <I>trust</I>, hipótese em que serão aplicadas as regras de tributação de investimentos em controladas no exterior previstas na Seção III desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º O instituidor ou o beneficiário deverá requisitar ao <I>trust</I>ee a disponibilização dos recursos financeiros e das informações necessárias para viabilizar o pagamento do imposto e o cumprimento das demais obrigações tributárias no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º O instituidor do <I>trust</I>, caso esteja vivo, ou os beneficiários do <I>trust</I>, caso tenham conhecimento do <I>trust</I>, deverão providenciar, no prazo de até 180 (cento e oitenta) dias, contado da data de publicação desta Lei, a alteração da escritura do <I>trust</I> ou da respectiva carta de desejos, para fazer constar redação que obrigue, de forma irrevogável e irretratável, o atendimento, por parte do <I>trust</I>ee, das disposições estabelecidas nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º Para os <I>trust</I>s em que o instituidor já tenha falecido ou perdido poderes em relação a alterações do <I>trust</I> e os beneficiários também não tenham poderes de alteração da escritura ou da carta de desejos, os beneficiários deverão enviar ao <I>trust</I>ee comunicação formal a respeito da obrigatoriedade de observância ao disposto nesta Lei e requerer a disponibilização das informações e dos recursos financeiros necessários para o cumprimento do disposto nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º A inobservância ao disposto nos §§ 5º e 7º deste artigo ou o não atendimento da solicitação da requisição pelo <I>trust</I>ee não afastam o dever de cumprimento das obrigações tributárias principais e acessórias pelo instituidor ou pelo beneficiário, conforme o caso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Os bens e direitos objeto do <I>trust</I>, independentemente da data de sua aquisição, deverão, em relação à data-base de 31 de dezembro de 2023, ser declarados diretamente pelo titular na DAA, pelo custo de aquisição. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Caso o titular tenha informado anteriormente o <I>trust</I> na sua DAA, o <I>trust</I> deverá ser substituído pelos bens e direitos subjacentes, de modo a se alocar o custo de aquisição para cada um desses bens e direitos, considerada a proporção do valor de cada bem ou direito em relação ao valor total do patrimônio objeto do <I>trust</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Caso a pessoa que tenha informado anteriormente o <I>trust</I> na sua DAA seja distinta do titular estabelecido por esta Lei, o declarante poderá, excepcionalmente, ser considerado como o titular para efeitos do IRPF. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Para fins do disposto nesta Lei, considera-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - <I>trust</I>: figura contratual regida por lei estrangeira que dispõe sobre a relação jurídica entre o instituidor, o <I>trust</I>ee e os beneficiários quanto aos bens e direitos indicados na escritura do <I>trust</I>; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - instituidor (<I>settlor</I>): pessoa física que, por meio da escritura do <I>trust</I>, destina bens e direitos de sua titularidade para formar o <I>trust</I>; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - administrador do <I>trust</I> (<I>trust</I>ee): pessoa física ou jurídica com dever fiduciário sobre os bens e direitos objeto do <I>trust</I>, responsável por manter e administrar esses bens e direitos de acordo com as regras da escritura do <I>trust</I> e, se existente, da carta de desejos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - beneficiário (<I>beneficiary</I>): uma ou mais pessoas indicadas para receber do <I>trust</I>ee os bens e direitos objeto do <I>trust</I>, acrescidos dos seus frutos, de acordo com as regras estabelecidas na escritura do <I>trust</I> e, se existente, na carta de desejos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - distribuição (<I>distribution</I>): qualquer ato de disposição de bens e direitos objeto do <I>trust</I> em favor do beneficiário, tal como a disponibilização da posse, o usufruto e a propriedade de bens e direitos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - escritura do <I>trust</I> (<I>trust</I> deed ou declaration of <I>trust</I>): ato escrito de manifestação de vontade do instituidor que rege a instituição e o funcionamento do <I>trust</I> e a atuação do <I>trust</I>ee, incluídas as regras de manutenção, de administração e de distribuição dos bens e direitos aos beneficiários, além de eventuais encargos, termos e condições; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - carta de desejos (<I>letter of wishes</I>): ato suplementar que pode ser escrito pelo instituidor em relação às suas vontades que devem ser executadas pelo <I>trust</I>ee e que pode prever regras de funcionamento do <I>trust</I> e de distribuição de bens e direitos para os beneficiários, entre outras disposições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;Para os fins desta Lei, as disposições desta Seção aplicam-se aos demais contratos regidos por lei estrangeira com características similares às do <I>trust</I> e que não forem enquadrados como entidades controladas. <BR><BR><BR></P>
+<CENTER><B>Seção VI </CENTER></B>
+<CENTER><B>Da Atualização do Valor dos Bens e Direitos no Exterior </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;A pessoa física residente no País poderá optar por atualizar o valor dos bens e direitos no exterior informados na sua DAA para o valor de mercado em 31 de dezembro de 2023 e tributar a diferença para o custo de aquisição, pelo IRPF, à alíquota definitiva de 8% (oito por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A opção de que trata o <I>caput</I> deste artigo aplica-se a: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - aplicações financeiras de que trata o inciso I do § 1º do art. 3º desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - bens imóveis em geral ou ativos que representem direitos sobre bens imóveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - veículos, aeronaves, embarcações e demais bens móveis sujeitos a registro em geral, ainda que em alienação fiduciária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - participações em entidades controladas, nos termos do art. 5º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Para fins da tributação de que trata o <I>caput</I> deste artigo, os bens e direitos serão atualizados para o seu valor de mercado em 31 de dezembro de 2023, observado: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - quanto aos ativos de que trata o inciso I do § 1º deste artigo, o saldo existente na data-base, conforme documento disponibilizado pela instituição financeira custodiante; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - quanto aos ativos de que tratam os incisos II e III do § 1º deste artigo, o valor de mercado na data-base conforme avaliação feita por entidade especializada; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - quanto aos ativos de que trata o inciso IV do § 1º deste artigo, o valor do patrimônio líquido proporcional à participação no capital social, ou equivalente, conforme demonstrações financeiras preparadas com observância aos padrões contábeis brasileiros, com suporte em documentação hábil e idônea, incluídos a identificação do capital social, ou equivalente, a reserva de capital, os lucros acumulados e as reservas de lucros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Para fins de apuração do valor dos bens e direitos em moeda nacional, o valor expresso em moeda estrangeira será convertido em moeda nacional pela cotação de fechamento da moeda estrangeira divulgada, para venda, pelo Banco Central do Brasil, para o último dia útil do mês de dezembro de 2023. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Os valores decorrentes da atualização tributados na forma prevista neste artigo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - serão considerados como acréscimo patrimonial na data em que houver o pagamento do imposto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - serão incluídos na ficha de bens e direitos da DAA como custo de aquisição adicional do respectivo bem ou direito ou, no caso de lucros de controladas no exterior, de crédito de dividendo a receber; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - no caso de lucros de entidades controladas no exterior, quando forem disponibilizados para a pessoa física controladora, reduzirão o custo de aquisição do crédito de dividendo a receber, pelo valor originalmente declarado em moeda nacional, e não serão tributados novamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º O ganho ou a perda decorrente de variação cambial entre o valor em moeda nacional do lucro tributado em 31 de dezembro de 2023 e registrado como custo de aquisição do crédito do dividendo a receber, na forma prevista no inciso II do § 4º, e o valor em moeda nacional do dividendo percebido posteriormente, na forma prevista no inciso III do § 4º deste artigo, não será tributado ou deduzida, respectivamente, na apuração do IRPF. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º O contribuinte poderá optar, inclusive, pela atualização do valor de bens e direitos objeto de <I>trust</I> em relação aos quais a pessoa física seja definida como titular, nos termos desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º A opção poderá ser exercida em conjunto ou separadamente para cada bem ou direito no exterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º O imposto deverá ser pago até 31 de maio de 2024. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º A opção deverá ser exercida na forma e no prazo estabelecidos pela Secretaria Especial da Receita Federal do Brasil do Ministério da Fazenda, por meio de declaração específica que deverá conter, no mínimo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - identificação do declarante; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - identificação dos bens e direitos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - valor do bem ou direito constante da última DAA relativa ao ano-calendário de 2022; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - valor atualizado do bem ou direito em moeda nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 10. Não poderão ser objeto de atualização: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - bens ou direitos que não tiverem sido declarados na DAA relativa ao anocalendário de 2022, entregue até o dia 31 de maio de 2023, ou adquiridos no decorrer do ano-calendário de 2023; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - bens ou direitos que tiverem sido alienados, baixados ou liquidados anteriormente à data da formalização da opção de que trata este artigo; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - moeda estrangeira em espécie, joias, pedras e metais preciosos, obras de arte, antiguidades de valor histórico ou arqueológico, animais de estimação ou esportivos e material genético de reprodução animal, sujeitos a registro em geral, ainda que em alienação fiduciária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 11. A opção de que trata este artigo somente se consumará e se tornará definitiva com o pagamento integral do imposto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 12. Não poderão ser aplicados quaisquer deduções, percentuais ou fatores de redução à base de cálculo, à alíquota ou ao montante devido do imposto de que trata este artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 13. Para fins da opção de que trata este artigo, o custo de aquisição dos bens e direitos que tiverem sido adquiridos com rendimentos auferidos originariamente em moeda estrangeira, nos termos do § 5º do art. 24 da Medida Provisória nº 2.158-35, de 24 de agosto de 2001, deverá ser calculado mediante a conversão do valor dos bens e direitos da moeda estrangeira em moeda nacional pela cotação de fechamento da moeda estrangeira divulgada, para venda, pelo Banco Central do Brasil, para o último dia útil do mês de dezembro de 2023. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 14. Caso o contribuinte declare que exerceu ou exercerá a opção por declarar os bens, direitos e obrigações da entidade controlada no exterior como se fossem detidos diretamente pela pessoa física na forma do art. 8º desta Lei, o contribuinte poderá optar por aplicar o critério de atualização do inciso III do § 2º deste artigo, ou de cada bem e direito subjacente. <BR><BR><BR>
+<CENTER><B>Seção VII </CENTER></B>
+<CENTER><B>Da Conversão da Moeda Estrangeira em Moeda Nacional </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;A cotação a ser utilizada para converter os valores em moeda estrangeira em moeda nacional é a cotação de fechamento da moeda estrangeira divulgada, para venda, pelo Banco Central do Brasil, para a data do fato gerador, ressalvadas as disposições específicas previstas nesta Lei. <BR><BR><BR>
+<CENTER>CAPÍTULO II <BR>DA TRIBUTAÇÃO DOS RENDIMENTOS DE APLICAÇÕES EM FUNDOS <BR>DE INVESTIMENTO NO PAÍS </CENTER><BR><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Disposições Gerais </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Os rendimentos de aplicações em fundos de investimento no País constituídos na forma do art. 1.368-C da Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil), ficarão sujeitos à incidência do imposto sobre a renda de acordo com o disposto nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Ficam isentos do imposto sobre a renda os rendimentos, inclusive os ganhos líquidos, dos títulos e valores mobiliários e demais aplicações financeiras integrantes das carteiras dos fundos de investimento. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Do Regime Geral dos Fundos </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Os rendimentos das aplicações em fundos de investimento ficarão sujeitos à retenção na fonte do IRRF nas seguintes datas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - no último dia útil dos meses de maio e novembro; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - na data da distribuição de rendimentos, da amortização ou do resgate de cotas, caso ocorra antes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A alíquota do IRRF será a seguinte: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - como regra geral: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>15% (quinze por cento), na data da tributação periódica de que trata o inciso I do <I>caput</I> deste artigo; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o percentual complementar necessário para totalizar a alíquota prevista nos incisos I, II, III e IV do <I>caput</I> do art. 1º da Lei nº 11.033, de 21 de dezembro de 2004, na data da distribuição de rendimentos, da amortização ou do resgate de cotas de que trata o inciso II do <I>caput</I> deste artigo; ou </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - nos fundos de que trata o art. 6º da Lei nº 11.053, de 29 de dezembro de 2004: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>20% (vinte por cento), na data da tributação periódica de que trata o inciso I do <I>caput</I> deste artigo; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o percentual complementar necessário para totalizar a alíquota prevista nos incisos I e II do § 2º do art. 6º da Lei nº 11.053, de 29 de dezembro de 2004, na data da distribuição de rendimentos, da amortização ou do resgate de cotas de que trata o inciso II do <I>caput</I> deste artigo. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O custo de aquisição das cotas corresponderá ao valor: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - do preço pago na aquisição das cotas, o qual consistirá no custo de aquisição inicial das cotas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - acrescido da parcela do valor patrimonial da cota que tiver sido tributada anteriormente, no que exceder o custo de aquisição inicial; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - diminuído das parcelas do custo de aquisição que tiverem sido computadas anteriormente em amortizações de cotas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O custo de aquisição total será dividido pela quantidade de cotas da mesma classe ou subclasse, quando houver, de titularidade do cotista, a fim de calcular o custo médio por cota. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Opcionalmente, o administrador do fundo de investimento poderá computar o custo de aquisição por cota ou certificado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º A base de cálculo do IRRF corresponderá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - na incidência periódica de que trata o inciso I do <I>caput</I> deste artigo, à diferença positiva entre o valor patrimonial da cota do dia imediatamente anterior e o custo de aquisição da cota; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - nas hipóteses de que trata o inciso II do <I>caput</I> deste artigo: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>no resgate, à diferença positiva entre o preço do resgate da cota e o custo de aquisição da cota; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>na amortização, à diferença positiva entre o preço da amortização e a parcela do custo de aquisição da cota calculada com base na proporção que o preço da amortização representar do valor patrimonial da cota. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º As perdas apuradas na amortização ou no resgate de cotas poderão ser compensadas, exclusivamente, com ganhos apurados nas incidências posteriores e na distribuição de rendimentos, na amortização ou no resgate de cotas do mesmo fundo de investimento, ou de outro fundo de investimento administrado pela mesma pessoa jurídica, desde que este fundo esteja sujeito ao mesmo regime de tributação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º A compensação de perdas de que trata o § 6º deste artigo somente será admitida se a perda constar de sistema de controle e registro mantido pelo administrador que permita a identificação, em relação a cada cotista, dos valores compensáveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º A incidência do IRRF de que trata este artigo abrangerá todos os fundos de investimento constituídos sob a forma de condomínio aberto ou fechado, ressalvadas as hipóteses previstas nesta Lei e na legislação a que se refere o art. 39 desta Lei. <BR><BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Do Regime Específico dos Fundos Não Sujeitos à Tributação Periódica </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Quando forem enquadrados como entidades de investimento e cumprirem os demais requisitos previstos nesta Seção, ficarão sujeitos ao regime de tributação de que trata esta Seção os seguintes fundos de investimento: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - Fundo de Investimento em Participações (FIP); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - Fundo de Investimento em Índice de Mercado (<I>Exchange Traded Fund</I> - ETF), com exceção dos ETFs de Renda Fixa; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - Fundo de Investimento em Direitos Creditórios (FIDC). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Ficarão também sujeitos ao regime de tributação de que trata esta Seção, ainda que não sejam enquadrados como entidades de investimento, os Fundos de Investimento em Ações (FIAs) que cumpram os demais requisitos previstos nesta Seção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;Para fins do disposto nesta Lei, serão considerados como FIDCs os fundos que possuírem carteira composta de, no mínimo, 67% (sessenta e sete por cento) de direitos creditórios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para fins do disposto no <I>caput</I> deste artigo, a definição de direitos creditórios obedecerá à regulamentação do Conselho Monetário Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O FIDC terá prazo de até 180 (cento e oitenta) dias, contado da data da primeira integralização de cotas, para se enquadrar no disposto no <I>caput</I> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O FIDC já constituído em 31 de dezembro de 2023 terá prazo até o dia 30 de junho de 2024 para se enquadrar no disposto no <I>caput</I> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Aplicam-se aos FIDCs as regras de desenquadramento previstas nos §§ 3º e 4º do art. 21 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;Para fins do disposto nesta Lei, serão considerados como FIPs os fundos que cumprirem os requisitos de alocação, de enquadramento e de reenquadramento de carteira previstos na regulamentação da Comissão de Valores Mobiliários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;Para fins do disposto nesta Lei, serão considerados como FIAs os fundos que possuírem carteira composta de, no mínimo, 67% (sessenta e sete por cento) dos seguintes ativos financeiros, quando forem admitidos à negociação no mercado à vista de bolsa de valores, no País ou no exterior, ou no mercado de balcão organizado no País:&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - no País: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>as ações; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>os recibos de subscrição; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>os certificados de depósito de ações; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>os Certificados de Depósito de Valores Mobiliários (Brazilian Depositary Receipts - BDRs); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>as cotas de FIAs; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>as cotas negociadas em bolsa de valores ou em mercado de balcão organizado no País de fundos de índice de ações; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>as representações digitais (tokens) dos ativos previstos nas alíneas "<EM>a</EM>" a "<EM>f</EM>" deste inciso; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - no exterior: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>as ações; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>os Global <EM>Depositary Receipts</EM> (GDRs); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>os American <EM>Depositary Receipts</EM> (ADRs); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>as cotas negociadas em bolsa de valores no exterior de fundos de índice de ações; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>as cotas dos FIAs no exterior, na forma permitida pela regulamentação da Comissão de Valores Mobiliários; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>as representações digitais (<EM>tokens)</EM> dos ativos previstos nas alíneas "<EM>a</EM>" a "<EM>e</EM>" deste inciso. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para fins de enquadramento no limite mínimo de que trata o <I>caput</I> deste artigo, as operações de empréstimo de ações realizadas pelo fundo de investimento serão:&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - computadas no limite de que trata o <I>caput</I> deste artigo, quando o fundo for o emprestador; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - excluídas do limite de que trata o <I>caput</I> deste artigo, quando o fundo for o tomador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Para fins de cálculo do limite de que trata o <I>caput</I> deste artigo, não integrarão a parcela da carteira aplicada em ações as operações conjugadas realizadas nos mercados de opções de compra e de venda em bolsas de valores, de mercadorias e de futuros (box), no mercado a termo nas bolsas de valores, de mercadorias e de futuros, em operações de venda coberta e sem ajustes diários, e no mercado de balcão organizado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O cotista do FIA cuja carteira deixar de observar o limite de que trata o <I>caput</I> deste artigo ficará sujeito às regras de tributação de que trata o art. 17 desta Lei a partir do momento do desenquadramento da carteira, salvo se, cumulativamente: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a proporção de que trata o <I>caput</I> deste artigo não for reduzida para menos de 50% (cinquenta por cento) do total da carteira de investimento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a situação for regularizada no prazo máximo de 30 (trinta) dias; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - o fundo não incorrer em nova hipótese de desenquadramento no período de 12 (doze) meses subsequentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Na hipótese de desenquadramento de que trata o § 3º deste artigo, os rendimentos produzidos até a data da alteração ficarão sujeitos à incidência do IRRF de acordo com a regra prevista no art. 24 desta Lei na data do desenquadramento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Para efeitos do disposto neste artigo, consideram-se como bolsas de valores e mercados de balcão organizado no País os sistemas centralizados de negociação que possibilitem o encontro e a interação de ofertas de compra e venda de valores mobiliários e garantam a formação pública de preços, administrados por entidade autorizada pela Comissão de Valores Mobiliários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Os ativos financeiros referidos na alínea "<EM>e</EM>" do inciso I e na alínea "<EM>e</EM>" do inciso II do <I>caput</I> deste artigo e as suas representações digitais (<I>tokens</I>) ficam dispensados de serem admitidos à negociação no mercado à vista de bolsa de valores ou no mercado de balcão organizado, no País, ou em bolsa de valores, no exterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;Para fins do disposto nesta Lei, serão considerados como ETFs os fundos que cumprirem os requisitos de alocação, de enquadramento e de reenquadramento de carteira previstos na regulamentação da Comissão de Valores Mobiliários e possuírem cotas efetivamente negociadas em bolsa de valores ou em mercado de balcão organizado no País, com exceção dos ETFs de Renda Fixa, de que trata o art. 2º da Lei nº 13.043, de 13 de novembro de 2014. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;Para fins do disposto nesta Lei, serão classificados como entidades de investimento os fundos que tiverem estrutura de gestão profissional, no nível do fundo ou de seus cotistas quando organizados como fundos de investimento no País ou como fundos ou veículos de investimentos no exterior, representada por agentes ou prestadores de serviços com poderes para tomar decisões de investimento e de desinvestimento de forma discricionária, com o propósito de obter retorno por meio de apreciação do capital investido ou de renda, ou de ambos, na forma a ser regulamentada pelo Conselho Monetário Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Os rendimentos nas aplicações nos fundos de que trata o art. 18 desta Lei ficarão sujeitos à retenção na fonte do IRRF à alíquota de 15% (quinze por cento), na data da distribuição de rendimentos, da amortização ou do resgate de cotas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os fundos de que trata este artigo não ficarão sujeitos à tributação periódica nas datas previstas no inciso I do <I>caput</I> do art. 17 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Aplica-se aos rendimentos de que trata este artigo o disposto nos §§ 2º, 3º e 4º, no inciso II do § 5º e nos §§ 6º e 7º do art. 17 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Ficarão sujeitos ao tratamento tributário de que trata o art. 24 os fundos de investimento que investirem, no mínimo, 95% (noventa e cinco por cento) de seu patrimônio líquido nos fundos de que trata o art. 18 desta Lei. <BR><BR><BR>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Do Regime Específico de Fundos Sujeitos à Tributação Periódica </CENTER></B>
+<CENTER><B>com Subconta de Avaliação de Participações Societárias </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Os rendimentos das aplicações nos FIPs, nos ETFs e nos FIDCs que não forem classificados como entidades de investimentos ficarão sujeitos à retenção na fonte do IRRF à alíquota de 15% (quinze por cento), nas datas previstas nos incisos I e II do <I>caput</I> do art. 17 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Aplica-se aos rendimentos de que trata este artigo o disposto nos §§ 2º a 7º do art. 17 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Para fins de apuração da base de cálculo do imposto, não será computada a contrapartida positiva ou negativa decorrente da avaliação, pelo valor patrimonial ou pelo valor justo, de cotas ou de ações de emissão de pessoas jurídicas domiciliadas no País representativas de controle ou de coligação integrantes da carteira dos fundos, nos termos do art. 243 da Lei nº 6.404, de 15 de dezembro de 1976 (Lei das Sociedades por Ações). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O ganho ou a perda da avaliação dos ativos na forma do § 2º deste artigo deverão ser evidenciados em subconta nas demonstrações contábeis do fundo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Os FIPs, os ETFs e os FIDCs que forem titulares de cotas de outros FIPs, ETFs e FIDCs de que trata o <I>caput</I> deste artigo deverão registrar no patrimônio uma subconta reflexa equivalente à subconta registrada no patrimônio do fundo investido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Aplica-se o disposto no § 4º na hipótese de outros fundos que possuam na carteira cotas de FIPs, de ETFs e de FIDCs de que trata o <I>caput</I> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º A subconta será revertida e o seu saldo comporá a base de cálculo do IRRF no momento da realização do investimento pelo fundo, inclusive por meio da alienação, da baixa, da liquidação, da amortização ou do resgate da cota ou da ação, ou do registro de valores a receber a título de dividendos e juros sobre capital próprio, ou no momento em que houver a distribuição de rendimentos pelo fundo aos cotistas, sob qualquer forma, inclusive na amortização ou no resgate de cotas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º A ausência de controle em subconta para qualquer ativo do fundo enquadrado no § 2º deste artigo implicará a tributação dos rendimentos da aplicação na cota do fundo integralmente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º Caso seja apurada uma perda de ativo enquadrado no § 2º deste artigo sem controle em subconta, essa perda não poderá ser deduzida do rendimento bruto submetido à incidência do IRRF. <BR><BR><BR>
+<CENTER><B>Seção V </CENTER></B>
+<CENTER><B>Das Regras de Transição </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Os rendimentos apurados até 31 de dezembro de 2023 nas aplicações nos fundos de investimento que não estavam sujeitos até o ano de 2023 à tributação periódica nos meses de maio e novembro de cada ano e que estarão sujeitos à tributação periódica a partir do ano de 2024, com base nos arts. 17 ou 26 desta Lei, serão apropriados<EM> pro rata tempore</EM> até 31 de dezembro de 2023 e ficarão sujeitos à incidência do IRRF à alíquota de 15% (quinze por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os rendimentos de que trata o <I>caput</I> deste artigo corresponderão à diferença positiva entre o valor patrimonial da cota em 31 de dezembro de 2023, incluídos os rendimentos apropriados a cada cotista, e o custo de aquisição calculado de acordo com as regras previstas nos §§ 2º, 3º e 4º do art. 17 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No caso dos fundos sujeitos ao regime específico de que trata o art. 26, o cotista poderá optar por não computar na base de cálculo do IRRF os valores controlados nas subcontas de que trata o § 3º do art. 26 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O cotista deverá prover previamente ao administrador do fundo de investimento os recursos financeiros necessários para o recolhimento do imposto, podendo o administrador do fundo dispensar o aporte de novos recursos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A parcela do valor patrimonial da cota tributada na forma deste artigo passará a compor o custo de aquisição da cota, nos termos do inciso II do § 2º do art. 17 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º O imposto de que trata o <I>caput</I> deste artigo deverá ser retido pelo administrador do fundo de investimento e recolhido à vista até 31 de maio de 2024. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º O imposto de que trata o <I>caput</I> deste artigo poderá ser recolhido em até 24 (vinte e quatro) parcelas mensais e sucessivas, com pagamento da primeira parcela até 31 de maio de 2024. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º Na hipótese de que trata o § 6º deste artigo, o valor de cada prestação mensal: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - será acrescido, por ocasião do pagamento, de juros equivalentes à taxa referencial do Sistema Especial de Liquidação e de Custódia (Selic) para títulos federais, acumulada mensalmente, calculados a partir do mês de junho de 2024, e de 1% (um por cento) relativamente ao mês em que o pagamento estiver sendo efetuado; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - não poderá ser inferior a 1/24 (um vinte e quatro avos) do imposto apurado nos termos do <I>caput</I> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 8º Caso o cotista realize o investimento no fundo de investimento por meio de amortização, de resgate ou de alienação de cotas antes do decurso do prazo do pagamento do IRRF, o vencimento do IRRF será antecipado para a data da realização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 9º Caso o imposto não seja pago no prazo de que trata este artigo, o fundo não poderá efetuar distribuições ou repasses de recursos aos cotistas nem realizar novos investimentos até que haja a quitação integral do imposto, com eventuais acréscimos legais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 10. Caso o imposto não seja pago no prazo de que trata este artigo em decorrência da falta de provimento de recursos pelo cotista, nos termos do § 3º deste artigo, o administrador deverá encaminhar à Secretaria Especial da Receita Federal do Brasil do Ministério da Fazenda, na forma e no prazo por ela regulamentados, as seguintes informações, afastada a responsabilidade do administrador pela retenção e pelo recolhimento do imposto: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - número de inscrição do contribuinte no Cadastro de Pessoas Físicas (CPF) ou no Cadastro Nacional da Pessoa Jurídica (CNPJ); <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - valor dos rendimentos que serviram de base de cálculo do imposto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - valor do imposto devido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 11. Na hipótese de que trata o § 10 deste artigo, a responsabilidade pelo recolhimento do imposto será do cotista, que ficará sujeito ao seu lançamento de ofício. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Alternativamente ao disposto no art. 27 desta Lei, a pessoa física residente no País poderá optar por pagar o IRRF sobre os rendimentos das aplicações nos fundos de investimento de que trata o referido artigo à alíquota de 8% (oito por cento), em 2 (duas) etapas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - na primeira, pagamento do imposto sobre os rendimentos apurados até 30 de novembro de 2023; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - na segunda, pagamento do imposto sobre os rendimentos apurados de 1º de dezembro de 2023 a 31 de dezembro de 2023. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Caso ocorra amortização ou resgate de cotas, ou cisão do fundo, entre 1º de dezembro de 2023 e 29 de dezembro de 2023, o efeito do evento deverá ser excluído do valor patrimonial da cota em 30 de novembro de 2023, para fins do disposto no inciso I do <I>caput</I> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Caso seja exercida a opção de que trata este artigo, o imposto deverá ser recolhido: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - sobre os rendimentos de que trata o inciso I do <I>caput</I> deste artigo, em 4 (quatro) parcelas iguais, mensais e sucessivas, com vencimentos nos dias 29 de dezembro de 2023, 31 de janeiro de 2024, 29 de fevereiro de 2024 e 29 de março de 2024; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - sobre os rendimentos de que trata o inciso II do <I>caput</I> deste artigo, à vista, no mesmo prazo de vencimento do IRRF devido na tributação periódica de que trata o inciso I do <I>caput</I> do art. 17 desta Lei relativa ao mês de maio de 2024. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A opção de que trata este artigo somente se consumará e se tornará definitiva com o pagamento integral do imposto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Aplica-se à opção de que trata este artigo o disposto nos §§ 1º a 4º e nos §§ 8º a 10 do art. 27 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Caso o imposto não seja pago nos prazos previstos no § 2º deste artigo, o cotista ficará sujeito ao cálculo e ao recolhimento do imposto na forma do art. 27 desta Lei, deduzidas as parcelas pagas até a data do inadimplemento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Os fundos de investimento que, na data de publicação desta Lei, previrem expressamente em seu regulamento a sua extinção e liquidação improrrogável até 30 de novembro de 2024 não ficarão sujeitos à tributação periódica nas datas previstas no inciso I do <I>caput</I> do art. 17 desta Lei. <BR><BR><BR>
+<CENTER><B>Seção VI </CENTER></B>
+<CENTER><B>Disposições Comuns </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Na hipótese de fusão, de cisão, de incorporação ou de transformação de fundo de investimento a partir de 1º de janeiro de 2024, os rendimentos correspondentes à diferença positiva entre o valor patrimonial da cota na data do evento e o custo de aquisição da cota ficarão sujeitos à retenção na fonte do IRRF à alíquota aplicável aos cotistas do fundo naquela data. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os rendimentos serão calculados de acordo com o disposto nos §§ 2º a 7º do art. 17 e, no caso dos fundos sujeitos ao regime específico previsto no art. 26 desta Lei, de acordo com as disposições dele constantes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Não haverá incidência do IRRF quando a fusão, a cisão, a incorporação ou a transformação: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - envolverem, exclusivamente, fundos que estiverem sujeitos ao mesmo regime de tributação, segundo as regras dos arts. 17, 18 ou 26 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - não implicarem mudança na titularidade das cotas; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - não implicarem disponibilização de ativo pelo fundo aos cotistas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A fusão, a cisão, a incorporação ou a transformação de fundo sujeito às regras de tributação do art. 17 desta Lei e que não se sujeitar ao IRRF não implicarão reinício da contagem do prazo de aplicação dos cotistas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Na cisão ou na transformação de fundo, será cancelada ou transformada quantidade de cotas de cada prazo de aplicação proporcional à quantidade de cotas do respectivo prazo de aplicação em relação à quantidade total de cotas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Não haverá incidência do IRRF na fusão, na cisão, na incorporação ou na transformação ocorrida até 31 de dezembro de 2023 quando: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o fundo objeto da operação não estiver sujeito à tributação periódica nos meses de maio e novembro no ano de 2023; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a alíquota a que seus cotistas estiverem sujeitos no fundo resultante da operação for igual ou maior do que a alíquota a que estavam sujeitos na data imediatamente anterior à operação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Em caso de fundo objeto do § 5º deste artigo com titulares de cotas com prazos distintos de aplicação, haverá a incidência do IRRF somente sobre os rendimentos apurados pelos titulares das cotas que estarão sujeitos a uma alíquota menor após a operação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;É responsável pela retenção e pelo recolhimento do IRRF sobre rendimentos de aplicações em cotas de fundos de investimento: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o administrador do fundo de investimento; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a instituição que intermediar recursos por conta e ordem de seus clientes, para aplicações em fundos de investimento administrados por outra instituição, na forma prevista em normas expedidas pelo Conselho Monetário Nacional ou pela Comissão de Valores Mobiliários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para fins do disposto no inciso II do <I>caput</I> deste artigo, a instituição intermediadora de recursos deverá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ser também responsável pela retenção e pelo recolhimento dos demais impostos incidentes sobre as aplicações que intermediar; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - manter sistema de registro e controle que permita a identificação de cada cliente e dos elementos necessários à apuração dos impostos por ele devidos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - fornecer à instituição administradora do fundo de investimento, individualizado por código de cliente, o valor das aplicações, dos resgates e dos impostos retidos; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - prestar à Secretaria Especial da Receita Federal do Brasil do Ministério da Fazenda todas as informações decorrentes da responsabilidade prevista neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Em caso de mudança de administrador do fundo de investimento, cada administrador será responsável pela retenção e pelo recolhimento do IRRF referente aos fatos geradores ocorridos no período relativo à sua administração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;O IRRF incidente sobre rendimentos de aplicações em fundos de investimento será: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - definitivo, no caso de pessoa física residente no País e de pessoa jurídica isenta ou optante pelo Regime Especial Unificado de Arrecadação de Tributos e Contribuições devidos pelas Microempresas e Empresas de Pequeno Porte (Simples Nacional); ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - antecipação do Imposto sobre a Renda das Pessoas Jurídicas (IRPJ) devido no encerramento do período de apuração, no caso de pessoa jurídica tributada com base no lucro real, presumido ou arbitrado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;São dispensadas da retenção na fonte do IRRF incidente sobre os rendimentos de aplicações em fundos de investimento as pessoas jurídicas domiciliadas no País de que trata o inciso I do <I>caput</I> do art. 77 da Lei nº 8.981, de 20 de janeiro de 1995. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;Os rendimentos de aplicações em fundos de investimento no País apurados por investidores residentes ou domiciliados no exterior nos termos da regulamentação do Conselho Monetário Nacional ficarão sujeitos à incidência do IRRF à alíquota de 15% (quinze por cento), na data da distribuição de rendimentos, da amortização ou do resgate de cotas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A alíquota do IRRF incidente sobre rendimentos apurados na amortização ou no resgate de cotas de FIAs, nos termos do art. 21 desta Lei, de investidor residente ou domiciliado no exterior de que trata este artigo será de 10% (dez por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Não se aplica aos investidores residentes ou domiciliados no exterior de que trata este artigo a tributação periódica na data prevista no inciso I do <I>caput</I> do art. 17 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Aplica-se aos rendimentos de que trata este artigo o disposto nos §§ 2º, 3º e 4º, no inciso II do § 5º e nos §§ 6º e 7º do art. 17 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O regime de tributação deste artigo não se aplica a investidor residente ou domiciliado em jurisdição de tributação favorecida de que trata o art. 24 da Lei nº 9.430, de 27 de dezembro de 1996. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;O IRRF incidente sobre os rendimentos de aplicações em cotas de fundos de investimento, salvo quando previsto de forma diversa nesta Lei, deverá ser recolhido em cota única, no prazo previsto no art. 70 da Lei nº 11.196, de 21 de novembro de 2005. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;Para as cotas de fundos de investimento gravadas com usufruto, o tratamento tributável levará em consideração o beneficiário dos rendimentos, ainda que esse não seja o proprietário da cota. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;Nos casos em que o regulamento do fundo de investimento previr diferentes classes de cotas, com direitos e obrigações distintos e patrimônio segregado para cada classe, nos termos do inciso III do <I>caput</I> do art. 1.368-D da Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil), observada a regulamentação da Comissão de Valores Mobiliários, cada classe de cotas será considerada como um fundo de investimento para fins de aplicação das regras de tributação previstas na legislação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A transferência de cotas entre subclasses de uma mesma classe não é hipótese de incidência do imposto de renda, desde que não haja mudança na titularidade das cotas e não haja disponibilização de ativo pelo fundo aos cotistas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Aplicam-se aos clubes de investimento as regras de tributação de fundos de investimento previstas nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Ficam ressalvadas do disposto nesta Lei as regras aplicáveis aos seguintes fundos de investimento: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - os Fundos de Investimento Imobiliário (FII) e os Fundos de Investimento nas Cadeias Produtivas do Agronegócio (Fiagro), de que trata a Lei nº 8.668, de 25 de junho de 1993; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - os investimentos de residentes ou domiciliados no exterior em fundos de investimento em títulos públicos de que trata o art. 1º da Lei nº 11.312, de 27 de junho de 2006; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - os investimentos de residentes ou domiciliados no exterior em FIPs e em Fundos de Investimento em Empresas Emergentes (FIEE) de que trata o art. 3º da Lei nº 11.312, de 27 de junho de 2006; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - os Fundos de Investimento em Participações em Infraestrutura (FIPs-IE) e os Fundos de Investimento em Participação na Produção Econômica Intensiva em Pesquisa, Desenvolvimento e Inovação (FIPs-PD&amp;I) de que trata a Lei nº 11.478, de 29 de maio de 2007; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - os fundos de investimento de que trata a Lei nº 12.431, de 24 de junho de 2011; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - os fundos de investimento com cotistas exclusivamente residentes ou domiciliados no exterior, nos termos do art. 97 da Lei nº 12.973, de 13 de maio de 2014; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - os ETFs de Renda Fixa de que trata o art. 2º da Lei nº 13.043, de 13 de novembro de 2014. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Os fundos de investimento que investirem, direta ou indiretamente, pelo menos, 95% (noventa e cinco por cento) do seu patrimônio líquido nos fundos de que tratam os incisos I, IV e V do art. 39 e o art. 18 ficarão sujeitos ao tratamento tributário do art. 24 desta Lei. <BR><BR>
+<CENTER><B>Seção VII </CENTER></B>
+<CENTER><B>Das Isenções do Imposto sobre a Renda </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;O art. 3º da Lei nº 11.033, de 21 de dezembro de 2004, passa a vigorar com a seguinte redação, numerando-se o atual parágrafo único como § 1º: <BR><BR>
+<DIR>"Art. 3º&nbsp;.............................................................................................................<BR>............................................................................................................................ <BR><BR>§ 1º ................................................................................................................... <BR><BR>I - será concedido somente nos casos em que os Fundos de Investimento Imobiliário ou os Fiagro possuam, no mínimo, 100 (cem) cotistas; <BR>.............................................................................................................................. <BR><BR>III - não será concedido ao conjunto de cotistas pessoas físicas ligadas, definidas na forma da alínea "<EM>a</EM>" do inciso I do parágrafo único do art. 2º da Lei nº 9.779, de 19 de janeiro de 1999, titulares de cotas que representem 30% (trinta por cento) ou mais da totalidade das cotas emitidas pelos Fundos de Investimento Imobiliário ou pelos Fiagro, ou ainda cujas cotas lhes derem direito ao recebimento de rendimento superior a 30% (trinta por cento) do total de rendimentos auferidos pelo fundo. <BR><BR>§ 2º O fundo de investimento terá prazo de até 180 (cento e oitenta) dias, contado da data da primeira integralização de cotas, para se enquadrar no disposto no inciso I do § 1º deste artigo. <BR><BR>§ 3º O fundo de investimento já constituído em 31 de dezembro de 2023 terá prazo até o dia 30 de junho de 2024 para se enquadrar no disposto no inciso I do § 1º deste artigo. <BR><BR>§ 4º Caso o fundo deixe de se enquadrar no disposto no inciso I do § 1º deste artigo, o fundo poderá manter o tratamento tributário deste artigo desde que retome a quantidade mínima de cotistas dentro de 30 (trinta) dias." (NR)</DIR><BR><BR>
+<CENTER>CAPÍTULO III<BR>DISPOSIÇÕES FINAIS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;A Lei nº 8.668, de 25 de junho de 1993, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 7º&nbsp;.............................................................................................................. <BR>............................................................................................................................. <BR><BR>VI - não possam ser constituídos quaisquer ônus reais sobre os imóveis, exceto para garantir obrigações assumidas pelo Fundo ou por seus cotistas. <BR>.........................................................................................................................." (NR)</DIR>
+<DIR>"Art. 12.&nbsp;............................................................................................................. <BR>.............................................................................................................................. <BR><BR>II - prestar fiança, aval, aceite ou coobrigar-se sob qualquer forma, exceto para garantir obrigações assumidas pelo Fundo ou por seus cotistas;<BR>...................................................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;O art. 1.368-E da Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil), passa a vigorar acrescido do seguinte § 3º: <BR><BR>
+<DIR>"Art. 1.368-E&nbsp;..................................................................................................... <BR>............................................................................................................................... <BR><BR>§ 3º Caso o regulamento do fundo estabeleça classes de cotas com direitos e obrigações distintos, nos termos do inciso III do <I>caput</I> do art. 1.368-D deste Código, aplicase o disposto neste artigo a cada classe de cotas, individualmente considerada." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;As empresas que operarem no País com ativos virtuais, independentemente de seu domicílio, ficam obrigadas a fornecer informações periódicas de suas atividades e de seus clientes à Secretaria Especial da Receita Federal do Brasil do Ministério da Fazenda e ao Conselho de Controle de Atividades Financeiras (Coaf). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;A Secretaria Especial da Receita Federal do Brasil do Ministério da Fazenda regulamentará o disposto nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Revogam-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - os arts. 49 e 50 da Lei nº 4.728, de 14 de julho de 1965; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o § 4º do art. 25 da Lei nº 9.250, de 26 de dezembro de 1995; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - os arts. 28 a 35 da Lei nº 9.532, de 10 de dezembro de 1997; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - os arts. 3º e 6º da Lei nº 10.426, de 24 de abril de 2002; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - o art. 3º da Lei nº 10.892, de 13 de julho de 2004; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - os §§ 2º a 7º do art. 1º da Lei nº 11.033, de 21 de dezembro de 2004; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - o art. 24 do Decreto-Lei nº 2.287, de 23 de julho de 1986; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - os seguintes dispositivos da Medida Provisória nº 2.189-49, de 23 de agosto de 2001: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>arts. 1º a 6º; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>inciso II do <I>caput</I> do art. 10; e </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - os seguintes dispositivos da Medida Provisória nº 2.158-35, de 24 de agosto de 2001: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>art. 24; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>art. 28. </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;Esta Lei entra em vigor na data de sua publicação e produzirá efeitos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - imediatamente, quanto aos arts. 28 e 29, aos §§ 4º, 5º e 6º do art. 30 e aos arts. 42 e 43; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a partir de 1º de janeiro de 2024, quanto aos demais dispositivos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 12 de dezembro de 2023; 202º da Independência e 135º da República. </P>
+<P>LUIZ INÁCIO LULA DA SILVA <BR>Fernando Haddad </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 13/12/2023
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 13/12/2023, Página 7 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

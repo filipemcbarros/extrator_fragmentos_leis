@@ -1,0 +1,911 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 5.020, DE 7 DE JUNHO DE 1966 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sôbre as promoções dos Oficiais da ativa da Aeronáutica, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 5.020, DE 7 DE JUNHO DE 1966 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                            <li>  	
+                                                <a href="lei-5020-7-junho-1966-364658-retificacao-45462-pl.html">Retificação</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=214301">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-5020-7-junho-1966-364658-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 5.020, DE 7 DE JUNHO DE 1966</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							<META name=GENERATOR content="MSHTML 6.00.2800.1528">Dispõe sôbre as promoções dos Oficiais da ativa da Aeronáutica, e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA;&nbsp; <BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte lei: <BR><BR>
+<P align=center><STRONG>CAPÍTULO I<BR>Generalidades</STRONG></P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º a presente Lei tem por finalidade estabelecer os princípios os requisitos e o processamento para as promoções dos Oficiais da ativa da Aeronáutica.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º As promoções no Corpo de Oficiais da Aeronáutica da ativa são realizadas no interêsse da Aeronáutica com o objetivo de atender:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;1 - as necessidades de pessoal para organização militar com base nos efetivos fixados em lei;<BR>&nbsp;&nbsp;&nbsp;&nbsp;2 - ao justo aproveitamento dos valores profissionais para o desempenho das diferentes funções principalmente as de comando chefia e direção;<BR>&nbsp;&nbsp;&nbsp;&nbsp;3 - ao adequado equilíbrio de acesso, de forma regular, gradual e sucessiva aos postos da hierarquia militar.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º O ingresso nos Quadros do Corpo de Oficiais da Aeronáutica da ativa é feito no pôsto inicial da escala hierárquica do respectivo Quadro.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º O ingresso nos Quadros é permitido:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;1 - aos possuidores de Curso de Escola de Formação de Oficiais da Aeronáutica da ativa;<BR>&nbsp;&nbsp;&nbsp;&nbsp;2 - aos diplomados pelas faculdades civis reconhecidas pelo Governo Federal na forma estabelecida em lei, desde que habilitados em concurso, curso ou estágio organizado pelo Ministério da Aeronáutica, quando não haja Escola de Formação de Oficiais da Aeronáutica da ativa para o respectivo Quadro.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º Para os Quadros do Serviço de Saúde, e considerado pôsto inicial da escala hierárquica o de Primeiro-Tenente.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º Para ingresso nos quadros, é necessário que o Aspirante ou Estagiário revele correta conduta civil e militar.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º O acesso aos postos da hierarquia militar é feito através de promoções graduais e sucessivas, obedecendo aos princípios de antigüidade, merecimento ou escolha.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> Para atender a casos específicos, as promoções também poderão ser efetuadas por bravura, em ressarcimento de preterição ou <EM>post mortem</EM> .</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º A ordem hierárquica de colocação dos oficiais no pôsto inicial é ditada pela Antigüidade Selecionada.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> Antigüidade Selecionada é a ordem de colocação final, por aproveitamento em Curso da Escola de Formação, concurso curso ou estágio, de acôrdo com a exigência para ingresso nos Quadros do Corpo de Oficiais da Aeronáutica da ativa.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º A efetivação da promoção só ocorrerá pela existência da vaga correspondente exceto as efetuadas por bravura em ressarcimento de preterição ou <EM>post mortem</EM> .</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 10. As vagas nos diferentes Quadros do Corpo de Oficiais da Aeronáutica da ativa são provenientes de:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;1 - falecimento;<BR>&nbsp;&nbsp;&nbsp;&nbsp;2 - aumento ou criação de quadros;<BR>&nbsp;&nbsp;&nbsp;&nbsp;3 - promoção ao pôsto superior;<BR>&nbsp;&nbsp;&nbsp;&nbsp;4 - transferência para categoria especial;<BR>&nbsp;&nbsp;&nbsp;&nbsp;5 - agregação;<BR>&nbsp;&nbsp;&nbsp;&nbsp;6 - perda de patente;<BR>&nbsp;&nbsp;&nbsp;&nbsp;7 - demissão;<BR>&nbsp;&nbsp;&nbsp;&nbsp;8 - transferência para a reserva;<BR>&nbsp;&nbsp;&nbsp;&nbsp;9 - reforma.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 11 Os oficiais em condições de serem promovidos de acôrdo com os princípios estabelecidos nesta Lei, serão relacionados em Quadros de Acesso, por antigüidade, por merecimento ou por escolha organizados separadamente, para cada pôsto e quadro.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 12. A organização dos Quadros de Acesso é atribuição da Comissão de Promoções que relacionará os oficiais da seguinte forma:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;1 - Quadros de Acesso por antigüidade;<BR>&nbsp;&nbsp;&nbsp;&nbsp;Por ordem de precedência hierárquica.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;2 - Quadros de acesso por merecimento.<BR>&nbsp;&nbsp;&nbsp;&nbsp;Por ordem decrescente do grau de merecimento, no julgamento da Comissão de Promoções.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;3 - Quadros de Acesso por escolha.<BR>&nbsp;&nbsp;&nbsp;&nbsp;Por ordem de precedência hierárquica.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para as promoções por merecimento serão sempre reformulados os correspondentes Quadros de Acesso, mesmo que não tenha havido promoção anterior, em uma das datas fixadas no art. 52.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os Quadros de Acesso serão publicados nas condições previstas na regulamentação desta Lei.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Os Quadros de Acesso por antigüidade serão constituídos pelos oficias em condições de promoção colocados em ordem de precedência hierárquica até os seguintes limites:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>a)</EM> efetivos até 20 ............................................................................................................... 12<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>b)</EM> efetivos de 21 a 40 ........................................................................................................ 16<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>c)</EM> efetivos de 41 a 80 ........................................................................................................ 24<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>d)</EM> efetivos de 81 a 160 ...................................................................................................... 36<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>e)</EM> efetivos de 161 a 320 .................................................................................................... 52<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>f)</EM> efetivos acima de 320 .................................................................................................... 72</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Os Quadros de Acesso por merecimento são constituídos por metade do número de oficiais constantes dos correspondentes Quadros de Acesso por antiguidade, e selecionados dentre êsses, pela Comissão de Promoções.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Os Quadros de Acesso por escolha, para promoção a Brigadeiro, serão constituídos pela metade do número de Coronéis, em condições de promoção, colocados em ordem de precedência hierárquica, até os limites abaixo fixados, selecionados pela Comissão de Promoções:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;<EM>&nbsp;&nbsp;&nbsp; a)</EM> efetivos até 25 ............................................................................................................... 16<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>b)</EM> efetivos de 26 a 50 ........................................................................................................ 20<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>c)</EM> efetivos acima de 50 ...................................................................................................... 26</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Os quadros de Acesso por escolha para promoção de Oficiais-Generais serão constituídos pelos Oficiais, em condições de promoção, colocados em ordem de precedência hierárquica, até os seguintes limites:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>a)</EM> efetivos até 10 - todos;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>b)</EM> efetivos acima de 10 - 10 mais 50% do que exceder de 10</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 13. Não poderá ser cogitado, incluído ou mantido em Quadros de Acesso, oficial que estiver nas seguintes situações:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;1 - "Sub judice";<BR>&nbsp;&nbsp;&nbsp;&nbsp;2 - agregado sem direito a promoção;<BR>&nbsp;&nbsp;&nbsp;&nbsp;3 - prisioneiro de guerra;<BR>&nbsp;&nbsp;&nbsp;&nbsp;4 - desaparecido;<BR>&nbsp;&nbsp;&nbsp;&nbsp;5 - extraviado.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Considera-se "sub judice" o oficial:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>a)</EM> prêso preventivamente em flagrante delito, enquanto a prisão não houver sido revogada;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>b)</EM> condenado em sentença transitada em julgado, durante o cumprimento da pena;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>c)</EM> condenado, mesmo beneficiado com "sursis", durante a sua vigência;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>d)</EM> denunciado em processo-crime, revogada ou não a prisão preventiva porventura imposta, enquanto não houver a sentença final transitado em julgado. Exclui-se o caso em que a denúncia não fôr aceita, quando então, o oficial deixará de ser considerado "sub judice", a partir da data em que tenha transitado em julgado o despacho do não-recebimento da denúncia;<BR>&nbsp;&nbsp;&nbsp;<EM>&nbsp;&nbsp;&nbsp; e)</EM> na situação de desertor.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Considerar-se agregado, sem direito a promoção, o oficial;</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>a)</EM> licenciado para tratar de interesse particular;<BR>&nbsp;&nbsp;&nbsp;<EM>&nbsp;&nbsp;&nbsp; b)</EM> licenciado para exercer atividades em organizações civis;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM>c)</EM> desertor.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Considera-se prisioneiro de guerra o oficial que, em campanha, fôr capturado por fôrças inimigas, até sua libertação ou repatriamento.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Considera-se desaparecido o oficial do qual não haja noticia até 30 (trinta) dias, quando, comprovadamente, tenha desaparecido em viagem, acidente, operações ou calamidade pública.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Considera-se extraviado, quando o desaparecimento ultrapassar de 30 (trinta) dias.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 14. O oficial será excluído de qualquer quadro de Acesso pela Comissão de Promoções, quando:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1 - fôr considerado incapaz para o acesso, temporária ou definitivamente;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 - fôr enquadrado em quaisquer uma das situações previstas no art. 13;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 - tiver sido incluído indevidamente no quadro de Acesso.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 15. O oficial não incluído em Quadros de Acesso ou dêles excluído, por motivo de situação de prisioneiro de guerra desaparecido ou extraviado, será incluído ou reincluído no correspondente Quadro de Acesso, desde que, cessado o motivo, satisfaça as condições para o acesso.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> Êste artigo também se aplica ao oficial que tendo estado na situação de "sub judice", foi impronunciado ou absolvido por sentença passada em julgado.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 16. As vagas abertas serão preenchidas, em cada pôsto, por promoção, da seguinte forma:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;1 - as de 2º - Tenente, 1º - Tenente e Capitão, todas por antigüidade;<BR>&nbsp;&nbsp;&nbsp;&nbsp;2 - as de Major - duas por antigüidade e uma por merecimento;<BR>&nbsp;&nbsp;&nbsp;&nbsp;3 - as de Tenente-Coronel - uma por antigüidade e uma por merecimento;<BR>&nbsp;&nbsp;&nbsp;&nbsp;4 - as de Coronel - uma por antigüidade e três por merecimento;<BR>&nbsp;&nbsp;&nbsp;&nbsp;5 - as de Brigadeiro, Major-Brigadeiro e Tenente-Brigadeiro - tôdas por escolha.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> Serão preenchidas, exclusivamente por merecimento, as vagas do último pôsto, nos quadros em que não haja acesso ao pôsto de Brigadeiro.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 17. Havendo num pôsto oficiais aguardando reinclusão em seu quadro, as vagas que ocorrerem serão por eles preenchidas, por ordem de precedência hierárquica e prioritáriamente ao preenchimento das mesmas por promoções; excetuam-se as vagas decorrentes da aplicação das cotas compulsórias, de que trata a Lei de Inatividade dos Militares, as quais serão preenchidas de acôrdo com a referida lei.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 18. Os oficiais incluídos em categoria especial, e os agregados, não preenchem vagas e, quando promovidos, não alteram o cômputo das cotas previstas no art. 16; quando integrando Quadros de Acesso, são considerados como excedentes aos limites fixados no art. 12.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> Os oficiais de que trata êste artigo serão incluídos em Quadros de Acesso:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>a)</EM> por antigüidade - desde que constante do correspondente Quadro de Acesso por antigüidade e selecionado pela Comissão de Promoções.<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>b)</EM> por merecimento - desde que constante do correspondente Quadro de Acesso por antigüidade e selecionado pela Comissão de Promoções.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 19. O preenchimento de vaga que deva ser feito pelo princípio de antigüidade, na forma do art. 16 poderá ser processado pelo princípio de merecimento, sem alterar a seqüência no cômputo de cotas futuras, desde que o oficial a ser promovido figure em primeiro lugar no Quadro de Acesso por merecimento.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 20. A incapacidade do oficial para o acesso será:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;1 - temporária:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>a)</EM> por falta de requisitos sanáveis para a promoção;<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>b)</EM> na situação de "sub judice".<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>c)</EM> agregado sem direito a promoção;<BR>&nbsp;&nbsp;&nbsp;&nbsp;d) na situação de prisioneiro de guerra;<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>e)</EM> na situação de desaparecido ou extraviado;<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>f)</EM> quando em inspeção de saúde fôr julgado incapaz temporariamente, observadas as disposições desta Lei.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;2 - definitiva, quando:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>a)</EM> enquadrado em dispositivo de lei que acarrete sua passagem compulsória para a inatividade;<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>b)</EM> cogitado para integrar Quadros de Acesso, na forma desta Lei, não possuir diploma de curso exigido como requisito para acesso, esgotadas as possibilidades de obtê-lo;<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>c)</EM> fôr julgado incapaz, moral ou profissionalmente, em processo regular, na forma da legislação em vigor;<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>d)</EM> por falta de requisitos sanáveis, estiver fora de Quadro de Acesso por 2 (dois) anos consecutivos.</P>
+<P align=center><STRONG>CAPÍTULO II<BR>Requisitos Essenciais</STRONG></P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 21. Para a promoção por qualquer dos princípios é necessários que o oficial possua, como requisitos essenciais, o interstício, a aptidão física, o conceito moral e profissional e as condições peculiares a cada posto e quadro.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 22. O interstício é o período mínimo de serviço, em cada posto, necessário para que o oficial adquira os conhecimentos imprescindíveis ao exercício das funções atribuídas ao pôsto imediatamente superior.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os interstícios para promoções, nos diferentes postos, são:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>a)</EM> a 2º - Tenente - 6 (seis) meses como aspirante;<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>b)</EM> a 1º - Tenente - 2 (dois) anos como 2º - Tenente;<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>c)</EM> a Capitão - 6 (seis) anos como Oficial Subalterno, dos quais pelo menos 2 (dois) anos como 1º - Tenente;<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>d)</EM> a Major - 4 (quatro) anos como Capitão;<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>e)</EM> a Tenente-Coronel - 3 (três) anos como Major;<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>f)</EM> a Coronel - 2 (dois) anos como Tenente-Coronel;<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>g)</EM> a Brigadeiro - 2 (dois) anos como Coronel;<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>h)</EM> a Major-Brigadeiro - 2 (dois) anos como Brigadeiro;<BR>&nbsp;&nbsp;&nbsp;&nbsp;<EM>i)</EM> a Tenente-Brigdeiro - 2 (dois) anos como Major-Brigadeiro.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O interstício de Oficial Estagiário do Serviço de Saúde é fixado pela duração do curso ou estágio previsto em legislação especial, não podendo, no entanto, ser inferior a 6 (seis) meses.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 23. A aptidão física exprime as condições de sanidade que habilitam o oficial ao exercício das atividades físicas funcionais, inerentes ao pôsto, quadro e categoria a que pertence.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A aptidão física será verificada mediante inspeção de saúde, realizada por Junta Especial de Saúde, quando se tratar de pessoal funcionalmente obrigado ao vôo, e por Junta Regular de Saúde, nos demais casos.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O oficial hospitalizado, ou temporariamente incapaz, em conseqüência de acidente ocorrido em serviço, ou de moléstia adquirida em serviço, será considerado, para efeito de promoção, em relação à aptidão física da seguinte forma:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>a)</EM> incluído ou mantido no Quadro de Acesso, satisfeitas as demais condições, desde que se encontre na situação de hospitalizado, ou incapaz temporariamente, até 12 (doze) meses consecutivos, referidos à data em que teve início a sua hospitalização ou incapacidade temporária;</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>b)</EM> excluído do Quadro de Acesso, se a hospitalização, ou incapacidade temporária, exceder de 12 (doze) meses consecutivos;</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>c)</EM> os prazos verificados nas letras a e b acima, quando se tratar de incapacidade temporária resultante de acidente aéreo em serviço autorizado por ordem de missão, será de 24 (vinte e quatro) meses.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O oficial enquadrado na letra b do parágrafo anterior, que venha a ser julgado apto em nova inspeção de saúde, realizada por Junta Superior de Saúde, antes de haver atingido o vigésimo-quarto mês de incapacidade física continuada, terá sua situação estabelecida na regulamentação desta Lei.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 24. O conceito constitui requisito para promoção, por aferir conjunto de qualidades morais do oficial e as qualidades profissionais reveladas e aperfeiçoadas durante o desempenho de suas atividades militares.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> As instruções sôbre avaliação, análise e processamento do conceito serão estabelecidas na regulamentação desta Lei.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 25. As condições peculiares de acesso serão estabelecidas na regulamentação desta Lei, devendo, entre outras, ser consideradas as seguintes:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;1 - para promoção ao pôsto de Major - o Curso de aperfeiçoamento de Oficias, previsto para o correspondente quadro;<BR>&nbsp;&nbsp;&nbsp;&nbsp;2 - para promoção ao pôsto de Coronel no Quadro de Oficiais-Aviadores - o Curso Superior de Estado-Maior da Aeronáutica;<BR>&nbsp;&nbsp;&nbsp;&nbsp;3 - para promoção ao pôsto de Brigadeiro no Quadro de Oficiais-Aviadores - o Curso Superior de comando da Aeronáutica;<BR>&nbsp;&nbsp;&nbsp;&nbsp;4 - para promoção ao pôsto de Coronel no Quadro de Oficiais-Intendentes e no Quadro de Oficiais-Médicos - o Curso de Direção de Serviço.</P>
+<P align=center><STRONG>CAPÍTULO III<BR>Promoção por Antigüidade</STRONG></P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 26. A antigüidade é a precedência hierárquica de um oficial sôbre os demais do mesmo pôsto, estabelecida de acôrdo com as leis e os regulamentos em vigor.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 27. As vagas de cada pôsto e quadro, correspondentes às cotas de antigüidade serão preenchidas sucessivamente pela promoção dos oficiais de acôrdo com a ordem de colocação dos mesmos no Quadro de Acesso por antigüidade.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> O oficial agregado por motivo de licença para tratamento de saúde de pessoa da família só concorrerá à promoção pelo princípio de antigüidade.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 28. Os oficiais incluídos em categoria especial e os agregados, quando em Quadro de Acesso por antigüidade serão promovidos por êsse princípio, sempre que oficial mais moderno numerado do mesmo pôsto e quadro, houver sido promovido por atividade.</P>
+<P align=center><STRONG>CAPÍTULO IV<BR>Promoção por Merecimento</STRONG> </P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 29. O merecimento é conjunto de atributos que distinguem e realçam o valor do oficial entre os seus pares. Tem por base as qualidades profissionais morais e intelectuais de cada um e a proficiência no desempenho das funções exercidas.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 30. As vagas de cada posto e quadro correspondentes às cotas de merecimento, serão preenchidas sucessivamente pela promoção dos oficiais de acôrdo com a ordem de colocação dos mesmos no Quadro de Acesso por merecimento.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 31. Os oficiais incluídos em categoria especial e os agregados, quando em Quadros de Acesso por Merecimento, serão promovidos por êsse princípio, sempre que oficial numerado e colocado abaixo deles nos referidos Quadros de Acesso houver sido promovido por merecimento.</P>
+<P align=center><STRONG>CAPÍTULO V<BR>Promoção por Escolha</STRONG> </P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 32. A Promoção por Escolha é a forma pela qual é processado o acesso aos postos de Oficial-General, no Corpo de Oficiais de Aeronáutica da ativa.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 33 A escolha e ato da competência do Presidente da República recaindo a mesma em oficiais selecionados de Quadros de Acesso por Escolha e apresentados em Listas para Promoção.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O número de oficiais numerados promovidos deverá ser igual ao de vagas existentes.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os oficiais incluídos em Categoria Especial poderão ser promovidos desde que não ultrapassem o total de oficiais numerados previsto no parágrafo anterior.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 34. As Listas para promoção organizadas em função do número de vagas, são relações de oficiais de cada pôsto e quadro selecionados dos correspondentes Quadros de Acesso por Escolha e sôbre os quais recairá a preferência do Presidente da República para a promoção aos postos de Oficial-General.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os oficiais do Quadro de Oficiais-Aviadores de categoria especial, colocados em Quadros de Acesso por Escolha acima de oficiais numerados incluídos em Listas para Promoção serão também incluídos nas correspondentes listas para promoção a critério da Comissão Especial.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os oficiais incluídos nas Listas para Promoção na forma do parágrafo anterior serão considerados como excedentes aos limites fixados no art. 38.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 35 As Listas para Promoção são constituídas por oficiais selecionados de Quadros de Acesso por Escolha pelo julgamento de uma Comissão Especial tendo como membros natos o Ministro da Aeronáutica e o Chefe do Estado-Maior da Aeronáutica.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os demais membros da Comissão Especial são convocados pelo Ministro da Aeronáutica dentre os Tenentes-Brigadeiros e Majores-Brigadeiros do Quadro de Oficiais-Aviadores, em função.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A seleção de oficiais, para constituírem as Listas para Promoção, será realizada em reunião da Comissão Especial com a presença de no mínimo 5 (cinco) membros incluido o seu presidente, salvo quando se tratar de promoção ao pôsto de Tenente-Brigadeiro quando então serão convocados apenas os Tenentes-Brigadeiros.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 3º No impedimento do Ministro da Aeronáutica, a Comissão Especial será presidida pelo Chefe do Estado-Maior da Aeronáutica.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 36. A Comissão Especial registrará em ata o julgamento feito em cada reunião e a respectiva apuração de votos.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 37. Os oficiais, inclusive os de categoria especial serão relacionados nas Listas para Promoção em ordem decrescente do número de votos obtidos no julgamento da Comissão Especial.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;<EM>&nbsp;Parágrafo único.</EM> No caso de empate a colocação dos Oficiais nas Listas para Promoção será determinada pela precedência hierárquica.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 38. Em função das vagas nos postos de Oficial-General as Listas para Promoção serão consignadas de:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;I - Quadro de Oficiais Aviadores:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>a)</EM> promoção ao pôsto de -Brigadeiro:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;1 - para a primeira vaga: 3 (três) Coronéis numerados, ou assim considerados selecionados dentre os colocados no Quadro de Acesso;<BR>&nbsp;&nbsp;&nbsp;&nbsp;2 - para cada vaga subseqüente: mais 2 (dois) Coronéis numerados, ou assim considerados selecionados dentre os colocados no Quadro de Acesso.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;<EM>&nbsp;b)</EM> promoção aos postos de Major-Brigadeiro e Tenente-Brigadeiro:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;1 - para a primeira vaga: 3 (três) Brigadeiros ou Majores-Brigadeiros numerados, ou assim considerados selecionados dentre os colocados no Quadro de Acesso correspondente;<BR>&nbsp;&nbsp;&nbsp;&nbsp;2 - para cada vaga subseqüente: mais 1 (um) Brigadeiro ou Major-Brigadeiro numerado ou assim considerado, selecionado dentre os colocados no Quadro de Acesso correspondente.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;II - Quadro de Oficiais-Intendentes e de Oficiais-Médicos:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>a)</EM> promoção ao pôsto de Brigadeiro:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;1 - para primeira vaga: 3 (três) Coronéis numerados, ou assim considerados, selecionados dentre os colocados no Quadro de Acesso correspondente;<BR>&nbsp;&nbsp;&nbsp;&nbsp;2 - para cada vaga subseqüente: mais 2 (dois) Coronéis numerados ou assim considerados, selecionados dentre os colocados no Quadro de Acesso correspondente;</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>b)</EM> promoção ao pôsto de Major-Brigadeiro: todos os Brigadeiros constantes do Quadro de Acesso correspondente.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 39 Os Coronéis e Oficiais-Generais não incluídos em Categoria Especial quando agregados e em Quadros de Acesso, serão considerados como numerados para os efeitos de seleção relacionamento e promoção.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> Aos oficiais promovidos da forma dêste artigo não se aplica o disposto no art. 18.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 40. O oficial cujo nome constar por quatro vezes consecutivas em primeiro lugar na lista para promoção não poderá deixar de ser promovido quando da sua apresentação pela quarta vez.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 41. O Ministro da Aeronáutica apresentará ao Presidente da República até 45 (quarenta e cinco) dias, contados da data de abertura da vaga, a Lista para Promoção.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> As Listas para Promoção serão organizadas considerando-se as vagas existentes em cada pôsto e quadro, e aquelas que decorrerem do preenchimento das mesmas.</P>
+<P align=center><STRONG>CAPÍTULO VI<BR>Promoção por Bravura</STRONG> </P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 42. Bravura é o ato meritório que, ultrapassando o cumprimento do dever militar, é praticado com desprendimento e risco de vida.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 43. A bravura, em casos de operações de guerra constitui motivo de promoção.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para efeito deste artigo a bravura deverá ser comprovada na forma estabelecida na regulamentação desta Lei.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A Promoção por Bravura será feita, independente de vaga ou condições pelo Comandante do Teatro de Operações, pelo Comandante-em-Chefe ou pelo Presidente da República.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O Governo, posteriormente, proporcionará ao promovido a oportunidade de satisfazer as condições exigidas para o acesso.</P>
+<P align=center><STRONG>CAPÍTULO VII<BR>Promoção em Ressarcimento de Preterição</STRONG> </P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 44. Promoção em Ressarcimento de Preterição e aquela que é feita após ser reconhecido o direto de um oficial preterido à promoção que lhe caberia.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 45. A Promoção em Ressarcimento de Preterição ocorrerá após o recolhimento, "ex officio" ou recorrido de direito assecuratório da promoção.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> Cabe a Comissão de Promoções a abertura do processo quando o reconhecimento fôr "ex officio", ou sua informação, quando recorrido.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 46. A antiguidade do final promovido em ressarcimento de preterição será contada da data estabelecida no ato em que lhe fôr reconhecido o direto à promoção.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 47. O oficial incluido ou recluído em Quadro de Acesso por Antiguidade ou por Merecimento na forma do disposto no art. 15 será promovido em ressarcimento de preterição, a contar da data em que lhe caberia a promoção por Antiguidade ou Merecimento.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> As promoções efetuadas na forma dêste artigo não dependerão de vagas.</P>
+<P align=center><STRONG>CAPÍTULO VIII<BR>Promoção "Post Mortem"</STRONG> </P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 48. Promoção Post Mortem é aquela efetuada após o falecimento do militar.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 49. A Promoção Post Mortem é feita de conformidade com a legislação em vigor.</P>
+<P align=center><STRONG>CAPÍTULO IX<BR>Efetivação das Promoções</STRONG> </P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 50 As promoções pelos diversos princípios, exceto o de bravura, são efetivadas por Portaria Ministerial até o pôsto de Capitão e por Decreto Presidencial para os demais postos.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 51. A promoção ao pôsto inicial dos quadros satisfeitas as condições ocorrerá em qualquer época o mesmo acontecendo com as nomeações e inclusões.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 52. As promoções por Antiguidade e Merecimento se efetuarão nos dias 20 de janeiro, 22 de abril, 20 de julho e 23 de outubro para preenchimento das vagas abertas até os dias 10 de janeiro, 12 de abril, 10 de julho e 13 de outubro respectivamente.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 53. As promoções por Escolha serão efetivas a partir da apresentação da Lista para Promoção.</P>
+<P align=center><STRONG>CAPÍTULO X<BR>Recurso</STRONG> </P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 54. O recurso é o meio legal de que dispõe o oficial ou Aspirante-a-Oficial, para pleitear o reconhecimento de um direito que julga lhe tenha sido negado.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> Os prazos e processamento do recurso, serão fixados na regulamentação desta Lei.</P>
+<P align=center><STRONG>CAPÍTULO XI<BR>Comissão de Promoções</STRONG> </P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 55. A Comissão de Promoções, diretamente subordinada ao Ministro da Aeronáutica, é o órgão encarregado do estudo de todos os assuntos relativos a promoções no Corpo de Oficiais da Aeronáutica da ativa.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 56. O Presidente da Comissão de Promoções é o Chefe do Estado-Maior da Aeronáutica.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 57. Compete essencialmente à Comissão de Promoções:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;1 - organizar os Quadros de Acesso para promoção pelos diversos princípios;<BR>&nbsp;&nbsp;&nbsp;&nbsp;2 - assistir à Comissão Especial na organização das Listas para Promoção;<BR>&nbsp;&nbsp;&nbsp;&nbsp;3 - encaminhar ao Ministro da Aeronáutica, com parecer, os recursos interpostos;<BR>&nbsp;&nbsp;&nbsp;&nbsp;4 - formular e emitir pareceres sôbre promoções, merecimento profissional, precedência hierárquica e colocação nos Quadros de Acesso ou no almanaque dos Oficiais da Aeronáutica;<BR>&nbsp;&nbsp;&nbsp;&nbsp;5 - providenciar os documentos indispensáveis à elaboração dos Quadros de Acesso, determinando às organizações as providências necessárias;<BR>&nbsp;&nbsp;&nbsp;&nbsp;6 - propor ao Ministro da Aeronáutica agregações e reversões de oficias, nos processos que impliquem em promoções.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 58. A Comissão de Promoções é constituída por 7 (sete) Membros Efetivos e 5 (cinco) Membros Suplentes, todos Oficiais-Generais do Quadro de Oficiais-Aviadores.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Dos 7 (sete) Membros Efetivos 2 (dois) são considerados Membros Natos e 5 (cinco), Membros Temporários.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>a)</EM> São Membros Natos o Chefe do Estado-Maior da Aeronáutica e do Diretor-Geral do Pessoal da Aeronáutica;</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;<EM>&nbsp;b)</EM> os Membros Temporários são designados anualmente por decreto, na Segunda quinzena do mês de dezembro, coincidindo com o ano civil imediato o período de exercício de funções na Comissão de Promoções.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os Membros Suplentes são designados no mesmo decreto de designação dos Membros Temporários co-indicado com o ano civil imediato o período de exercício da suplencia.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A Comissão de Promoções será acrescida de 2 (dois) membros o Diretor-Geral de Intendência e o Diretor-Geral de Saúde convocados para a organização dos Quadros de Acesso de Oficiais-Intendentes Oficais-Medicos e Oficiais-Farmaceuticos.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 59. Os Membros Efetivos serão substituídos por Membros Suplentes em seus impedimentos eventuais.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 1º No impedimento do Chefe de Estado-Maior da Aeronáutica as reuniões da Comissão de Promoções serão presididas pelo Membro Efetivo ou Suplente de maior precedência hierarquica.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O Diretor-Geral de Intendencia e o Diretor-Geral de Saúde serão substituídos pelo oficial do respectivo quadro que lhe seguir na escala hierárquica e que esteja em função.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 60. Só imperiosa necessidade do serviço ou motivo de saúde poderá impedir a presença de quaisquer dos membros aos trabalhos da conclusão de Promoções os quais preferem quaisquer outro serviço, que não os da Justiça.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 61. Os membros temporários não poderão exercer consecutivamente funções na comissão de Promoções por período superior a 2 (dois) anos.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 62. A Comissão de Promoções disporá de uma Secretaria, chefiada por um Coronel-Aviador, com organização e funcionamento fixados na regulamentação desta Lei.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> A Comissão de Promoções disporá de um Regimento Interno, baixado por ato ministerial.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 63. As normas de trabalho reguladoras do funcionamento e das atribuições da Comissão de Promoções serão fixadas na regulamentação desta Lei.</P>
+<P align=center><STRONG>CAPÍTULO XII<BR>Disposições Finais</STRONG> </P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 64. O Aspirante-a-oficial que, uma vez completado o interstício, deixar de ser promovido por não possuir correta conduta civil ou militar, ou por indisciplina de vôo, poderá ser licenciado do serviço ativo, mediante proposta da Comissão de Promoções.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> Será, também, por proposta da Comissão de Promoções, licenciado do serviço ativo o Aspirante-a-Oficial que, por conceito desfavorável, deixar de ser promovido na época regulamentar e que, 6 (seis) meses após haver completado o interstício, não satisfaça, ainda, essas condições para a promoção.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 65. O oficial estagiário designado durante o curso ou estágio, por lhe faltar correta conduta e conceito favorável, retornará à situação que tinha antes da matrícula.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 66. O oficial promovido indevidamente será agregado ao quadro a que pertence, sem contar antiguidade do novo posto.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> O oficial agregado, na forma deste artigo, desagregará quando lhe couber a promoção de acôrdo com esta Lei.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 67. O oficial promovido em ressarcimento de preterição retornará à sua situação hierárquica, sendo considerado excedente o oficial mais moderno do pôsto e quadro correspondentes, se fôr o caso.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 68. Aos oficiais que estiverem matriculados em curso do Instituto Tecnológico da Aeronáutica ou do Instituto Militar de Engenharia, ou que concluírem com aproveitamento os referidos cursos, há menos de 2 (dois) anos da data em que lhes caiba promoção ao pôsto de Major, não se aplica, para efeito dessa promoção, o disposto no item 1 do art. 25 desta Lei.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;<EM>Parágrafo único.</EM> Os oficiais promovidos na forma dêste artigo ficam obrigados ao cumprimento da exigência do item 1 do art. 25, para que possam ser incluídos em Quadro de Acesso para promoção ao pôsto de Tenente-Coronel.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 69. O Alto Comando da Aeronáutica, quando fôr ativado, assumirá as atribuições da Comissão Especial de que trata o art. 35, desta lei.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 70. Os casos omissos serão resolvidos pelo Poder Executivo.</P>
+<P align=center><STRONG>CAPÍTULO XIII<BR>Disposições Transitórias</STRONG> </P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 71. Esta lei não se aplica aos oficiais do Quadro Complementar de Aviadores, de que trata o Decreto-lei nº 3.448, de 23 de julho de 1941.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 72. As promoções dos oficiais homólogos do Quadro de Infantaria-de-Guarda serão processadas da seguinte forma:</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;1) as de Antiguidade - de acôrdo com o disposto em regulamentação específica;<BR>&nbsp;&nbsp;&nbsp;&nbsp;2) as de Merecimento - em numero igual ao de oficiais numerados promovidos, do mesmo pôsto, satisfeitas, ainda, as condições estabelecidas nesta Lei e na sua regulamentação.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 73. Aos atuais Primeiros-Tenentes que já tenham completado o interstício previsto para seu pôsto pelo Decreto nº 48.983, de 1º de outubro de 1960, não se aplica a exigência da letra c do § 1º do art. 22 desta Lei.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 74. Aos atuais Tenentes-Coronéis do Quadro de Oficiais-Intendentes e Quadro de Oficiais-Médicos, não se aplica o disposto no item 4 do artigo 25, durante o período de carência de 2 (dois) anos, contados da data de vigência desta Lei.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os oficiais promovidos de conformidade com êste artigo ficam obrigados à realização do Curso de Direção de Serviços, no prazo máximo de 3 (três) anos, contados a partir da data de promoção ao pôsto de Coronel.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os oficiais enquadrados no presente artigo estarão incapacitados definitivamente para o acesso, na forma estabelecida nesta Lei, se, dentro do prazo fixado no parágrafo anterior e por motivo dependente do interessado, não realizarem o Curso de Direção de Serviços.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 75. Dentro de 60 (sessenta) dias, a partir da data da publicação desta Lei, o Poder Executivo baixará a sua regulamentação.</P>
+<P align=justify>&nbsp;&nbsp;&nbsp;&nbsp;Art. 76. Ficam revogadas as disposições em contrário.</P>
+<P align=justify>Brasília, 7 de junho de 1966; 145º da independência e 78º da República.</P>
+<P align=justify>H.CASTELLO BRANCO<BR>Eduardo Gomes</P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 08/06/1966
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 8/6/1966, Página 6155       
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

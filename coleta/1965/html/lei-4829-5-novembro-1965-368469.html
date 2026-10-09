@@ -1,0 +1,934 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 4.829, DE 5 DE NOVEMBRO DE 1965 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Institucionaliza o crédito rural. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 4.829, DE 5 DE NOVEMBRO DE 1965 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-4829-5-novembro-1965-368469-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-4829-5-novembro-1965-368469-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-4829-5-novembro-1965-368469-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-4829-5-novembro-1965-368469-retificacao-49504-pl.html">Retificação</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-4829-5-novembro-1965-368469-promulgacaodevetos-50122-pl.html">Promulgação de Vetos</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-4829-5-novembro-1965-368469-veto-135633-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-4829-5-novembro-1965-368469-veto-146235-pl.html">Veto</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=209862">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-4829-5-novembro-1965-368469-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 4.829, DE 5 DE NOVEMBRO DE 1965</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Institucionaliza o crédito rural. 
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA, <BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Disposições Preliminares </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;O crédito rural, sistematizado nos têrmos desta Lei, será distribuído e aplicado de acôrdo com a política de desenvolvimento da produção rural do País e tendo em vista o bem-estar do povo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Considera-se crédito rural o suprimento de recursos financeiros por entidades públicas e estabelecimentos de crédito particulares a produtores rurais ou a suas cooperativas para aplicação exclusiva em atividades que se enquadrem nos objetivos indicados na legislação em vigor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;São objetivos específicos do crédito rural: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - estimular o incremento ordenado dos investimentos rurais, inclusive para armazenamento beneficiamento e industrialização dos produtos agropecuários, quando efetuado por cooperativas ou pelo produtor na sua propriedade rural; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - favorecer o custeio oportuno e adequado da produção e a comercialização de produtos agropecuários; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - possibilitar o fortalecimento econômico dos produtores rurais, notadamente pequenos e médios; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - incentivar a introdução de métodos racionais de produção, visando ao aumento da produtividade e à melhoria do padrão de vida das populações rurais, e à adequada defesa do solo; </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 4º O Conselho Monetário Nacional, de acôrdo com as atribuições estabelecidas na Lei nº 4.595, de 31 de dezembro de 1964, disciplinará o crédito rural do País e estabelecerá, com exclusividade, normas operativas traduzidas nos seguintes tópicos:<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - avaliação, origem e dotação dos recursos a serem aplicados no crédito rural; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - diretrizes e instruções relacionadas com a aplicação e contrôle do crédito rural; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - critérios seletivos e de prioridade para a distribuição do crédito rural; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - fixação e ampliação dos programas de crédito rural, abrangendo tôdas as formas de suplementação de recursos, inclusive refinanciamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;O cumprimento das deliberações do Conselho Monetário Nacional, aplicáveis ao crédito rural, será dirigido, coordenado e fiscalizado pelo Banco Central da República do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Compete ao Banco Central da República do Brasil, como órgão de contrôle do sistema nacional do crédito rural: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - sistematizar a ação dos órgãos financiadores e promover a sua coordenação com os que prestam assistência técnica e econômica ao produtor rural; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - elaborar planos globais de aplicação do crédito rural e conhecer de sua execução, tendo em vista a avaliação dos resultados para introdução de correções cabíveis; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - determinar os meios adequados de seleção e prioridade na distribuição do crédito rural e estabelecer medidas para o zoneamento dentro do qual devem atuar os diversos órgãos financiadores em função dos planos elaborados; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - incentivar a expansão da rêde distribuidora do crédito rural, especialmente através de cooperativas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - estimular a ampliação dos programas de crédito rural, mediante financiamento aos órgãos participantes da rêde distribuidora do crédito rural, especialmente aos bancos com sede nas áreas de produção e que destinem ao crédito rural mais de 50% (cinqüenta por cento) de suas aplicações. <BR><BR></P>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Do Sistema de Crédito Rural </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Integrarão, bàsicamente, o sistema nacional de crédito rural: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - O Banco Central da República do Brasil, com as funções indicadas no artigo anterior; <BR>&nbsp;&nbsp;&nbsp;&nbsp; II - O Banco do Brasil S. A., através de suas carteiras especializadas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - O Banco de Crédito da Amazônia S. A. e o Banco do Nordeste do Brasil S.A., através de suas carteiras ou departamentos especializados, e <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - O Banco Nacional de Crédito Cooperativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Serão vinculados ao sistema: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - de conformidade com o disposto na Lei nº 4.504, de 30 de novembro de 1964:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>o Instituto Brasileiro de Reforma Agrária - IBRA; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o Instituto Nacional de Desenvolvimento Agrário - INDA; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o Banco Nacional do Desenvolvimento Econômico - BNDE; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - como órgãos auxiliares, desde que operem em crédito rural dentro das diretrizes fixadas nesta Lei: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>Bancos de que os Estados participem com a maioria de ações; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>Caixas Econômicas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>Bancos privados; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>Sociedades de crédito, financiamento e investimentos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>Cooperativas autorizadas a operar em crédito rural. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Poderão articular-se no sistema, mediante convênios, órgãos oficiais de valorização regional e entidades de prestação de assistência técnica e econômica ao produtor rural, cujos serviços sejam passíveis de utilizar em conjugação com o crédito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Poderão incorporar-se ao sistema, além das entidades mencionadas neste artigo, outras que o Conselho Monetário Nacional venha a admitir. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Da Estrutura do Crédito Rural </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;O crédito rural restringe-se ao campo específico do financiamento das atividades rurais e adotará, bàsicamente, as modalidades de operações indicadas nesta Lei, para suprir as necessidades financeiras do custeio e da comercialização da produção própria, como também as de capital para investimentos e industrialização de produtos agropecuários, quando efetuada por cooperativas ou pelo produtor na sua propriedade rural. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Para os efeitos desta Lei, os financiamentos rurais caracterizam-se, segundo a finalidade, como de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - custeio, quando destinados a cobrir despesas normais de um ou mais períodos de produção agrícola ou pecuária; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - investimento, quando se destinarem a inversões em bens e serviços cujos desfrutes se realizem no curso de vários períodos; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - comercialização, quando destinados, isoladamente, ou como extensão do custeio, a cobrir despesas próprias da fase sucessiva à coleta da produção, sua estocagem, transporte ou à monetização de títulos oriundos da venda pelos produtores; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - industrialização de produtos agropecuários, quando efetuada por cooperativas ou pelo produtor na sua propriedade rural. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;As operações de crédito rural subordinam-se às seguintes exigências essenciais: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - idoneidade do proponente; <BR>&nbsp;&nbsp;&nbsp;&nbsp; II - apresentação de orçamento de aplicação nas atividades específicas; <BR>&nbsp;&nbsp;&nbsp;&nbsp; III - fiscalização pelo financiador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Constituem modalidade de operações: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I -&nbsp;Crédito Rural Corrente a produtores rurais de capacidade técnica e substância econômica reconhecidas;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; II - Crédito Rural Orientado, como forma de crédito tecnificado, com assistência técnica prestada pelo financiador, diretamente ou através de entidade especializada em extensão rural, com o objetivo de elevar os níveis de produtividade e melhorar o padrão de vida do produtor e sua família; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - Crédito a Cooperativas de produtores rurais, como antecipação de recursos para funcionamento, aparelhamento, prestação de serviços aos cooperados, bem como para financiar êstes, nas mesmas condições estabelecidas para as operações diretas de crédito rural, os trabalhos de custeio, coleta, transportes, estocagem e a comercialização da produção respectiva e os gastos com melhoramento de suas propriedades; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - Crédito para Comercialização com o fim de garantir aos produtores agrícolas preços remuneradores para a colocação de suas safras e industrialização de produtos agropecuários, quando efetuada por cooperativas ou pelo produtor na sua propriedade rural; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - Crédito aos programas de colonização e reforma agrária, para financiar projetos de colonização e reforma agrária como as definidas na Lei nº 4.504, de 30 de novembro de 1964. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;As operações de crédito rural que forem realizadas pelo Instituto Brasileiro de Reforma Agrária, pelo Instituto Nacional de Desenvolvimento Agrário e pelo Banco Nacional de Desenvolvimento Econômico, diretamente ou através de convênios, obedecerão às modalidades do crédito orientado, aplicadas às finalidades previstas na Lei nº 4.504, de 30 de novembro de 1964. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;As entidades financiadoras participantes do sistema de crédito rural poderão designar representantes para acompanhar a execução de convênios relativos à aplicação de recursos por intermédio de órgãos intervenientes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Em caso de crédito a cooperativas, poderão os representantes mencionados neste artigo prestar assistência técnica e administrativa, como também orientar e fiscalizar a aplicação dos recursos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Quando se tratar de cooperativa integral de reforma agrária, aplicar-se-á o disposto no § 2º do art. 79 da Lei nº 4.504, de 30 de novembro de 1964. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Os têrmos, prazos, juros e demais condições das operações de crédito rural, sob quaisquer de suas modalidades, serão estabelecidos pelo Conselho Monetário Nacional, observadas as disposições legais específicas, não expressamente revogadas pela presente Lei, inclusive o favorecimento previsto no art. 4º, inciso IX, da Lei nº 4.595, de 31 de dezembro de 1964, ficando revogado o art. 4º do Decreto-lei nº 2.611, de 20 de setembro de 1940. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>VETADO <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Dos Recursos para o Crédito Rural </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;O crédito rural contará com suprimentos provenientes das seguintes fontes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - internas:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>recursos que são ou vierem a ser atribuídos ao Fundo Nacional de Refinanciamento Rural instituído pelo Decreto nº 54.019, de 14 de julho de 1964; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>recursos que são ou vierem a ser atribuídos ao Fundo Nacional de Reforma Agrária, instituído pela Lei nº 4.504, de 30 de novembro de 1964; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>recursos que são ou vierem a ser atribuídos ao Fundo Agroindustrial de Reconversão, instituído pela Lei nº 4.504, de 30 de novembro de 1964; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>dotações orçamentárias atribuídas a órgãos que integrem ou venham a integrar o sistema de crédito rural, com destinação específica; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>valores que o Conselho Monetário Nacional venha a isentar de recolhimento, na forma prevista na Lei nº 4.595, de 31 de dezembro de 1964, art. 4º, item XIV, letra "c", VETADO </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>recursos próprios dos órgãos participantes ou que venham a participar do sistema de crédito rural, na forma do art. 7º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>importâncias recolhidas ao Banco Central da República do Brasil pelo sistema bancário, na forma prevista no § 1º do art. 21; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>produto da colocação de bônus de crédito rural, hipotecário ou títulos de natureza semelhante, que forem emitidos por entidades governamentais participantes do sistema, com características e sob condições que o Conselho Monetário Nacional autorize, obedecida a legislação referente à emissão e circulação de valores mobiliários; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>i)</I></TD>
+<TD>produto das multas recolhidas nos têrmos do § 3º do art. 21; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>j)</I></TD>
+<TD>resultado das operações de financiamento ou refinanciamento; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>l)</I></TD>
+<TD>recursos outros de qualquer origem atribuídos exclusivamente para aplicação em crédito rural; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>m)</I></TD>
+<TD>VETADO </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>n)</I></TD>
+<TD>VETADO </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - externas:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>recursos decorrentes de empréstimos ou acôrdos, especialmente reservados para aplicação em crédito rural; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>recursos especìficamente reservados para aplicação em programas de assistência financeira ao setor rural, através do Fundo Nacional de Reforma Agrária, criado pelo art. 27 da Lei nº 4.504, de 30 de novembro de 1964; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>recursos especìficamente reservados para aplicação em financiamentos de projetos de desenvolvimento agroindustrial, através do Fundo Agroindustrial de Reconversão, criado pelo art. 120 da Lei nº 4.504, de 30 de novembro de 1964; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>produto de acôrdos ou convênios celebrados com entidades estrangeiras ou internacionais, conforme normas que o Conselho Monetário Nacional traçar, desde que nelas sejam especìficamente atribuídas parcelas para aplicação em programa de desenvolvimento de atividades rurais. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Os recursos destinados ao crédito rural, de origem externa ou interna, ficam sob o contrôle do Conselho Monetário Nacional, que fixará, anualmente, as normas de distribuição aos órgãos que participem do sistema de crédito rural, nos têrmos do art. 7º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Todo e qualquer fundo, já existente ou que vier a ser criado, destinado especìficamente a financiamento de programas de crédito rural, terá sua administração determinada pelo Conselho Monetário Nacional, respeitada a legislação específica, que estabelecerá as normas e diretrizes para a sua aplicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Ao Banco Central da República do Brasil, de acôrdo com as atribuições estabelecidas na Lei número 4.595, de 31 de dezembro de 1964, caberá entender-se ou participar de entendimentos com as instituições financeiras estrangeiras e internacionais, em assuntos ligados a obtenção de empréstimos destinados a programas de financiamento às atividades rurais, estando presente na assinatura dos convênios e apresentando ao Conselho Monetário Nacional sugestões quanto às normas para sua utilização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;O Conselho Monetário Nacional poderá tomar medidas de incentivo que visem a aumentar a participação da rêde bancária não oficial na aplicação de crédito rural. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;A fixação de limite do valor dos empréstimos a que se refere o § 2º do art. 126 da Lei nº 4.504, de 30 de novembro de 1964, passa para a competência do Conselho Monetário Nacional, que levará em conta a proposta apresentada pela diretoria do Banco do Brasil S. A. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;O Conselho Monetário Nacional, anualmente, na elaboração da proposta orçamentária pelo Poder Executivo, incluirá dotação destinada ao custeio de assistência técnica e educativa aos beneficiários do crédito rural. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;As instituições de crédito e entidades referidas no art. 7º desta Lei manterão aplicada em operações típicas de crédito rural, contratadas diretamente com produtores ou suas cooperativas, percentagem, a ser fixada pelo Conselho Monetário Nacional, dos recursos com que operarem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os estabelecimentos que não desejarem ou não puderem cumprir as obrigações estabelecidas no presente artigo, recolherão as somas correspondentes em depósito no Banco Central da República do Brasil, para aplicação nos fins previstos nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º As quantias recolhidas no Banco Central da República do Brasil, na forma dêste artigo, vencerão juros à taxa que o Conselho Monetário Nacional fixar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A inobservância ao disposto neste artigo sujeitará o infrator à multa variável entre 10% (dez por cento) e 50% (cinqüenta por cento) sôbre os valores não aplicados em crédito rural. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O não recolhimento da multa mencionada no parágrafo anterior, no prazo de 15 (quinze) dias, sujeitará o infrator às penalidades previstas no Capítulo V da Lei nº 4.595, de 31 de dezembro de 1964. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;O depósito que constitui o Fundo de Fomento à Produção, de que trata o art. 7º da Lei número 1.184, de 30 de agôsto de 1950, fica elevado para 20% (vinte por cento) das dotações anuais previstas no art. 199 da Constituição Federal, e será efetuado pelo Tesouro Nacional no Banco de Crédito da Amazônia S.A., que se incumbirá de sua aplicação, direta e exclusiva, dentro da área da Amazônia, observadas as normas estabelecidas pelo Conselho Monetário Nacional e outras disposições contidas nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O Banco de Crédito da Amazônia S.A., destinará, para aplicação em crédito rural, pelo menos 60% (sessenta por cento) do valor do fundo, podendo o Conselho Monetário Nacional alterar essa percentagem, em face da circunstância que assim recomende. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os juros das aplicações mencionadas neste artigo serão cobrados às taxas usuais para as operações de tal natureza, conforme o Conselho Monetário Nacional fixar, ficando abolido o limite previsto no art. 7º, §§ 2º e 3º, da Lei nº 1.184, de 30 de agôsto de 1950. <BR><BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Dos Instrumentos de Crédito Rural </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;VETADO <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º VETADO <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º VETADO </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 24. VETADO <BR><BR></P>
+<CENTER><B>CAPÍTULO VI </CENTER></B>
+<CENTER><B>Das garantias do crédito rural </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Poderão constituir garantia dos empréstimos rurais, de conformidade com a natureza da operação creditícia, em causa: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - Penhor agrícola; <BR>&nbsp;&nbsp;&nbsp;&nbsp; II - Penhor pecuário; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - Penhor mercantil; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - Penhor industrial; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - Bilhete de mercadoria; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - Warrants; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - Caução; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - Hipoteca; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - Fidejussória; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - Outras que o Conselho Monetário venha a admitir. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;A constituição das garantias previstas no artigo anterior, de livre convenção entre financiado e financiador, observará a legislação própria de cada tipo, bem como as normas complementares que o Conselho Monetário Nacional estabelecer ou aprovar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;As garantias reais serão sempre, preferentemente, outorgadas sem concorrência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Exceto a hipoteca, as demais garantias reais oferecidas para segurança dos financiamentos rurais valerão entre as partes, independentemente de registro, com todos os direitos e privilégios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Os bens adquiridos e as culturas custeadas ou formadas por meio do crédito rural em que couber garantia serão vinculados ao respectivo instrumento contratual como garantia especial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;O Conselho Monetário Nacional estabelecerá os têrmos e condições em que poderão ser contratados os seguros dos bens vinculados aos instrumentos de crédito rural. <BR><BR>
+<CENTER><B>CAPÍTULO VII </CENTER></B>
+<CENTER><B>Disposições transitórias </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;O Banco Central da República do Brasil assumirá, até que o Conselho Monetário Nacional resolva em contrário, o encargo dos programas de treinamento de pessoal para administração do crédito rural, inclusive através de cooperativas, podendo, para tanto, firmar convênios que visem à realização de cursos e à obtenção de recursos para cobrir os gastos respectivos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>As unidades interessadas em treinar pessoal concorrerão para os gastos com a contribuição que fôr arbitrada pelo Banco Central da República do Brasil. <BR><BR>
+<CENTER><B>CAPÍTULO VIII </CENTER></B>
+<CENTER><B>Disposições gerais </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Os órgãos de orientação e coordenação de atividades rurais, criados no âmbito estadual, deverão elaborar seus programas de ação, no que respeita ao crédito especializado, observando as disposições desta Lei e normas complementares que o Conselho Monetário Nacional venha a baixar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;Estendem-se às instituições financeiras que integrem bàsicamente, o sistema de crédito rural, nos têrmos do art. 7º, itens I a IV, desta Lei, as disposições constantes do artigo 4º, da Lei nº 454, de 9 de julho de 1937, do art. 3º do Decreto-lei número 2.611, e do art. 3º do Decreto-lei nº 2.612, ambos de 20 de setembro de 1940, e dos arts. 1º e 2º do Decreto-lei nº 1.003, de 29 de dezembro de 1938. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;As operações de crédito rural, sob quaisquer modalidades, de valor até 50 (cinqüenta) vêzes o maior salário-mínimo vigente no País, pagarão sòmente as despesas indispensáveis, ficando isentas de taxas (VETADO) relativas aos serviços bancários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º VETADO <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Fica revogado o art. 53 da Lei nº 4.595, de 31 de dezembro de 1964. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;VETADO </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 36. Ficam transferidas para o Conselho Monetário Nacional, de acôrdo com o previsto nos arts. 3º e 4º da Lei nº 4.595, de 31 de dezembro de 1964, as atribuições conferidas à Comissão de Coordenação do Crédito Agropecuário pelo art. 15 da Lei Delegada nº 9, de 11 de outubro de 1962, artigo êsse que fica revogado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;A concessão do crédito rural em tôdas as suas modalidades, bem como a constituição das suas garantias, pelas instituições de crédito, públicas e privadas, independerá da exibição de comprovante de cumprimento de obrigações fiscais ou da previdência social, ou declaração de bens ou certidão negativa de multas por infrigência do Código Florestal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A comunicação da repartição competente, de ajuizamento da dívida fiscal, de multa florestal ou previdenciária, impedirá a concessão do crédito rural ao devedor, a partir da data do recebimento da comunicação pela instituição de crédito, exceto se as garantias oferecidas assegurarem a solvabilidade do débito em litígio e da operação proposta pelo interessado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;As operações de crédito rural terão registro distinto na contabilidade dos financiadores e serão divulgadas com destaque nos balanços e balancetes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Esta Lei entra em vigor na data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Revogam-se as disposições em contrário. </P>
+<P>Brasília, 5 de novembro de 1965; 144º da Independência e 77º da República. </P>
+<P>H. CASTELLO BRANCO <BR>Octavio Bulhões <BR>Hugo de Almeida Leme <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 09/11/1965
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 9/11/1965, Página 11465      
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1965, Página 68 
+                                                        Vol. 7          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

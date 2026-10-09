@@ -13,7 +13,7 @@ import unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
-from fragmentador import Tipo, fragmentar, fragmentar_referencia  # noqa: E402
+from fragmentador import Tipo, fragmentar, fragmentar_html, fragmentar_referencia  # noqa: E402
 from fragmentador.extracao import TextoExtraido  # noqa: E402
 from fragmentador.rotulos import eh_fecho, reconhecer  # noqa: E402
 
@@ -36,6 +36,21 @@ class TestReconhecimentoDeRotulos(unittest.TestCase):
                 tipo, numero, _ = reconhecer(texto)
                 self.assertIs(tipo, Tipo.ARTIGO)
                 self.assertEqual(numero, esperado)
+
+    def test_artigo_unico(self):
+        for texto in [
+            "Artigo unico. É declarado feriado...",
+            "Artigo único. Fica aberto o credito...",
+            "Art. único. Fica o Poder Executivo...",
+            "Artigo unico: Não poderá ser ordenado...",
+        ]:
+            with self.subTest(texto=texto):
+                tipo, numero, resto = reconhecer(texto)
+                self.assertIs(tipo, Tipo.ARTIGO)
+                self.assertEqual(numero, "único")
+                self.assertFalse(resto.startswith((".", ":")))
+        # Em minúscula é remissão, como no artigo numerado.
+        self.assertIsNone(reconhecer("artigo único da Lei nº 93;"))
 
     def test_paragrafo_numerado_e_unico(self):
         tipo, numero, resto = reconhecer("§ 2º É vedado...")
@@ -139,6 +154,42 @@ class TestHierarquia(unittest.TestCase):
     def test_texto_continua_na_linha_seguinte(self):
         lei = arvore("Art. 1º Primeira parte", "segunda parte do caput.")
         self.assertEqual(lei.dispositivos[0].texto, "Primeira parte segunda parte do caput.")
+
+    def test_lei_de_artigo_unico(self):
+        """Lei 93/1935: o único artigo não tem número."""
+        lei = arvore(
+            "Faço saber que o PODER LEGISLATIVO decreta e eu sancciono a seguinte lei:",
+            "Artigo unico. É declarado feriado nacional o dia 6 de setembro de 1935.",
+            "Rio de Janeiro, 5 de setembro de 1935; 114º da Independencia e 47º da Republica.",
+        )
+        (artigo,) = lei.por_tipo(Tipo.ARTIGO)
+        self.assertEqual(artigo.rotulo, "Art. único")
+        self.assertEqual(artigo.texto, "É declarado feriado nacional o dia 6 de setembro de 1935.")
+        self.assertTrue(lei.preambulo.startswith("Faço saber"))
+        self.assertTrue(lei.fecho.startswith("Rio de Janeiro"))
+
+
+class TestExtracao(unittest.TestCase):
+    def test_rotulo_partido_pela_fonte_e_reunido(self):
+        """Lei 6.051/1974: o HTML quebra a linha entre "Art." e o número."""
+        lei = fragmentar_html(
+            '<div class="textoNorma"><div class="texto"><P>O PRESIDENTE DA REPÚBLICA,<BR>'
+            "Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei:"
+            '<BR><BR>&nbsp;&nbsp;Art. \n\n1º &nbsp;É denominada de "Ponte Marcelino Machado" a ponte.'
+            "<BR><BR>&nbsp;&nbsp;Art. \n\n2º &nbsp;Esta Lei \n\nentrará em vigor na data de sua publicação.</P>"
+            "<P>Brasília, 30 de maio de 1974; 153º da Independência e 86º da República.</P></div></div>"
+        )
+        artigos = lei.por_tipo(Tipo.ARTIGO)
+        self.assertEqual([a.numero for a in artigos], ["1º", "2º"])
+        self.assertEqual(artigos[1].texto, "Esta Lei entrará em vigor na data de sua publicação.")
+        self.assertNotIn("Art.", lei.preambulo)
+
+    def test_rotulo_solto_sem_numero_na_linha_seguinte_fica_como_esta(self):
+        lei = fragmentar_html(
+            '<div class="textoNorma"><div class="texto"><p>Art. 1º Primeira parte, nos termos do<br>'
+            "Art.<br>da Constituição.</p></div></div>"
+        )
+        self.assertEqual(len(lei.por_tipo(Tipo.ARTIGO)), 1)
 
 
 class TestCitacaoDeAlteracao(unittest.TestCase):

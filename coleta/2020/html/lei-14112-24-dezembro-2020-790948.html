@@ -1,0 +1,951 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 14.112, DE 24 DE DEZEMBRO DE 2020 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Altera as Leis nºs 11.101, de 9 de fevereiro de 2005, 10.522, de 19 de julho de 2002, e 8.929, de 22 de agosto de 1994, para atualizar a legislação referente à recuperação judicial, à recuperação extrajudicial e à falência do empresário e da sociedade empresária. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 14.112, DE 24 DE DEZEMBRO DE 2020 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-14112-24-dezembro-2020-790948-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-14112-24-dezembro-2020-790948-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-14112-24-dezembro-2020-790948-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-14112-24-dezembro-2020-790948-veto-162030-pl.html">Veto</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-14112-24-dezembro-2020-790948-promulgacaodevetos-162548-pl.html">Promulgação de Vetos</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-14112-24-dezembro-2020-790948-republicacao-162566-pl.html">Republicação</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=307272">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-14112-24-dezembro-2020-790948-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 14.112, DE 24 DE DEZEMBRO DE 2020</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Altera as Leis nºs 11.101, de 9 de fevereiro de 2005, 10.522, de 19 de julho de 2002, e 8.929, de 22 de agosto de 1994, para atualizar a legislação referente à recuperação judicial, à recuperação extrajudicial e à falência do empresário e da sociedade empresária. 
+						</p>
+				
+						<div class="texto">
+							&nbsp;&nbsp;<STRONG>&nbsp;&nbsp; O PRESIDENTE DA REPÚBLICA</STRONG><BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;A Lei nº 11.101, de 9 de fevereiro de 2005, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 6º&nbsp;A decretação da falência ou o deferimento do processamento da recuperação judicial implica: <BR><BR>I - suspensão do curso da prescrição das obrigações do devedor sujeitas ao regime desta Lei; <BR><BR>II - suspensão das execuções ajuizadas contra o devedor, inclusive daquelas dos credores particulares do sócio solidário, relativas a créditos ou obrigações sujeitos à recuperação judicial ou à falência; <BR><BR>III - proibição de qualquer forma de retenção, arresto, penhora, sequestro, busca e apreensão e constrição judicial ou extrajudicial sobre os bens do devedor, oriunda de demandas judiciais ou extrajudiciais cujos créditos ou obrigações sujeitem-se à recuperação judicial ou à falência.<BR>.................................................................................................................... <BR><BR>§ 4º Na recuperação judicial, as suspensões e a proibição de que tratam os incisos I, II e III do <I>caput</I> deste artigo perdurarão pelo prazo de 180 (cento e oitenta) dias, contado do deferimento do processamento da recuperação, prorrogável por igual período, uma única vez, em caráter excepcional, desde que o devedor não haja concorrido com a superação do lapso temporal. <BR><BR>§ 4º-A. O decurso do prazo previsto no § 4º deste artigo sem a deliberação a respeito do plano de recuperação judicial proposto pelo devedor faculta aos credores a propositura de plano alternativo, na forma dos §§ 4º, 5º, 6º e 7º do art. 56 desta Lei, observado o seguinte: <BR><BR>I - as suspensões e a proibição de que tratam os incisos I, II e III do <I>caput</I> deste artigo não serão aplicáveis caso os credores não apresentem plano alternativo no prazo de 30 (trinta) dias, contado do final do prazo referido no § 4º deste artigo ou no § 4º do art. 56 desta Lei; <BR><BR>II - as suspensões e a proibição de que tratam os incisos I, II e III do <I>caput</I> deste artigo perdurarão por 180 (cento e oitenta) dias contados do final do prazo referido no § 4º deste artigo, ou da realização da assembleia-geral de credores referida no § 4º do art. 56 desta Lei, caso os credores apresentem plano alternativo no prazo referido no inciso I deste parágrafo ou no prazo referido no § 4º do art. 56 desta Lei. <BR><BR>§ 5º O disposto no § 2º deste artigo aplica-se à recuperação judicial durante o período de suspensão de que trata o § 4º deste artigo.<BR>................................................................................................................................ <BR><BR>§ 7º (Revogado). <BR><BR>§ 7º-A. O disposto nos incisos I, II e III do <I>caput</I> deste artigo não se aplica aos créditos referidos nos §§ 3º e 4º do art. 49 desta Lei, admitida, todavia, a competência do juízo da recuperação judicial para determinar a suspensão dos atos de constrição que recaiam sobre bens de capital essenciais à manutenção da atividade empresarial durante o prazo de suspensão a que se refere o § 4º deste artigo, a qual será implementada mediante a cooperação jurisdicional, na forma do art. 69 da Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), observado o disposto no art. 805 do referido Código. <BR><BR>§ 7º-B. O disposto nos incisos I, II e III do <I>caput</I> deste artigo não se aplica às execuções fiscais, admitida, todavia, a competência do juízo da recuperação judicial para determinar a substituição dos atos de constrição que recaiam sobre bens de capital essenciais à manutenção da atividade empresarial até o encerramento da recuperação judicial, a qual será implementada mediante a cooperação jurisdicional, na forma do art. 69 da Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), observado o disposto no art. 805 do referido Código. <BR><BR>§ 8º A distribuição do pedido de falência ou de recuperação judicial ou a homologação de recuperação extrajudicial previne a jurisdição para qualquer outro pedido de falência, de recuperação judicial ou de homologação de recuperação extrajudicial relativo ao mesmo devedor. <BR><BR>§ 9º O processamento da recuperação judicial ou a decretação da falência não autoriza o administrador judicial a recusar a eficácia da convenção de arbitragem, não impedindo ou suspendendo a instauração de procedimento arbitral. <BR><BR>§ 10. (VETADO). <BR><BR>§ 11. O disposto no § 7º-B deste artigo aplica-se, no que couber, às execuções fiscais e às execuções de ofício que se enquadrem respectivamente nos incisos VII e VIII do <I>caput</I> do art. 114 da Constituição Federal, vedados a expedição de certidão de crédito e o arquivamento das execuções para efeito de habilitação na recuperação judicial ou na falência. <BR><BR>§ 12. Observado o disposto no art. 300 da Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), o juiz poderá antecipar total ou parcialmente os efeitos do deferimento do processamento da recuperação judicial. <BR><BR>§ 13. (VETADO)." (NR)</DIR>
+<DIR>"Art. 10.&nbsp;............................................................................................................. <BR>............................................................................................................................. <BR><BR>§ 7º O quadro-geral de credores será formado com o julgamento das impugnações tempestivas e com as habilitações e as impugnações retardatárias decididas até o momento da sua formação. <BR><BR>§ 8º As habilitações e as impugnações retardatárias acarretarão a reserva do valor para a satisfação do crédito discutido. <BR><BR>§ 9º A recuperação judicial poderá ser encerrada ainda que não tenha havido a consolidação definitiva do quadro-geral de credores, hipótese em que as ações incidentais de habilitação e de impugnação retardatárias serão redistribuídas ao juízo da recuperação judicial como ações autônomas e observarão o rito comum. <BR><BR>§ 10. O credor deverá apresentar pedido de habilitação ou de reserva de crédito em, no máximo, 3 (três) anos, contados da data de publicação da sentença que decretar a falência, sob pena de decadência." (NR)</DIR>
+<DIR>"Art. 14.&nbsp;Caso não haja impugnações, o juiz homologará, como quadro-geral de credores, a relação dos credores de que trata o § 2º do art. 7º, ressalvado o disposto no art. 7º-A desta Lei." (NR)</DIR>
+<DIR>"Art. 16.&nbsp;Para fins de rateio na falência, deverá ser formado quadro-geral de credores, composto pelos créditos não impugnados constantes do edital de que trata o § 2º do art. 7º desta Lei, pelo julgamento de todas as impugnações apresentadas no prazo previsto no art. 8º desta Lei e pelo julgamento realizado até então das habilitações de crédito recebidas como retardatárias. <BR><BR>§ 1º As habilitações retardatárias não julgadas acarretarão a reserva do valor controvertido, mas não impedirão o pagamento da parte incontroversa. <BR><BR>§ 2º Ainda que o quadro-geral de credores não esteja formado, o rateio de pagamentos na falência poderá ser realizado desde que a classe de credores a ser satisfeita já tenha tido todas as impugnações judiciais apresentadas no prazo previsto no art. 8º desta Lei, ressalvada a reserva dos créditos controvertidos em função das habilitações retardatárias de créditos distribuídas até então e ainda não julgadas." (NR)</DIR>
+<DIR>"Art. 22.&nbsp;............................................................................................................ <BR><BR>I - ...................................................................................................................... <BR>............................................................................................................................... </DIR>
+<DIR><EM>j) </EM>estimular, sempre que possível, a conciliação, a mediação e outros métodos alternativos de solução de conflitos relacionados à recuperação judicial e à falência, respeitados os direitos de terceiros, na forma do § 3º do art. 3º da Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil); <BR><EM>k) </EM>manter endereço eletrônico na internet, com informações atualizadas sobre os processos de falência e de recuperação judicial, com a opção de consulta às peças principais do processo, salvo decisão judicial em sentido contrário; <BR><EM>l) </EM>manter endereço eletrônico específico para o recebimento de pedidos de habilitação ou a apresentação de divergências, ambos em âmbito administrativo, com modelos que poderão ser utilizados pelos credores, salvo decisão judicial em sentido contrário; <BR><EM>m) </EM>providenciar, no prazo máximo de 15 (quinze) dias, as respostas aos ofícios e às solicitações enviadas por outros juízos e órgãos públicos, sem necessidade de prévia deliberação do juízo;<BR><BR>II - ....................................................................................................................<BR>........................................................................................................................... </DIR>
+<DIR><EM>c) </EM>apresentar ao juiz, para juntada aos autos, relatório mensal das atividades do devedor, fiscalizando a veracidade e a conformidade das informações prestadas pelo devedor;<BR>................................................................................................................................ <BR><EM>e) </EM>fiscalizar o decurso das tratativas e a regularidade das negociações entre devedor e credores; <BR><EM>f) </EM>assegurar que devedor e credores não adotem expedientes dilatórios, inúteis ou, em geral, prejudiciais ao regular andamento das negociações;<BR><EM>g) </EM>assegurar que as negociações realizadas entre devedor e credores sejam regidas pelos termos convencionados entre os interessados ou, na falta de acordo, pelas regras propostas pelo administrador judicial e homologadas pelo juiz, observado o princípio da boa-fé para solução construtiva de consensos, que acarretem maior efetividade econômico-financeira e proveito social para os agentes econômicos envolvidos;<BR><EM>h) </EM>apresentar, para juntada aos autos, e publicar no endereço eletrônico específico relatório mensal das atividades do devedor e relatório sobre o plano de recuperação judicial, no prazo de até 15 (quinze) dias contado da apresentação do plano, fiscalizando a veracidade e a conformidade das informações prestadas pelo devedor, além de informar eventual ocorrência das condutas previstas no art. 64 desta Lei; <BR><BR>III - ..................................................................................................................<BR>........................................................................................................................ </DIR>
+<DIR><EM>c) </EM>relacionar os processos e assumir a representação judicial e extrajudicial, incluídos os processos arbitrais, da massa falida; <BR>............................................................................................................................... <BR><EM>j) </EM>proceder à venda de todos os bens da massa falida no prazo máximo de 180 (cento e oitenta) dias, contado da data da juntada do auto de arrecadação, sob pena de destituição, salvo por impossibilidade fundamentada, reconhecida por decisão judicial; <BR>................................................................................................................................ <BR><EM>s) </EM>arrecadar os valores dos depósitos realizados em processos administrativos ou judiciais nos quais o falido figure como parte, oriundos de penhoras, de bloqueios, de apreensões, de leilões, de alienação judicial e de outras hipóteses de constrição judicial, ressalvado o disposto nas Leis nos 9.703, de 17 de novembro de 1998, e 12.099, de 27 de novembro de 2009, e na Lei Complementar nº 151, de 5 de agosto de 2015.<BR>........................................................................................................................ " (NR)<BR><BR>"Art. 24.&nbsp;................................................................................................................<BR>............................................................................................................................... <BR><BR>§ 5º A remuneração do administrador judicial fica reduzida ao limite de 2% (dois por cento), no caso de microempresas e de empresas de pequeno porte, bem como na hipótese de que trata o art. 70-A desta Lei." (NR)</DIR>
+<DIR>"Art. 35.&nbsp;........................................................................................................... <BR><BR>I - ....................................................................................................................<BR>.......................................................................................................................... </DIR>
+<DIR><EM>g) </EM>alienação de bens ou direitos do ativo não circulante do devedor, não prevista no plano de recuperação judicial;<BR>........................................................................................................................" (NR) <BR><BR>"Art. 36.&nbsp;A assembleia-geral de credores será convocada pelo juiz por meio de edital publicado no diário oficial eletrônico e disponibilizado no sítio eletrônico do administrador judicial, com antecedência mínima de 15 (quinze) dias, o qual conterá: <BR>......................................................................................................................" (NR)</DIR>
+<DIR>"Art. 39.&nbsp;..........................................................................................................<BR>.............................................................................................................................. <BR><BR>§ 4º Qualquer deliberação prevista nesta Lei a ser realizada por meio de assembleia-geral de credores poderá ser substituída, com idênticos efeitos, por: <BR><BR>I - termo de adesão firmado por tantos credores quantos satisfaçam o quórum de aprovação específico, nos termos estabelecidos no art. 45-A desta Lei; <BR><BR>II - votação realizada por meio de sistema eletrônico que reproduza as condições de tomada de voto da assembleia-geral de credores; ou <BR><BR>III - outro mecanismo reputado suficientemente seguro pelo juiz. <BR><BR>§ 5º As deliberações nos formatos previstos no § 4º deste artigo serão fiscalizadas pelo administrador judicial, que emitirá parecer sobre sua regularidade, previamente à sua homologação judicial, independentemente da concessão ou não da recuperação judicial. <BR><BR>§ 6º O voto será exercido pelo credor no seu interesse e de acordo com o seu juízo de conveniência e poderá ser declarado nulo por abusividade somente quando manifestamente exercido para obter vantagem ilícita para si ou para outrem. <BR><BR>§ 7º A cessão ou a promessa de cessão do crédito habilitado deverá ser imediatamente comunicada ao juízo da recuperação judicial." (NR)</DIR>
+<DIR>"Art. 48.&nbsp;............................................................................................................ <BR>......................................................................................................................... <BR><BR>§ 2º No caso de exercício de atividade rural por pessoa jurídica, admite-se a comprovação do prazo estabelecido no <I>caput</I> deste artigo por meio da Escrituração Contábil Fiscal (ECF), ou por meio de obrigação legal de registros contábeis que venha a substituir a ECF, entregue tempestivamente. <BR><BR>§ 3º Para a comprovação do prazo estabelecido no <I>caput</I> deste artigo, o cálculo do período de exercício de atividade rural por pessoa física é feito com base no Livro Caixa Digital do Produtor Rural (LCDPR), ou por meio de obrigação legal de registros contábeis que venha a substituir o LCDPR, e pela Declaração do Imposto sobre a Renda da Pessoa Física (DIRPF) e balanço patrimonial, todos entregues tempestivamente. <BR><BR>§ 4º Para efeito do disposto no § 3º deste artigo, no que diz respeito ao período em que não for exigível a entrega do LCDPR, admitir-se-á a entrega do livro-caixa utilizado para a elaboração da DIRPF. <BR><BR>§ 5º Para os fins de atendimento ao disposto nos §§ 2º e 3º deste artigo, as informações contábeis relativas a receitas, a bens, a despesas, a custos e a dívidas deverão estar organizadas de acordo com a legislação e com o padrão contábil da legislação correlata vigente, bem como guardar obediência ao regime de competência e de elaboração de balanço patrimonial por contador habilitado." (NR) </DIR>
+<DIR>"Art. 49.&nbsp;............................................................................................................<BR>............................................................................................................................. <BR><BR>§ 6º Nas hipóteses de que tratam os §§ 2º e 3º do art. 48 desta Lei, somente estarão sujeitos à recuperação judicial os créditos que decorram exclusivamente da atividade rural e estejam discriminados nos documentos a que se referem os citados parágrafos, ainda que não vencidos. <BR><BR>§ 7º Não se sujeitarão aos efeitos da recuperação judicial os recursos controlados e abrangidos nos termos dos arts. 14 e 21 da Lei nº 4.829, de 5 de novembro de 1965. <BR><BR>§ 8º Estarão sujeitos à recuperação judicial os recursos de que trata o § 7º deste artigo que não tenham sido objeto de renegociação entre o devedor e a instituição financeira antes do pedido de recuperação judicial, na forma de ato do Poder Executivo. <BR><BR>§ 9º Não se enquadrará nos créditos referidos no <I>caput</I> deste artigo aquele relativo à dívida constituída nos 3 (três) últimos anos anteriores ao pedido de recuperação judicial, que tenha sido contraída com a finalidade de aquisição de propriedades rurais, bem como as respectivas garantias." (NR)</DIR>
+<DIR>"Art. 50.&nbsp;.............................................................................................................<BR>................................................................................................................................. <BR><BR>XVII - conversão de dívida em capital social; <BR><BR>XVIII - venda integral da devedora, desde que garantidas aos credores não submetidos ou não aderentes condições, no mínimo, equivalentes àquelas que teriam na falência, hipótese em que será, para todos os fins, considerada unidade produtiva isolada. <BR>................................................................................................................................. <BR><BR>§ 3º Não haverá sucessão ou responsabilidade por dívidas de qualquer natureza a terceiro credor, investidor ou novo administrador em decorrência, respectivamente, da mera conversão de dívida em capital, de aporte de novos recursos na devedora ou de substituição dos administradores desta. <BR><BR>§ 4º O imposto sobre a renda e a Contribuição Social sobre o Lucro Líquido (CSLL) incidentes sobre o ganho de capital resultante da alienação de bens ou direitos pela pessoa jurídica em recuperação judicial poderão ser parcelados, com atualização monetária das parcelas, observado o seguinte: <BR><BR>I - o disposto na Lei nº 10.522, de 19 de julho de 2002; e <BR><BR>II - a utilização, como limite, da mediana de alongamento no plano de recuperação judicial em relação aos créditos a ele sujeitos. <BR><BR>§ 5º O limite de alongamento de prazo a que se refere o inciso II do § 4º deste artigo será readequado na hipótese de alteração superveniente do plano de recuperação judicial." (NR)</DIR>
+<DIR>"Art. 51.&nbsp;............................................................................................................ <BR>.............................................................................................................................. <BR><BR>II - ..................................................................................................................... <BR>.......................................................................................................................... </DIR>
+<DIR><EM>e) </EM>descrição das sociedades de grupo societário, de fato ou de direito; <BR><BR>III - a relação nominal completa dos credores, sujeitos ou não à recuperação judicial, inclusive aqueles por obrigação de fazer ou de dar, com a indicação do endereço físico e eletrônico de cada um, a natureza, conforme estabelecido nos arts. 83 e 84 desta Lei, e o valor atualizado do crédito, com a discriminação de sua origem, e o regime dos vencimentos;<BR>............................................................................................................................... <BR><BR>IX - a relação, subscrita pelo devedor, de todas as ações judiciais e procedimentos arbitrais em que este figure como parte, inclusive as de natureza trabalhista, com a estimativa dos respectivos valores demandados; <BR><BR>X - o relatório detalhado do passivo fiscal; e <BR><BR>XI - a relação de bens e direitos integrantes do ativo não circulante, incluídos aqueles não sujeitos à recuperação judicial, acompanhada dos negócios jurídicos celebrados com os credores de que trata o § 3º do art. 49 desta Lei. <BR>................................................................................................................................. <BR><BR>§ 4º Na hipótese de o ajuizamento da recuperação judicial ocorrer antes da data final de entrega do balanço correspondente ao exercício anterior, o devedor apresentará balanço prévio e juntará o balanço definitivo no prazo da lei societária aplicável. <BR><BR>§ 5º O valor da causa corresponderá ao montante total dos créditos sujeitos à recuperação judicial. <BR><BR>§ 6º Em relação ao período de que trata o § 3º do art. 48 desta Lei: <BR><BR>I - a exposição referida no inciso I do <I>caput</I> deste artigo deverá comprovar a crise de insolvência, caracterizada pela insuficiência de recursos financeiros ou patrimoniais com liquidez suficiente para saldar suas dívidas; <BR><BR>II - os requisitos do inciso II do <I>caput</I> deste artigo serão substituídos pelos documentos mencionados no § 3º do art. 48 desta Lei relativos aos últimos 2 (dois) anos." (NR)</DIR>
+<DIR>"Art. 52.&nbsp;.............................................................................................................<BR>................................................................................................................................ <BR><BR>II - determinará a dispensa da apresentação de certidões negativas para que o devedor exerça suas atividades, observado o disposto no § 3º do art. 195 da Constituição Federal e no art. 69 desta Lei; <BR>................................................................................................................................ <BR><BR>V - ordenará a intimação eletrônica do Ministério Público e das Fazendas Públicas federal e de todos os Estados, Distrito Federal e Municípios em que o devedor tiver estabelecimento, a fim de que tomem conhecimento da recuperação judicial e informem eventuais créditos perante o devedor, para divulgação aos demais interessados. <BR>........................................................................................................................." (NR)</DIR>
+<DIR>"Art. 54.&nbsp;............................................................................................................ <BR><BR>§ 1º ................................................................................................................... <BR><BR>§ 2º O prazo estabelecido no <I>caput</I> deste artigo poderá ser estendido em até 2 (dois) anos, se o plano de recuperação judicial atender aos seguintes requisitos, cumulativamente: <BR>I - apresentação de garantias julgadas suficientes pelo juiz; <BR><BR>II - aprovação pelos credores titulares de créditos derivados da legislação trabalhista ou decorrentes de acidentes de trabalho, na forma do § 2º do art. 45 desta Lei; e <BR><BR>III - garantia da integralidade do pagamento dos créditos trabalhistas." (NR)</DIR>
+<DIR>"Art. 56.&nbsp;...........................................................................................................<BR>............................................................................................................................. <BR><BR>§ 4º Rejeitado o plano de recuperação judicial, o administrador judicial submeterá, no ato, à votação da assembleia-geral de credores a concessão de prazo de 30 (trinta) dias para que seja apresentado plano de recuperação judicial pelos credores. <BR><BR>§ 5º A concessão do prazo a que se refere o § 4º deste artigo deverá ser aprovada por credores que representem mais da metade dos créditos presentes à assembleia-geral de credores. <BR><BR>§ 6º O plano de recuperação judicial proposto pelos credores somente será posto em votação caso satisfeitas, cumulativamente, as seguintes condições: <BR><BR>I - não preenchimento dos requisitos previstos no § 1º do art. 58 desta Lei; <BR><BR>II - preenchimento dos requisitos previstos nos incisos I, II e III do <I>caput</I> do art. 53 desta Lei; <BR><BR>III - apoio por escrito de credores que representem, alternativamente: </DIR>
+<DIR><EM>a) </EM>mais de 25% (vinte e cinco por cento) dos créditos totais sujeitos à recuperação judicial; ou <BR><EM>b) </EM>mais de 35% (trinta e cinco por cento) dos créditos dos credores presentes à assembleia-geral a que se refere o § 4º deste artigo; <BR><BR>IV - não imputação de obrigações novas, não previstas em lei ou em contratos anteriormente celebrados, aos sócios do devedor; <BR><BR>V - previsão de isenção das garantias pessoais prestadas por pessoas naturais em relação aos créditos a serem novados e que sejam de titularidade dos credores mencionados no inciso III deste parágrafo ou daqueles que votarem favoravelmente ao plano de recuperação judicial apresentado pelos credores, não permitidas ressalvas de voto; e <BR><BR>VI - não imposição ao devedor ou aos seus sócios de sacrifício maior do que aquele que decorreria da liquidação na falência. <BR><BR>§ 7º O plano de recuperação judicial apresentado pelos credores poderá prever a capitalização dos créditos, inclusive com a consequente alteração do controle da sociedade devedora, permitido o exercício do direito de retirada pelo sócio do devedor. <BR><BR>§ 8º Não aplicado o disposto nos §§ 4º, 5º e 6º deste artigo, ou rejeitado o plano de recuperação judicial proposto pelos credores, o juiz convolará a recuperação judicial em falência. <BR><BR>§ 9º Na hipótese de suspensão da assembleia-geral de credores convocada para fins de votação do plano de recuperação judicial, a assembleia deverá ser encerrada no prazo de até 90 (noventa) dias, contado da data de sua instalação." (NR) <BR></DIR>
+<DIR>"Art. 58.&nbsp;Cumpridas as exigências desta Lei, o juiz concederá a recuperação judicial do devedor cujo plano não tenha sofrido objeção de credor nos termos do art. 55 desta Lei ou tenha sido aprovado pela assembleia-geral de credores na forma dos arts. 45 ou 56-A desta Lei. <BR><BR>§ 1º .................................................................................................................. <BR>............................................................................................................................... <BR><BR>II - a aprovação de 3 (três) das classes de credores ou, caso haja somente 3 (três) classes com credores votantes, a aprovação de pelo menos 2 (duas) das classes ou, caso haja somente 2 (duas) classes com credores votantes, a aprovação de pelo menos 1 (uma) delas, sempre nos termos do art. 45 desta Lei;<BR>................................................................................................................................ <BR><BR>§ 3º Da decisão que conceder a recuperação judicial serão intimados eletronicamente o Ministério Público e as Fazendas Públicas federal e de todos os Estados, Distrito Federal e Municípios em que o devedor tiver estabelecimento." (NR) </DIR>
+<DIR>"Art. 59.&nbsp;............................................................................................................<BR>............................................................................................................................... <BR><BR>§ 3º Da decisão que conceder a recuperação judicial serão intimadas eletronicamente as Fazendas Públicas federal e de todos os Estados, Distrito Federal e Municípios em que o devedor tiver estabelecimento." (NR)</DIR>
+<DIR>"Art. 60.&nbsp;............................................................................................................ <BR><BR><I>Parágrafo único. </I>(VETADO)." (NR)</DIR>
+<DIR>"Art. 61.&nbsp;Proferida a decisão prevista no art. 58 desta Lei, o juiz poderá determinar a manutenção do devedor em recuperação judicial até que sejam cumpridas todas as obrigações previstas no plano que vencerem até, no máximo, 2 (dois) anos depois da concessão da recuperação judicial, independentemente do eventual período de carência. <BR>......................................................................................................................." (NR)</DIR>
+<DIR>"Art. 63.&nbsp;..........................................................................................................<BR>........................................................................................................................... <BR><BR>V - a comunicação ao Registro Público de Empresas e à Secretaria Especial da Receita Federal do Brasil do Ministério da Economia para as providências cabíveis. <BR><BR><I>Parágrafo único. </I>O encerramento da recuperação judicial não dependerá da consolidação do quadro-geral de credores." (NR)</DIR>
+<DIR>"Art. 66.&nbsp;Após a distribuição do pedido de recuperação judicial, o devedor não poderá alienar ou onerar bens ou direitos de seu ativo não circulante, inclusive para os fins previstos no art. 67 desta Lei, salvo mediante autorização do juiz, depois de ouvido o Comitê de Credores, se houver, com exceção daqueles previamente autorizados no plano de recuperação judicial. <BR><BR>§ 1º Autorizada a alienação de que trata o <I>caput</I> deste artigo pelo juiz, observar-se-á o seguinte: <BR><BR>I - nos 5 (cinco) dias subsequentes à data da publicação da decisão, credores que corresponderem a mais de 15% (quinze por cento) do valor total de créditos sujeitos à recuperação judicial, comprovada a prestação da caução equivalente ao valor total da alienação, poderão manifestar ao administrador judicial, fundamentadamente, o interesse na realização da assembleia-geral de credores para deliberar sobre a realização da venda; <BR><BR>II - nas 48 (quarenta e oito) horas posteriores ao final do prazo previsto no inciso I deste parágrafo, o administrador judicial apresentará ao juiz relatório das manifestações recebidas e, somente na hipótese de cumpridos os requisitos estabelecidos, requererá a convocação de assembleia-geral de credores, que será realizada da forma mais célere, eficiente e menos onerosa, preferencialmente por intermédio dos instrumentos referidos no § 4º do art. 39 desta Lei. <BR><BR>§ 2º As despesas com a convocação e a realização da assembleia-geral correrão por conta dos credores referidos no inciso I do § 1º deste artigo, proporcionalmente ao valor total de seus créditos. <BR><BR>§ 3º (VETADO). <BR><BR>§ 4º O disposto no <I>caput</I> deste artigo não afasta a incidência do inciso VI do <I>caput</I> e do § 2º do art. 73 desta Lei." (NR)</DIR>
+<DIR>"Art. 67.&nbsp;.......................................................................................................... <BR><BR><I>Parágrafo único. </I>O plano de recuperação judicial poderá prever tratamento diferenciado aos créditos sujeitos à recuperação judicial pertencentes a fornecedores de bens ou serviços que continuarem a provê-los normalmente após o pedido de recuperação judicial, desde que tais bens ou serviços sejam necessários para a manutenção das atividades e que o tratamento diferenciado seja adequado e razoável no que concerne à relação comercial futura." (NR)</DIR>
+<DIR>"Art. 69.&nbsp;........................................................................................................... <BR><BR><I>Parágrafo único. </I>O juiz determinará ao Registro Público de Empresas e à Secretaria Especial da Receita Federal do Brasil a anotação da recuperação judicial nos registros correspondentes." (NR)</DIR>
+<DIR>"Art. 73.&nbsp;.........................................................................................................<BR>............................................................................................................................ <BR><BR>III - quando não aplicado o disposto nos §§ 4º, 5º e 6º do art. 56 desta Lei, ou rejeitado o plano de recuperação judicial proposto pelos credores, nos termos do § 7º do art. 56 e do art. 58-A desta Lei; <BR>............................................................................................................................... <BR><BR>V - por descumprimento dos parcelamentos referidos no art. 68 desta Lei ou da transação prevista no art. 10-C da Lei nº 10.522, de 19 de julho de 2002; e <BR><BR>VI - quando identificado o esvaziamento patrimonial da devedora que implique liquidação substancial da empresa, em prejuízo de credores não sujeitos à recuperação judicial, inclusive as Fazendas Públicas. <BR><BR>§ 1º .................................................................................................................. <BR><BR>§ 2º A hipótese prevista no inciso VI do <I>caput</I> deste artigo não implicará a invalidade ou a ineficácia dos atos, e o juiz determinará o bloqueio do produto de eventuais alienações e a devolução ao devedor dos valores já distribuídos, os quais ficarão à disposição do juízo. <BR><BR>§ 3º Considera-se substancial a liquidação quando não forem reservados bens, direitos ou projeção de fluxo de caixa futuro suficientes à manutenção da atividade econômica para fins de cumprimento de suas obrigações, facultada a realização de perícia específica para essa finalidade." (NR)</DIR>
+<DIR>"Art. 75.&nbsp;A falência, ao promover o afastamento do devedor de suas atividades, visa a: <BR><BR>I - preservar e a otimizar a utilização produtiva dos bens, dos ativos e dos recursos produtivos, inclusive os intangíveis, da empresa; <BR><BR>II - permitir a liquidação célere das empresas inviáveis, com vistas à realocação eficiente de recursos na economia; e <BR><BR>III - fomentar o empreendedorismo, inclusive por meio da viabilização do retorno célere do empreendedor falido à atividade econômica. <BR><BR>§ 1º O processo de falência atenderá aos princípios da celeridade e da economia processual, sem prejuízo do contraditório, da ampla defesa e dos demais princípios previstos na Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil). <BR><BR>§ 2º A falência é mecanismo de preservação de benefícios econômicos e sociais decorrentes da atividade empresarial, por meio da liquidação imediata do devedor e da rápida realocação útil de ativos na economia." (NR)</DIR>
+<DIR>"Art. 83.&nbsp;............................................................................................................. <BR><BR>I - os créditos derivados da legislação trabalhista, limitados a 150 (cento e cinquenta) salários-mínimos por credor, e aqueles decorrentes de acidentes de trabalho; <BR><BR>II - os créditos gravados com direito real de garantia até o limite do valor do bem gravado; <BR><BR>III - os créditos tributários, independentemente da sua natureza e do tempo de constituição, exceto os créditos extraconcursais e as multas tributárias; <BR><BR>IV - (revogado); </DIR>
+<DIR><EM>a) </EM>(revogada); <BR><EM>b) </EM>(revogada); <BR><EM>c) </EM>(revogada); <BR><EM>d) </EM>(revogada); <BR><BR>V - (revogado); </DIR>
+<DIR><EM>a) </EM>(revogada); <BR><EM>b) </EM>(revogada); <BR><EM>c) </EM>(revogada);<BR><BR>VI - os créditos quirografários, a saber:<BR>................................................................................................................................ </DIR>
+<DIR><EM>b) </EM>os saldos dos créditos não cobertos pelo produto da alienação dos bens vinculados ao seu pagamento; e <BR><EM>c) </EM>os saldos dos créditos derivados da legislação trabalhista que excederem o limite estabelecido no inciso I do <I>caput</I> deste artigo; <BR><BR>VII - as multas contratuais e as penas pecuniárias por infração das leis penais ou administrativas, incluídas as multas tributárias; <BR><BR>VIII - os créditos subordinados, a saber: </DIR>
+<DIR><EM>a) </EM>os previstos em lei ou em contrato; e <BR><EM>b) </EM>os créditos dos sócios e dos administradores sem vínculo empregatício cuja contratação não tenha observado as condições estritamente comutativas e as práticas de mercado; e <BR><BR>IX - os juros vencidos após a decretação da falência, conforme previsto no art. 124 desta Lei.<BR>............................................................................................................................... <BR><BR>§ 4º (Revogado). <BR><BR>§ 5º Para os fins do disposto nesta Lei, os créditos cedidos a qualquer título manterão sua natureza e classificação. <BR><BR>§ 6º § 6º Para os fins do disposto nesta Lei, os créditos que disponham de privilégio especial ou geral em outras normas integrarão a classe dos créditos quirografários." (NR)</DIR>
+<DIR>"Art. 84.&nbsp;Serão considerados créditos extraconcursais e serão pagos com precedência sobre os mencionados no art. 83 desta Lei, na ordem a seguir, aqueles relativos: <BR><BR>I - (revogado); <BR><BR>I-A - às quantias referidas nos arts. 150 e 151 desta Lei; <BR><BR>I-B - ao valor efetivamente entregue ao devedor em recuperação judicial pelo financiador, em conformidade com o disposto na Seção IV-A do Capítulo III desta Lei; <BR><BR>I-C - aos créditos em dinheiro objeto de restituição, conforme previsto no art. 86 desta Lei; <BR><BR>I-D - às remunerações devidas ao administrador judicial e aos seus auxiliares, aos reembolsos devidos a membros do Comitê de Credores, e aos créditos derivados da legislação trabalhista ou decorrentes de acidentes de trabalho relativos a serviços prestados após a decretação da falência; <BR><BR>I-E - às obrigações resultantes de atos jurídicos válidos praticados durante a recuperação judicial, nos termos do art. 67 desta Lei, ou após a decretação da falência; <BR><BR>II - às quantias fornecidas à massa falida pelos credores; <BR><BR>III - às despesas com arrecadação, administração, realização do ativo, distribuição do seu produto e custas do processo de falência; <BR><BR>IV - às custas judiciais relativas às ações e às execuções em que a massa falida tenha sido vencida; <BR><BR>V - aos tributos relativos a fatos geradores ocorridos após a decretação da falência, respeitada a ordem estabelecida no art. 83 desta Lei. <BR><BR>§ 1º As despesas referidas no inciso I-A do <I>caput</I> deste artigo serão pagas pelo administrador judicial com os recursos disponíveis em caixa. <BR><BR>§ 2º O disposto neste artigo não afasta a hipótese prevista no art. 122 desta Lei." (NR)</DIR>
+<DIR>"Art. 86.&nbsp;...........................................................................................................<BR>............................................................................................................................ <BR><BR>IV - às Fazendas Públicas, relativamente a tributos passíveis de retenção na fonte, de descontos de terceiros ou de sub-rogação e a valores recebidos pelos agentes arrecadadores e não recolhidos aos cofres públicos. <BR><BR><I>Parágrafo único. </I>(Revogado)." (NR)</DIR>
+<DIR>"Art. 99.&nbsp;............................................................................................................ <BR>............................................................................................................................... <BR><BR>VIII - ordenará ao Registro Público de Empresas e à Secretaria Especial da Receita Federal do Brasil que procedam à anotação da falência no registro do devedor, para que dele constem a expressão "falido", a data da decretação da falência e a inabilitação de que trata o art. 102 desta Lei; <BR>............................................................................................................................... <BR><BR>XIII - ordenará a intimação eletrônica, nos termos da legislação vigente e respeitadas as prerrogativas funcionais, respectivamente, do Ministério Público e das Fazendas Públicas federal e de todos os Estados, Distrito Federal e Municípios em que o devedor tiver estabelecimento, para que tomem conhecimento da falência. <BR><BR>§ 1º O juiz ordenará a publicação de edital eletrônico com a íntegra da decisão que decreta a falência e a relação de credores apresentada pelo falido. <BR><BR>§ 2º A intimação eletrônica das pessoas jurídicas de direito público integrantes da administração pública indireta dos entes federativos referidos no inciso XIII do <I>caput</I> deste artigo será direcionada: <BR><BR>I - no âmbito federal, à Procuradoria-Geral Federal e à Procuradoria-Geral do Banco Central do Brasil; <BR><BR>II - no âmbito dos Estados e do Distrito Federal, à respectiva Procuradoria-Geral, à qual competirá dar ciência a eventual órgão de representação judicial específico das entidades interessadas; e <BR><BR>III - no âmbito dos Municípios, à respectiva Procuradoria-Geral ou, se inexistir, ao gabinete do Prefeito, à qual competirá dar ciência a eventual órgão de representação judicial específico das entidades interessadas. <BR><BR>§ 3º Após decretada a quebra ou convolada a recuperação judicial em falência, o administrador deverá, no prazo de até 60 (sessenta) dias, contado do termo de nomeação, apresentar, para apreciação do juiz, plano detalhado de realização dos ativos, inclusive com a estimativa de tempo não superior a 180 (cento e oitenta) dias a partir da juntada de cada auto de arrecadação, na forma do inciso III do <I>caput</I> do art. 22 desta Lei." (NR)</DIR>
+<DIR>"Art. 104.&nbsp;A decretação da falência impõe aos representantes legais do falido os seguintes deveres: <BR><BR>I - assinar nos autos, desde que intimado da decisão, termo de comparecimento, com a indicação do nome, da nacionalidade, do estado civil e do endereço completo do domicílio, e declarar, para constar do referido termo, diretamente ao administrador judicial, em dia, local e hora por ele designados, por prazo não superior a 15 (quinze) dias após a decretação da falência, o seguinte: <BR>................................................................................................................................. <BR><BR>II - entregar ao administrador judicial os seus livros obrigatórios e os demais instrumentos de escrituração pertinentes, que os encerrará por termo;<BR>................................................................................................................................. <BR><BR>V - entregar ao administrador judicial, para arrecadação, todos os bens, papéis, documentos e senhas de acesso a sistemas contábeis, financeiros e bancários, bem como indicar aqueles que porventura estejam em poder de terceiros; <BR>................................................................................................................................. <BR><BR>XI - apresentar ao administrador judicial a relação de seus credores, em arquivo eletrônico, no dia em que prestar as declarações referidas no inciso I do <I>caput</I> deste artigo;<BR>........................................................................................................................" (NR)</DIR>
+<DIR>"Art. 131.&nbsp;Nenhum dos atos referidos nos incisos I, II, III e VI do <I>caput</I> do art. 129 desta Lei que tenham sido previstos e realizados na forma definida no plano de recuperação judicial ou extrajudicial será declarado ineficaz ou revogado." (NR) <BR><BR>"Art. 141.&nbsp;Na alienação conjunta ou separada de ativos, inclusive da empresa ou de suas filiais, promovida sob qualquer das modalidades de que trata o art. 142:<BR>.................................................................................................................................. <BR><BR>§ 3º A alienação nas modalidades de que trata o art. 142 desta Lei poderá ser realizada com compartilhamento de custos operacionais por 2 (duas) ou mais empresas em situação falimentar." (NR)</DIR>
+<DIR>"Art. 142.&nbsp;A alienação de bens dar-se-á por uma das seguintes modalidades: <BR><BR>I - leilão eletrônico, presencial ou híbrido; <BR><BR>II - (revogado); <BR><BR>III - (revogado); <BR><BR>IV - processo competitivo organizado promovido por agente especializado e de reputação ilibada, cujo procedimento deverá ser detalhado em relatório anexo ao plano de realização do ativo ou ao plano de recuperação judicial, conforme o caso; <BR><BR>V - qualquer outra modalidade, desde que aprovada nos termos desta Lei. <BR><BR>§ 1º (Revogado). <BR><BR>§ 2º (Revogado). <BR><BR>§ 2º-A. A alienação de que trata o <I>caput</I> deste artigo: <BR><BR>I - dar-se-á independentemente de a conjuntura do mercado no momento da venda ser favorável ou desfavorável, dado o caráter forçado da venda; <BR><BR>II - independerá da consolidação do quadro-geral de credores; <BR><BR>III - poderá contar com serviços de terceiros como consultores, corretores e leiloeiros; <BR><BR>IV - deverá ocorrer no prazo máximo de 180 (cento e oitenta) dias, contado da data da lavratura do auto de arrecadação, no caso de falência; <BR><BR>V - não estará sujeita à aplicação do conceito de preço vil. <BR><BR>§ 3º Ao leilão eletrônico, presencial ou híbrido aplicam-se, no que couber, as regras da Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil). <BR><BR>§ 3º-A. A alienação por leilão eletrônico, presencial ou híbrido dar-se-á: <BR><BR>I - em primeira chamada, no mínimo pelo valor de avaliação do bem; <BR><BR>II - em segunda chamada, dentro de 15 (quinze) dias, contados da primeira chamada, por no mínimo 50% (cinquenta por cento) do valor de avaliação; e <BR><BR>III - em terceira chamada, dentro de 15 (quinze) dias, contados da segunda chamada, por qualquer preço. <BR><BR>§ 3º-B. A alienação prevista nos incisos IV e V do <I>caput</I> deste artigo, conforme disposições específicas desta Lei, observará o seguinte: <BR><BR>I - será aprovada pela assembleia-geral de credores; <BR><BR>II - decorrerá de disposição de plano de recuperação judicial aprovado; ou <BR><BR>III - deverá ser aprovada pelo juiz, considerada a manifestação do administrador judicial e do Comitê de Credores, se existente. <BR><BR>§ 4º (Revogado). <BR><BR>§ 5º (Revogado). <BR><BR>§ 6º (Revogado). <BR><BR>§ 7º Em qualquer modalidade de alienação, o Ministério Público e as Fazendas Públicas serão intimados por meio eletrônico, nos termos da legislação vigente e respeitadas as respectivas prerrogativas funcionais, sob pena de nulidade. <BR><BR>§ 8º Todas as formas de alienação de bens realizadas de acordo com esta Lei serão consideradas, para todos os fins e efeitos, alienações judiciais." (NR)</DIR>
+<DIR>"Art. 143.&nbsp;.......................................................................................................... <BR><BR>§ 1º Impugnações baseadas no valor de venda do bem somente serão recebidas se acompanhadas de oferta firme do impugnante ou de terceiro para a aquisição do bem, respeitados os termos do edital, por valor presente superior ao valor de venda, e de depósito caucionário equivalente a 10% (dez por cento) do valor oferecido. <BR><BR>§ 2º A oferta de que trata o § 1º deste artigo vincula o impugnante e o terceiro ofertante como se arrematantes fossem. <BR><BR>§ 3º Se houver mais de uma impugnação baseada no valor de venda do bem, somente terá seguimento aquela que tiver o maior valor presente entre elas. <BR><BR>§ 4º A suscitação infundada de vício na alienação pelo impugnante será considerada ato atentatório à dignidade da justiça e sujeitará o suscitante à reparação dos prejuízos causados e às penas previstas na Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), para comportamentos análogos." (NR)</DIR>
+<DIR>"Art. 145.&nbsp;Por deliberação tomada nos termos do art. 42 desta Lei, os credores poderão adjudicar os bens alienados na falência ou adquiri-los por meio de constituição de sociedade, de fundo ou de outro veículo de investimento, com a participação, se necessária, dos atuais sócios do devedor ou de terceiros, ou mediante conversão de dívida em capital. <BR><BR>§ 1º Aplica-se irrestritamente o disposto no art. 141 desta Lei à transferência dos bens à sociedade, ao fundo ou ao veículo de investimento mencionados no <I>caput</I> deste artigo. <BR><BR>§ 2º (Revogado). <BR><BR>§ 3º (Revogado). <BR><BR>§ 4º Será considerada não escrita qualquer restrição convencional à venda ou à circulação das participações na sociedade, no fundo de investimento ou no veículo de investimento a que se refere o <I>caput</I> deste artigo." (NR)</DIR>
+<DIR>"Art. 156.&nbsp;Apresentado o relatório final, o juiz encerrará a falência por sentença e ordenará a intimação eletrônica às Fazendas Públicas federal e de todos os Estados, Distrito Federal e Municípios em que o devedor tiver estabelecimento e determinará a baixa da falida no Cadastro Nacional da Pessoa Jurídica (CNPJ), expedido pela Secretaria Especial da Receita Federal do Brasil. <BR>........................................................................................................................" (NR)</DIR>
+<DIR>"Art. 158.&nbsp;........................................................................................................<BR>............................................................................................................................. <BR><BR>II - o pagamento, após realizado todo o ativo, de mais de 25% (vinte e cinco por cento) dos créditos quirografários, facultado ao falido o depósito da quantia necessária para atingir a referida porcentagem se para isso não tiver sido suficiente a integral liquidação do ativo; <BR><BR>III - (revogado); <BR><BR>IV - (revogado); <BR><BR>V - o decurso do prazo de 3 (três) anos, contado da decretação da falência, ressalvada a utilização dos bens arrecadados anteriormente, que serão destinados à liquidação para a satisfação dos credores habilitados ou com pedido de reserva realizado; <BR><BR>VI - o encerramento da falência nos termos dos arts. 114-A ou 156 desta Lei." (NR) </DIR>
+<DIR>"Art. 159.&nbsp;......................................................................................................... <BR><BR>§ 1º A secretaria do juízo fará publicar imediatamente informação sobre a apresentação do requerimento a que se refere este artigo, e, no prazo comum de 5 (cinco) dias, qualquer credor, o administrador judicial e o Ministério Público poderão manifestar-se exclusivamente para apontar inconsistências formais e objetivas. <BR><BR>§ 2º (Revogado). <BR><BR>§ 3º Findo o prazo, o juiz, em 15 (quinze) dias, proferirá sentença que declare extintas todas as obrigações do falido, inclusive as de natureza trabalhista.<BR>......................................................................................................................." (NR)</DIR><BR>
+<DIR>"Art. 161.&nbsp;......................................................................................................... <BR><BR>§ 1º Estão sujeitos à recuperação extrajudicial todos os créditos existentes na data do pedido, exceto os créditos de natureza tributária e aqueles previstos no § 3º do art. 49 e no inciso II do <I>caput</I> do art. 86 desta Lei, e a sujeição dos créditos de natureza trabalhista e por acidentes de trabalho exige negociação coletiva com o sindicato da respectiva categoria profissional.<BR>......................................................................................................................" (NR)</DIR>
+<DIR>"Art. 163.&nbsp;O devedor poderá tambeìm requerer a homologação de plano de recuperação extrajudicial que obriga todos os credores por ele abrangidos, desde que assinado por credores que representem mais da metade dos créditos de cada espécie abrangidos pelo plano de recuperação extrajudicial. <BR>.............................................................................................................................. <BR><BR>§ 7º O pedido previsto no <I>caput</I> deste artigo poderá ser apresentado com comprovação da anuência de credores que representem pelo menos 1/3 (um terço) de todos os créditos de cada espécie por ele abrangidos e com o compromisso de, no prazo improrrogável de 90 (noventa) dias, contado da data do pedido, atingir o quórum previsto no <I>caput</I> deste artigo, por meio de adesão expressa, facultada a conversão do procedimento em recuperação judicial a pedido do devedor. <BR><BR>§ 8º Aplica-se à recuperação extrajudicial, desde o respectivo pedido, a suspensão de que trata o art. 6º desta Lei, exclusivamente em relação às espécies de crédito por ele abrangidas, e somente deverá ser ratificada pelo juiz se comprovado o quórum inicial exigido pelo § 7º deste artigo." (NR)</DIR>
+<DIR>"Art. 164.&nbsp;Recebido o pedido de homologação do plano de recuperação extrajudicial previsto nos arts. 162 e 163 desta Lei, o juiz ordenará a publicação de edital eletrônico com vistas a convocar os credores do devedor para apresentação de suas impugnações ao plano de recuperação extrajudicial, observado o disposto no § 3º deste artigo. <BR>....................................................................................................................." (NR)</DIR>
+<DIR>"Art. 168.&nbsp;........................................................................................................<BR>.............................................................................................................................. </DIR>
+<DIR>Contabilidade paralela e distribuição de lucros ou dividendos a sócios e acionistas até a aprovação do plano de recuperação judicial <BR><BR>§ 2º A pena&nbsp;é aumentada de 1/3 (um terço) até metade se o devedor manteve ou movimentou recursos ou valores paralelamente à contabilidade exigida pela legislação, inclusive na hipótese de violação do disposto no art. 6º-A desta Lei. <BR>......................................................................................................................." (NR)</DIR>
+<DIR>"Art. 189.&nbsp;Aplica-se, no que couber, aos procedimentos previstos nesta Lei, o disposto na Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), desde que não seja incompatível com os princípios desta Lei. <BR><BR>§ 1º Para os fins do disposto nesta Lei: <BR><BR>I - todos os prazos nela previstos ou que dela decorram serão contados em dias corridos; e <BR><BR>II - as decisões proferidas nos processos a que se refere esta Lei serão passíveis de agravo de instrumento, exceto nas hipóteses em que esta Lei previr de forma diversa. <BR><BR>§ 2º Para os fins do disposto no art. 190 da Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), a manifestação de vontade do devedor será expressa e a dos credores será obtida por maioria, na forma prevista no art. 42 desta Lei." (NR)</DIR>
+<DIR>"Art. 191.&nbsp;Ressalvadas as disposições específicas desta Lei, as publicações ordenadas serão feitas em sítio eletrônico próprio, na internet, dedicado à recuperação judicial e à falência, e as intimações serão realizadas por notificação direta por meio de dispositivos móveis previamente cadastrados e autorizados pelo interessado. <BR>......................................................................................................................." (NR)</DIR>
+<DIR>"Art. 196.&nbsp;Os Registros Públicos de Empresas, em cooperação com os Tribunais de Justiça, manterão banco de dados público e gratuito, disponível na internet, com a relação de todos os devedores falidos ou em recuperação judicial. <BR><BR><I>Parágrafo único. </I>Os Registros Públicos de Empresas, em cooperação com o Conselho Nacional de Justiça, deverão promover a integração de seus bancos de dados em âmbito nacional." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;A Lei nº 11.101, de 9 de fevereiro de 2005, passa a vigorar acrescida dos seguintes artigos, seções e capítulo: <BR><BR>
+<DIR>"Art. 6º-A.&nbsp;É vedado ao devedor, até a aprovação do plano de recuperação judicial, distribuir lucros ou dividendos a sócios e acionistas, sujeitando-se o infrator ao disposto no art. 168 desta Lei."</DIR>
+<DIR>"Art. 6º-B.&nbsp;(VETADO)."</DIR>
+<DIR>"Art. 6º-C.&nbsp;É vedada atribuição de responsabilidade a terceiros em decorrência do mero inadimplemento de obrigações do devedor falido ou em recuperação judicial, ressalvadas as garantias reais e fidejussórias, bem como as demais hipóteses reguladas por esta Lei."</DIR>
+<DIR>"Art. 7º-A.&nbsp;Na falência, após realizadas as intimações e publicado o edital, conforme previsto, respectivamente, no inciso XIII do <I>caput</I> e no § 1º do art. 99 desta Lei, o juiz instaurará, de ofício, para cada Fazenda Pública credora, incidente de classificação de crédito público e determinará a sua intimação eletrônica para que, no prazo de 30 (trinta) dias, apresente diretamente ao administrador judicial ou em juízo, a depender do momento processual, a relação completa de seus créditos inscritos em dívida ativa, acompanhada dos cálculos, da classificação e das informações sobre a situação atual. <BR><BR>§ 1º Para efeito do disposto no <I>caput</I> deste artigo, considera-se Fazenda Pública credora aquela que conste da relação do edital previsto no § 1º do art. 99 desta Lei, ou que, após a intimação prevista no inciso XIII do <I>caput</I> do art. 99 desta Lei, alegue nos autos, no prazo de 15 (quinze) dias, possuir crédito contra o falido. <BR><BR>§ 2º Os créditos não definitivamente constituídos, não inscritos em dívida ativa ou com exigibilidade suspensa poderão ser informados em momento posterior. <BR><BR>§ 3º Encerrado o prazo de que trata o <I>caput</I> deste artigo: <BR><BR>I - o falido, os demais credores e o administrador judicial disporão do prazo de 15 (quinze) dias para manifestar objeções, limitadamente, sobre os cálculos e a classificação para os fins desta Lei; <BR><BR>II - a Fazenda Pública, ultrapassado o prazo de que trata o inciso I deste parágrafo, será intimada para prestar, no prazo de 10 (dez) dias, eventuais esclarecimentos a respeito das manifestações previstas no referido inciso; <BR><BR>III - os créditos serão objeto de reserva integral até o julgamento definitivo quando rejeitados os argumentos apresentados de acordo com o inciso II deste parágrafo; <BR><BR>IV - os créditos incontroversos, desde que exigíveis, serão imediatamente incluídos no quadro-geral de credores, observada a sua classificação; <BR><BR>V - o juiz, anteriormente à homologação do quadro-geral de credores, concederá prazo comum de 10 (dez) dias para que o administrador judicial e a Fazenda Pública titular de crédito objeto de reserva manifestem-se sobre a situação atual desses créditos e, ao final do referido prazo, decidirá acerca da necessidade de mantê-la. <BR><BR>§ 4º Com relação à aplicação do disposto neste artigo, serão observadas as seguintes disposições: <BR><BR>I - a decisão sobre os cálculos e a classificação dos créditos para os fins do disposto nesta Lei, bem como sobre a arrecadação dos bens, a realização do ativo e o pagamento aos credores, competirá ao juízo falimentar; <BR><BR>II - a decisão sobre a existência, a exigibilidade e o valor do crédito, observado o disposto no inciso II do <I>caput</I> do art. 9º desta Lei e as demais regras do processo de falência, bem como sobre o eventual prosseguimento da cobrança contra os corresponsáveis, competirá ao juízo da execução fiscal; <BR><BR>III - a ressalva prevista no art. 76 desta Lei, ainda que o crédito reconhecido não esteja em cobrança judicial mediante execução fiscal, aplicar-se-á, no que couber, ao disposto no inciso II deste parágrafo; <BR><BR>IV - o administrador judicial e o juízo falimentar deverão respeitar a presunção de certeza e liquidez de que trata o art. 3º da Lei nº 6.830, de 22 de setembro de 1980, sem prejuízo do disposto nos incisos II e III deste parágrafo; <BR><BR>V - as execuções fiscais permanecerão suspensas até o encerramento da falência, sem prejuízo da possibilidade de prosseguimento contra os corresponsáveis; <BR><BR>VI - a restituição em dinheiro e a compensação serão preservadas, nos termos dos arts. 86 e 122 desta Lei; e <BR><BR>VII - o disposto no art. 10 desta Lei será aplicado, no que couber, aos créditos retardatários. <BR><BR>§ 5º Na hipótese de não apresentação da relação referida no <I>caput</I> deste artigo no prazo nele estipulado, o incidente será arquivado e a Fazenda Pública credora poderá requerer o desarquivamento, observado, no que couber, o disposto no art. 10 desta Lei. <BR><BR>§ 6º As disposições deste artigo aplicam-se, no que couber, às execuções fiscais e às execuções de ofício que se enquadrem no disposto nos incisos VII e VIII do <I>caput</I> do art. 114 da Constituição Federal. <BR><BR>§ 7º O disposto neste artigo aplica-se, no que couber, aos créditos do Fundo de Garantia do Tempo de Serviço (FGTS). <BR><BR>§ 8º Não haverá condenação em honorários de sucumbência no incidente de que trata este artigo."</DIR>
+<DIR>
+<P align=center><STRONG>"'Seção II-A<BR>Das Conciliações e das Mediações Antecedentes ou Incidentais aos Processos de Recuperação Judicial' </STRONG></P></DIR>
+<DIR>'Art. 20-A. A conciliação e a mediação deverão ser incentivadas em qualquer grau de jurisdição, inclusive no âmbito de recursos em segundo grau de jurisdição e nos Tribunais Superiores, e não implicarão a suspensão dos prazos previstos nesta Lei, salvo se houver consenso entre as partes em sentido contrário ou determinação judicial.' </DIR>
+<DIR>'Art. 20-B. Serão admitidas conciliações e mediações antecedentes ou incidentais aos processos de recuperação judicial, notadamente: <BR><BR>I - nas fases pré-processual e processual de disputas entre os sócios e acionistas de sociedade em dificuldade ou em recuperação judicial, bem como nos litígios que envolverem credores não sujeitos à recuperação judicial, nos termos dos §§ 3º e 4º do art. 49 desta Lei, ou credores extraconcursais; <BR><BR>II - em conflitos que envolverem concessionárias ou permissionárias de serviços públicos em recuperação judicial e órgãos reguladores ou entes públicos municipais, distritais, estaduais ou federais; <BR><BR>III - na hipótese de haver créditos extraconcursais contra empresas em recuperação judicial durante período de vigência de estado de calamidade pública, a fim de permitir a continuidade da prestação de serviços essenciais; <BR><BR>IV - na hipótese de negociação de dívidas e respectivas formas de pagamento entre a empresa em dificuldade e seus credores, em caráter antecedente ao ajuizamento de pedido de recuperação judicial. <BR><BR>§ 1º Na hipótese prevista no inciso IV do <I>caput</I> deste artigo, será facultado às empresas em dificuldade que preencham os requisitos legais para requerer recuperação judicial obter tutela de urgência cautelar, nos termos do art. 305 e seguintes da Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), a fim de que sejam suspensas as execuções contra elas propostas pelo prazo de até 60 (sessenta) dias, para tentativa de composição com seus credores, em procedimento de mediação ou conciliação já instaurado perante o Centro Judiciário de Solução de Conflitos e Cidadania (Cejusc) do tribunal competente ou da câmara especializada, observados, no que couber, os arts. 16 e 17 da Lei nº 13.140, de 26 de junho de 2015. <BR><BR>§ 2º São vedadas a conciliação e a mediação sobre a natureza jurídica e a classificação de créditos, bem como sobre critérios de votação em assembleia-geral de credores. <BR><BR>§ 3º Se houver pedido de recuperação judicial ou extrajudicial, observados os critérios desta Lei, o período de suspensão previsto no § 1º deste artigo será deduzido do período de suspensão previsto no art. 6º desta Lei.' </DIR>
+<DIR>'Art. 20-C. O acordo obtido por meio de conciliação ou de mediação com fundamento nesta Seção deverá ser homologado pelo juiz competente conforme o disposto no art. 3º desta Lei. <BR><BR><I>Parágrafo único. </I>Requerida a recuperação judicial ou extrajudicial em até 360 (trezentos e sessenta) dias contados do acordo firmado durante o período da conciliação ou de mediação pré-processual, o credor terá reconstituídos seus direitos e garantias nas condições originalmente contratadas, deduzidos os valores eventualmente pagos e ressalvados os atos validamente praticados no âmbito dos procedimentos previstos nesta Seção.' </DIR>
+<DIR>'Art. 20-D. As sessões de conciliação e de mediação de que trata esta Seção poderão ser realizadas por meio virtual, desde que o Cejusc do tribunal competente ou a câmara especializada responsável disponham de meios para a sua realização.'"</DIR>
+<DIR>"Art. 45-A.&nbsp;As deliberações da assembleia-geral de credores previstas nesta Lei poderão ser substituídas pela comprovação da adesão de credores que representem mais da metade do valor dos créditos sujeitos à recuperação judicial, observadas as exceções previstas nesta Lei. <BR><BR>§ 1º Nos termos do art. 56-A desta Lei, as deliberações sobre o plano de recuperação judicial poderão ser substituídas por documento que comprove o cumprimento do disposto no art. 45 desta Lei. <BR><BR>§ 2º As deliberações sobre a constituição do Comitê de Credores poderão ser substituídas por documento que comprove a adesão da maioria dos créditos de cada conjunto de credores previsto no art. 26 desta Lei. <BR><BR>§ 3º As deliberações sobre forma alternativa de realização do ativo na falência, nos termos do art. 145 desta Lei, poderão ser substituídas por documento que comprove a adesão de credores que representem 2/3 (dois terços) dos créditos. <BR><BR>§ 4º As deliberações no formato previsto neste artigo serão fiscalizadas pelo administrador judicial, que emitirá parecer sobre sua regularidade, com oitiva do Ministério Público, previamente à sua homologação judicial, independentemente da concessão ou não da recuperação judicial."</DIR>
+<DIR>"Art. 48-A.&nbsp;Na recuperação judicial de companhia aberta, serão obrigatórios a formação e o funcionamento do conselho fiscal, nos termos da Lei nº 6.404, de 15 de dezembro de 1976, enquanto durar a fase da recuperação judicial, incluído o período de cumprimento das obrigações assumidas pelo plano de recuperação."</DIR>
+<DIR>"Art. 50-A.&nbsp;(VETADO)."</DIR>
+<DIR>"Art. 51-A.&nbsp;Após a distribuição do pedido de recuperação judicial, poderá o juiz, quando reputar necessário, nomear profissional de sua confiança, com capacidade técnica e idoneidade, para promover a constatação exclusivamente das reais condições de funcionamento da requerente e da regularidade e da completude da documentação apresentada com a petição inicial. <BR><BR>§ 1º A remuneração do profissional de que trata o <I>caput</I> deste artigo deverá ser arbitrada posteriormente à apresentação do laudo e deverá considerar a complexidade do trabalho desenvolvido. <BR><BR>§ 2º O juiz deverá conceder o prazo máximo de 5 (cinco) dias para que o profissional nomeado apresente laudo de constatação das reais condições de funcionamento do devedor e da regularidade documental. <BR><BR>§ 3º A constatação prévia será determinada sem que seja ouvida a outra parte e sem apresentação de quesitos por qualquer das partes, com a possibilidade de o juiz determinar a realização da diligência sem a prévia ciência do devedor, quando entender que esta poderá frustrar os seus objetivos. <BR><BR>§ 4º O devedor será intimado do resultado da constatação prévia concomitantemente à sua intimação da decisão que deferir ou indeferir o processamento da recuperação judicial, ou que determinar a emenda da petição inicial, e poderá impugná-la mediante interposição do recurso cabível. <BR><BR>§ 5º A constatação prévia consistirá, objetivamente, na verificação das reais condições de funcionamento da empresa e da regularidade documental, vedado o indeferimento do processamento da recuperação judicial baseado na análise de viabilidade econômica do devedor. <BR><BR>§ 6º Caso a constatação prévia detecte indícios contundentes de utilização fraudulenta da ação de recuperação judicial, o juiz poderá indeferir a petição inicial, sem prejuízo de oficiar ao Ministério Público para tomada das providências criminais eventualmente cabíveis. <BR><BR>§ 7º Caso a constatação prévia demonstre que o principal estabelecimento do devedor não se situa na área de competência do juízo, o juiz deverá determinar a remessa dos autos, com urgência, ao juízo competente."</DIR>
+<DIR>"Art. 56-A.&nbsp;Até 5 (cinco) dias antes da data de realização da assembleia-geral de credores convocada para deliberar sobre o plano, o devedor poderá comprovar a aprovação dos credores por meio de termo de adesão, observado o quórum previsto no art. 45 desta Lei, e requerer a sua homologação judicial.<BR><BR>§ 1º No caso previsto no <I>caput</I> deste artigo, a assembleia-geral será imediatamente dispensada, e o juiz intimará os credores para apresentarem eventuais oposições, no prazo de 10 (dez) dias, o qual substituirá o prazo inicialmente estipulado nos termos do <I>caput</I> do art. 55 desta Lei. <BR><BR>§ 2º Oferecida oposição prevista no § 1º deste artigo, terá o devedor o prazo de 10 (dez) dias para manifestar-se a respeito, ouvido a seguir o administrador judicial, no prazo de 5 (cinco) dias. <BR><BR>§ 3º No caso de dispensa da assembleia-geral ou de aprovação do plano de recuperação judicial em assembleia-geral, as oposições apenas poderão versar sobre: <BR><BR>I - não preenchimento do quórum legal de aprovação; <BR><BR>II - descumprimento do procedimento disciplinado nesta Lei; <BR><BR>III - irregularidades do termo de adesão ao plano de recuperação; ou <BR><BR>IV - irregularidades e ilegalidades do plano de recuperação."</DIR>
+<DIR>"Art. 58-A.&nbsp;Rejeitado o plano de recuperação proposto pelo devedor ou pelos credores e não preenchidos os requisitos estabelecidos no § 1º do art. 58 desta Lei, o juiz convolará a recuperação judicial em falência. <BR><BR><I>Parágrafo único. </I>Da sentença prevista no <I>caput</I> deste artigo caberá agravo de instrumento."</DIR>
+<DIR>"Art. 60-A.&nbsp;A unidade produtiva isolada de que trata o art. 60 desta Lei poderá abranger bens, direitos ou ativos de qualquer natureza, tangíveis ou intangíveis, isolados ou em conjunto, incluídas participações dos sócios. <BR><BR><I>Parágrafo único. </I>O disposto no <I>caput</I> deste artigo não afasta a incidência do inciso VI do <I>caput</I> e do § 2º do art. 73 desta Lei."</DIR>
+<DIR>"Art. 66-A.&nbsp;A alienação de bens ou a garantia outorgada pelo devedor a adquirente ou a financiador de boa-fé, desde que realizada mediante autorização judicial expressa ou prevista em plano de recuperação judicial ou extrajudicial aprovado, não poderá ser anulada ou tornada ineficaz após a consumação do negócio jurídico com o recebimento dos recursos correspondentes pelo devedor."</DIR>
+<DIR>
+<P align=center><STRONG>"'Secão IV-A<BR>Do Financiamento do Devedor e do Grupo Devedor durante a Recuperação Judicial'</STRONG></P></DIR>
+<DIR>'Art. 69-A. Durante a recuperação judicial, nos termos dos arts. 66 e 67 desta Lei, o juiz poderá, depois de ouvido o Comitê de Credores, autorizar a celebração de contratos de financiamento com o devedor, garantidos pela oneração ou pela alienação fiduciária de bens e direitos, seus ou de terceiros, pertencentes ao ativo não circulante, para financiar as suas atividades e as despesas de reestruturação ou de preservação do valor de ativos.'</DIR>
+<DIR>'Art. 69-B. A modificação em grau de recurso da decisão autorizativa da contratação do financiamento não pode alterar sua natureza extraconcursal, nos termos do art. 84 desta Lei, nem as garantias outorgadas pelo devedor em favor do financiador de boa-fé, caso o desembolso dos recursos já tenha sido efetivado.'</DIR>
+<DIR>'Art. 69-C. O juiz poderá autorizar a constituição de garantia subordinada sobre um ou mais ativos do devedor em favor do financiador de devedor em recuperação judicial, dispensando a anuência do detentor da garantia original. <BR><BR>§ 1º A garantia subordinada, em qualquer hipótese, ficará limitada ao eventual excesso resultante da alienação do ativo objeto da garantia original. <BR><BR>§ 2º O disposto no <I>caput</I> deste artigo não se aplica a qualquer modalidade de alienação fiduciária ou de cessão fiduciária.'</DIR>
+<DIR>&nbsp;'Art. 69-D. Caso a recuperação judicial seja convolada em falência antes da liberação integral dos valores de que trata esta Seção, o contrato de financiamento será considerado automaticamente rescindido. <BR><BR><I>Parágrafo único. </I>As garantias constituídas e as preferências serão conservadas até o limite dos valores efetivamente entregues ao devedor antes da data da sentença que convolar a recuperação judicial em falência.' </DIR>
+<DIR>'Art. 69-E. O financiamento de que trata esta Seção poderá ser realizado por qualquer pessoa, inclusive credores, sujeitos ou não à recuperação judicial, familiares, sócios e integrantes do grupo do devedor.' </DIR>
+<DIR>'Art. 69-F. Qualquer pessoa ou entidade pode garantir o financiamento de que trata esta Seção mediante a oneração ou a alienação fiduciária de bens e direitos, inclusive o próprio devedor e os demais integrantes do seu grupo, estejam ou não em recuperação judicial.'"</DIR>
+<DIR>
+<P align=center><STRONG>"'Secão IV-B<BR>Da Consolidação Processual e da Consolidação Substancial' </STRONG></P></DIR>
+<DIR>'Art. 69-G. Os devedores que atendam aos requisitos previstos nesta Lei e que integrem grupo sob controle societário comum poderão requerer recuperação judicial sob consolidação processual. <BR><BR>§ 1º Cada devedor apresentará individualmente a documentação exigida no art. 51 desta Lei. <BR><BR>§ 2º O juízo do local do principal estabelecimento entre os dos devedores eì competente para deferir a recuperação judicial sob consolidação processual, em observância ao disposto no art. 3º desta Lei. <BR><BR>§ 3º Exceto quando disciplinado de forma diversa, as demais disposições desta Lei aplicam-se aos casos de que trata esta Seção.' </DIR>
+<DIR>'Art. 69-H. Na hipótese de a documentação de cada devedor ser considerada adequada, apenas um administrador judicial será nomeado, observado o disposto na Seção III do Capítulo II desta Lei.' </DIR>
+<DIR>'Art. 69-I. A consolidação processual, prevista no art. 69-G desta Lei, acarreta a coordenação de atos processuais, garantida a independência dos devedores, dos seus ativos e dos seus passivos. <BR><BR>§ 1º Os devedores proporão meios de recuperação independentes e específicos para a composição de seus passivos, admitida a sua apresentação em plano único. <BR><BR>§ 2º Os credores de cada devedor deliberarão em assembleias-gerais de credores independentes. <BR><BR>§ 3º Os quóruns de instalação e de deliberação das assembleias-gerais de que trata o § 2º deste artigo serão verificados, exclusivamente, em referência aos credores de cada devedor, e serão elaboradas atas para cada um dos devedores. <BR><BR>§ 4º A consolidação processual não impede que alguns devedores obtenham a concessão da recuperação judicial e outros tenham a falência decretada. <BR><BR>§ 5º Na hipótese prevista no § 4º deste artigo, o processo será desmembrado em tantos processos quantos forem necessários.' </DIR>
+<DIR>'Art. 69-J. O juiz poderá, de forma excepcional, independentemente da realização de assembleia-geral, autorizar a consolidação substancial de ativos e passivos dos devedores integrantes do mesmo grupo econômico que estejam em recuperação judicial sob consolidação processual, apenas quando constatar a interconexão e a confusão entre ativos ou passivos dos devedores, de modo que não seja possível identificar a sua titularidade sem excessivo dispêndio de tempo ou de recursos, cumulativamente com a ocorrência de, no mínimo, 2 (duas) das seguintes hipóteses: <BR><BR>I - existência de garantias cruzadas; <BR><BR>II - relação de controle ou de dependência; <BR><BR>III - identidade total ou parcial do quadro societário; e <BR><BR>IV - atuação conjunta no mercado entre os postulantes.' </DIR>
+<DIR>'Art. 69-K. Em decorrência da consolidação substancial, ativos e passivos de devedores serão tratados como se pertencessem a um único devedor. <BR><BR>§ 1º A consolidação substancial acarretará a extinção imediata de garantias fidejussórias e de créditos detidos por um devedor em face de outro. <BR><BR>§ 2º A consolidação substancial não impactará a garantia real de nenhum credor, exceto mediante aprovação expressa do titular.'</DIR>
+<DIR>'Art. 69-L. Admitida a consolidação substancial, os devedores apresentarão plano unitário, que discriminará os meios de recuperação a serem empregados e será submetido a uma assembleia-geral de credores para a qual serão convocados os credores dos devedores. <BR><BR>§ 1º As regras sobre deliberação e homologação previstas nesta Lei serão aplicadas à assembleia-geral de credores a que se refere o <I>caput</I> deste artigo. <BR><BR>§ 2º A rejeição do plano unitário de que trata o <I>caput</I> deste artigo implicará a convolação da recuperação judicial em falência dos devedores sob consolidação substancial.'"</DIR>
+<DIR>"Art. 70-A.&nbsp;O produtor rural de que trata o § 3º do art. 48 desta Lei poderá apresentar plano especial de recuperação judicial, nos termos desta Seção, desde que o valor da causa não exceda a R$ 4.800.000,00 (quatro milhões e oitocentos mil reais)."</DIR>
+<DIR>"Art. 82-A.&nbsp;É vedada a extensão da falência ou de seus efeitos, no todo ou em parte, aos sócios de responsabilidade limitada, aos controladores e aos administradores da sociedade falida, admitida, contudo, a desconsideração da personalidade jurídica. <BR><BR><I>Parágrafo único. </I>A desconsideração da personalidade jurídica da sociedade falida, para fins de responsabilização de terceiros, grupo, sócio ou administrador por obrigação desta, somente pode ser decretada pelo juízo falimentar com a observância do art. 50 da Lei nº 10.406, de 10 de janeiro de 2002 (Código Civil) e dos arts. 133, 134, 135, 136 e 137 da Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), não aplicada a suspensão de que trata o § 3º do art. 134 da Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil)."</DIR>
+<DIR>"Art. 114-A.&nbsp;Se não forem encontrados bens para serem arrecadados, ou se os arrecadados forem insuficientes para as despesas do processo, o administrador judicial informará imediatamente esse fato ao juiz, que, ouvido o representante do Ministério Público, fixará, por meio de edital, o prazo de 10 (dez) dias para os interessados se manifestarem. <BR><BR>§ 1º Um ou mais credores poderão requerer o prosseguimento da falência, desde que paguem a quantia necessária às despesas e aos honorários do administrador judicial, que serão considerados despesas essenciais nos termos estabelecidos no inciso I-A do <I>caput</I> do art. 84 desta Lei. <BR><BR>§ 2º Decorrido o prazo previsto no <I>caput</I> sem manifestação dos interessados, o administrador judicial promoverá a venda dos bens arrecadados no prazo máximo de 30 (trinta) dias, para bens móveis, e de 60 (sessenta) dias, para bens imóveis, e apresentará o seu relatório, nos termos e para os efeitos dispostos neste artigo. <BR><BR>§ 3º Proferida a decisão, a falência será encerrada pelo juiz nos autos."</DIR>
+<DIR>"Art. 144-A.&nbsp;Frustrada a tentativa de venda dos bens da massa falida e não havendo proposta concreta dos credores para assumi-los, os bens poderão ser considerados sem valor de mercado e destinados à doação. <BR><BR><I>Parágrafo único. </I>Se não houver interessados na doação referida no <I>caput</I> deste artigo, os bens serão devolvidos ao falido."</DIR>
+<DIR>"Art. 159-A.&nbsp;A sentença que declarar extintas as obrigações do falido, nos termos do art. 159 desta Lei, somente poderá ser rescindida por ação rescisória, na forma prevista na Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), a pedido de qualquer credor, caso se verifique que o falido tenha sonegado bens, direitos ou rendimentos de qualquer espécie anteriores à data do requerimento a que se refere o art. 159 desta Lei. <BR><BR><I>Parágrafo único. </I>O direito à rescisão de que trata o <I>caput</I> deste artigo extinguir-se-á no prazo de 2 (dois) anos, contado da data do trânsito em julgado da sentença de que trata o art. 159 desta Lei."</DIR>
+<DIR>
+<P align=center><STRONG>"'CAPÍTULO VI-A<BR>DA INSOLVÊNCIA TRANSNACIONAL' </STRONG></P></DIR>
+<DIR>
+<P align=center><STRONG>'Secão I<BR>Disposicões Gerais'</STRONG> </P></DIR>
+<DIR>'Art. 167-A. Este Capítulo disciplina a insolvência transnacional, com o objetivo de proporcionar mecanismos efetivos para: <BR><BR>I - a cooperação entre juízes e outras autoridades competentes do Brasil e de outros países em casos de insolvência transnacional; <BR><BR>II - o aumento da segurança jurídica para a atividade econômica e para o investimento; <BR><BR>III - a administração justa e eficiente de processos de insolvência transnacional, de modo a proteger os interesses de todos os credores e dos demais interessados, inclusive do devedor; <BR><BR>IV - a proteção e a maximização do valor dos ativos do devedor; <BR><BR>V - a promoção da recuperação de empresas em crise econômico-financeira, com a proteção de investimentos e a preservação de empregos; e <BR><BR>VI - a promoção da liquidação dos ativos da empresa em crise econômicofinanceira, com a preservação e a otimização da utilização produtiva dos bens, dos ativos e dos recursos produtivos da empresa, inclusive os intangíveis. <BR><BR>§ 1º Na interpretação das disposições deste Capítulo, deverão ser considerados o seu objetivo de cooperação internacional, a necessidade de uniformidade de sua aplicação e a observância da boa-fé.<BR><BR>§ 2º As medidas de assistência aos processos estrangeiros mencionadas neste Capítulo formam um rol meramente exemplificativo, de modo que outras medidas, ainda que previstas em leis distintas, solicitadas pelo representante estrangeiro, pela autoridade estrangeira ou pelo juízo brasileiro poderão ser deferidas pelo juiz competente ou promovidas diretamente pelo administrador judicial, com imediata comunicação nos autos. <BR><BR>§ 3º Em caso de conflito, as obrigações assumidas em tratados ou convenções internacionais em vigor no Brasil prevalecerão sobre as disposições deste Capítulo. <BR><BR>§ 4º O juiz somente poderá deixar de aplicar as disposições deste Capítulo se, no caso concreto, a sua aplicação configurar manifesta ofensa à ordem pública. <BR><BR>§ 5º O Ministério Público intervirá nos processos de que trata este Capítulo. <BR><BR>§ 6º Na aplicação das disposições deste Capítulo, será observada a competência do Superior Tribunal de Justiça prevista na alínea "<EM>i</EM>" do inciso I do <I>caput</I> do art. 105 da Constituição Federal, quando cabível.' </DIR>
+<DIR>'Art. 167-B. Para os fins deste Capítulo, considera-se: <BR><BR>I - processo estrangeiro: qualquer processo judicial ou administrativo, de cunho coletivo, inclusive de natureza cautelar, aberto em outro país de acordo com disposições relativas à insolvência nele vigentes, em que os bens e as atividades de um devedor estejam sujeitos a uma autoridade estrangeira, para fins de reorganização ou liquidação; <BR><BR>II - processo estrangeiro principal: qualquer processo estrangeiro aberto no país em que o devedor tenha o centro de seus interesses principais; <BR><BR>III - processo estrangeiro não principal: qualquer processo estrangeiro que não seja um processo estrangeiro principal, aberto em um país em que o devedor tenha estabelecimento ou bens; <BR><BR>IV - representante estrangeiro: pessoa ou órgão, inclusive o nomeado em caráter transitório, que esteja autorizado, no processo estrangeiro, a administrar os bens ou as atividades do devedor, ou a atuar como representante do processo estrangeiro; <BR><BR>V - autoridade estrangeira: juiz ou autoridade administrativa que dirija ou supervisione um processo estrangeiro; e <BR><BR>VI - estabelecimento: qualquer local de operações em que o devedor desenvolva uma atividade econômica não transitória com o emprego de recursos humanos e de bens ou serviços.'</DIR>
+<DIR>'Art. 167-C. As disposições deste Capítulo aplicam-se aos casos em que: </DIR>
+<DIR>I - autoridade estrangeira ou representante estrangeiro solicita assistência no Brasil para um processo estrangeiro; <BR><BR>II - assistência relacionada a um processo disciplinado por esta Lei é pleiteada em um país estrangeiro; <BR><BR>III - processo estrangeiro e processo disciplinado por esta Lei relativos ao mesmo devedor estão em curso simultaneamente; ou <BR><BR>IV - credores ou outras partes interessadas, de outro país, têm interesse em requerer a abertura de um processo disciplinado por esta Lei, ou dele participar.' </DIR>
+<DIR>'Art. 167-D. O juízo do local do principal estabelecimento do devedor no Brasil é o competente para o reconhecimento de processo estrangeiro e para a cooperação com a autoridade estrangeira nos termos deste Capítulo. <BR><BR>§ 1º A distribuição do pedido de reconhecimento do processo estrangeiro previne a jurisdição para qualquer pedido de recuperação judicial, de recuperação extrajudicial ou de falência relativo ao devedor. <BR><BR>§ 2º A distribuição do pedido de recuperação judicial, de recuperação extrajudicial ou de falência previne a jurisdição para qualquer pedido de reconhecimento de processo estrangeiro relativo ao devedor.'</DIR>
+<DIR>'Art. 167-E. São autorizados a atuar em outros países, independentemente de decisão judicial, na qualidade de representante do processo brasileiro, desde que essa providência seja permitida pela lei do país em que tramitem os processos estrangeiros: <BR><BR>I - o devedor, na recuperação judicial e na recuperação extrajudicial; <BR><BR>II - o administrador judicial, na falência. <BR><BR>§ 1º Na hipótese de que trata o inciso II do <I>caput</I> deste artigo, poderá o juiz, em caso de omissão do administrador judicial, autorizar terceiro para a atuação prevista no <I>caput</I> deste artigo. <BR><BR>§ 2º A pedido de qualquer dos autorizados, o juízo mandará certificar a condição de representante do processo brasileiro.' </DIR>
+<DIR>
+<P align=center><STRONG>'Seção II <BR>Do Acesso à Jurisdição Brasileira'</STRONG></P></DIR>
+<DIR>'Art. 167-F. O representante estrangeiro está legitimado a postular diretamente ao juiz brasileiro, nos termos deste Capítulo. <BR><BR>§ 1º O pedido feito ao juiz brasileiro não sujeita o representante estrangeiro nem o devedor, seus bens e suas atividades à jurisdição brasileira, exceto no que diz respeito aos estritos limites do pedido. <BR><BR>§ 2º Reconhecido o processo estrangeiro, o representante estrangeiro está autorizado a: <BR><BR>I - ajuizar pedido de falência do devedor, desde que presentes os requisitos para isso, de acordo com esta Lei; <BR><BR>II - participar do processo de recuperação judicial, de recuperação extrajudicial ou de falência do mesmo devedor, em curso no Brasil; <BR><BR>III - intervir em qualquer processo em que o devedor seja parte, atendidas as exigências do direito brasileiro.'</DIR>
+<DIR>'Art. 167-G. Os credores estrangeiros têm os mesmos direitos conferidos aos credores nacionais nos processos de recuperação judicial, de recuperação extrajudicial ou de falência. <BR><BR>§ 1º Os credores estrangeiros receberão o mesmo tratamento dos credores nacionais, respeitada a ordem de classificação dos créditos prevista nesta Lei, e não serão discriminados em razão de sua nacionalidade ou da localização de sua sede, estabelecimento, residência ou domicílio, respeitado o seguinte: <BR><BR>I - os créditos estrangeiros de natureza tributária e previdenciária, bem como as penas pecuniárias por infração de leis penais ou administrativas, inclusive as multas tributárias devidas a Estados estrangeiros, não serão considerados nos processos de recuperação judicial e serão classificados como créditos subordinados nos processos de falência, independentemente de sua classificação nos países em que foram constituídos; <BR><BR>II - o crédito do representante estrangeiro será equiparado ao do administrador judicial nos casos em que fizer jus a remuneração, exceto quando for o próprio devedor ou seu representante; <BR><BR>III - os créditos que não tiverem correspondência com a classificação prevista nesta Lei serão classificados como quirografários, independentemente da classificação atribuída pela lei do país em que foram constituídos. <BR><BR>§ 2º O juiz deve determinar as medidas apropriadas, no caso concreto, para que os credores que não tiverem domicílio ou estabelecimento no Brasil tenham acesso às notificações e às informações dos processos de recuperação judicial, de recuperação extrajudicial ou de falência. <BR><BR>§ 3º As notificações e as informações aos credores que não tiverem domicílio ou estabelecimento no Brasil serão realizadas por qualquer meio considerado adequado pelo juiz, dispensada a expedição de carta rogatória para essa finalidade. <BR><BR>§ 4º A comunicação do início de um processo de recuperação judicial ou de falência para credores estrangeiros deverá conter as informações sobre providências necessárias para que o credor possa fazer valer seu direito, inclusive quanto ao prazo para apresentação de habilitação ou de divergência e à necessidade de os credores garantidos habilitarem seus créditos. <BR><BR>§ 5º O juiz brasileiro deverá expedir os ofícios e os mandados necessários ao Banco Central do Brasil para permitir a remessa ao exterior dos valores recebidos por credores domiciliados no estrangeiro.' </DIR>
+<DIR>
+<P align=center><STRONG>'Secão III <BR>Do Reconhecimento de Processos Estrangeiros'</STRONG> </P></DIR>
+<DIR>'Art. 167-H. O representante estrangeiro pode ajuizar, perante o juiz, pedido de reconhecimento do processo estrangeiro em que atua. <BR><BR>§ 1º O pedido de reconhecimento do processo estrangeiro deve ser acompanhado dos seguintes documentos: <BR><BR>I - cópia apostilada da decisão que determine a abertura do processo estrangeiro e nomeie o representante estrangeiro; <BR><BR>II - certidão apostilada expedida pela autoridade estrangeira que ateste a existência do processo estrangeiro e a nomeação do representante estrangeiro; ou <BR><BR>III - qualquer outro documento emitido por autoridade estrangeira que permita ao juiz atingir plena convicção da existência do processo estrangeiro e da identificação do representante estrangeiro. <BR><BR>§ 2º O pedido de reconhecimento do processo estrangeiro deve ser acompanhado por uma relação de todos os processos estrangeiros relativos ao devedor que sejam de conhecimento do representante estrangeiro. <BR><BR>§ 3º Os documentos redigidos em língua estrangeira devem estar acompanhados de tradução oficial para a língua portuguesa, salvo quando, sem prejuízo aos credores, for expressamente dispensada pelo juiz e substituída por tradução simples para a língua portuguesa, declarada fiel e autêntica pelo próprio advogado, sob sua responsabilidade pessoal.' </DIR>
+<DIR>'Art. 167-I. Independentemente de outras medidas, o juiz poderá reconhecer: <BR><BR>I - a existência do processo estrangeiro e a identificação do representante estrangeiro, a partir da decisão ou da certidão referidas no § 1º do art. 167-H desta Lei que os indicarem como tal; <BR><BR>II - a autenticidade de todos ou de alguns documentos juntados com o pedido de reconhecimento do processo estrangeiro, mesmo que não tenham sido apostilados; <BR><BR>III - o país onde se localiza o domicílio do devedor, no caso dos empresários individuais, ou o país da sede estatutária do devedor, no caso das sociedades, como seu centro de interesses principais, salvo prova em contrário.'</DIR>
+<DIR>'Art. 167-J. Ressalvado o disposto no § 4º do art. 167-A desta Lei, o juiz reconhecerá o processo estrangeiro quando: <BR><BR>I - o processo enquadrar-se na definição constante do inciso I do <I>caput</I> do art. 167-B desta Lei; <BR><BR>II - o representante que tiver requerido o reconhecimento do processo enquadrar-se na definição de representante estrangeiro constante do inciso IV do <I>caput</I> do art. 167-B desta Lei; <BR><BR>III - o pedido cumprir os requisitos estabelecidos no art. 167-H desta Lei; e <BR><BR>IV - o pedido tiver sido endereçado ao juiz, conforme o disposto no art. 167- D desta Lei. <BR><BR>§ 1º Satisfeitos os requisitos previstos no <I>caput</I> deste artigo, o processo estrangeiro deve ser reconhecido como: <BR><BR>I - processo estrangeiro principal, caso tenha sido aberto no local em que o devedor tenha o seu centro de interesses principais; ou <BR><BR>II - processo estrangeiro não principal, caso tenha sido aberto em local em que o devedor tenha bens ou estabelecimento, na forma definida no inciso VI do <I>caput</I> do art. 167-B desta Lei. <BR><BR>§ 2º Não obstante o previsto nos incisos I e II do § 1º deste artigo, o processo estrangeiro será reconhecido como processo estrangeiro não principal se o centro de interesses principais do devedor tiver sido transferido ou de outra forma manipulado com o objetivo de transferir para outro Estado a competência jurisdicional para abertura do processo. <BR><BR>§ 3º A decisão de reconhecimento do processo estrangeiro poderá ser modificada ou revogada, a qualquer momento, a pedido de qualquer parte interessada, se houver elementos que comprovem que os requisitos para o reconhecimento foram descumpridos, total ou parcialmente, ou deixaram de existir. <BR><BR>§ 4º Da decisão que acolher o pedido de reconhecimento caberá agravo, e da sentença que o julgar improcedente caberá apelação.'</DIR>
+<DIR>'Art. 167-K. Após o pedido de reconhecimento do processo estrangeiro, o representante estrangeiro deverá imediatamente informar ao juiz: <BR><BR>I - qualquer modificação significativa no estado do processo estrangeiro reconhecido ou no estado de sua nomeação como representante estrangeiro; <BR><BR>II - qualquer outro processo estrangeiro relativo ao mesmo devedor de que venha a ter conhecimento.'</DIR>
+<DIR>'Art. 167-L. Após o ajuizamento do pedido de reconhecimento do processo estrangeiro, e antes de sua decisão, o juiz poderá conceder liminarmente as medidas de tutela provisória, fundadas em urgência ou evidência, necessárias para o cumprimento desta Lei, para a proteção da massa falida ou para a eficiência da administração. <BR><BR>§ 1º Salvo no caso do disposto no inciso IV do <I>caput</I> do art. 167-N desta Lei, as medidas de natureza provisória encerram-se com a decisão sobre o pedido de reconhecimento. <BR><BR>§ 2º O juiz poderá recusar-se a conceder as medidas de assistência provisória que possam interferir na administração do processo estrangeiro principal.'</DIR>
+<DIR>'Art. 167-M. Com o reconhecimento de processo estrangeiro principal, decorrem automaticamente: <BR><BR>I - a suspensão do curso de quaisquer processos de execução ou de quaisquer outras medidas individualmente tomadas por credores relativas ao patrimônio do devedor, respeitadas as demais disposições desta Lei; <BR><BR>II - a suspensão do curso da prescrição de quaisquer execuções judiciais contra o devedor, respeitadas as demais disposições desta Lei; <BR><BR>III - a ineficácia de transferência, de oneração ou de qualquer forma de disposição de bens do ativo não circulante do devedor realizadas sem prévia autorização judicial. <BR><BR>§ 1º A extensão, a modificação ou a cessação dos efeitos previstos nos incisos I, II e III do <I>caput</I> deste artigo subordinam-se ao disposto nesta Lei. <BR><BR>§ 2º Os credores conservam o direito de ajuizar quaisquer processos judiciais e arbitrais, e de neles prosseguir, que visem à condenação do devedor ou ao reconhecimento ou à liquidação de seus créditos, e, em qualquer caso, as medidas executórias deverão permanecer suspensas. <BR><BR>§ 3º As medidas previstas neste artigo não afetam os credores que não estejam sujeitos aos processos de recuperação judicial, de recuperação extrajudicial ou de falência, salvo nos limites permitidos por esta Lei.'</DIR>
+<DIR>'Art. 167-N. Com a decisão de reconhecimento do processo estrangeiro, tanto principal como não principal, o juiz poderá determinar, a pedido do representante estrangeiro e desde que necessárias para a proteção dos bens do devedor e no interesse dos credores, entre outras, as seguintes medidas: <BR><BR>I - a ineficácia de transferência, de oneração ou de qualquer forma de disposição de bens do ativo não circulante do devedor realizadas sem prévia autorização judicial, caso não tenham decorrido automaticamente do reconhecimento previsto no art. 167-M desta Lei; <BR><BR>II - a oitiva de testemunhas, a colheita de provas ou o fornecimento de informações relativas a bens, a direitos, a obrigações, à responsabilidade e à atividade do devedor; <BR><BR>III - a autorização do representante estrangeiro ou de outra pessoa para administrar e/ou realizar o ativo do devedor, no todo ou em parte, localizado no Brasil; <BR><BR>IV - a conversão, em definitiva, de qualquer medida de assistência provisória concedida anteriormente; <BR><BR>V - a concessão de qualquer outra medida que seja necessária. <BR><BR>§ 1º Com o reconhecimento do processo estrangeiro, tanto principal como não principal, o juiz poderá, a requerimento do representante estrangeiro, autorizá-lo, ou outra pessoa nomeada por aquele, a promover a destinação do ativo do devedor, no todo ou em parte, localizado no Brasil, desde que os interesses dos credores domiciliados ou estabelecidos no Brasil estejam adequadamente protegidos. <BR><BR>§ 2º Ao conceder medida de assistência prevista neste artigo requerida pelo representante estrangeiro de um processo estrangeiro não principal, o juiz deverá certificar-se de que as medidas para efetivá-la se referem a bens que, de acordo com o direito brasileiro, devam ser submetidos à disciplina aplicável ao processo estrangeiro não principal, ou certificar-se de que elas digam respeito a informações nele exigidas.'</DIR>
+<DIR>'Art. 167-O. Ao conceder ou denegar uma das medidas previstas nos arts. 167- L e 167-N desta Lei, bem como ao modificá-las ou revogá-las nos termos do § 2º deste artigo, o juiz deverá certificar-se de que o interesse dos credores, do devedor e de terceiros interessados será adequadamente protegido. <BR><BR>§ 1º O juiz poderá condicionar a concessão das medidas previstas nos arts. 167-L e 167-N desta Lei ao atendimento de condições que considerar apropriadas. <BR><BR>§ 2º A pedido de qualquer interessado, do representante estrangeiro ou de ofício, o juiz poderá modificar ou revogar, a qualquer momento, medidas concedidas com fundamento nos arts. 167-L e 167-N desta Lei. <BR><BR>§ 3º Com o reconhecimento do processo estrangeiro, tanto principal quanto não principal, o representante estrangeiro poderá ajuizar medidas com o objetivo de tornar ineficazes quaisquer atos realizados, nos termos dos arts. 129 e 130, observado ainda o disposto no art. 131, todos desta Lei. <BR><BR>§ 4º No caso de processo estrangeiro não principal, a ineficácia referida no § 3º deste artigo dependerá da verificação, pelo juiz, de que, de acordo com a lei brasileira, os bens devam ser submetidos à disciplina aplicável ao processo estrangeiro não principal.' </DIR>
+<DIR>
+<P align=center><STRONG>'Seção IV <BR>Da Cooperação com Autoridades e Representantes Estrangeiros'</STRONG> </P></DIR>
+<DIR>'Art. 167-P. O juiz deverá cooperar diretamente ou por meio do administrador judicial, na máxima extensão possível, com a autoridade estrangeira ou com representantes estrangeiros, na persecução dos objetivos estabelecidos no art. 167- A desta Lei. <BR><BR>§ 1º O juiz poderá comunicar-se diretamente com autoridades estrangeiras ou com representantes estrangeiros, ou deles solicitar informação e assistência, sem a necessidade de expedição de cartas rogatórias, de procedimento de auxílio direto ou de outras formalidades semelhantes. <BR><BR>§ 2º O administrador judicial, no exercício de suas funções e sob a supervisão do juiz, deverá cooperar, na máxima extensão possível, com a autoridade estrangeira ou com representantes estrangeiros, na persecução dos objetivos estabelecidos no art. 167-A desta Lei. <BR><BR>§ 3º O administrador judicial, no exercício de suas funções, poderá comunicar-se com as autoridades estrangeiras ou com os representantes estrangeiros.'</DIR>
+<DIR>'Art. 167-Q. A cooperação a que se refere o art. 167-P desta Lei poderá ser implementada por quaisquer meios, inclusive pela: <BR><BR>I - nomeação de uma pessoa, natural ou jurídica, para agir sob a supervisão do juiz; <BR><BR>II - comunicação de informações por quaisquer meios considerados apropriados pelo juiz; <BR><BR>III - coordenação da administração e da supervisão dos bens e das atividades do devedor; <BR><BR>IV - aprovação ou implementação, pelo juiz, de acordos ou de protocolos de cooperação para a coordenação dos processos judiciais; e <BR><BR>V - coordenação de processos concorrentes relativos ao mesmo devedor.' </DIR>
+<DIR>
+<P align=center><STRONG>'Seção V <BR>Dos Processos Concorrentes'</STRONG></P></DIR>
+<DIR>'Art. 167-R. Após o reconhecimento de um processo estrangeiro principal, somente se iniciará no Brasil um processo de recuperação judicial, de recuperação extrajudicial ou de falência se o devedor possuir bens ou estabelecimento no País. <BR><BR><I>Parágrafo único. </I>Os efeitos do processo ajuizado no Brasil devem restringir-se aos bens e ao estabelecimento do devedor localizados no Brasil e podem estenderse a outros, desde que esta medida seja necessária para a cooperação e a coordenação com o processo estrangeiro principal.'</DIR>
+<DIR>'Art. 167-S. Sempre que um processo estrangeiro e um processo de recuperação judicial, de recuperação extrajudicial ou de falência relativos ao mesmo devedor estiverem em curso simultaneamente, o juiz deverá buscar a cooperação e a coordenação entre eles, respeitadas as seguintes disposições: <BR><BR>I - se o processo no Brasil já estiver em curso quando o pedido de reconhecimento do processo estrangeiro tiver sido ajuizado, qualquer medida de assistência determinada pelo juiz nos termos dos arts. 167-L ou 167-N desta Lei deve ser compatível com o processo brasileiro, e o previsto no art. 167-M desta Lei não será aplicável se o processo estrangeiro for reconhecido como principal; <BR><BR>II - se o processo no Brasil for ajuizado após o reconhecimento do processo estrangeiro ou após o ajuizamento do pedido de seu reconhecimento, todas as medidas de assistência concedidas nos termos dos arts. 167-L ou 167-N desta Lei deverão ser revistas pelo juiz e modificadas ou revogadas se forem incompatíveis com o processo no Brasil e, quando o processo estrangeiro for reconhecido como principal, os efeitos referidos nos incisos I, II e III do <I>caput</I> do art. 167-M serão modificados ou cessados, nos termos do § 1º do art. 167-M desta Lei, se incompatíveis com os demais dispositivos desta Lei; <BR><BR>III - qualquer medida de assistência a um processo estrangeiro não principal deverá restringir-se a bens e a estabelecimento que, de acordo com o ordenamento jurídico brasileiro, devam ser submetidos à disciplina aplicável ao processo estrangeiro não principal, ou a informações nele exigidas.' </DIR>
+<DIR>'Art. 167-T. Na hipótese de haver mais de um processo estrangeiro relativo ao mesmo devedor, o juiz deverá buscar a cooperação e a coordenação de acordo com as disposições dos arts. 167-P e 167-Q desta Lei, bem como observar o seguinte: <BR></DIR>
+<DIR>I - qualquer medida concedida ao representante de um processo estrangeiro não principal após o reconhecimento de um processo estrangeiro principal deve ser compatível com este último; <BR><BR>II - se um processo estrangeiro principal for reconhecido após o reconhecimento ou o pedido de reconhecimento de um processo estrangeiro não principal, qualquer medida concedida nos termos dos arts. 167-L ou 167-N desta Lei deverá ser revista pelo juiz, que a modificará ou a revogará se for incompatível com o processo estrangeiro principal; <BR><BR>III - se, após o reconhecimento de um processo estrangeiro não principal, outro processo estrangeiro não principal for reconhecido, o juiz poderá, com a finalidade de facilitar a coordenação dos processos, conceder, modificar ou revogar qualquer medida antes concedida.' </DIR>
+<DIR>'Art. 167-U. Na ausência de prova em contrário, presume-se a insolvência do devedor cujo processo estrangeiro principal tenha sido reconhecido no Brasil. <BR><BR><I>Parágrafo único. </I>O representante estrangeiro, o devedor ou os credores podem requerer a falência do devedor cujo processo estrangeiro principal tenha sido reconhecido no Brasil, atendidos os pressupostos previstos nesta Lei.'</DIR>
+<DIR>'Art. 167-V. O juízo falimentar responsável por processo estrangeiro não principal deve prestar ao juízo principal as seguintes informações, entre outras: <BR><BR>I - valor dos bens arrecadados e do passivo; <BR><BR>II - valor dos créditos admitidos e sua classificação; <BR><BR>III - classificação, segundo a lei nacional, dos credores não domiciliados ou sediados nos países titulares de créditos sujeitos à lei estrangeira; <BR><BR>IV - relação de ações judiciais em curso de que seja parte o falido, como autor, réu ou interessado; <BR><BR>V - ocorrência do término da liquidação e o saldo, credor ou devedor, bem como eventual ativo remanescente.'</DIR>
+<DIR>'Art. 167-W. No processo falimentar transnacional, principal ou não principal, nenhum ativo, bem ou recurso remanescente da liquidação será entregue ao falido se ainda houver passivo não satisfeito em qualquer outro processo falimentar transnacional.' </DIR>
+<DIR>'Art. 167-X. O processo de falência transnacional principal somente poderá ser finalizado após o encerramento dos processos não principais ou após a constatação de que, nesses últimos, não haja ativo líquido remanescente.' </DIR>
+<DIR>'Art. 167-Y. Sem prejuízo dos direitos sobre bens ou decorrentes de garantias reais, o credor que tiver recebido pagamento parcial de seu crédito em processo de insolvência no exterior não poderá ser pago pelo mesmo crédito em processo no Brasil referente ao mesmo devedor enquanto os pagamentos aos credores da mesma classe forem proporcionalmente inferiores ao valor já recebido no exterior.'"</DIR>
+<DIR>"Art. 189-A.&nbsp;Os processos disciplinados nesta Lei e os respectivos recursos, bem como os processos, os procedimentos e a execução dos atos e das diligências judiciais em que figure como parte empresário individual ou sociedade empresária em regime de recuperação judicial ou extrajudicial ou de falência terão prioridade sobre todos os atos judiciais, salvo o <I>habeas corpus</I> e as prioridades estabelecidas em leis especiais."</DIR>
+<DIR>"Art. 193-A.&nbsp;O pedido de recuperação judicial, o deferimento de seu processamento ou a homologação do plano de recuperação judicial não afetarão ou suspenderão, nos termos da legislação aplicável, o exercício dos direitos de vencimento antecipado e de compensação no âmbito de operações compromissadas e de derivativos, de modo que essas operações poderão ser vencidas antecipadamente, desde que assim previsto nos contratos celebrados entre as partes ou em regulamento, proibidas, no entanto, medidas que impliquem a redução, sob qualquer forma, das garantias ou de sua condição de excussão, a restrição do exercício de direitos, inclusive de vencimento antecipado por inexecução, e a compensação previstas contratualmente ou em regulamento.<STRONG> </STRONG><BR><BR>§ 1º Em decorrência do vencimento antecipado das operações compromissadas e de derivativos conforme previsto no <I>caput</I> deste artigo, os créditos e débitos delas decorrentes serão compensados e extinguirão as obrigações até onde se compensarem. <BR><BR>§ 2º Se houver saldo remanescente contra o devedor, será este considerado crédito sujeito à recuperação judicial, ressalvada a existência de garantia de alienação ou de cessaÞo fiduciária."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;A Lei nº 10.522, de 19 de julho de 2002, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 10-A.&nbsp;O empresário ou a sociedade empresária que pleitear ou tiver deferido o processamento da recuperação judicial, nos termos dos arts. 51, 52 e 70 da Lei nº 11.101, de 9 de fevereiro de 2005, poderá liquidar os seus débitos para com a Fazenda Nacional existentes, ainda que não vencidos até a data do protocolo da petição inicial da recuperação judicial, de natureza tributária ou não tributária, constituídos ou não, inscritos ou não em dívida ativa, mediante a opção por uma das seguintes modalidades: <BR></DIR>
+<DIR>I - (revogado); <BR><BR>II - (revogado); <BR><BR>III - (revogado); <BR><BR>IV - (revogado); <BR><BR>V - parcelamento da dívida consolidada em até 120 (cento e vinte) prestações mensais e sucessivas, calculadas de modo a observar os seguintes percentuais mínimos, aplicados sobre o valor da dívida consolidada no parcelamento: </DIR>
+<DIR><EM>a) </EM>da primeira à décima segunda prestação: 0,5% (cinco décimos por cento); <BR><EM>b) </EM>da décima terceira à vigésima quarta prestação: 0,6% (seis décimos por cento); <BR><EM>c) </EM>da vigésima quinta prestação em diante: percentual correspondente ao saldo remanescente, em até 96 (noventa e seis) prestações mensais e sucessivas; ou <BR><BR>VI - em relação aos débitos administrados pela Secretaria Especial da Receita Federal do Brasil, liquidação de até 30% (trinta por cento) da dívida consolidada no parcelamento com a utilização de créditos decorrentes de prejuízo fiscal e de base de cálculo negativa da Contribuição Social sobre o Lucro Líquido (CSLL) ou com outros créditos próprios relativos aos tributos administrados pela Secretaria Especial da Receita Federal do Brasil, hipótese em que o restante poderá ser parcelado em até 84 (oitenta e quatro) parcelas, calculadas de modo a observar os seguintes percentuais mínimos, aplicados sobre o saldo da dívida consolidada: </DIR>
+<DIR><EM>a) </EM>da primeira à décima segunda prestação: 0,5% (cinco décimos por cento); <BR><EM>b) </EM>da décima terceira à vigésima quarta prestação: 0,6% (seis décimos por cento); <BR><EM>c) </EM>da vigésima quinta prestação em diante: percentual correspondente ao saldo remanescente, em até 60 (sessenta) prestações mensais e sucessivas. <BR><BR>§ 1º (Revogado). <BR><BR>§ 1º-A. As opções previstas nos incisos V e VI do <I>caput</I> deste artigo não impedem que o empresário ou a sociedade empresária que pleitear ou tiver deferido o processamento da recuperação judicial, nos termos estabelecidos nos arts. 51, 52 e 70 da Lei nº 11.101, de 9 de fevereiro de 2005, opte por liquidar os referidos débitos para com a Fazenda Nacional por meio de outra modalidade de parcelamento instituído por lei federal, desde que atendidas as condições previstas na lei, hipótese em que será firmado ou mantido o termo de compromisso a que se refere o § 2º-A deste artigo, sob pena de indeferimento ou de exclusão do parcelamento, conforme o caso. <BR><BR>§ 1º-B. O valor do crédito de que trata o inciso VI do <I>caput</I> deste artigo, decorrente de prejuízo fiscal e de base de cálculo negativa da CSLL, será determinado por meio da aplicação das seguintes alíquotas: <BR><BR>I - 25% (vinte e cinco por cento) sobre o montante do prejuízo fiscal; <BR><BR>II - 20% (vinte por cento) sobre a base de cálculo negativa da CSLL, no caso das pessoas jurídicas de seguros privados, das pessoas jurídicas de capitalização e das pessoas jurídicas referidas nos incisos I, II, III, IV, V, VI, VII e X do § 1º do art. 1º da Lei Complementar nº 105, de 10 de janeiro de 2001; <BR><BR>III - 17% (dezessete por cento) sobre a base de cálculo negativa da CSLL, no caso das pessoas jurídicas referidas no inciso IX do § 1º do art. 1º da Lei Complementar nº 105, de 10 de janeiro de 2001; <BR><BR>IV - 9% (nove por cento) sobre a base de cálculo negativa da CSLL, no caso das demais pessoas jurídicas. <BR><BR>§ 1º-C. A adesão ao parcelamento abrangerá a totalidade dos débitos exigíveis em nome do sujeito passivo, observadas as seguintes condições e ressalvas: <BR><BR>I - os débitos sujeitos a outros parcelamentos ou que comprovadamente sejam objeto de discussão judicial poderão ser excluídos, estes últimos mediante: </DIR>
+<DIR><EM>a) </EM>o oferecimento de garantia idônea e suficiente, aceita pela Fazenda Nacional em juízo; ou <BR><EM>b) </EM>a apresentação de decisão judicial em vigor e eficaz que determine a suspensão de sua exigibilidade; <BR><BR>II - a garantia prevista na alínea "<EM>a</EM>" do inciso I deste parágrafo não poderá ser incluída no plano de recuperação judicial, permitida a sua execução regular, inclusive por meio da expropriação, se não houver a suspensão da exigibilidade ou a extinção do crédito em discussão judicial; <BR><BR>III - o disposto no inciso II deste § 1º-C também se aplica aos depósitos judiciais regidos pela Lei nº 9.703, de 17 de novembro de 1998, e pela Lei nº 12.099, de 27 de novembro de 2009. <BR><BR>§ 2º Na hipótese de o sujeito passivo optar pela inclusão, no parcelamento de que trata este artigo, de débitos que se encontrem sob discussão administrativa ou judicial, submetidos ou não a causa legal de suspensão de exigibilidade, deverá ele comprovar que desistiu expressamente e de forma irrevogável da impugnação ou do recurso interposto, ou da ação judicial e, cumulativamente, que renunciou às alegações de direito sobre as quais se fundam a ação judicial e o recurso administrativo. <BR><BR>§ 2º-A. Para aderir ao parcelamento de que trata este artigo, o sujeito passivo firmará termo de compromisso, no qual estará previsto: <BR><BR>I - o fornecimento à Secretaria Especial da Receita Federal do Brasil e à Procuradoria-Geral da Fazenda Nacional de informações bancárias, incluídas aquelas sobre extratos de fundos ou aplicações financeiras e sobre eventual comprometimento de recebíveis e demais ativos futuros; <BR><BR>II - o dever de amortizar o saldo devedor do parcelamento de que trata este artigo com percentual do produto de cada alienação de bens e direitos integrantes do ativo não circulante realizada durante o período de vigência do plano de recuperação judicial, sem prejuízo do disposto no inciso III do § 4º deste artigo; <BR><BR>III - o dever de manter a regularidade fiscal; <BR><BR>IV - o cumprimento regular das obrigações para com o Fundo de Garantia do Tempo de Serviço (FGTS). <BR><BR>§ 2º-B. Para fins do disposto no inciso II do § 2º-A deste artigo: <BR><BR>I - a amortização do saldo devedor implicará redução proporcional da quantidade de parcelas vincendas; <BR><BR>II - observado o limite máximo de 30% (trinta por cento) do produto da alienação, o percentual a ser destinado para a amortização do parcelamento corresponderá à razão entre o valor total do passivo fiscal e o valor total de dívidas do devedor, na data do pedido de recuperação judicial. <BR><BR>§ 3º O empresário ou a sociedade empresária poderá, a seu critério, desistir dos parcelamentos em curso, independentemente da modalidade, e solicitar o parcelamento nos termos estabelecidos neste artigo. <BR><BR>§ 4º Implicará a exclusão do sujeito passivo do parcelamento: <BR><BR>I - a falta de pagamento de 6 (seis) parcelas consecutivas ou de 9 (nove) parcelas alternadas; <BR><BR>II - a falta de pagamento de 1 (uma) até 5 (cinco) parcelas, conforme o caso, se todas as demais estiverem pagas; <BR><BR>III - a constatação, pela Secretaria Especial da Receita Federal do Brasil ou pela Procuradoria-Geral da Fazenda Nacional, de qualquer ato tendente ao esvaziamento patrimonial do sujeito passivo como forma de fraudar o cumprimento do parcelamento, observado, no que couber, o disposto no inciso II do § 2º-A deste artigo; <BR><BR>IV - a decretação de falência ou extinção, pela liquidação, da pessoa jurídica optante; <BR><BR>V - a concessão de medida cautelar fiscal, nos termos da Lei nº 8.397, de 6 de janeiro de 1992; <BR><BR>VI - a declaração de inaptidão da inscrição no Cadastro Nacional da Pessoa Jurídica (CNPJ), nos termos dos arts. 80 e 81 da Lei nº 9.430, de 27 de dezembro de 1996; <BR><BR>VII - a extinção sem resolução do mérito ou a não concessão da recuperação judicial, bem como a convolação desta em falência; ou <BR><BR>VIII - o descumprimento de quaisquer das condições previstas neste artigo, inclusive quanto ao disposto no § 2º-A deste artigo. <BR><BR>§ 4º-A. São consequências da exclusão prevista no § 4º deste artigo: <BR><BR>I - a exigibilidade imediata da totalidade do débito confessado e ainda não pago, com o prosseguimento das execuções fiscais relacionadas aos créditos cuja exigibilidade estava suspensa, inclusive com a possibilidade de prática de atos de constrição e de alienação pelos juízos que as processam, ressalvada a hipótese prevista no inciso IV deste parágrafo; <BR><BR>II - a execução automática das garantias; <BR><BR>III - o restabelecimento em cobrança dos valores liquidados com os créditos, na hipótese de parcelamento na modalidade prevista no inciso VI do <I>caput</I> deste artigo; <BR><BR>IV - a faculdade de a Fazenda Nacional requerer a convolação da recuperação judicial em falência. <BR><BR>§ 5º O empresário ou a sociedade empresária poderá ter apenas 1 (um) parcelamento perante a Fazenda Nacional, cujos débitos constituídos, inscritos ou não em dívida ativa da União, poderão ser incluídos até a data do pedido de parcelamento. <BR><BR>§ 6º A concessão do parcelamento não implica a liberação dos bens e dos direitos do devedor ou de seus responsáveis que tenham sido constituídos em garantia dos créditos. <BR><BR>§ 7º O parcelamento referido nos incisos V e VI do <I>caput</I> deste artigo observará as demais condições previstas nesta Lei, ressalvado o disposto nos seguintes dispositivos: <BR><BR>I - § 1º do art. 11; <BR><BR>II - inciso II do § 1º do art. 12; <BR><BR>III - inciso VIII do <I>caput</I> do art. 14; <BR><BR>IV - § 2º do art. 14-A. <BR><BR>§ 7º-A. As microempresas e as empresas de pequeno porte farão jus a prazos 20% (vinte por cento) superiores àqueles regularmente concedidos às demais empresas. <BR><BR>§ 8º O disposto neste artigo aplica-se, no que couber, aos créditos de qualquer natureza das autarquias e das fundações públicas federais, ressalvada a modalidade de parcelamento de que trata o inciso VI do <I>caput</I> deste artigo." (NR) </DIR>
+<DIR>"Art. 10-B.&nbsp;O empresário ou a sociedade empresária que pleitear ou tiver deferido o processamento da recuperação judicial, nos termos dos arts. 51, 52 e 70 da Lei nº 11.101, de 9 de fevereiro de 2005, poderá parcelar os seus débitos para com a Fazenda Nacional existentes, ainda que não vencidos até a data do protocolo da petição inicial da recuperação judicial, relativos aos tributos previstos nos incisos I e II do <I>caput</I> do art. 14 desta Lei, constituídos ou não, inscritos ou não em dívida ativa, em até 24 (vinte e quatro) parcelas mensais e consecutivas, calculadas de modo a observar os seguintes percentuais mínimos, aplicados sobre o valor da dívida consolidada: <BR><BR>I - da primeira à sexta prestação: 3% (três por cento); <BR><BR>II - da sétima à décima segunda prestação: 6% (seis por cento); <BR><BR>III - da décima terceira prestação em diante: percentual correspondente ao saldo remanescente, em até 12 (doze) prestações mensais e sucessivas. <BR><BR>§ 1º O disposto no art. 10-A desta Lei, exceto quanto aos incisos V e VI do <I>caput</I>, ao § 1º-B e ao inciso III do § 4º-A, aplica-se ao parcelamento de que trata este artigo. <BR><BR>§ 2º As microempresas e as empresas de pequeno porte farão jus a prazos 20% (vinte por cento) superiores àqueles regularmente concedidos às demais empresas."</DIR>
+<DIR>"Art. 10-C.&nbsp;Alternativamente ao parcelamento de que trata o art. 10-A desta Lei e às demais modalidades de parcelamento instituídas por lei federal porventura aplicáveis, o empresário ou a sociedade empresária que tiver o processamento da recuperação judicial deferido poderá, até o momento referido no art. 57 da Lei nº 11.101, de 9 de fevereiro de 2005, submeter à Procuradoria-Geral da Fazenda Nacional proposta de transação relativa a créditos inscritos em dívida ativa da União, nos termos da Lei nº 13.988, de 14 de abril de 2020, observado que: <BR><BR>I - o prazo máximo para quitação será de até 120 (cento e vinte) meses, observado, no que couber, o disposto no § 3º do art. 11 da Lei nº 13.988, de 14 de abril de 2020; <BR><BR>II - o limite máximo para reduções será de até 70% (setenta por cento); <BR><BR>III - a apresentação de proposta ou a análise de proposta de transação formulada pelo devedor caberá à Procuradoria-Geral da Fazenda Nacional, em juízo de conveniência e oportunidade, obedecidos os requisitos previstos nesta Lei e em atos regulamentares, de forma motivada, observados o interesse público e os princípios da isonomia, da capacidade contributiva, da transparência, da moralidade, da livre concorrência, da preservação da atividade empresarial, da razoável duração dos processos e da eficiência, e utilizados como parâmetros, entre outros: </DIR>
+<DIR><EM>a) </EM>a recuperabilidade do crédito, inclusive considerando eventual prognóstico em caso de falência; <BR><EM>b) </EM>a proporção entre o passivo fiscal e o restante das dívidas do sujeito passivo; e <BR><EM>c) </EM>o porte e a quantidade de vínculos empregatícios mantidos pela pessoa jurídica; <BR><BR>IV - a cópia integral do processo administrativo de análise da proposta de transação, ainda que esta tenha sido rejeitada, será encaminhada ao juízo da recuperação judicial; <BR><BR>V - os seguintes compromissos adicionais serão exigidos do proponente, sem prejuízo do disposto no art. 3º da Lei nº 13.988, de 14 de abril de 2020: </DIR>
+<DIR><EM>a) </EM>fornecer à Procuradoria-Geral da Fazenda Nacional informações bancárias e empresariais, incluídas aquelas sobre extratos de fundos ou aplicações financeiras e sobre eventual comprometimento de recebíveis e demais ativos futuros; <BR><EM>b) </EM>manter regularidade fiscal perante a União;<BR><EM>c) </EM>manter o Certificado de Regularidade do FGTS; <BR><EM>d) </EM>demonstrar a ausência de prejuízo decorrente do cumprimento das obrigações contraídas com a celebração da transação em caso de alienação ou de oneração de bens ou direitos integrantes do respectivo ativo não circulante;<BR><BR>VI - a apresentação da proposta de transação suspenderá o andamento das execuções fiscais, salvo oposição justificada por parte da Procuradoria-Geral da Fazenda Nacional, a ser apreciada pelo respectivo juízo; e <BR><BR>VII - a rescisão da transação por inadimplemento de parcelas somente ocorrerá nas seguintes hipóteses: </DIR>
+<DIR><EM>a) </EM>falta de pagamento de 6 (seis) parcelas consecutivas ou de 9 (nove) parcelas alternadas; e <BR><EM>b) </EM>falta de pagamento de 1 (uma) até 5 (cinco) parcelas, conforme o caso, se todas as demais estiverem pagas. <BR><BR>§ 1º O limite de que trata o inciso I do <I>caput</I> deste artigo poderá ser ampliado em até 12 (doze) meses adicionais quando constatado que o devedor em recuperação judicial desenvolve projetos sociais, nos termos da regulamentação a que se refere a Lei nº 13.988, de 14 de abril de 2020. <BR><BR>§ 2º O disposto neste artigo aplica-se, no que couber, aos créditos de qualquer natureza das autarquias e das fundações públicas federais. <BR><BR>§ 3º Na hipótese de os créditos referidos no § 2º deste artigo consistirem em multa decorrente do exercício de poder de polícia, não será aplicável o disposto no inciso I do § 2º do art. 11 da Lei nº 13.988, de 14 de abril de 2020. <BR><BR>§ 4º Os Estados, o Distrito Federal e os Municípios poderão, por lei de iniciativa própria, autorizar que o disposto neste artigo seja aplicado a seus créditos."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;O art. 11 da Lei nº 8.929, de 22 de agosto de 1994, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 11.&nbsp;(VETADO)." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;Observado o disposto no art. 14 da Lei nº 13.105, de 16 de março de 2015 (Código de Processo Civil), esta Lei aplica-se de imediato aos processos pendentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os dispositivos constantes dos incisos seguintes somente serão aplicáveis às falências decretadas, inclusive as decorrentes de convolação, e aos pedidos de recuperação judicial ou extrajudicial ajuizados após o início da vigência desta Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a proposição do plano de recuperação judicial pelos credores, conforme disposto no art. 56 da Lei nº 11.101, de 9 de fevereiro de 2005; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - as alterações sobre a sujeição de créditos na recuperação judicial e sobre a ordem de classificação de créditos na falência, previstas, respectivamente, nos arts. 49, 83 e 84 da Lei nº 11.101, de 9 de fevereiro de 2005; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - as disposições previstas no <I>caput</I> do art. 82-A da Lei nº 11.101, de 9 de fevereiro de 2005; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - as disposições previstas no inciso V do <I>caput</I> do art. 158 da Lei nº 11.101, de 9 de fevereiro de 2005. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º As recuperações judiciais em curso poderão ser encerradas independentemente de consolidação definitiva do quadro-geral de credores, facultada ao juiz essa possibilidade no período previsto no art. 61 da Lei nº 11.101, de 9 de fevereiro de 2005. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º As disposições de natureza penal somente se aplicam aos crimes praticados após a data de entrada em vigor desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Fica permitido aos atuais devedores em recuperação judicial, no prazo de 60 (sessenta) dias, contado da regulamentação da transação a que se refere o art. 10-C da Lei nº 10.522, de 19 de julho de 2002, apresentar a respectiva proposta posteriormente à concessão da recuperação judicial, desde que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - as demais disposições do art. 10-C da Lei nº 10.522, de 19 de julho de 2002, sejam observadas; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o processo de recuperação judicial ainda não tenha sido encerrado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º O disposto no inciso VI do <I>caput</I> do art. 158 terá aplicação imediata, inclusive às falências regidas pelo Decreto-Lei nº 7.661, de 21 de junho de 1945. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Fica permitido aos devedores em recuperação judicial, no prazo de 60 (sessenta) dias, contado da entrada em vigor desta Lei, solicitar a repactuação do acordo de transação resolutiva de litígio formalizado anteriormente, desde que atendidos os demais requisitos e condições exigidos na Lei nº 13.988, de 14 de abril de 2020, e na respectiva regulamentação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Revogam-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - os incisos I a IV do <I>caput</I> e o § 1º do art. 10-A da Lei nº 10.522, de 19 de julho de 2002; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - os seguintes dispositivos da Lei nº 11.101, de 9 de fevereiro de 2005: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>§ 7º do art. 6º; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>incisos IV e V do <I>caput</I>, com as respectivas alíneas, e § 4º, todos do art. 83; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>inciso I do <I>caput</I> do art. 84; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>parágrafo único do art. 86; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>incisos II e III do <I>caput</I> e §§ 1º, 2º, 4º, 5º e 6º, todos do art. 142; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>§§ 2º e 3º do art. 145; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>incisos III e IV do <I>caput</I> do art. 158; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>art. 157; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>i)</I></TD>
+<TD>§ 2º do art. 159. </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Esta Lei entra em vigor após decorridos 30 (trinta) dias de sua publicação oficial. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 24 de dezembro de 2020; 199º da Independência e 132º da República. </P>
+<P>JAIR MESSIAS BOLSONARO <BR>Tercio Issami Tokano<BR>Paulo Guedes <BR>Tereza Cristina Corrêa da Costa Dias<BR>Eduardo Pazuello<BR>Fabrício da Soller </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 - Edição Extra - B de 24/12/2020
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1 - Edição Extra - B
+                                                         - 24/12/2020, Página 23 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,945 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 5.056, DE 29 DE JUNHO DE 1966 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Modifica dispositivos da Lei nº 2.180, de 5 de fevereiro de 1954, alterada pela de nº 3.543, de 11 de fevereiro de 1959, que dispõe sobre o Tribunal Marítimo, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 5.056, DE 29 DE JUNHO DE 1966 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-5056-29-junho-1966-368481-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-5056-29-junho-1966-368481-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-5056-29-junho-1966-368481-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-5056-29-junho-1966-368481-retificacao-47515-pl.html">Retificação</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=213403">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-5056-29-junho-1966-368481-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 5.056, DE 29 DE JUNHO DE 1966</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Modifica dispositivos da Lei nº 2.180, de 5 de fevereiro de 1954, alterada pela de nº 3.543, de 11 de fevereiro de 1959, que dispõe sobre o Tribunal Marítimo, e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA:&nbsp; <BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte lei:&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Os arts. 1º, 2º, 3º e 6º, da Lei nº 2.180, de 5 de fevereiro de 1954, modificados pela Lei nº 3.543, de 11 de fevereiro de 1959, passam a ter a seguinte redação: <BR><BR>
+<DIR>"Art. 1º&nbsp;O Tribunal Marítimo, com jurisdição em todo o território nacional, órgão, autônomo, auxiliar do Poder Judiciário, vinculado ao Ministério da Marinha no que se refere ao provimento de pessoal militar e de recursos orçamentários para pessoal e material destinados ao seu funcionamento, tem como atribuições julgar os acidentes e fatos da navegação marítima, fluvial e lacustre e as questões relacionadas com tal atividade, especificadas nesta Lei. <BR><BR>Art. 2º&nbsp;O Tribunal Marítimo compor-se-á de sete (7) Juízes, nomeados em caráter efetivo, que serão:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>um (1) Oficial General do Corpo da Armada, que será seu Presidente; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>dois (2) Oficiais Superiores da Marinha de Guerra, da Ativa ou da Reserva Remunerada, sendo um do Corpo da Armada e o outro do Corpo de Engenheiros e Técnicos Navais, subespecializados em Máquinas ou Casco; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>dois (2) bacharéis em Direito, especializados, um dêles em Direito Marítimo e o outro em Direito Internacional Público; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>um especialista em armação de navios e navegação comercial; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>um Capitão de Longo Curso, da Marinha Mercante. </TD></TR></TBODY></TABLE><BR>§ 1º As nomeações serão feitas pelo Presidente da República, atendida a composição do Tribunal e observadas as condições de:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>Oficial-General do Corpo da Armada, para o Juiz-Presidente; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>Capitão-de-Mar-e-Guerra ou Capitão-de-Fragata, da Ativa ou da Reserva Remunerada, aprovado no Curso de Comando da Escola de Guerra Naval, para o Oficial do Corpo da Armada e aprovado no Curso Especial da mesma Escola, para o do Corpo de Engenheiros e Técnicos Navais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>reconhecida idoneidade, mais de cinco (5) anos de prática forense e idade compreendida entre trinta e cinco (35) e quarenta e oito (48) anos, para os bacharéis em Direito; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>reconhecida idoneidade e competência, idade compreendida entre trinta e cinco (35) e quarenta e oito (48) anos e ter mais de cinco (5) anos em cargo de direção de emprêsa de navegação marítima, para o especialista em armação de navios e navegação comercial; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>reconhecida idoneidade e competência, idade compreendida entre trinta e cinco (35) e quarenta e oito (48) anos e ter, no minimo, cinco (5) anos de efetivo comando, nessa categoria, em navios brasileiros, sem punição decorrente de julgamento, para o Capitão de Longo Curso. </TD></TR></TBODY></TABLE><BR>§ 2º Os Juízes, com exceção do Presidente, serão nomeados mediante concurso de títulos e provas, realizado perante banca examinadora presidida pelo Juiz Presidente e constituída por um Juiz eleito pelo Tribunal, em escrutínio secreto; um representante da Procuradoria, designado pelo Ministro da Marinha; e ainda, conforme se trate do preenchimento de vaga relativa às alíneas <EM>b</EM>, <EM>c </EM>e <EM>d</EM> ou <EM>e</EM> , do parágrafo anterior respectivamente, de um Oficial Superior do Corpo da Armada ou do Corpo de Engenheiros e Técnicos Navais, designado pelo Ministro da Marinha; de um especialista em Direito Marítimo ou Direito Internacional Público, escolhido pelo Conselho Federal da Ordem dos Advogados do Brasil; e de um representante da Comissão de Marinha Mercante, designado pelo Presidente da mesma Comissão. <BR><BR>§ 3º Os Juízes Militares de que trata a alínea b do art. 2º, resguardada a situação dos atuais ocupantes, caso estejam na Ativa, serão logo após a nomeação transferidos para a Reserva Remunerada com tôdas as promoções e vantagens a que tiverem direito, na ocasião. <BR><BR>§ 4º Os Juízes Militares referidos nas alíneas <EM>a</EM> e <EM>b</EM> , do artigo 2º, permanecerão nos seus cargos, ainda depois de reformados, contanto que não tenham ultrapassado a idade limite para permanência no Serviço Público. <BR><BR>§ 5º O Vice-Presidente será eleito bienalmente, em escrutínio secreto. <BR><BR>§ 6º Os Juízes de que tratam as alíneas <EM>c</EM>, <EM>d</EM> e <EM>e</EM> , do art. 2º, ficam impedidos de exercer advocacia ou prestar serviços profissionais em favor de partes interessadas nas atividades da navegação. <BR><BR>Art. 3º&nbsp;Com exceção dos Juízes Militares, os demais Juízes terão suplentes nomeados pelo Presidente da República, com mandato de três (3) anos, podendo ser reconduzidos, os quais funcionarão quando convocados pelo Presidente do Tribunal, nos casos previstos no Regimento Interno. <BR><BR>§ 1º Quando a necessidade se apresentar com relação aos Juízes Militares (alínea b do artigo 2º), o Ministro da Marinha designará os suplentes necessários, por solicitação do Presidente do Tribunal. <BR><BR>§ 2º Para a nomeação ou designação dos suplentes de que trata este artigo, deverão ser observados, com exceção do concurso, os mesmos requisitos exigidos para "os Juízes Efetivos". </DIR>
+<DIR>............................................................................................................................................... <BR><BR>Art. 6º&nbsp;Os advogados de ofício serão nomeados mediante concurso de provas realizado perante banca examinadora presidida pelo Presidente do Tribunal e constituída por um Juiz eleito pelo Tribunal, em escrutínio secreto, um representante da procuradoria, designado pelo Ministro da Marinha, e um especialista em Direito Marítimo ou Direito Internacional Público, indicado pelo Conselho Federal da Ordem dos Advogados do Brasil."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Passam a ter a seguinte redação as disposições abaixo mencionadas da Lei nº 2.180, de 5 de fevereiro de 1954: <BR><BR>
+<DIR>"Art. 9º&nbsp;Para a execução dos serviços processuais, técnicos e administrativos, o Tribunal Marítimo terá uma Secretaria constituída de quatro (4) Divisões. ...................................................................................................................................................." <BR><BR>"Art. 18.&nbsp;As decisões do Tribunal Marítimo, nas matérias de sua competência, tem valor probatório e se presumem certas, sendo suscetíveis de reexame pelo Poder Judiciário sòmente nos casos previstos na alínea <EM>a </EM>do inciso III do art. 101 da Constituição. <BR><BR>Art. 19.&nbsp;Sempre que se discutir em juízo uma questão decorrente de matéria da competência do Tribunal Marítimo, cuja parte técnica ou técnico-administrativa couber nas suas atribuições, deverá ser juntada aos autos a sua decisão definitiva.&nbsp;</DIR>
+<DIR>............................................................................................................" </DIR>
+<DIR>"Art. 22. ................................................................................................ .............................................................................................................. <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>i)</I></TD>
+<TD>
+<P>praticar todos os atos de direção decorrentes da legislação em vigor para os servidores públicos federais; </P>
+<P>................................................................................................ </P></TD></TR></TBODY></TABLE><BR>Art. 23.&nbsp;O Presidente terá um Gabinete constituído por um Assistente Militar e praças designados pelos órgãos competentes do Ministério da Marinha, devendo ter, ainda, um Assistente Civil de sua confiança, designado dentre os funcionários do Tribunal. <BR><BR><I>Parágrafo único. </I>O Assistente Militar acumulará as funções de Chefe de Gabinete."</DIR>
+<DIR>................................................................................................... <BR><BR>"Art. 32.&nbsp;A Secretaria é o órgão de execução dos serviços processuais, técnicos e administrativos decorrentes das atribuições do Tribunal; será dirigida por um bacharel em Direito que exercerá o cargo de Diretor-Geral e terá a seguinte composição:"</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Divisão de Acidentes e Fatos da Navegação; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Divisão de Registro da Propriedade Marítima; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Divisão de Jurisprudência e Documentação; e <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Divisão de Administração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º............................................................................................... <BR><BR>
+<DIR>"§ 2º As atribuições do Diretor-Geral da Secretaria, das divisões, serviços, seções e turmas serão minuciosamente fixadas no Regimento Interno." </DIR>
+<DIR>"Art. 41. O processo perante o Tribunal Marítimo se inicia: <BR><BR>I - por iniciativa da Procuradoria; <BR>II - por iniciativa da parte interessada; <BR>III - por decisão do próprio Tribunal."</DIR>
+<DIR>"§ 1º O caso do número II dar-se-á: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>por meio de representação, devidamente instruída, quando se tratar de acidente ou fato da navegação, no decorrer dos trinta (30) dias subseqüentes ao prazo de cento e oitenta (180) dias da sua ocorrência, se até o final dêste, não houver entrado no Tribunal o inquérito respectivo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>Por meio de representação, nos autos de inquérito, dentro do prazo de dois (2) meses, contado do dia em que os autos voltarem da Procuradoria, quando a promoção fôr pelo arquivamento, ou ainda no curso do processo dentro do prazo de três (3) meses, contado do dia da abertura da instrução, ou até a data de seu encerramento, se menor fôr a sua duração." </TD></TR></TBODY></TABLE>"§ 2º No caso da alínea a do parágrafo anterior, se achar o Tribunal que há elementos suficientes, determinará o prosseguimento e tomará as providências para o recebimento do inquérito, cujos autos serão incorporados aos da representação, procedendo-se, então, na forma do art. 42 e dos ulteriores têrmos processuais. <BR><BR>§ 3º Em se tratando da hipótese prevista na primeira parte da alínea b, do § 1º, os autos permanecerão em Secretaria durante aquêle prazo, findo o que serão conclusos ao relator. <BR><BR>§ 4º Em qualquer caso, porém, os prazos fixados no § 1º são peremptórios e só serão contemplados uma vez, não se renovando em outras fases de instrução que porventura venham a ocorrer. <BR><BR>Art. 42.&nbsp;Feita a distribuição e a autuação, em se tratando de inquérito ou de representação, o relator designado dará vista dos autos à Procuradoria, para que esta, em dez (10) dias, contados daquele em que os tiver recebido, oficie por uma das formas seguintes: 
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right>
+<P>&nbsp;</P>
+<P><I>a)<BR></I><I><BR>b)</I></P></TD>
+<TD>
+<P>&nbsp;</P>
+<P>oferecendo representação ou pronunciando-se sôbre a que tenha sido oferecida pela parte;</P>
+<P>pedindo em parecer fundamentado, o arquivamento do inquérito;&nbsp;</P></TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20>&nbsp; </TD>
+<TD vAlign=UP width=30 align=right>
+<P><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</I></P>
+<P><EM>c)</EM></P></TD>
+<TD>
+<P>&nbsp;</P>
+<P>opinando pela incompetência do Tribunal e requerendo a remessa dos autos a quem de direito."</P>
+<P>.............................................................................&nbsp;</P>
+<P>&nbsp;</P></TD></TR></TBODY></TABLE>"Art. 46. No curso da ação privada é lícito às partes desistirem, mas o processo prosseguirá, nos têrmos em que o Tribunal decidir na homologação, como se fôsse de iniciativa da Procuradoria. "</DIR>
+<DIR>"Art. 53.&nbsp;Recebida a representação ou negado o arquivamento do inquérito, determinará o relator a notificação do acusado: por mandado ou com hora certa, se residente no Estado da Guanabara; por delegação de atribuições ao Capitão do Pôrto em cuja jurisdição residir o representado, se fora daquele Estado; por delegação de atribuições ao agente consular brasileiro em cujo país residir o representado, se fora do Brasil; e por edital, se ignorado, desconhecido ou incerto o local de permanência.</DIR>
+<DIR>............................................................................................. </DIR>
+<DIR>"Art. 71. O Tribunal só poderá deliberar com a presença de, pelo menos, metade e mais um dos seus membros, sendo as questões decididas por maioria de votos". </DIR>
+<DIR>.............................................................................................. </DIR>
+<DIR>"Art. 93. Qualquer embarcação poderá ser hipotecadana própria fase da construção, seja qual fôr a sua tonelagem."<BR><BR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>"Art. 112. ................................................................................. <BR><BR>§ 1º ........................................................................................... <BR><BR>§ 2º O prazo para a interposição do agravo, será de cinco (5) dias e o seu processamento na forma do Código de Processo Civil, arts. 844 e 845, incisos e parágrafos. <BR><BR>§ 3º No Tribunal o agravo será distribuído a um juiz desimpedido que pedirá sua inclusão em pauta para julgamento, com preferência nos trabalhos do dia, quando o relatará. <BR><BR>§ 4º Provido ou não o recurso, os autos baixarão ao relator do feito principal, para o seu prosseguimento."</DIR>
+<DIR>&nbsp;................................................................................................. </DIR>
+<DIR>"Art. 121. A inobservância dos preceitos legais, que regulam a navegação será reprimida com as seguintes penas:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>repreensão; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>suspensão de pessoal marítimo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>interdição para o exercício de determinada função; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>cancelamento da matrícula profissional; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>proibição ou suspensão do tráfego da embarcação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>cancelamento do registro de armador; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>multa, cumulativamente, ou não, com qualquer das anteriores. </TD></TR></TBODY></TABLE><BR>§ 1º A suspensão de pessoal marítimo será por prazo não superior a doze (12) meses. <BR><BR>§ 2º A interdição não excederá de cinco (5) anos. <BR><BR>§ 3º A proibição ou suspensão do tráfego da embarcação cessará logo que deixem de existir os motivos que a determinaram, ou, no caso do art. 81, logo que seja iniciado o processo de registro da propriedade. <BR><BR>§ 4º ........................................................................................... .................................................................................................." </DIR>
+<DIR>"Art. 131. A pena de suspensão, cancelamento da matrícula ou interdição em que incorrer o capitão ou tripulante de navio estrangeiro, será aplicada sòmente com relação ao exercício de suas funções em águas brasileiras.<BR>..................................................................................................." </DIR>
+<DIR>"Art. 134. .................................................................................... <BR><BR><I>Parágrafo único. </I>Para a conversão, a cada quadragésimo do maior salário-mínimo vigente no País, ao tempo da aplicação da pena, corresponderá um dia de suspensão, atribuindo-se tantos dias de suspensão quantas daquelas frações estiverem contidas no valor da multa, arredondando-se para um mês quando menor fôr o resultado.</DIR>
+<DIR>.................................................................................................." <BR><BR>"Art. 147.&nbsp;O Tribunal Marítimo terá o seu Quadro próprio de Pessoal. Parágrafo único. Dentro de cento e vinte (120) dias a contar da publicação desta Lei o Poder Executivo submeterá à aprovação do Congresso Nacional o nôvo Quadro de Pessoal do Tribunal, que lhe será proposto pelo seu Juiz-Presidente, através do Ministro da Marrinha." </DIR>
+<DIR>.................................................................................................."</DIR><BR>
+<DIR>"Art. 152.&nbsp;................................................................................... </DIR>
+<DIR><EM>Parágrafo único.</EM> O período de sessenta (60) dias, contado a partir de 1º de janeiro, será de férias para o Tribunal, que sòmente se reunirá para assunto de alta relevância, por convocação extraordinária do Juiz-Presidente."</DIR><BR>
+<DIR>"................................................................................................. </DIR>
+<DIR>Art. 156. Nos processos da competência do Tribunal Marítimo haverá custas que serão recolhidas na forma da legislação fazendária em vigor. <BR>&nbsp;&nbsp;&nbsp;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Tribunal organizará o seu Regimento de Custas e o submeterá à aprovação do Presidente da República no prazo de cento e vinte (120) dias, a contar da publicação desta lei. <BR>&nbsp;&nbsp;&nbsp;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp; § 2º O referido Regimento de Custas deverá ser vinculado ao valor do maior salário-mínimo vigente no País e atualizável de acôrdo com os reajustamentos daquele valor."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;O art. 15 da Lei nº 2.180, de 5 de fevereiro de 1954, fica acrescido da seguinte alínea: <BR><BR>
+<DIR>"<EM>f</EM>) o emprego da embarcação, no todo ou em parte, na prática de atos ilícitos, previstos em lei como crime ou contravenção penal, ou lesivos à Fazenda Nacional."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 4º Ao art 16 da Lei nº 2.180, de 5 de fevereiro de 1954, é acrescida a seguinte alínea: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" <EM>l</EM> - eleger seu Vice-Presidente. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 5º Acrescente-se ao art. 22 da Lei nº 2.180, de 5 de fevereiro de 1954, a seguinte alínea: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "<EM>k</EM> )propor ao Presidente da República, por intermédio do Ministro da Marinha, os servidores que devam <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ocupar os cargos em Comissão, bem como os que devam ser promovidos. " <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Suprima-se o parágrafo único do art. 42 da Lei nº 2.180, de 5 de fevereiro de 1954. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Acrescente-se parágrafo único ao art. 81 da Lei nº 2.180, de 5 de fevereiro de 1954, com a seguinte redação: </P>
+<DIR>"<I>Parágrafo único. </I>A inobservância do disposto neste artigo sujeita o infrator à pena de multa de cinco (5) a cinqüenta (50) vêzes o maior salário mínimo vigente no País, a ser aplicada pelo Presidente do tribunal, sem prejuízo da suspensão do trafego da embarcação, que será logo determinada."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Acrescente-se parágrafo único ao art. 150 da Lei nº 2.180, de 5 de fevereiro de 1954, com a seguinte redação: <BR><BR>
+<DIR>"<I>Parágrafo único. </I>Aos advogados de ofício, quando funcionando nos processos, caberão as mesmas regalias concedidas aos demais advogados."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;O art. 157 da Lei nº 2.180, de 5 de fevereiro de 1954, modificado pela Lei nº 3.543, de 11 de fevereiro de 1959, passa a ter a seguinte redação: <BR><BR>
+<DIR>"Art. 157.&nbsp;O Tribunal Marítimo deverá, no prazo de noventa (90) dias, contados da publicação desta lei, ter elaborado o seu Regimento Interno para submetê-lo ao Presidente da República. <BR><BR><I>Parágrafo único. </I>O Regimento Interno entrará em vigor no prazo de noventa (90) dias, para o País, e cento e vinte (120) dias, para o exterior, a contar da data de sua publicação no órgão oficial."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;As multas previstas na Lei nº 2.180, de 5 de fevereiro de 1954, serão graduadas de 1/10 (um décimo ) até o quíntuplo do maior salário-mínimo que estiver vigorando no País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Tais multas poderão ser elevadas até cinqüenta (50) vezes êsse salário, nos casos estabelecidos no § 1º do art. 124, e nos artigos 127 e 132 da mesma lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Nos feitos perante o Tribunal Marítimo em que funcionar advogado de ofício, o beneficiado, quando julgado responsável pelo fato ou acidente da navegação, pagará os respectivos honorários, que serão fixados na decisão final, desde que o possa fazer. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Se o caso fôr de representação de parte, caberá o pagamento ao vencido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A importância do pagamento será recolhida na forma da legislação fazendária em vigor, e a guia anexada aos autos, será rubricado pelo advogado de ofício. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;É obrigatório o registro, no Tribunal Marítimo, de armador de embarcações mercantes de mais de vinte (20) toneladas brutas, mesmo quando a atividade fôr exercida pelo respectivo proprietário, exceto quanto às empregadas exclusivamente no serviço público. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As disposições dêste artigo são igualmente aplicadas ainda que se trate de embarcações de tonelagem inferior desde que providas de propulsão mecânica e se dediquem a qualquer atividade lucrativa de barra-a-fora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;Para os efeitos desta Lei, compreende-se como armador a pessoa natural ou jurídica que, em seu nome e sob sua responsabilidade, apresta a embarcação para ser utilizada, pondo-a ou não a navegar por sua conta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Nesse conceito também se incluem aquêles que tenham o exclusivo contrôle da expedição, sob qualquer modalidade de cessão, embora recebam a embarcação devidamente aparelhada e tripulada, desde que possuam sôbre ela podêres de administração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;A armação da embarcação, excluídas as do tráfego do pôrto, só poderá ser exercida pelas pessoas aludidas nas alíneas <EM>a</EM>, <EM>b</EM>, e <EM>c</EM> , do art. 83 da lei nº 2.180, de 5 de fevereiro de 1954 e que satisfaçam os demais requisitos legais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As disposições finais dêste artigo não se aplicam quando se trata de embarcações que não exerçam atividade lucrativa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;O contrato de armação, carta-partida ou outro qualquer título de cessão que dê podêres de administração, será averbado no registro de propriedade da embarcação e constará do rol de equipagem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;A nenhuma embarcação, nas condições previstas no art. 12 e seu parágrafo único, sob a administração de pessoa natural ou jurídica brasileira, será fornecido passe se o responsável pela expedição não estiver registrado como armador no Tribunal Marítimo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Do certificado de armador, que será expedido quando ultimado o registro poderá ser fornecida outra via em caso de perda ou destruição da anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Mediante comprovante fornecido pelo Tribunal Marítimo, ou pela Capitania do Pôrto que encaminhar o pedido, poderá o armador praticar os atos pertinentes à expedição da embarcação, até a ultimação do registro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;O registro será cancelado a pedido do interessado, ou ex officio, quando obtido em desacordo com a legislação vigente, e por decisão do Tribunal Marítimo, nos casos previstos nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;O Tribunal Marítimo, sem prejuízo das demais sanções legais, ordenará o cancelamento do registro de armador quando provado que êste, na utilização da embarcação, praticou atos previstos em lei como crime ou contravenção penal, ou lesivos à Fazenda Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;Não será concedido registro de armador à pessoa física que tenha participado da administração de pessoa jurídica atingida pelo cancelamento na forma do artigo anterior, nem à pessoa jurídica da qual faça parte quem já tenha participado de outra sociedade com poderes de administração e cujo registro haja sido cancelado naquelas condições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Igualmente, não será concedido registro à pessoa jurídica da qual faça parte quem, como pessoa física, tenha tido por aquêles motivos o registro cancelado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;Fica estabelecido o prazo de doze (12) meses, contado da data da publicação desta Lei, para que os atuais armadores promovam o respectivo registro no Tribunal Marítimo, findo o qual não será mais concedido o passe, na forma estabelecida no art. 16 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;Dos despachos e decisões sôbre registro de armador caberá recurso para o Tribunal, observado, no que couber, o disposto no nº II, alínea d do art. 111, art. 112 e seus parágrafos e arts. 106 e seguintes, da Lei nº 2.180, de 5 de fevereiro de 1954. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;O Regimento Interno do Tribunal Marítimo especificará os documentos indispensáveis ao pedido de registro e dirimirá as dúvidas surgidas na interpretação dos dispositivos relacionados com a armação de embarcações contidos nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Os débitos para com o Tribunal Marítimo, tanto os atuais como os futuros, decorrentes de multas e custas não recolhidas na data devida, ficam sujeitos à correção monetária de que trata o art. 7º da Lei nº 4.357 de 16 de julho de 1964. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;A pena de suspensão prevista no Capítulo III do Título 7º da Lei nº 2.180, de 5 de fevereiro de 1954, passa a ser considerada como suspensão de pessoal marítimo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Os cargos de Diretor-Geral da Secretaria e de Diretores de Divisão, passam a ser de provimento em Comissão, resguardada a situação pessoal dos atuais ocupantes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Esta Lei entra em vigor na data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Ficam revogados os arts. 43 e 101 e seus parágrafos, da Lei nº 2.180, de 5 de fevereiro de 1954, e demais disposições em contrário. </P>
+<P>Brasília, 29 de junho de 1966; 145º da Independência e 78º da República. </P>
+<P>H. CASTELLO BRANCO <BR>Arnoldo Toscano </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 05/07/1966
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 5/7/1966, Página 7331       
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1966, Página 131 
+                                                        Vol. 5          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

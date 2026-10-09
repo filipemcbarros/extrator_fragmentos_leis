@@ -1,0 +1,906 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>Lei nº 5.701, de 9 de Setembro de 1971 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre o Magistério do Exército. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - Lei nº 5.701, de 9 de Setembro de 1971 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=171685">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-5701-9-setembro-1971-357918-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>Lei nº 5.701, de 9 de Setembro de 1971</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							<META name=GENERATOR content="MSHTML 5.50.4807.2300">Dispõe sobre o Magistério do Exército. 
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA, <BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Esta Lei organiza o Magistério do Exército e estabelece o regime jurídico de seu pessoal. <BR><BR>
+<CENTER><B>TÍTULO I </CENTER></B>
+<CENTER><B>Disposições Gerais</B><BR><BR></CENTER>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Da Organização </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;O Magistério do Exército tem como integrantes os professôres civis e militares dos Estabelecimentos de Ensino do Exército. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para os efeitos desta Lei, entendem-se como atividades do magistério aquelas pertinentes ao ensino e à pesquisa, quando exercidas nos estabelecimentos de Ensino do Exército. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Constituem, também, atividades de magistério a educação moral e cívica e as concernentes à orientação educativa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Os professôres pertencem a duas categorias: permanentes e temporários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Professôres permanentes são os nomeados, por concurso público de títulos e provas, para o exercício efetivo de atividades de magistério. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Professôres temporários são os nomeados em comissão ou admitidos por contrato para e exercício de atividades de magistério, por tempo determinado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;No ensino superior, os professôres permanentes distribuem-se pelas classes: Titular, Adjunto e Assistente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;O efetivo de professôres de cada estabelecimento de Ensino é fixado pelo Ministro do exército, considerados os fatôres: índice "turma-hora" por disciplina ou grupo de disciplinas, programas de pesquisa, regime de trabalho e funções peculiares ao magistério do Estabelecimento considerado. Parágrafo único Nos estabelecimentos de Ensino médio, 70% (setenta por cento) do efetivo de professôres destinam-se a professôres permanentes a 30% (trinta por cento) a professôres temporários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Além dos professôres especificados no art. 4º desta Lei, cujo efetivo é fixado na forma de art. 5º, os Estabelecimentos de ensino podem utilizar professôres autônomos ou de outras organizações oficiais ou privadas, mediante convênio, e conferencistas para realização de cursos, programas de pesquisa, ciclos de conferências, palestras, seminários e outras atividades correlatas. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Das Atribuições </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;São atribuições de magistério as pertinentes à preservação, elaboração e transmissão de conhecimentos de natureza não essencialmente militar, à administração do ensino e à colaboração na formação ética e cívica do aluno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Nos Estabelecimentos de Ensino do Exército o cargo de Diretor de Ensino é privativo do comandante. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Os cargos privativos de professor são: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Subdiretor de Ensino; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Chefe de seção de Ensino; e <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Adjunto de Ensino. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Nos Estabelecimentos de Ensino de nível superior, o cargo de sub-diretor de Ensino é privativo de Oficial Superior do Quadro de Estado-maior da Ativa ou Quadro de Engenheiros Militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Ao Subdiretor de Ensino incumbe secundar o Diretor de Ensino e exercer as atribuições que, por êste, lhe forem delegadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Ao chefe de Seção de Ensino cabe a responsabilidade direta da orientação didática e da coordenação do ensino das disciplinas de sua Seção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Ao Adjunto de Ensino competente ministrar a disciplina que lhe fôr distribuída, respondendo perante o chefe de Seção de Ensino pelo rendimento do ensino. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º os professôres não podem exercer cargo ou encargo na administração do Estabelecimento de Ensino, exceto aquêles diretamente relacionados com as atribuições do magistério. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Nos Estabelecimentos de Ensino de nível médio, os cargos de subdiretor de Ensino e de Chefe de Seção de Ensino são privativos de professôres permanentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Nos Estabelecimentos de Ensino de nível superior, os cargos de Chefe de seção de Ensino e de Adjunto de Ensino podem ser exercidos por professôres permanentes, contratados ou em comissão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;O Comandante do Estabelecimentos de Ensino designa os professôres para os cargos relacionados no art. 9º desta Lei, consideradas a precedência e as atribuições funcionais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;A precedência entre professôres obedece às seguintes normas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - entre militares, segue a hierarquia; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - entre civis, cabe ao professor de mais elevada categoria ou classe. Nestas condições, em caso de igualdade, ao que tem mais tempo no magistério do Exército, decidindo-se afinal pela idade; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - entre militares e civis respeitadas a primazia e a equivalência dos cargos, categorias e classes, aos primeiros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Nas atividades referentes a assuntos de ensino e nos casos de substituição temporária, deve ser respeitada a precedência estabelecida nos incisos dêste artigo. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Do Provimento </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;O pessoal do Magistério do Exército é nomeado ou admitido de acôrdo com esta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Além das condições especificadas para cada categoria de que trata o art. 3º desta Lei, o candidato ao Magistério do Exército deve satisfazer aos requisitos de idade, idoneidade moral, capacidade física compatível com a atividade docente e aptidão psicológica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;O cargo de professor permanente é provido mediante concurso público de títulos e provas, realizado nos têrmos dêste artigo, ao qual podem concorrer civis e oficiais do Exército, da ativa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os candidatos civis a cargo de professor nos Estabelecimentos de nível médio devem ser licenciados por Faculdade de Filosofia, Ciências e Letras, na disciplina ou grupo de disciplinas a que se apresentam e ter o respectivo título registrado no Ministério da Educação e Cultura. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os candidatos civis às vagas existentes nos Estabelecimentos de nível superior devem satisfazer as condições de aptidão profissional exigidas pela legislação federal referente ao magistério superior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Ocorrida a vaga, o Ministro do Exército mandará abrir, no Estabelecimento de Ensino interessado, inscrições para o concurso destinado ao provimento. O prazo de inscrição é de 90 (noventa) dias, devendo o concurso realizar-se dentro de 60 (sessenta) dias contados da data de encerramento das inscrições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O concurso é organizado, realizado e julgado por uma Comissão constituída de 5 (cinco) professôres designados pelo Comandante do Estabelecimento interessado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;O candidato a cargo de professor permanente aprovado e indicado pela comissão julgadora é nomeado por decreto do Presidente da República, e: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - se Oficial da ativa, permanece relacionado entre os Oficiais de sua Arma, Quadro ou Serviço, onde concorre às promoções por antigüidade e merecimento; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - se civil, incluído, nesta condição, no Quadro de Pessoal - Parte Permanente - do Ministério do Exército. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;O candidato a cargo de professor contratado é selecionado pelo Estabelecimento de Ensino interessado no provimento, entre civis e Oficiais da reserva ou reformados, através de exame de suficiência, para o ensino médio e de exame de suficiência e confronto de títulos, para o ensino superior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Para os Estabelecimentos de Ensino médio os candidatos devem possuir, se civis, registro no Ministério da Educação e Cultura de professor da disciplina ou grupo de disciplinas a que se apresentem; se militares, curso de Estabelecimento de Ensino superior das Forças Armadas. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Para os estabelecimentos de Ensino superior, os candidatos civis precisam satisfazer as condições de aptidão profissional exigidas pela legislação federal referente ao magistério superior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A prova de suficiência ou de exame e confronto de títulos é organizada, realizada e julgada por comissão constituída de três professôres permanentes ou em comissão, designados pelo comandante do estabelecimento de Ensino interessado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Satisfeitas todas as exigências, os candidatos habilitados firmarão contrato com o Estabelecimento de Ensino pelo período de 2 (dois) anos que pode ser prorrogável por outro de igual duração para os civis e, para os militares, por tantos outros quantos permitir a legislação vigente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º No caso de Estabelecimento de Ensino superior, o professor contratado, no prazo máximo de 4(quatro) anos deve apresentar certificado de aprovação em curso de pós-graduação, sem o que seu contrato deixará de ser renovado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;Os professôres em comissão são Oficiais da ativa, do pôsto de Capitão ou mais elevado, possuidores de curso de Estabelecimento de Ensino superior das Forças Armadas, para tanto nomeados por autoridade competente, por indicação dos Comandantes dos Estabelecimentos interessados, para um período de 3 (três) anos, prorrogável por igual prazo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;As funções dos professôres em comissão são consideradas, para todos os efeitos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - do QEMA, quando exercidas por Oficial com o curso, do Exército, de Comando e Estado-Maior ou de Chefia e Estado-Maior de serviço; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - do QEM, quando exercidas por Oficial com o curso de Engenharia Militar; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - do QSG, quando exercidas pelos demais Oficiais, e assim estiverem, tôdas elas, consignada nos Quadros de Organização e de Distribuição dos Estabelecimentos de Ensino. <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Dos Deveres e Responsabilidades </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;É dever dos integrantes do Magistério do Exército contribuir para que a educação se desenvolva no sentido da formação integral da personalidade do aluno, de acôrdo com os objetivos estabelecidos pelos Órgãos Diretores do ensino no Exército. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Competem aos integrantes do Magistério do Exército, além de ministrar as aulas de sua disciplina, as seguintes atividades de ensino:&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM> a)</EM> colaborar, com a Direção de Ensino, na preparação de material didático; <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>participar da elaboração de livros didáticos e textos escolares; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>colaborar na orientação do estudo dirigido quando determinado pela Direção de Ensino; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>participar de atividades extra-classe e de solenidades cívico-militares; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>realizar outros trabalhos relacionados com a disciplina que lecionem, conforme lhes fôr determinado pela Direção de Ensino. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Além das atividades de ensino, os professôres participam dos atos que completam a educação do corpo discente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22..&nbsp;professôres militares estão sujeitos a legislação militar em vigor e às prescrições dos regulamentos Estabelecimentos onde servem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;Os professôres permanentes civis estão sujeitos, subsidiáriamente, ao Estatuto dos Funcionários Públicos Civis da União, à legislação referente ao magistério civil da União e às prescrições dos regulamentos dos Estabelecimentos de Ensino onde servem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Os professôres contratados civis estão sujeitos ao que estabelecem a legislação trabalhista, os contratos firmados e os regulamentos dos Estabelecimentos onde desempenham suas atividades. <BR><BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Do Regime de Trabalho </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;O professor civil, no Estabelecimento em que lecione, fica sujeito, se do ensino médio, ao regime de 24 (vinte e quatro) horas semanais de efetiva atividade de magistério, das quais obrigatòriamente 12 (doze) de aulas; se do ensino superior, ao regime de 40 (quarenta) horas semanais de atividade de magistério. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No interêsse do ensino e da pesquisa, o professor civil, permanente ou temporário, ressalvado o direito à opção do permanente, pode ficar sujeito ao regime de dedicação exclusiva com o compromisso de não exercer qualquer outra atividade remunerada em órgão público ou privado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No cômputo do número de horas de aula, não se incluem as referentes à preparação didática, orientação do estudo dirigido em classe, organização e fiscalização de provas, participação em comissões de exame ou concurso, reuniões relativas às atividades educativas e de ensino atribuídas ao professor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O professor no exercício do cargo de Chefe de Seção de Ensino é obrigado a ministrar, no máximo, 10 (dez) horas de aula por semana, dispondo do tempo restante para as atividades inerentes àquele cargo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O professor no exercício do cargo de subdiretor de Ensino está dispensado de ministrar aula. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Os professôres empenhados em programas de pesquisas têm, individualmente, suas obrigações didáticas mínimas fixadas pelos comandantes dos Estabelecimentos de Ensino a que pertencem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º O professor de determinada disciplina pode ser aproveitado no ensino de outra disciplina, desde que da mesma Seção de Ensino e a critério do Comandante de Estabelecimento. <BR><BR>
+<CENTER><B>CAPÍTULO VI </CENTER></B>
+<CENTER><B>Da Inatividade e Exoneração </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;O professor permanente que solicite passagem para a inatividade aguardará, no exercício de suas funções normais, a publicação, no Diário Oficial, da solução de seu requerimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;A passagem para a inatividade ex offício do professor permanente militar é aplicada de acôrdo com a Lei de Inatividade dos Militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;A aposentadoria ex offício é aplicada ao professor permanente civil que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - atingir a idade limite de permanência na atividade, de acôrdo com a legislação vigente; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - fôr julgado inválido ou, em definitivo, capaz fisicamente para o exercício da função de docente; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - fôr afastados das funções de docente durante 2 (dois) anos, por licenças de tratamento de saúde, consecutivas ou não, no período máximo de 4 (quatro) anos a contar da data da primeira licença; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - julgado incapaz moral ou profissionalmente, em processo regular quando não fôr o caso de demissão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;O professor em comissão é exonerado, antes do término do prazo de nomeação ou de recondução, e o professor contratado tem o seu contrato rescindindo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a pedido; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - por incapacidade física para o exercício do ensino, comprovada em inspeção de saúde; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - por conveniência da disciplina ou a bem moral; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - por extinção da cadeira para a qual foi nomeado ou contratado, se não puder ser aproveitado em outra disciplina correlata do mesmo Estabelecimento; e <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - por interêsse do serviço. <BR><BR>
+<CENTER><B>CAPÍTULO VII </CENTER></B>
+<CENTER><B>Do Pessoal Coadjuvante </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;O corpo docente de cada Estabelecimento de Ensino tem como coadjuvante: tecnologistas, preparadores e inspetores-monitores de alunos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;Os tecnologistas auxiliam os professôres no ensino superior técnico-científico, seja no campo didático, seja na pesquisa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O cargo de tecnologista é desempenhado por Sargentos com o curso de tecnologista, regulado pelo Ministério do Exército, e por tecnologistas civis contratados, possuidores de formação equivalentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O candidato civil ao cargo de tecnologista contratado deve satisfazer às seguintes exigências: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>possuir idoneidade moral, comprovada perante comissão de sindicância; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>ter aptidão para o exercício do cargo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>ser julgado, em inspeção de saúde, apto fisicamente para o exercício do cargo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>apresentar diploma de tecnologista passado por Estabelecimento de Ensino reconhecido pelo Ministério da Educação e Cultura; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>ser aprovado em exame de suficiência, constante de prova escrita e prática, referente à disciplina a que se apresente. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Os preparadores auxiliam os professôres nas disciplinas de ensino experimental e são selecionados, entre candidatos civis, pelos Estabelecimentos que dêles necessitem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O candidato a preparador deve satisfazer ás seguintes exigências: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>possuir idoneidade moral, comprovada perante a comissão de sindicância; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>ter aptidão para o exercício do cargo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>ser julgado, em inspeção de saúde, apto fisicamente para o exercício do cargo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>possuir o curso de nível médio completo; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>ser aprovado em exame de suficiência, constante de prova escrita e prática, referente à disciplina a que se candidate. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;Satisfeitas tôdas as exigências, o candidato civil a tecnologista ou a prepador é contratado por período de 2 (dois) anos, prorrogável por outro de igual duração, atendidos os requisitos de aproveitamento e rendimento do trabalho e de adaptação às atividades inerentes ao cargo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os tecnologistas civis e os preparadores podem ser contratados no regime de 40 (quarenta) horas de trabalho semanais, ou no de dedicação exclusiva com o compromisso de não exercer qualquer outra atividade remunerada em órgão público ou privado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;Os tecnologistas civis e os preparadores têm o contrato rescindido: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - A pedido; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Por incapacidade física para o exercício do cargo comprovada em inspeção de saúde; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Por conveniência da disciplina ou a bem da moral; e <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Por extinção, no Estabelecimento, da disciplina para a qual foram contratados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os tecnologistas civis e os preparadores ficam sujeitos ao que estabelecem a legislação trabalhista, o contrato firmado e as normas regulamentares do Estabelecimento para o qual foram contratados; os tecnologistas militares `a legislação militar em vigor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Os inspetores-monitores de alunos são Sargentos possuidores de curso de inspetor-monitor, regulado pelo Exército, que exercem atividades nos Estabelecimentos de nível médio. Destinam-se a auxiliar os professôres e instrutores na preparação material e na realização de aulas e sessões de instrução, bem como na manutenção da disciplina escolar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O regime de trabalho e os deveres dos inspetores-monitores estão definidos na legislação militar vigente e nos regulamentos dos Estabelecimentos de Ensino onde servem. <BR><BR>
+<CENTER><B>CAPÍTULO VIII </CENTER></B>
+<CENTER><B>Da Remuneração </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;Os vencimentos básicos do pessoal docente do ensino superior e médio e dos tecnologistas e preparadores, com os respectivos regimes de trabalho, serão fixados em lei específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;Os professôres civis, sòmente quando no exercício efetivo de suas atribuições no Magistério do Exército, fazem jus às gratificações abaixo: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Gratificação adicional por Tempo de Serviço; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Gratificação de Auxílio ao Aperfeiçoamento Técnico e Profissional; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Gratificação de Comissão no magistério do Exército; e <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Gratificação de Dedicação Exclusiva. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O pagamento das gratificações previstas no incisos II, III e IV dêste artigo cessa com o afastamento do professor de suas atividades no Magistério do Exercito ou da comissão que no mesmo exercia, por: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>aposentadoria; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>licença por período superior a 6 (seis) meses para tratamento de saúde de dependente; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>licença para aperfeiçoar seus conhecimentos técnicos ou realizar estudos por conta própria; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>ausência não justificada; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>afastamento do serviço além dos prazos legais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>término ou afastamento da comissão; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>licença especial; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>h)</I></TD>
+<TD>disponibilidade prevista no artigo 48; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>i)</I></TD>
+<TD>mudança de regime de trabalho. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os professôres contratados fazem jus sòmente às gratificações previstas nos incisos II, III e IV dêste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;A gratificação adicional por Tempo de Serviço é devida, definitivamente, inclusive na inatividade, ao professor permanente que complete cada qüinqüênio de efetivo serviço, no valor de tantas cotas de 5% (cinco por cento) de seu vencimento básico quantos forem os qüinqüênios de efetivo serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O direito à gratificação começa no dia seguinte àquele em que o professor completa cada qüinqüênio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;A gratificação de Auxilio ao Aperfeiçoamento Técnico Profissional, calculada sôbre o vencimento básico, é atribuída ao professor civil e ao coadjuvante civil de ensino no efetivo exercício da atividade de magistério, como estímulo ao aperfeiçoamento técnico-profissional, na razão de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - 35% (trinta e cinco por cento) aos professôres permanentes ou contratados do ensino superior; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - 25% (vinte e cinco por cento) aos professôres permanentes ou contratados do ensino médio; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - 20% ( vinte por cento) aos coadjuvantes do ensino superior; e <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - 15% (quinze por cento) aos coadjuvantes do ensino médio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;A gratificação pelo exercício de comissão no magistério do Exército é atribuída aos professôres civis nos seguintes casos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - 25% (vinte cinco por cento) do vencimento básico pelo efetivo desempenho do cargo de Subdiretor de Ensino; e <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - 15% (quinze por cento) do vencimento básico pelo efetivo desempenho do cargo de Chefe de Seção de Ensino. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;A gratificação de Dedicação Exclusiva é devida ao professor civil e ao coadjuvante civil na razão de 20% (vinte por cento) sôbre o vencimento básico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A gratificação prevista neste artigo não pode ser acumulada com a estabelecida no art. 40, anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;A remuneração a que tem direito o professor militar, permanente ou em comissão, e o coadjuvante militar é regulada pelo código de Vencimento dos Militares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;O professor contratado, Oficial da reserva ou reformado, além dos proventos da inatividade regulados pelo Código de Vencimentos dos Militares, faz jus à remuneração igual à do professor civil contratado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;O conferencista recebe, por conferência de duração de uma hora, importância igual à média das gratificações pagas aos conferencistas do mesmo nível de ensino, na localidade do Estabelecimento de Ensino considerado. <BR><BR>
+<CENTER><B>TÍTULO II </CENTER></B>
+<CENTER><B>Disposições Especiais</B><BR><BR></CENTER>
+<CENTER><B>CAPÍTULO ÚNICO </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;O professor não participar da administração do Estabelecimento de Ensino, exceto nas atividades diretamente relacionadas com as atribuições de magistério. Entretanto, se militar, deve assumir o comando eventual ou temporário por imposição de sua hierarquia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;O professor não pode, a qualquer título, ensinar individual ou coletivamente, em caráter particular, a alunos do Estabelecimento onde leciona. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O professor não pode lecionar em curso, ou organizações semelhantes, de preparação para concurso de admissão ou para exames de segunda época do Estabelecimento onde leciona. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;O professor permanente pode ser movimentado por imposição da disciplina, por conveniência do ensino, por motivo de saúde ou por interêsse próprio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Na hipótese de extinção do Estabelecimento de Ensino e por conveniência do ensino, sua movimentação é feita por necessidade do serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;O professor permanente civil é pôsto em disponibilidade quando a disciplina que leciona é extinta do currículo oficial do Estabelecimento de Ensino e não cabe seu aproveitamento em disciplina correlata, no mesmo ou em outro Estabelecimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O professor permanente civil em disponibilidade pode ser aproveitado a critério da autoridade competente, em função de natureza técnica compatível com sua hierarquia funcional, relacionada com a administração do ensino ou com programas de pesquisas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;Além dos casos previstos na legislação em vigor, pode ocorrer, no interêsse do ensino e da pesquisa, o afastamento do professor para aperfeiçoar-se em instituições nacionais ou estrangeiras, ou para comparecer a congresso e reuniões relacionadas com a atividade do magistério que exerce. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O afastamento previsto neste artigo é concedido, por indicação do Comandante do Estabelecimento de Ensino ou a requerimento do interessado, pela autoridade de competente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;O professor militar permanente, afastado do exército da função do Magistério do Exército, agrega nas condições estabelecidas na legislação vigente. <BR><BR>
+<CENTER><B>TÍTULO III </CENTER></B>
+<CENTER><B>Disposições Transitórias </CENTER></B><BR>
+<CENTER><B>CAPÍTULO ÚNICO <BR></CENTER></B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;Aos atuais professôres civis e militares, catedráticos e adjuntos de catedráticos em caráter efetivo, são assegurados os direitos e as prerrogativas estabelecidas na legislação em vigor até a data de publicação desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para efeitos da presente Lei, no que lhes fôr aplicável, os professôres de que trata êste artigo são considerados como das classes de titulares e adjuntos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;O direito à inatividade remunerada, a pedido, só assiste aos professôres militares referidos no artigo 51, que tenham mais de 30 (trinta) anos de efetivo serviço, dos quais 10 (dez), no mínimo, de tempo no Magistério do Exército. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;São incluídos na categoria de professor contratado os professôres civis que se submeteram à prova de suficiência, para admissão em caráter provisório ou temporário, e que ainda se encontrem em exercício por ocasião da entrada em vigor desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;Os atuais professôres adjuntos de catedrático em caráter provisório, desde que satisfaçam à legislação vigente na data da entrada em vigor desta Lei, podem ser reconduzidos, até que se realize, no Estabelecimento de Ensino onde exercem atividade, o primeiro concurso para preenchimento, em caráter permanente, das vagas existentes na Seção de Ensino que integram. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;As providências do artigo 16 desta Lei serão aplicadas pela primeira vez em cada Estabelecimento após atingidas as percentagens de professôres temporários de que trata o parágrafo único de seu art. 5º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;Na Lei de que trata o artigo 36 serão previstos os valôres básicos da hora de trabalho, considerando o mês de 4 (quatro) semanas para cálculo dos vencimentos dos professôres e dos coadjuvantes civis. <BR><BR>
+<CENTER><B>TÍTULO IV </CENTER></B>
+<CENTER><B>Disposições finais</B><BR><BR></CENTER>
+<CENTER><B>CAPÍTULO ÚNICO </CENTER></B>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;Esta Lei será regulada por ato do Poder Executivo, no prazo de 90 (noventa) dias a partir da data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;Esta Lei entrará em vigor na data de sua publicação e revoga o Decreto-Lei nº 103, de 23 de dezembro de 1.937, e demais disposições em contrário. </P>
+<P>Brasília, 9 de setembro de 1.971; 150º da Independência e 83º da República. </P>
+<P>EMÍLIO G. MÉDICI <BR>Orlando Geiel <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 10/09/1971
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 10/9/1971, Página 7345 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1971, Página 80 
+                                                        Vol. 5          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

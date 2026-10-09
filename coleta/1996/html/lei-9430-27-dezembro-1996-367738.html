@@ -1,0 +1,941 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 9.430, DE 27 DE DEZEMBRO DE 1996 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre a legislação tributária federal, as contribuições para a seguridade social, o processo administrativo de consulta e dá outras providências. " />
+
+<!-- CSS do portal-tema: necessário para o botão de compartilhamento -->
+<link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T3NRZN7V');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T3NRZN7V"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 9.430, DE 27 DE DEZEMBRO DE 1996 - Publicação Original</h2>
+
+			<div class="g-contexto-compartilhamento g-contexto-compartilhamento--extendido g-impressao">
+				<!-- Elemento propositalmente vazio, preenchido pelo JS de compartilhamento do portal -->
+			</div>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-9430-27-dezembro-1996-367738-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-9430-27-dezembro-1996-367738-normaatualizada-pl.docx">formato docx</a>)
+                                                &nbsp;
+                                                    (<a href="lei-9430-27-dezembro-1996-367738-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=203584">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-9430-27-dezembro-1996-367738-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 9.430, DE 27 DE DEZEMBRO DE 1996</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre a legislação tributária federal, as contribuições para a seguridade social, o processo administrativo de consulta e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							<STRONG>&nbsp;&nbsp;&nbsp;&nbsp; O PRESIDENTE DA REPÚBLICA&nbsp;<BR></STRONG><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER>Capítulo I </CENTER>
+<CENTER>IMPOSTO DE RENDA - PESSOA JURÍDICA </CENTER><BR><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><STRONG>Apuração da Base de Cálculo <BR></STRONG><B></CENTER></B><BR>Período de Apuração Trimestral&nbsp;<B>&nbsp;</B> <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;A partir do ano-calendário de 1997, o imposto de renda das pessoas jurídicas será determinado com base no lucro real, presumido, ou arbitrado, por períodos de apuração trimestrais, encerrados nos dias 31 de março, 30 de junho, 30 de setembro e 31 de dezembro de cada ano-calendário, observada a legislação vigente, com as alterações desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Nos casos de incorporação, fusão ou cisão, a apuração da base de cálculo e do imposto de renda devido será efetuada na data do evento, observado o disposto no art. 21 da Lei nº 9.249, de 26 de dezembro de 1995. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na extinção da pessoa jurídica, pelo encerramento da liquidação, a apuração da base de cálculo e do imposto devido será efetuada na data desse evento.<BR>&nbsp;<BR>Pagamento por Estimativa&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;A pessoa jurídica sujeita a tributação com base no lucro real poderá optar pelo pagamento do imposto, em cada mês, determinado sobre base de cálculo estimada, mediante a aplicação, sobre a receita bruta auferida mensalmente, dos percentuais de que trata o art. 15 da Lei nº 9.249, de 26 de dezembro de 1995, observado o disposto nos §§ 1º e 2º do art. 29 e nos arts. 30 a 32, 34 e 35 da Lei nº 8.981, de 20 de janeiro de 1995, com as alterações da Lei nº 9.065, de 20 de junho de 1995. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O imposto a ser pago mensalmente na forma deste artigo será determinado mediante a aplicação, sobre a base de cálculo, da alíquota de quinze por cento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A parcela da base de cálculo, apurada mensalmente, que exceder a R$20.000,00 (vinte mil reais) ficará sujeita à incidência de adicional de imposto de renda à alíquota de dez por cento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A pessoa jurídica que optar pelo pagamento do imposto na forma deste artigo deverá apurar o lucro real em 31 de dezembro de cada ano, exceto nas hipóteses de que tratam os §§ 1º e 2º do artigo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Para efeito de determinação do saldo de imposto a pagar ou a ser compensado, a pessoa jurídica poderá deduzir do imposto devido o valor: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - dos incentivos fiscais de dedução do imposto, observados os limites e prazos fixados na legislação vigente, bem como o disposto no § 4º do art. 3º da Lei nº 9.249, de 26 de dezembro de 1995; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - dos incentivos fiscais de redução e isenção do imposto, calculados com base no lucro da exploração; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - do imposto de renda pago ou retido na fonte, incidente sobre receitas computadas na determinação do lucro real; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - do imposto de renda pago na forma deste artigo. <BR><BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Pagamento do Imposto </CENTER></B>
+<CENTER><B>&nbsp;</CENTER></B><BR>Escolha da Forma de Pagamento&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;A adoção da forma de pagamento do imposto prevista no art. 1º, pelas pessoas jurídicas sujeitas ao regime do lucro real, ou a opção pela forma do art. 2º será irretratável para todo o ano-calendário. <BR><BR><EM>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo único</EM>. A opção pela forma estabelecida no art. 2º será manifestada com o pagamento do imposto correspondente ao mês de janeiro ou de início de atividade. <BR><BR>Adicional do Imposto de Renda <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Os §§ 1º e 2º do art. 3º da Lei nº 9.249, de 26 de dezembro de 1995, passam a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 3º..........................................................................................................&nbsp; <BR><BR>§ 1ºA parcela do lucro real, presumido ou arbitrado, que exceder o valor resultante da multiplicação de R$20.000,00 (vinte mil reais) pelo número de meses do respectivo período de apuração, sujeita-se à incidência de adicional de imposto de renda à alíquota de dez por cento. <BR><BR>§ 2º O disposto no parágrafo anterior aplica-se, inclusive, nos casos de incorporação, fusão ou cisão e de extinção da pessoa jurídica pelo encerramento da liquidação. <BR>....................................................................................................................."</DIR>
+<P>Imposto Correspondente a Período Trimestral <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;O imposto de renda devido, apurado na forma do art. 1º, será pago em quota única, até o último dia útil do mês subseqüente ao do encerramento do período de apuração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A opção da pessoa jurídica, o imposto devido poderá ser pago em até três quotas mensais, iguais e sucessivas, vencíveis no último dia útil dos três meses subseqüentes ao de encerramento do período de apuração a que corresponder. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Nenhuma quota poderá ter valor inferior a R$1.000,00 (mil reais) e o imposto de valor inferior a R$2.000,00 (dois mil reais) será pago em quota única, até o último dia útil do mês subseqüente ao do encerramento do período de apuração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As quotas do imposto serão acrescidas de juros equivalentes à taxa referencial do Sistema Especial de Liquidação e Custódia - SELIC para títulos federais, acumulada mensalmente, calculados a partir do primeiro dia do segundo mês subseqüente ao do encerramento do período de apuração até o último dia do mês anterior ao do pagamento e de um por cento no mês do pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Nos casos de incorporação, fusão ou cisão e de extinção da pessoa jurídica pelo encerramento da liquidação, o imposto devido deverá ser pago até o último dia útil do mês subseqüente ao do evento, não se lhes aplicando a opção prevista no § 1º. </P>
+<P>Pagamento por Estimativa <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;O imposto devido, apurado na forma do art. 2º, deverá ser pago até o último dia útil do mês subseqüente àquele a que se referir. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O saldo do imposto apurado em 31 de dezembro será: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - pago em quota única, até o último dia útil do mês de março do ano subseqüente, se positivo, observado o disposto no § 2º; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - compensado com o imposto a ser pago a partir do mês de abril do ano subseqüente, se negativo, assegurada a alternativa de requerer, após a entrega da declaração de rendimentos, a restituição do montante pago a maior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º o saldo do imposto a pagar de que trata o inciso I do parágrafo anterior será acrescido de juros calculados à taxa a que se refere o § 3º do art. 5º, a partir de 1º de fevereiro até o último dia do mês anterior ao do pagamento e de um por cento no mês do pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O prazo a que se refere o inciso I do § 1º não se aplica ao imposto relativo ao mês de dezembro, que deverá ser pago até o último dia útil do mês de janeiro do ano subseqüente. </P>
+<P>Disposições Transitórias <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Alternativamente ao disposto no art. 40 da Lei nº 8.981, de 20 de janeiro de 1995, com as alterações da Lei nº 9.065, de 20 de junho de 1995, a pessoa jurídica tributada com base no lucro real ou presumido poderá efetuar o pagamento do saldo do imposto devido, apurado em 31 de dezembro de 1996, em até quatro quotas mensais, iguais e sucessivas, devendo a primeira ser paga até o último dia útil do mês de março de 1997 e as demais no último dia útil dos meses subseqüentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Nenhuma quota poderá ter valor inferior a R$1.000,00 (mil reais) e o imposto de valor inferior a R$2.000,00 (dois mil reais) será pago em quota única, até o último dia útil do mês de março de 1997. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As quotas do imposto serão acrescidas de juros calculados à taxa a que se refere o § 3º do art. 5º, a partir de 1º de abril de 1997 até o último dia do mês anterior ao do pagamento e de um por cento no mês do pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Havendo saldo de imposto pago a maior, a pessoa jurídica poderá compensá-lo com o imposto devido, correspondente aos períodos de apuração subseqüentes, facultado o pedido de restituição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;As pessoas jurídicas, mesmo as que não tenham optado pela forma de pagamento do art. 2º, deverão calcular e pagar o imposto de renda relativo aos meses de janeiro e fevereiro de 1997 de conformidade com o referido dispositivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único</EM>. Para as empresas submetidas às normas do art. 1º o imposto pago com base na receita bruta auferida nos meses de janeiro e fevereiro de 1997 será deduzido do que for devido em relação ao período de apuração encerrado no dia 31 de março de 1997. <BR><BR><BR></P>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Perdas no Recebimento de Créditos </B><B></CENTER></B>
+<P><BR>Dedução&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;As perdas no recebimento de créditos decorrentes das atividades da pessoa jurídica poderão ser deduzidas como despesas, para determinação do lucro real, observado o disposto neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Poderão ser registrados como perda os créditos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - em relação aos quais tenha havido a declaração de insolvência do devedor, em sentença emanada do Poder Judiciário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - sem garantia, de valor: <BR><BR></P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>a)</EM></TD>
+<TD>até R$5.000,00 (cinco mil reais), por operação, vencidos há mais de seis meses, independentemente de iniciados os procedimentos judiciais para o seu recebimento; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>b)</EM></TD>
+<TD>acima de R$5.000,00 (cinco mil reais) até R$30.000,00 (trinta mil reais), por operação, vencidos há mais de um ano, independentemente de iniciados os procedimentos judiciais para o seu recebimento, porém, mantida a cobrança administrativa; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>c)</EM></TD>
+<TD>superior a R$30.000,00 (trinta mil reais), vencidos há mais de um ano, desde que iniciados e mantidos os procedimentos judiciais para o seu recebimento; </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - com garantia, vencidos há mais de dois anos, desde que iniciados e mantidos os procedimentos judiciais para o seu recebimento ou o arresto das garantias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - contra devedor declarado falido ou pessoa jurídica declarada concordatária, relativamente à parcela que exceder o valor que esta tenha se comprometido a pagar, observado o disposto no § 5º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No caso de contrato de crédito em que o não pagamento de uma ou mais parcelas implique o vencimento automático de todas as demais parcelas vincendas, os limites a que se referem, as alíneas <EM>a</EM> e <EM>b</EM> do inciso II do parágrafo anterior serão considerados em relação ao total dos créditos, por operação, com o mesmo devedor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Para os fins desta Lei, considera-se crédito garantido o proveniente de vendas com reserva de domínio, de alienação fiduciária em garantia ou de operações com outras garantias reais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º No caso de crédito com empresa em processo falimentar ou de concordata, a dedução da perda será admitida a partir da data da decretação da falência ou da concessão da concordata, desde que a credora tenha adotado os procedimentos judiciais necessários para o recebimento do crédito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º A parcela do crédito cujo compromisso de pagar não houver sido honrado pela empresa concordatária poderá, também, ser deduzida como perda, observadas as condições previstas neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Não será admitida a dedução de perda no recebimento de créditos com pessoa jurídica que seja controladora, controlada, coligada ou interligada, bem como com pessoa física que seja acionista controlador, sócio, titular ou administrador da pessoa jurídica credora, ou parente até o terceiro grau dessas pessoas físicas. </P>
+<P>Registro Contábil das Perdas <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Os registros contábeis das perdas admitidas nesta Lei serão efetuados a débito de conta de resultado e a crédito: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - da conta que registra o crédito de que trata a alínea <EM>a</EM> do inciso II do § 1º do artigo anterior; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - de conta redutora do crédito, nas demais hipóteses. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Ocorrendo a desistência da cobrança pela via judicial, antes de decorridos cinco anos do vencimento do crédito, a perda eventualmente registrada deverá ser estornada ou adicionada ao lucro líquido, para determinação do lucro real correspondente ao período de apuração em que se der a desistência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na hipótese do parágrafo anterior, o imposto será considerado como postergado desde o período de apuração em que tenha sido reconhecida a perda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Se a solução da cobrança se der em virtude de acordo homologado por sentença judicial, o valor da perda a ser estornado ou adicionado ao lucro líquido para determinação do lucro real será igual à soma da quantia recebida com o saldo a receber renegociado, não sendo aplicável o disposto no parágrafo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Os valores registrados na conta redutora do crédito referida no inciso II do <EM><I>caput</I></EM> poderão ser baixados definitivamente em contrapartida à conta que registre o crédito, a partir do período de apuração em que se completar cinco anos do vencimento do crédito sem que o mesmo tenha sido liquidado pelo devedor. </P>
+<P>Encargos Financeiros de Créditos Vencidos <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Após dois meses do vencimento do crédito, sem que tenha havido o seu recebimento, a pessoa jurídica credora poderá excluir do lucro líquido, para determinação do lucro real, o valor dos encargos financeiros incidentes sobre o crédito, contabilizado como receita auferido a partir do prazo definido neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Ressalvadas as hipóteses das alíneas <EM>a </EM>e <EM>b </EM>do inciso II do § 1º do art. 9º, o disposto neste artigo somente se aplica quando a pessoa jurídica houver tomado as providências de caráter judicial necessárias ao recebimento do crédito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os valores excluídos deverão ser adicionados no período de apuração em que, para os fins legais, se tornarem disponíveis para a pessoa jurídica credora ou em que reconhecida a respectiva perda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A partir da citação inicial para o pagamento do débito, a pessoa jurídica devedora deverá adicionar ao lucro líquido, para determinação do lucro real, os encargos incidentes sobre o débito vencido e não pago que tenham sido deduzidos como despesa ou custo, incorridos a partir daquela data. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Os valores adicionados a que se refere o parágrafo anterior poderão ser excluídos do lucro líquido, para determinação do lucro real, no período de apuração em que ocorra a quitação do débito por qualquer forma. </P>
+<P>Créditos Recuperados <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Deverá ser computado na determinação do lucro real o montante dos créditos deduzidos que tenham sido recuperados, em qualquer época ou a qualquer título, inclusive nos casos de novação da dívida ou do arresto dos bens recebidos em garantia real. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Parágrafo único. Os bens recebidos a título de quitação do débito serão escriturados pelo valor do crédito ou avaliados pelo valor definido na decisão judicial que tenha determinado sua incorporação ao patrimônio do credor.</P>
+<P>Disposição Transitória <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;No balanço levantado para determinação do lucro real em 31 de dezembro de 1996, a pessoa jurídica poderá optar pela constituição de provisão para créditos de liquidação duvidosa na forma do art. 43 da Lei nº 8.981, de 20 de janeiro de 1995, com as alterações da Lei nº 9.065, de 20 de junho de 1995, ou pelos critérios de perdas a que se referem os arts. 9º a 12. </P>
+<P>Saldo de Provisões Existente em 31.12.96 <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;A partir do ano-calendário de 1997, ficam revogadas as normas previstas no art. 43 da Lei nº 8.981, de 20 de janeiro de 1995, com as alterações da Lei nº 9.065, de 20 de junho de 1995, bem como a autorização para a constituição de provisão nos termos dos artigos citados, contida no inciso I do art. 13 da Lei nº 9.249, de 26 de dezembro de 1995. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A pessoa jurídica que, no balanço de 31 de dezembro de 1996, optar pelos critérios de dedução de perdas de que tratam os arts. 9º a 12 deverá, nesse mesmo balanço, reverter os saldos das provisões para créditos de liquidação duvidosa, constituídas na forma do art. 43 da Lei nº 8.981, de 20 de janeiro de 1995, com as alterações da Lei nº 9.065, de 20 de junho de 1995. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para a pessoa jurídica que, no balanço de 31 de dezembro de 1996, optar pela constituição de provisão na forma do art. 43 da Lei nº 8.981, de 20 de janeiro de 1995, com as alterações da Lei nº 9.065, de 20 de junho de 1995, a reversão a que se refere o parágrafo anterior será efetuada no balanço correspondente ao primeiro período de apuração encerrado em 1997, se houver adotado o regime de apuração trimestral, ou no balanço de 31 de dezembro de 1997 ou da data da extinção, se houver optado pelo pagamento mensal de que trata o art. 2º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Nos casos de incorporação, fusão ou cisão, a reversão de que trata o parágrafo anterior será efetuada no balanço que servir de base à apuração do lucro real correspondente. <BR><BR></P>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Rendimentos do Exterior </CENTER></B>
+<CENTER>&nbsp;</CENTER>
+<P>Compensação de Imposto Pago&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;A pessoa jurídica domiciliada no Brasil que auferir, de fonte no exterior, receita decorrente da prestação de serviços efetuada diretamente poderá compensar o imposto pago no país de domicílio da pessoa física ou jurídica contratante, observado o disposto no art. 26 da Lei nº 9.249, de 26 de dezembro de 1995. </P>
+<P>Lucros e Rendimentos <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Sem prejuízo do disposto nos arts. 25, 26 e 27 da Lei nº 9.249, de 26 de dezembro de 1995, os lucros auferidos por filiais, sucursais, controladas e coligadas, no exterior, serão: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - considerados de forma individualizada, por filial, sucursal, controlada ou coligada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - arbitrados, os lucros das filiais, sucursais e controladas, quando não for possível a determinação de seus resultados, com observância das mesmas normas aplicáveis às pessoas jurídicas domiciliadas no Brasil e computados na determinação do lucro real. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os resultados decorrentes de aplicações financeiras de renda variável no exterior, em um mesmo país, poderão ser consolidados para efeito de cômputo do ganho, na determinação do lucro real. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para efeito da compensação de imposto pago no exterior, a pessoa jurídica: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - com relação aos lucros, deverá apresentar as demonstrações financeiras correspondentes, exceto na hipótese do inciso II do <EM><I>caput</I></EM> deste artigo, <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - fica dispensada da obrigação a que se refere o § 2º do art. 26 da Lei nº 9.249, de 26 de dezembro de 1995, quando comprovar que a legislação do país de origem do lucro, rendimento ou ganho de capital prevê a incidência do imposto de renda que houver sido pago, por meio do documento de arrecadação apresentado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Na hipótese de arbitramento do lucro da pessoa jurídica domiciliada no Brasil, os lucros, rendimentos e ganhos de capital oriundos do exterior serão adicionados ao lucro arbitrado para determinação da base de cálculo do imposto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Do imposto devido correspondente a lucros, rendimentos ou ganhos de capital oriundos do exterior não será admitida qualquer destinação ou dedução a título de incentivo fiscal. </P>
+<P>Operações de Cobertura em Bolsa do Exterior <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Serão computados na determinação do lucro real os resultados líquidos, positivos ou negativos, obtidos em operações de cobertura ( hedge ) realizadas em mercados de liquidação futura, diretamente pela empresa brasileira, em bolsas no exterior. <BR><BR></P>
+<CENTER><B>Seção V </CENTER></B>
+<CENTER><B>Preços de Transferência </CENTER></B>
+<CENTER>&nbsp;</CENTER><BR>Bens, Serviços e Direitos Adquiridos no Exterior&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Os custos, despesas e encargos relativos a bens, serviços e direitos, constantes dos documentos de importação ou de aquisição, nas operações efetuadas com pessoa vinculada, somente serão dedutíveis na determinação do lucro real até o valor que não exceda ao preço determinado por um dos seguintes métodos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Método dos Preços Independentes Comparados - PIC: definido como a média aritmética dos preços de bens, serviços ou direitos, idênticos ou similares, apurados no mercado brasileiro ou de outros países, em operações de compra e venda, em condições de pagamento semelhantes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Método do Preço de Revenda menos Lucro - PRL: definido como a média aritmética dos preços de revenda dos bens ou direitos, diminuídos: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>a)</EM></TD>
+<TD>dos descontos incondicionais concedidos, </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>b)</EM></TD>
+<TD>dos impostos e contribuições incidentes sobre as vendas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>c)</EM></TD>
+<TD>das comissões e corretagens pagas, </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><EM>d)</EM></TD>
+<TD>de margem de lucro de vinte por cento, calculada sobre o preço de revenda; </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Método do Custo de Produção mais Lucro - CPL: definido como o custo médio de produção de bens, serviços ou direitos, idênticos ou similares, no país onde tiverem sido originariamente produzidos, acrescido dos impostos e taxas cobrados pelo referido país na exportação e de margem de lucro de vinte por cento, calculada sobre o custo apurado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As médias aritméticas dos preços de que tratam os incisos I e II e o custo médio de produção de que trata o inciso III serão calculados considerando os preços praticados e os custos incorridos durante todo o período de apuração da base de cálculo do imposto de renda a que se referirem os custos, despesas ou encargos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para efeito do disposto no inciso I, somente serão consideradas as operações de compra e venda praticadas entre compradores e vendedores não vinculados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Para efeito do disposto no inciso II, somente serão considerados os preços praticados pela empresa com compradores não vinculados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Na hipótese de utilização de mais de um método, será considerado dedutível o maior valor apurado, observado o disposto no parágrafo subseqüente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Se os valores apurados segundo os métodos mencionados neste artigo forem superiores ao de aquisição, constante dos respectivos documentos, a dedutibilidade fica limitada ao montante deste último. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Integram o custo, para efeito de dedutibilidade, o valor do frete e do seguro, cujo ônus tenha sido do importador e os tributos incidentes na importação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º A parcela dos custos que exceder ao valor determinado de conformidade com este artigo deverá ser adicionada ao lucro líquido, para determinação do lucro real. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º A dedutibilidade dos encargos de depreciação ou amortização dos bens e direitos fica limitada, em cada período de apuração, ao montante calculado com base no preço determinado na forma deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 9º O disposto neste artigo não se aplica aos casos de <EM>royalties</EM> e assistência técnica, científica, administrativa ou assemelhada, os quais permanecem subordinados às condições de dedutibilidade constantes da legislação vigente. <BR><BR>Receitas Oriundas de Exportações para o Exterior <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;As receitas auferidas nas operações efetuadas com pessoa vinculada ficam sujeitas a arbitramento quando o preço médio de venda dos bens, serviços ou direitos, nas exportações efetuadas durante o respectivo período de apuração da base de cálculo do imposto de renda, for inferior a noventa por cento do preço médio praticado na venda dos mesmos bens, serviços ou direitos, no mercado brasileiro, durante o mesmo período, em condições de pagamento semelhantes.<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Caso a pessoa jurídica não efetue operações de venda no mercado interno, a determinação dos preços médios a que se refere o <EM><I>caput</I></EM> será efetuada com dados de outras empresas que pratiquem a venda de bens, serviços ou direitos, idênticos ou similares, no mercado brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para efeito de comparação, o preço de venda: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - no mercado brasileiro, deverá ser considerado líquido dos descontos incondicionais concedidos, do imposto sobre a circulação de mercadorias e serviços, do imposto sobre serviços e das contribuições para a seguridade social - COFINS e para o PIS/PASEP; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - nas exportações, será tomado pelo valor depois de diminuído dos encargos de frete e seguro, cujo ônus tenha sido da empresa exportadora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Verificado que o preço de venda nas exportações é inferior ao limite de que trata este artigo, as receitas das vendas nas exportações serão determinadas tomando-se por base o valor apurado segundo um dos seguintes métodos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Método do Preço de Venda nas Exportações - PVEx: definido como a média aritmética dos preços de venda nas exportações efetuadas pela própria empresa, para outros clientes, ou por outra exportadora nacional de bens, serviços ou direitos, idênticos ou similares, durante o mesmo período de apuração da base de cálculo do imposto de renda e em condições de pagamento semelhantes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Método do Preço de Venda por Atacado no País de Destino, Diminuído do Lucro - PVA: definido como a média aritmética dos preços de venda de bens, idênticos ou similares, praticados no mercado atacadista do país de destino, em condições de pagamento semelhantes, diminuídos dos tributos incluídos no preço, cobrados no referido país, e de margem de lucro de quinze por cento sobre o preço de venda no atacado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Método do Preço de Venda a Varejo no País de Destino, Diminuído do Lucro - PVV: definido como a média aritmética dos preços de venda de bens, idênticos ou similares, praticados no mercado varejista do país de destino, em condições de pagamento semelhantes, diminuídos dos tributos incluídos no preço, cobrados no referido país, e de margem de lucro de trinta por cento sobre o preço de venda no varejo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Método do Custo de Aquisição ou de Produção mais Tributos e Lucro - CAP: definido como a média aritmética dos custos de aquisição ou de produção dos bens, serviços ou direitos, exportados, acrescidos dos impostos e contribuições cobrados no Brasil e de margem de lucro de quinze por cento sobre a soma dos custos mais impostos e contribuições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º As médias aritméticas de que trata o parágrafo anterior serão calculadas em relação ao período de apuração da respectiva base de cálculo do imposto de renda da empresa brasileira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Na hipótese de utilização de mais de um método, será considerado o menor dos valores apurados, observado o disposto no parágrafo subseqüente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Se o valor apurado segundo os métodos mencionados no § 3º for inferior aos preços de venda constantes dos documentos de exportação, prevalecerá o montante da receita reconhecida conforme os referidos documentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º A parcela das receitas, apurada segundo o disposto neste artigo, que exceder ao valor já apropriado na escrituração da empresa deverá ser adicionada ao lucro líquido, para determinação do lucro real, bem como ser computada na determinação do lucro presumido e do lucro arbitrado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º Para efeito do disposto no § 3º, somente serão consideradas as operações de compra e venda praticadas entre compradores e vendedores não vinculados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;Em circunstâncias especiais, o Ministro de Estado da Fazenda poderá alterar os percentuais de que tratam os arts. 18 e 19, <EM><I>caput</I></EM>, e incisos II, III e IV de seu § 3º. </P>
+<P>Apuração dos Preços Médios <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;Os custos e preços médios a que se referem os arts. 18 e 19 deverão ser apurados com base em: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - publicações ou relatórios oficiais do governo do país do comprador ou vendedor ou declaração dá autoridade fiscal desse mesmo país, quando com ele o Brasil mantiver acordo para evitar a bitributação ou para intercâmbio de informações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - pesquisas efetuadas por empresa ou instituição de notório conhecimento técnico ou publicações técnicas, em que se especifiquem o setor, o período, as empresas pesquisadas e a margem encontrada, bem como identifiquem, por empresa, os dados coletados e trabalhados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As publicações, as pesquisas e os relatórios oficiais a que se refere este artigo somente serão admitidos como prova se houverem sido realizados com observância de métodos de avaliação internacionalmente adotados e se referirem a período contemporâneo com o de apuração da base de cálculo da imposto de renda da empresa brasileira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Admitir-se-ão margens de lucro diversas das estabelecidas nos arts. 18 e 19, desde que o contribuinte as comprove, com base em publicações, pesquisas ou relatórios elaborados de conformidade com o disposto neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As publicações técnicas, as pesquisas e os relatórios a que se refere este artigo poderão ser desqualificados mediante ato do Secretário da Receita Federal, quando considerados inidôneos ou inconsistentes. </P>
+<P>Juros <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;Os juros pagos ou creditados a pessoa vinculada, quando decorrentes de contrato não registrado no Banco Central do Brasil, somente serão dedutíveis para fins de determinação do lucro real até o montante que não exceda ao valor calculado com base na taxa <EM>Libor</EM> , para depósitos em dólares dos Estados Unidos da América pelo prazo de seis meses, acrescida de três por cento anuais a título de <EM>spread</EM>, proporcionalizados em função do período a que se referirem os juros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No caso de mútuo com pessoa vinculada, a pessoa jurídica mutuante domiciliada no Brasil, deverá reconhecer, como receita financeira correspondente à operação, no mínimo o valor apurado segundo o disposto neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para efeito do limite a que se refere este artigo, os juros serão calculados com base no valor da obrigação ou do direito, expresso na moeda objeto do contrato e convertida em reais pela taxa de câmbio, divulgada pelo Banco Central do Brasil, para a data do termo final do cálculo dos juros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O valor dos encargos que exceder o limite referido no <EM><I>caput</I> </EM>e a diferença de receita apurada na forma do parágrafo anterior serão adicionados à base de cálculo do imposto de renda devido pela empresa no Brasil, inclusive ao lucro presumido ou arbitrado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Nos casos de contratos registrados no Banco Central do Brasil, serão admitidos os juros determinados com base na taxa registrada. </P>
+<P>Pessoa Vinculada - Conceito <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;Para efeito dos arts. 18 a 22, será considerada vinculada à pessoa jurídica domiciliada no Brasil: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a matriz desta, quando domiciliada no exterior; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a sua filial ou sucursal, domiciliada no exterior; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a pessoa física ou jurídica, residente ou domiciliada no exterior, cuja participação societária no seu capital social a caracterize como sua controladora ou coligada, na forma definida nos §§ 1º e 2º do art. 243 da Lei nº 6.404, de 15 de dezembro de 1976; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a pessoa jurídica domiciliada no exterior que seja caracterizada como sua controlada ou coligada, na forma definida nos §§ 1º e 2º do art. 243 da Lei nº 6.404, de 15 de dezembro de 1976; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - a pessoa jurídica domiciliada no exterior, quando esta e a empresa domiciliada no Brasil estiverem sob controle societário ou administrativo comum ou quando pelo menos dez por cento do capital social de cada uma pertencer a uma mesma pessoa física ou jurídica; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - a pessoa física ou jurídica, residente ou domiciliada no exterior, que, em conjunto com a pessoa jurídica domiciliada no Brasil, tiver participação societária no capital social de uma terceira pessoa jurídica, cuja soma as caracterizem como controladoras ou coligadas desta, na forma definida nos §§ 1º e 2º do art. 243 da Lei nº 6.404, de 15 de dezembro de 1976; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - a pessoa física ou jurídica, residente ou domiciliada no exterior, que seja sua associada, na forma de consórcio ou condomínio, conforme definido na legislação brasileira, em qualquer empreendimento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - a pessoa física residente no exterior que for parente ou afim até o terceiro grau, cônjuge ou companheiro de qualquer de seus diretores ou de seu sócio ou acionista controlador em participação direta ou indireta; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - a pessoa física ou jurídica, residente ou domiciliada no exterior, que goze de exclusividade, como seu agente, distribuidor ou concessionário, para a compra e venda de bens, serviços ou direitos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - a pessoa física ou jurídica, residente ou domiciliada no exterior, em relação à qual a pessoa jurídica domiciliada no Brasil goze de exclusividade, como agente, distribuidora ou concessionária, para a compra e venda de bens, serviços ou direitos. <BR><BR>Países com Tributação Favorecida <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;As disposições relativas a preços, custos e taxas de juros, constantes dos arts. 18 a 22, aplicam-se, também, às operações efetuadas por pessoa física ou jurídica residente ou domiciliada no Brasil, com qualquer pessoa física ou jurídica, ainda que não vinculada, residente ou domiciliada em país que não tribute a renda ou que a tribute a alíquota máxima inferior a vinte por cento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; §1º Para efeito do disposto na parte final deste artigo, será considerada a legislação tributária do referido país, aplicável às pessoas físicas ou às pessoas jurídicas, conforme a natureza do ente com o qual houver sido praticada a operação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No caso de pessoa física residente no Brasil: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o valor apurado segundo os métodos de que trata o art. 18 será considerado como custo de aquisição para efeito de apuração de ganho de capital na alienação do bem ou direito; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o preço relativo ao bem ou direito alienado, para efeito de apuração de ganho de capital, será o apurado de conformidade com o disposto no art. 19; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - será considerado como rendimento tributável o preço dos serviços prestados apurado de conformidade com o disposto no art. 19; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - serão considerados como rendimento tributável os juros determinados de conformidade com o art. 22. <BR><BR><BR></P>
+<CENTER><B>Seção VI </CENTER></B>
+<CENTER><B>Lucro Presumido </CENTER></B>
+<CENTER>&nbsp;</CENTER>Determinação&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;O lucro presumido será o montante determinado pela soma das seguintes parcelas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o valor resultante da aplicação dos percentuais de que trata o art. 15 da Lei nº 9.249, de 26 de dezembro de 1995, sobre a receita bruta definida pelo art. 31 da Lei nº 8.981, de 20 de janeiro de 1995, auferida no período de apuração de que trata o art. 1º desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os ganhos de capital, os rendimentos e ganhos líquidos auferidos em aplicações financeiras, as demais receitas e os resultados positivos decorrentes de receitas não abrangidas pelo inciso anterior e demais valores determinados nesta Lei, auferidos naquele mesmo período.&nbsp;<BR><BR>Opção&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;A opção pela tributação com base no lucro presumido será aplicada em relação a todo o período de atividade da empresa em cada ano-calendário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A opção de que trata este artigo será manifestada com o pagamento da primeira ou única quota do imposto devido correspondente ao primeiro período de apuração de cada ano-calendário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A pessoa jurídica que houver iniciado atividade a partir do segundo trimestre manifestará a opção de que trata este artigo com o pagamento da primeira ou única quota do imposto devido relativa ao período de apuração do início de atividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A pessoa jurídica que houver pago o imposto com base no lucro presumido e que, em relação ao mesmo ano-calendário, alterar a opção, passando a ser tributada com base no lucro real, ficará sujeita ao pagamento de multa e juros moratórios sobre a diferença de imposto paga a menor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º A mudança de opção a que se refere o parágrafo anterior somente será admitida quando formalizada até a entrega da correspondente declaração de rendimentos e antes de iniciado procedimento de ofício relativo a qualquer dos períodos de apuração do respectivo ano-calendário. <BR><BR><BR>
+<CENTER><B>Seção VII </CENTER></B>
+<CENTER><B>Lucro Arbitrado </CENTER></B>
+<CENTER>&nbsp;</CENTER><BR>Determinação&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;O lucro arbitrado será o montante determinado pela soma das seguintes parcelas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o valor resultante da aplicação dos percentuais de que trata o art. 16 da Lei nº 9.249, de 26 de dezembro de 1995, sobre a receita bruta definida pelo art. 31 da Lei nº 8.981, de 20 de janeiro de 1995, auferida no período de apuração de que trata o art. 1º desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os ganhos de capital, os rendimentos e ganhos líquidos auferidos em aplicações financeiras, as demais receitas e os resultados positivos decorrentes de receitas não abrangidas pelo inciso anterior e demais valores determinados nesta Lei, auferidos naquele mesmo período. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Na apuração do lucro arbitrado, quando não conhecida a receita bruta, os coeficientes de que tratam os incisos II, III e IV do art. 51 da Lei nº 8.981, de 20 de janeiro de 1995, deverão ser multiplicados pelo número de meses do período de apuração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na hipótese de utilização das alternativas de cálculo previstas nos incisos V a VIII do art. 51 da Lei nº 8.981, de 20 de janeiro de 1995, o lucro arbitrado será o valor resultante da soma dos valores apurados para cada mês do período de apuração. <BR><BR><BR>
+<CENTER>Capítulo II </CENTER>
+<CENTER>CONTRIBUIÇÃO SOCIAL SOBRE O LUCRO LÍQUIDO </CENTER><BR><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Apuração da Base de Cálculo e Pagamento </CENTER></B>
+<DIV align=left><BR>Normas Aplicáveis&nbsp;</DIV>
+<DIV align=left><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Aplicam-se à apuração da base de cálculo e ao pagamento da contribuição social sobre o lucro líquido as normas da legislação vigente e as correspondentes aos arts. 1º a 3º, 5º a 14, 17 a 24, 26, 55 e 71, desta Lei. </DIV>
+<P>Empresas sem Escrituração Contábil <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;A base de cálculo da contribuição social sobre o lucro líquido, devida pelas pessoas jurídicas tributadas com base no lucro presumido ou arbitrado e pelas demais empresas dispensadas de escrituração contábil, corresponderá à soma dos valores: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - de que trata o art. 20 da Lei nº 9.249, de 26 de dezembro de 1995; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os ganhos de capital, os rendimentos e ganhos líquidos auferidos em aplicações financeiras, as demais receitas e os resultados positivos decorrentes de receitas não abrangidas pelo inciso anterior e demais valores determinados nesta Lei, auferidos naquele mesmo período. </P>
+<P>Pagamento Mensal Estimado <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;A pessoa jurídica que houver optado pelo pagamento do imposto de renda na forma do art. 2º fica, também, sujeita ao pagamento mensal da contribuição social sobre o lucro líquido, determinada mediante a aplicação da alíquota a que estiver sujeita sobre a base de cálculo apurada na forma dos incisos I e II do artigo anterior. <BR><BR></P>
+<CENTER>Capítulo III </CENTER>
+<CENTER>IMPOSTO SOBRE PRODUTOS INDUSTRIALIZADOS </CENTER>
+<DIV align=left><BR>Contribuinte Substituto </DIV>
+<DIV align=left><BR>&nbsp;</DIV>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;O art. 35 da Lei nº 4.502, de 30 de novembro de 1964, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 35.&nbsp;........................................................................................ <BR>......................................................................................................... <BR><BR>II - como contribuinte substituto: <BR>.......................................................................................................... </DIR>
+<DIR><EM>c)</EM> o industrial ou equiparado, mediante requerimento, nas operações anteriores, concomitantes ou posteriores às saídas que promover, nas hipóteses e condições estabelecidas pela Secretaria da Receita Federal. <BR><BR>§ 1º Nos casos das alíneas <EM>a</EM> e <EM>b</EM> do inciso II deste artigo, o pagamento do imposto não exclui a responsabilidade por infração do contribuinte originário quando este for identificado, e será considerado como efetuado fora do prazo, para todos os efeitos legais. <BR><BR>§ 2º Para implementar o disposto na alínea <EM>c</EM> do inciso II, a Secretaria da Receita Federal poderá instituir regime especial de suspensão do imposto."<BR></DIR>
+<CENTER>Capítulo IV </CENTER>
+<CENTER>PROCEDIMENTOS DE FISCALIZAÇÃO </CENTER><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Suspensão da Imunidade e da Isenção </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;A suspensão da imunidade tributária, em virtude de falta de observância de requisitos legais, deve ser procedida de conformidade com o disposto neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Constatado que entidade beneficiária de imunidade de tributos federais de que trata a alínea <EM>c</EM> do inciso VI do art. 150 da Constituição Federal não está observando requisito ou condição previsto nos arts. 9º, § 1º, e 14, da Lei nº 5.172, de 25 de outubro de 1966 - Código Tributário Nacional, a fiscalização tributária expedirá notificação fiscal, na qual relatará os fatos que determinam a suspensão do benefício, indicando inclusive a data da ocorrência da infração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A entidade poderá, no prazo de trinta dias da ciência da notificação, apresentar as alegações e provas que entender necessárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O Delegado ou Inspetor da Receita Federal decidirá sobre a procedência das alegações, expedindo o ato declaratório suspensivo do benefício, no caso de improcedência, dando, de sua decisão, ciência à entidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Será igualmente expedido o ato suspensivo se decorrido o prazo previsto no § 2º sem qualquer manifestação da parte interessada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º A suspensão da imunidade terá como termo inicial a data da prática da infração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Efetivada a suspensão da imunidade: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a entidade interessada poderá, no prazo de trinta dias da ciência, apresentar impugnação ao ato declaratório, a qual será objeto de decisão pela Delegacia da Receita Federal de julgamento competente: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a fiscalização de tributos federais lavrará auto de infração, se for o caso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º A impugnação relativa à suspensão da imunidade obedecerá às demais normas reguladoras do processo administrativo fiscal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º A impugnação e o recurso apresentados pela entidade não terão efeito suspensivo em relação ao ato declaratório contestado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 9º Caso seja lavrado auto de infração, as impugnações contra o ato declaratório e contra a exigência de crédito tributário serão reunidas em um único processo, para serem decididas simultaneamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 10. Os procedimentos estabelecidos neste artigo aplicam-se, também, às hipóteses de suspensão de isenções condicionadas, quando a entidade beneficiária estiver descumprindo as condições ou requisitos impostos pela legislação de regência. <BR><BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Regimes Especiais de Fiscalização </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;A Secretaria da Receita Federal pode determinar regime especial para cumprimento de obrigações, pelo sujeito passivo, nas seguintes hipóteses: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - embaraço à fiscalização, caracterizado pela negativa não justificada de exibição de livros e documentos em que se assente a escrituração das atividades do sujeito passivo, bem como pelo não fornecimento de informações sobre bens, movimentação financeira, negócio ou atividade, próprios ou de terceiros, quando intimado, e demais hipóteses que autorizam a requisição do auxílio da força pública, nos termos do art. 200 da Lei nº 5.172, de 25 de outubro de 1966; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - resistência à fiscalização caracterizada pela negativa de acesso ao estabelecimento, ao domicílio fiscal ou a qualquer outro local onde se desenvolvam as atividades do sujeito passivo, ou se encontrem bens de sua posse ou propriedade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - evidências de que a pessoa jurídica esteja constituída por interpostas pessoas que não sejam os verdadeiros sócios ou acionistas, ou o titular, no caso de firma individual; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - realização de operações sujeitas à incidência tributária, sem a devida inscrição no cadastro de contribuintes apropriado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - prática reiterada de infração da legislação tributária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - comercialização de mercadorias com evidências de contrabando ou descaminho; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - incidência em conduta que enseje representação criminal, nos termos da legislação que rege os crimes contra a ordem tributária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O regime especial de fiscalização será aplicado em virtude de ato do Secretário da Receita Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O regime especial pode consistir, inclusive, em: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - manutenção de fiscalização ininterrupta no estabelecimento do sujeito passivo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - redução, à metade, dos períodos de apuração e dos prazos de recolhimento dos tributos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - utilização compulsória de controle eletrônico das operações realizadas e recolhimento diário dos respectivos tributos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - exigência de comprovação sistemática do cumprimento das obrigações tributárias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - controle especial da impressão e emissão de documentos comerciais e fiscais e da movimentação financeira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As medidas previstas neste artigo poderão ser aplicadas isolada ou cumulativamente, por tempo suficiente à normalização do cumprimento das obrigações tributárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º A imposição do regime especial não elide a aplicação de penalidades previstas na legislação tributária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º As infrações cometidas pelo contribuinte durante o período em que estiver submetido a regime especial de fiscalização serão punidas com a multa de que trata o inciso II do art. 44. <BR><BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Documentação Fiscal </CENTER></B>
+<DIV align=left><BR>Acesso à Documentação<STRONG> <BR></STRONG></DIV>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;São também passíveis de exame os documentos do sujeito passivo, mantidos em arquivos magnéticos ou assemelhados, encontrados no local da verificação, que tenham relação direta ou indireta com a atividade por ele exercida. </P>
+<P>Retenção de Livros e Documentos <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Os livros e documentos poderão ser examinados fora do estabelecimento do sujeito passivo, desde que lavrado termo escrito de retenção pela autoridade fiscal, em que se especifiquem a quantidade, espécie, natureza e condições dos livros e documentos retidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Constituindo os livros ou documentos prova da prática de ilícito penal ou tributário, os originais retidos não serão devolvidos, extraindo-se cópia para entrega ao interessado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Excetuado o disposto no parágrafo anterior, devem ser devolvidos os originais dos documentos retidos para exame, mediante recibo. <BR><BR>Lacração de Arquivos&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;A autoridade fiscal encarregada de diligência ou fiscalização poderá promover a lacração de móveis, caixas, cofres ou depósitos onde se encontram arquivos e documentos, toda vez que ficar caracterizada a resistência ou o embaraço à fiscalização, ou ainda quando as circunstâncias ou a quantidade de documentos não permitirem sua identificação e conferência no local ou no momento em que foram encontrados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único</EM>.<EM> </EM>O sujeito passivo e demais responsáveis serão previamente notificados para acompanharem o procedimento de rompimento do lacre e identificação dos elementos de interesse da fiscalização. </P>
+<P>Guarda de Documentos <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;Os comprovantes da escrituração da pessoa jurídica, relativos a fatos que repercutam em lançamentos contábeis de exercícios futuros, serão conservados até que se opere a decadência do direito de a Fazenda Pública constituir os créditos tributários relativos a esses exercícios. </P>
+<P>Arquivos Magnéticos <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;O sujeito passivo usuário de sistema de processamento de dados deverá manter documentação técnica completa e atualizada do sistema, suficiente para possibilitar a sua auditoria, facultada a manutenção em meio magnético, sem prejuízo da sua emissão gráfica, quando solicitada. </P>
+<P>Extravio de Livros e Documentos <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;A perda ou extravio dos livros ou documentos implica arbitramento dos valores das operações a que se referiam, para cálculo dos tributos sobre elas incidentes na forma da legislação específica, salvo se, feita a comunicação no prazo de trinta dias da data da ocorrência do fato, for possível a reconstituição da escrituração. <BR><BR><BR></P>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Omissão de Receita </CENTER></B>
+<DIV align=left>&nbsp;</DIV>
+<P><BR>Falta de Escrituração de Pagamentos&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;A falta de escrituração de pagamentos efetuados pela pessoa jurídica, assim como a manutenção, no passivo, de obrigações cuja exigibilidade não seja comprovada, caracterizam, também, omissão de receita. </P>
+<P>Levantamento Quantitativo por Espécie <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;A omissão de receita poderá, também, ser determinada a partir de levantamento por espécie das quantidades de matérias-primas e produtos intermediários utilizados no processo produtivo da pessoa jurídica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Para os fins deste artigo, apurar-se-á a diferença, positiva ou negativa, entre a soma das quantidades de produtos em estoque no início do período com a quantidade de produtos fabricados com as matérias-primas e produtos intermediários utilizados e a soma das quantidades de produtos cuja venda houver sido registrada na escrituração contábil da empresa com as quantidades em estoque, no final do período de apuração, constantes do livro de Inventário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Considera-se receita omitida, nesse caso, o valor resultante da multiplicação das diferenças de quantidades de produtos ou de matérias-primas e produtos intermediários pelos respectivos preços médios de venda ou de compra, conforme o caso, em cada período de apuração abrangido pelo levantamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os critérios de apuração de receita omitida de que trata este artigo aplicam-se, também, às empresas comerciais, relativamente às mercadorias adquiridas para revenda. </P>
+<P>Depósitos Bancários <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Caracterizam-se também omissão de receita ou de rendimento os valores creditados em conta de depósito ou de investimento mantida junto a instituição financeira, em relação aos quais o titular, pessoa física ou jurídica, regularmente intimado, não comprove, mediante documentação hábil e idônea, a origem dos recursos utilizados nessas operações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O valor das receitas ou dos rendimentos omitido será considerado auferido ou recebido no mês do crédito efetuado pela instituição financeira. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os valores cuja origem houver sido comprovada, que não houverem sido computados na base de cálculo dos impostos e contribuições a que estiverem sujeitos, submeter-se-ão às normas de tributação específicas, previstas na legislação vigente à época em que auferidos ou recebidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Para efeito de determinação da receita omitida, os créditos serão analisados individualizadamente, observado que não serão considerados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - os decorrentes de transferências de outras contas da própria pessoa física ou jurídica; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - no caso de pessoa física, sem prejuízo do disposto no inciso anterior, os de valor individual igual ou inferior a R$1.000,00 (mil reais), desde que o seu somatório, dentro do ano-calendário, não ultrapasse o valor de R$12.000,00 (doze mil reais). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Tratando-se de pessoa física, os rendimentos omitidos serão tributados no mês em que considerados recebidos, com base na tabela progressiva vigente à época em que tenha sido efetuado o crédito pela instituição financeira. <BR><BR><BR></P>
+<CENTER><B>Seção V </CENTER></B>
+<CENTER><B>Normas sobre o Lançamento de Tributos e Contribuições </CENTER></B>
+<DIV align=left>&nbsp;</DIV><BR>Auto de Infração sem Tributo&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Poderá ser formalizada exigência de crédito tributário correspondente exclusivamente a multa ou a juros de mora, isolada ou conjuntamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<EM> Parágrafo único</EM>.<EM> </EM>Sobre o crédito constituído na forma deste artigo, não pago no respectivo vencimento, incidirão juros de mora, calculados à taxa a que se refere o § 3º do art. 5º, a partir do primeiro dia do mês subseqüente ao vencimento do prazo até o mês anterior ao do pagamento e de um por cento no mês de pagamento. <BR><BR>Multas de Lançamento de Ofício <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;Nos casos de lançamento de ofício, serão aplicadas as seguintes multas, calculadas sobre a totalidade ou diferença de tributo ou contribuição: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - de setenta e cinco por cento, nos casos de falta de pagamento ou recolhimento, pagamento ou recolhimento após o vencimento do prazo, sem o acréscimo de multa moratória, de falta de declaração e nos de declaração inexata, excetuada a hipótese do inciso seguinte; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - cento e cinqüenta por cento, nos casos de evidente intuito de fraude, definido nos arts. 71, 72 e 73 da Lei nº 4.502, de 30 de novembro de 1964, independentemente de outras penalidades administrativas ou criminais cabíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As multas de que trata este artigo serão exigidas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - juntamente com o tributo ou a contribuição, quando não houverem sido anteriormente pagos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - isoladamente, quando o tributo ou a contribuição houver sido pago após o vencimento do prazo previsto, mas sem o acréscimo de multa de mora; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - isoladamente, no caso de pessoa física sujeita ao pagamento mensal do imposto (carnê-leão) na forma do art. 8º da Lei nº 7.713, de 22 de dezembro de 1988, que deixar de fazê-lo, ainda que não tenha apurado imposto a pagar na declaração de ajuste. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - isoladamente, no caso de pessoa jurídica sujeita ao pagamento do imposto de renda e da contribuição social sobre o lucro líquido, na forma do art. 2º, que deixar de fazê-lo, ainda que tenha apurado prejuízo fiscal ou base de cálculo negativa para a contribuição social sobre o lucro líquido, no ano-calendário correspondente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - isoladamente, no caso de tributo ou contribuição social lançado, que não houver sido pago ou recolhido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Se o contribuinte não atender, no prazo marcado, à intimação para prestar esclarecimentos, as multas a que se referem os incisos I e II do <EM><I>caput</I></EM> passarão a ser de cento e doze inteiros e cinco décimos por cento e de duzentos e vinte e cinco por cento, respectivamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Aplicam-se às multas de que trata este artigo as reduções previstas no art. 6º da Lei nº 8.218, de 29 de agosto de 1991, e no art. 60 da Lei nº 8.383, de 30 de dezembro de 1991. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º As disposições deste artigo aplicam-se, inclusive, aos contribuintes que derem causa a ressarcimento indevido de tributo ou contribuição decorrente de qualquer incentivo ou benefício fiscal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;O art. 80 da Lei nº 4.502, de 30 de novembro de 1964, com as alterações posteriores, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 80.&nbsp;A falta de lançamento do valor, total ou parcial, do imposto sobre produtos industrializados na respectiva nota fiscal, a falta de recolhimento do imposto lançado ou o recolhimento após vencido o prazo, sem o acréscimo de multa moratória, sujeitará o contribuinte às seguintes multas de ofício: <BR><BR>I - setenta e cinco por cento do valor do imposto que deixou de ser lançado ou recolhido ou que houver sido recolhido após o vencimento do prazo sem o acréscimo de multa moratória; <BR><BR>II - cento e cinqüenta por cento do valor do imposto que deixou de ser lançado ou recolhido, quando se tratar de infração qualificada. <BR>.............................................................................................................."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;As multas de que trata o art. 80 da Lei nº 4.502, de 30 de novembro de 1964, passarão a ser de cento e doze inteiros e cinco décimos por cento e de duzentos e vinte e cinco por cento, respectivamente, se o contribuinte não atender, no prazo marcado, à intimação para prestar esclarecimentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As multas de que trata este artigo serão exigidas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - juntamente com o imposto, quando este não houver sido lançado nem recolhido; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - isoladamente, nos demais casos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Aplicam-se às multas de que trata o art. 80 da Lei nº 4.502, de 30 de novembro de 1964, o disposto nos §§ 3º e 4º do art. 44. <BR><BR><BR>
+<CENTER><B>Seção VI </CENTER></B>
+<CENTER><B>Aplicação de Acréscimos de Procedimento Espontâneo </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;A pessoa física ou jurídica submetida a ação fiscal por parte da Secretaria da Receita Federal poderá pagar, até o vigésimo dia subseqüente à data de recebimento do termo de início de fiscalização, os tributos e contribuições já lançados ou declarados, de que for sujeito passivo como contribuinte ou responsável, com os acréscimos legais aplicáveis nos casos de procedimento espontâneo. <BR><BR><BR>
+<CENTER>Capítulo V </CENTER>
+<CENTER>DISPOSIÇÕES GERAIS </CENTER><BR><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Processo Administrativo de Consulta </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;No âmbito da Secretaria da Receita Federal, os processos administrativos de consulta serão solucionados em instância única. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A competência para solucionar a consulta ou declarar sua ineficácia será atribuída: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a órgão central da Secretaria da Receita Federal, nos casos de consultas formuladas por órgão central da administração pública federal ou por entidade representativa de categoria econômica ou profissional de âmbito nacional; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a órgão regional da Secretaria da Receita Federal, nos demais casos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os atos normativos expedidos pelas autoridades competentes serão observados quando da solução da consulta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Não cabe recurso nem pedido de reconsideração da solução da consulta ou do despacho que declarar sua ineficácia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º As soluções das consultas serão publicadas pela imprensa oficial, na forma disposta em ato normativo emitido pela Secretaria da Receita Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Havendo diferença de conclusões entre soluções de consultas relativas a uma mesma matéria, fundada em idêntica norma jurídica, cabe recurso especial, sem efeito suspensivo, para o órgão de que trata o inciso I do § 1º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º O recurso de que trata o parágrafo anterior pode ser interposto pelo destinatário da solução divergente, no prazo de trinta dias, contados da ciência da solução. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º Cabe a quem interpuser o recurso comprovar a existência das soluções divergentes sobre idênticas situações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º O juízo de admissibilidade do recurso será feito pelo órgão que jurisdiciona o domicilio fiscal do recorrente ou a que estiver subordinado o servidor, na hipótese do parágrafo seguinte, que solucionou a consulta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 9º Qualquer servidor da administração tributária deverá, a qualquer tempo, formular representação ao órgão que houver proferido a decisão, encaminhando as soluções divergentes sobre a mesma matéria, de que tenha conhecimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 10. O sujeito passivo que tiver conhecimento de solução divergente daquela que esteja observando em decorrência de resposta a consulta anteriormente formulada, sobre idêntica matéria, poderá adotar o procedimento previsto no § 5º, no prazo de trinta dias contados da respectiva publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 11. A solução da divergência acarretará, em qualquer hipótese, a edição de ato específico, uniformizando o entendimento, com imediata ciência ao destinatário da solução reformada, aplicando-se seus efeitos a partir da data da ciência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 12. Se, após a resposta à consulta, a administração alterar o entendimento nela expresso, a nova orientação atingirá, apenas, os fatos geradores que ocorram após dado ciência ao consulente ou após a sua publicação pela imprensa oficial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 13. A partir de 1º de janeiro de 1997, cessarão todos os efeitos decorrentes de consultas não solucionadas definitivamente, ficando assegurado aos consulentes, até 31 de janeiro de 1997: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a não instauração de procedimento de fiscalização em relação à matéria consultada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a renovação da consulta anteriormente formulada, à qual serão aplicadas as normas previstas nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;Não se aplicam aos processos de consulta no âmbito da Secretaria da Receita Federal as disposições dos arts. 54 a 58 do Decreto nº 70.235, de 6 de março de 1972. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;Aplicam-se aos processos de consulta relativos à classificação de mercadorias as disposições dos arts. 46 a 53 do Decreto nº 70.235, de 6 de março de 1972 e do art. 48 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O órgão de que trata o inciso I do § 1º do art. 48 poderá alterar ou reformar, de ofício, as decisões proferidas nos processos relativos à classificação de mercadorias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Da alteração ou reforma mencionada no parágrafo anterior, deverá ser dada ciência ao consulente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Em relação aos atos praticados até a data da ciência ao consulente, nos casos de que trata o § 1º deste artigo, aplicam-se as conclusões da decisão proferida pelo órgão regional da Secretaria da Receita Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O envio de conclusões decorrentes de decisões proferidas em processos de consulta sobre classificação de mercadorias, para órgãos do Mercado Comum do Sul - MERCOSUL, será efetuado exclusivamente pelo órgão de que trata o inciso I do § 1º do art. 48. <BR><BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Normas sobre o Lucro Presumido e Arbitrado </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;Os juros de que trata o art. 9º da Lei nº 9.249, de 26 de dezembro de 1995, bem como os rendimentos e ganhos líquidos decorrentes de quaisquer operações financeiras, serão adicionados ao lucro presumido ou arbitrado, para efeito de determinação do imposto de renda devido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único. </EM>O imposto de renda incidente na fonte sobre os rendimentos de que trata este artigo será considerado como antecipação do devido na declaração de rendimentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;Na apuração de ganho de capital de pessoa jurídica tributada pelo lucro presumido ou arbitrado, os valores acrescidos em virtude de reavaliação somente poderão ser computados como parte integrante dos custos de aquisição dos bens e direitos se a empresa comprovar que os valores acrescidos foram computados na determinação da base de cálculo do imposto de renda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;Os valores recuperados, correspondentes a custos e despesas, inclusive com perdas no recebimento de créditos, deverão ser adicionados ao lucro presumido ou arbitrado para determinação do imposto de renda, salvo se o contribuinte comprovar não os ter deduzido em período anterior no qual tenha se submetido ao regime de tributação com base no lucro real ou que se refiram a período no qual tenha se submetido ao regime de tributação com base no lucro presumido ou arbitrado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;A pessoa jurídica que, até o ano-calendário anterior, houver sido tributada com base no lucro real, deverá adicionar à base de cálculo do imposto de renda, correspondente ao primeiro período de apuração no qual houver optado pela tributação com base no lucro presumido ou for tributada com base no lucro arbitrado, os saldos dos valores cuja tributação havia diferido, controlados na parte B do Livro de Apuração do Lucro Real - LALUR. <BR><BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Normas Aplicáveis a Atividades Especiais </CENTER></B>
+<DIV align=left>&nbsp;</DIV>
+<P><BR>Sociedades Civis&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;As sociedades civis de prestação de serviços profissionais relativos ao exercício de profissão legalmente regulamentada de que trata o art. 1º do Decreto-lei nº 2.397, de 21 de dezembro de 1987, passam, em relação aos resultados auferidos a partir de 1º de janeiro de 1997, a ser tributadas pelo imposto de renda de conformidade com as normas aplicáveis às demais pessoas jurídicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;As sociedades civis de prestação de serviços de profissão legalmente regulamentada passam a contribuir para a seguridade social com base na receita bruta da prestação de serviços, observadas as normas da Lei Complementar nº 70, de 30 de dezembro de 1991. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único</EM>.<EM> </EM>Para efeito da incidência da contribuição de que trata este artigo, serão consideradas as receitas auferidas a partir do mês de abril de 1997. <BR><BR>Associações de Poupança e Empréstimo&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;As Associações de Poupança e Empréstimo pagarão o imposto de renda correspondente aos rendimentos e ganhos líquidos, auferidos em aplicações financeiras, à alíquota de quinze por cento, calculado sobre vinte e oito por cento do valor dos referidos rendimentos e ganhos líquidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único</EM>. O imposto incidente na forma deste artigo será considerado tributação definitiva. </P>
+<P>Empresas de <EM>Factoring </EM><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;Fica incluído no art. 36 da Lei nº 8.981, de 20 de janeiro de 1995, com as alterações da Lei nº 9.065, de 20 de junho de 1995, o seguinte inciso XV: <BR><BR></P>
+<DIR>"Art. 36.&nbsp;......................................................................................................... <BR>.......................................................................................................................... <BR><BR>XV - que explorem as atividades de prestação cumulativa e contínua de serviços de assessoria creditícia, mercadológica, gestão de crédito, seleção e riscos, administração de contas a pagar e a receber, compras de direitos creditórios resultantes de vendas mercantis a prazo ou de prestação de serviços (<EM>factoring</EM>)."</DIR>Atividade Florestal&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;Considera-se, também, como atividade rural o cultivo de florestas que se destinem ao corte para comercialização, consumo ou industrialização. <BR><BR>Liquidação Extra-judicial e Falência <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;As entidades submetidas aos regimes de liquidação extrajudicial e de falência sujeitam-se às normas de incidência dos impostos e contribuições de competência da União aplicáveis às pessoas jurídicas, em relação às operações praticadas durante o período em que perdurarem os procedimentos para a realização de seu ativo e o pagamento do passivo. <BR><BR><BR>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Acréscimos Moratórios </CENTER></B>
+<DIV align=left>Multas e Juros </DIV><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;Os débitos para com a União, decorrentes de tributos e contribuições administrados pela Secretaria da Receita Federal, cujos fatos geradores ocorrerem a partir de 1º de janeiro de 1997, não pagos nos prazos previstos na legislação específica, serão acrescidos de multa de mora, calculada à taxa de trinta e três centésimos por cento, por dia de atraso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A multa de que trata este artigo será calculada a partir do primeiro dia subseqüente ao do vencimento do prazo previsto para o pagamento do tributo ou da contribuição até o dia em que ocorrer o seu pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O percentual de multa a ser aplicado fica limitado a vinte por cento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Sobre os débitos a que se refere este artigo incidirão juros de mora calculados à taxa a que se refere o § 3º do art. 5º, a partir do primeiro dia do mês subseqüente ao vencimento do prazo até o mês anterior ao do pagamento e de um por cento no mês de pagamento. <BR><BR>Pagamento em Quotas-Juros <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;Os juros a que se referem o inciso III do art. 14 e o art. 16, ambos da Lei nº 9.250, de 26 de dezembro de 1995, serão calculados à taxa a que se refere o 3º do art. 5º, a partir do primeiro dia do mês subseqüente ao previsto para a entrega tempestiva da declaração de rendimentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único</EM>.<EM> </EM>As quotas do imposto sobre a propriedade territorial rural a que se refere a alínea "<EM>c"</EM> do parágrafo único do art. 14 da Lei nº 8.847, de 28 de janeiro de 1994, serão acrescidas de juros calculados à taxa a que se refere o § 3º do art. 5º, a partir do primeiro dia do mês subseqüente àquele em que o contribuinte for notificado até o último dia do mês anterior ao do pagamento e de um por cento no mês do pagamento. <BR><BR>Débitos com Exigibilidade Suspensa&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;Não caberá lançamento de multa de ofício na constituição do crédito tributário destinada a prevenir a decadência, relativo a tributos e contribuições de competência da União, cuja exigibilidade houver sido suspensa na forma do inciso IV do art. 151 da Lei nº 5.172, de 25 de outubro de 1966. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O disposto neste artigo aplica-se, exclusivamente, aos casos em que a suspensão da exigibilidade do débito tenha ocorrido antes do início de qualquer procedimento de ofício a ele relativo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A interposição da ação judicial favorecida com a medida liminar interrompe a incidência da multa de mora, desde a concessão da medida judicial, até 30 dias após a data da publicação da decisão judicial que considerar devido o tributo ou contribuição. <BR><BR><BR>
+<CENTER><B>Seção V </CENTER></B>
+<CENTER><B>Arrecadação de Tributos e Contribuições </CENTER></B>
+<DIV align=left><BR>Retenção de Tributos e Contribuições </DIV>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;Os pagamentos efetuados por órgãos, autarquias e fundações da administração pública federal a pessoas jurídicas, pelo fornecimento de bens ou prestação de serviços, estão sujeitos à incidência, na fonte, do imposto sobre a renda, da contribuição social sobre o lucro líquido, da contribuição para seguridade social - COFINS e da contribuição para o PIS/PASEP. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A obrigação pela retenção é do órgão ou entidade que efetuar o pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O valor retido, correspondente a cada tributo ou contribuição, será levado a crédito da respectiva conta de receita da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O valor do imposto e das contribuições sociais retido será considerado como antecipação do que for devido pelo contribuinte em relação ao mesmo imposto e às mesmas contribuições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O valor retido correspondente ao imposto de renda e a cada contribuição social somente poderá ser compensado com o que for devido em relação à mesma espécie de imposto ou contribuição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º O imposto de renda a ser retido será determinado mediante a aplicação da alíquota de quinze por cento sobre o resultado da multiplicação do valor a ser pago pelo percentual de que trata o art. 15 da Lei nº 9.249, de 26 de dezembro de 1995, aplicável à espécie de receita correspondente ao tipo de bem fornecido ou de serviço prestado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º O valor da contribuição social sobre o lucro líquido, a ser retido, será determinado mediante a aplicação da alíquota de um por cento, sobre o montante a ser pago. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º O valor da contribuição para a seguridade social - COFINS, a ser retido, será determinado mediante a aplicação da alíquota respectiva sobre o montante a ser pago. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º O valor da contribuição para o PIS/PASEP, a ser retido, será determinado mediante a aplicação da alíquota respectiva sobre o montante a ser pago. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;O Banco do Brasil S.A. deverá reter, no ato do pagamento ou crédito, a contribuição para o PIS/PASEP incidente nas transferências voluntárias da União para suas autarquias e fundações e para os Estados, Distrito Federal e Municípios, suas autarquias e fundações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;As cooperativas que se dedicam a vendas em comum, referidas no art. 82 da Lei nº 5.764, de 16 de dezembro de 1971, que recebam para comercialização a produção de suas associadas, são responsáveis pelo recolhimento da Contribuição para Financiamento da Seguridade Social - COFINS, instituída pela Lei Complementar nº 70, de 30 de dezembro de 1991 e da Contribuição para o Programa de Integração Social - PIS, criada pela Lei Complementar nº 7, de 7 de setembro de 1970, com suas posteriores modificações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O valor das contribuições recolhidas pelas cooperativas mencionadas no <EM><I>caput</I></EM> deste artigo, deverá ser por elas informado, individualizadamente, às suas filiadas, juntamente com o montante do faturamento relativo às vendas dos produtos de cada uma delas, com vistas a atender aos procedimentos contábeis exigidos pela legislação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O disposto neste artigo aplica-se a procedimento idêntico que, eventualmente, tenha sido anteriormente adotado pelas cooperativas centralizadoras de vendas, inclusive quanto ao recolhimento da Contribuição para o Fundo de Investimento Social - FINSOCIAL, criada pelo Decreto-lei nº 1.940, de 25 de maio de 1982, com suas posteriores modificações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A Secretaria da Receita Federal poderá baixar as normas necessárias ao cumprimento e controle das disposições contidas neste artigo. </P>
+<P>Dispensa de Retenção de Imposto de Renda <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;Fica dispensada a retenção de imposto de renda, de valor igual ou inferior a R$10,00 (dez reais), incidente na fonte sobre rendimentos que devam integrar a base de cálculo do imposto devido na declaração de ajuste anual. </P>
+<P>Utilização de DARF <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;É vedada a utilização de Documento de Arrecadação de Receitas Federais para o pagamento de tributos e contribuições de valor inferior a R$10,00 (dez reais). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O imposto ou contribuição administrado pela Secretaria da Receita Federal, arrecadado sob um determinado código de receita, que, no período de apuração, resultar inferior a R$10,00 (dez reais), deverá ser adicionado ao imposto ou contribuição de mesmo código, correspondente aos períodos subseqüentes, até que o total seja igual ou superior a R$10,00 (dez reais), quando, então, será pago ou recolhido no prazo estabelecido na legislação para este último período de apuração. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O critério a que se refere o parágrafo anterior aplica-se, também, ao imposto sobre operações de crédito, câmbio e seguro e sobre operações relativas a títulos e valores mobiliários - IOF. </P>
+<P>Imposto Retido na Fonte - Responsabilidade <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;É responsável pela retenção e recolhimento do imposto de renda na fonte, incidente sobre os rendimentos auferidos pelos fundos, sociedades de investimentos e carteiras de que trata o art. 81 da Lei nº 8.981, de 20 de janeiro de 1995, a pessoa jurídica que efetuar o pagamento dos rendimentos. <BR><BR><BR></P>
+<CENTER><B>Seção VI </CENTER></B>
+<CENTER><B>Casos Especiais de Tributação </CENTER></B>
+<DIV align=left><BR>Multas por Rescisão de Contrato </DIV>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;A multa ou qualquer outra vantagem paga ou creditada por pessoa jurídica, ainda que a título de indenização, a beneficiária pessoa física ou jurídica, inclusive isenta, em virtude de rescisão de contrato, sujeitam-se à incidência do imposto de renda na fonte à alíquota de quinze por cento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A responsabilidade pela retenção e recolhimento do imposto de renda é da pessoa jurídica que efetuar o pagamento ou crédito da multa ou vantagem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O imposto deverá ser retido na data do pagamento ou crédito da multa ou vantagem e será recolhido no prazo a que se refere a alínea <EM>d</EM> do inciso I do art. 83 da Lei nº 8.981, de 20 de janeiro de 1995. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O valor da multa ou vantagem será: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - computado na apuração da base de cálculo do imposto devido na declaração de ajuste anual da pessoa física; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - computado como receita, na determinação do lucro real; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - acrescido ao lucro presumido ou arbitrado, para determinação da base de cálculo do imposto devido pela pessoa jurídica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O imposto retido na fonte, na forma deste artigo, será considerado como antecipação do devido em cada período de apuração, nas hipóteses referidas no parágrafo anterior, ou como tributação definitiva, no caso de pessoa jurídica isenta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º O disposto neste artigo não se aplica às indenizações pagas ou creditadas em conformidade com a legislação trabalhista e àquelas destinadas a reparar danos patrimoniais. </P>
+<P>Ganhos em Mercado de Balcão&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;Sem prejuízo do disposto no art. 74 da Lei nº 8.981, de 20 de janeiro de 1995, os ganhos auferidos por qualquer beneficiário, inclusive pessoa jurídica isenta, nas demais operações realizadas em mercados de liquidação futura, fora de bolsa, serão tributados de acordo com as normas aplicáveis aos ganhos líquidos auferidos em operações de natureza semelhante realizadas em bolsa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Não se aplica aos ganhos auferidos nas operações de que trata este artigo o disposto no § 1º do art. 81 da Lei nº 8.981, de 20 de janeiro de 1995. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O Poder Executivo poderá estabelecer condições para o reconhecimento de perdas apuradas nas operações de que trata este artigo. <BR><BR>Remuneração de Direitos&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;Estão sujeitas à incidência do imposto na fonte, à alíquota de quinze por cento, as importâncias pagas, creditadas, entregues, empregadas ou remetidas para o exterior pela aquisição ou pela remuneração, a qualquer título, de qualquer forma de direito, inclusive à transmissão, por meio de rádio ou televisão ou por qualquer outro meio, de quaisquer filmes ou eventos, mesmo os de competições desportivas das quais faça parte representação brasileira. <BR><BR><BR></P>
+<CENTER><B>Seção VII </CENTER></B>
+<CENTER><B>Restituição e Compensação de Tributos e Contribuições </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;Para efeito do disposto no art. 7º do Decreto-lei nº 2.287, de 23 de julho de 1986, a utilização dos créditos do contribuinte e a quitação de seus débitos serão efetuadas em procedimentos internos à Secretaria da Receita Federal, observado o seguinte: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o valor bruto da restituição ou do ressarcimento será debitado à conta do tributo ou da contribuição a que se referir; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a parcela utilizada para a quitação de débitos do contribuinte ou responsável será creditada à conta do respectivo tributo ou da respectiva contribuição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;Observado o disposto no artigo anterior, a Secretaria da Receita Federal atendendo a requerimento do contribuinte, poderá autorizar a utilização de créditos a serem a ele restituídos ou ressarcidos para a quitação de quaisquer tributos e contribuições sob sua administração. <BR><BR><BR>
+<CENTER><B>Seção VIII </CENTER></B>
+<CENTER><B>UFIR </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;A partir de 1º de janeiro de 1997, a atualização do valor da Unidade Fiscal de Referência - UFIR, de que trata o art. 1º da Lei nº 8.383, de 30 de dezembro de 1991, com as alterações posteriores, será efetuada por períodos anuais, em 1º de janeiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único</EM>. No âmbito da legislação tributária federal, a UFIR será utilizada exclusivamente para a atualização dos créditos tributários da União, objeto de parcelamento concedido até 31 de dezembro de 1994. <BR><BR>
+<CENTER><B>Seção IX </CENTER></B>
+<CENTER><B>Competências dos Conselhos de Contribuintes </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76.&nbsp;Fica o Poder Executivo autorizado a alterar as competências relativas às matérias objeto de julgamento pelos Conselhos de Contribuintes do Ministério da Fazenda. <BR><BR>
+<CENTER><B>Seção X </CENTER></B>
+<CENTER><B>Dispositivo Declarado Inconstitucional </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77.&nbsp;Fica o Poder Executivo autorizado a disciplinar as hipóteses em que a administração tributária federal, relativamente aos créditos tributários baseados em dispositivo declarado inconstitucional por decisão definitiva do Supremo Tribunal Federal, possa: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - abster-se de constituí-los; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - retificar o seu valor ou declará-los extintos, de ofício, quando houverem sido constituídos anteriormente, ainda que inscritos em dívida ativa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - formular desistência de ações de execução fiscal já ajuizadas, bem como deixar de interpor recursos de decisões judiciais. <BR><BR><BR>
+<CENTER><B>Seção XI </CENTER></B>
+<CENTER><B>Juros sobre o Capital Próprio </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78.&nbsp;O § 1º do art. 9º da Lei nº 9.249, de 26 de dezembro de 1995, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 9º&nbsp;............................................................................................................................ <BR><BR>§ 1º O efetivo pagamento ou crédito dos juros fica condicionado à existência de lucros, computados antes da dedução dos juros, ou de lucros acumulados e reservas de lucros, em montante igual ou superior ao valor de duas vezes os juros a serem pagos ou creditados. <BR>..........................................................................................................................................."</DIR><BR><BR>
+<CENTER><B>Seção XII </CENTER></B>
+<CENTER><B>Admissão Temporária </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 79.&nbsp;Os bens admitidos temporariamente no País, para utilização econômica, ficam sujeitos ao pagamento dos impostos incidentes na importação proporcionalmente ao tempo de sua permanência em território nacional, nos termos e condições estabelecidos em regulamento. <BR><BR>
+<CENTER>Capítulo VI </CENTER>
+<CENTER>DISPOSIÇÕES FINAIS </CENTER>
+<DIV align=left>Empresa Inidônea<STRONG> </STRONG></DIV>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 80.&nbsp;As pessoas jurídicas que, embora obrigadas, deixarem de apresentar a declaração anual de imposto de renda por cinco ou mais exercícios, terão sua inscrição no Cadastro Geral de Contribuintes considerada inapta se, intimadas por edital, não regularizarem sua situação no prazo de sessenta dias contado da data da publicação da intimação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No edital de intimação, que será publicado no Diário Oficial da União, as pessoas jurídicas serão identificadas apenas pelos respectivos números de inscrição no Cadastro Geral de Contribuintes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Após decorridos noventa dias da publicação do edital de intimação, a Secretaria da Receita Federal fará publicar no Diário Oficial da União a relação nominal das pessoas jurídicas que houverem regularizado sua situação, tornando-se automaticamente inaptas, na data da publicação, as inscrições das pessoas jurídicas que não tenham providenciado a regularização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A Secretaria da Receita Federal manterá nas suas diversas unidades, para consulta pelos interessados, relação nominal das pessoas jurídicas cujas inscrições no Cadastro Geral de Contribuintes tenham sido consideradas inaptas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 81.&nbsp;Poderá, ainda, ser declarada inapta, nos termos e condições definidos em ato do Ministro da Fazenda, a inscrição da pessoa jurídica que deixar de apresentar a declaração anual de imposto de renda em um ou mais exercícios e não for localizada no endereço informado à Secretaria da Receita Federal, bem como daquela que não exista de fato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 82.&nbsp;Além das demais hipóteses de inidoneidade de documentos previstos na legislação, não produzirá efeitos tributários em favor de terceiros interessados, o documento emitido por pessoa jurídica cuja inscrição no Cadastro Geral de Contribuintes tenha sido considerada ou declarada inapta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único</EM>.<EM> </EM>O disposto neste artigo não se aplica aos casos em que o adquirente de bens, direitos e mercadorias ou o tomador de serviços comprovarem a efetivação do pagamento do preço respectivo e o recebimento dos bens, direitos e mercadorias ou utilização dos serviços. <BR><BR>Crime contra a Ordem Tributária&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 83.&nbsp;A representação fiscal para fins penais relativa aos crimes contra a ordem tributária definidos nos arts. 1º e 2º da Lei nº 8.137, de 27 de dezembro de 1990, será encaminhada ao Ministério Público após proferida a decisão final, na esfera administrativa, sobre a exigência fiscal do crédito tributário correspondente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único</EM>.<EM> </EM>As disposições contidas no <EM><I>caput</I></EM> do art. 34 da Lei nº 9.249, de 26 de dezembro de 1995, aplicam-se aos processos administrativos e aos inquéritos e processos em curso, desde que não recebida a denúncia pelo juiz. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 84.&nbsp;Nos casos de incorporação, fusão ou cisão de empresa incluída no Programa Nacional de Desestatização, bem como nos programas de desestatização das Unidades Federadas e dos Municípios, não ocorrerá a realização do lucro inflacionário acumulado relativamente à parcela do ativo sujeito a correção monetária até 31 de dezembro de 1995, que houver sido vertida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O lucro inflacionário acumulado da empresa sucedida, correspondente aos ativos vertidos sujeitos a correção monetária até 31 de dezembro de 1995, será integralmente transferido para a sucessora, nos casos de incorporação e fusão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No caso de cisão, o lucro inflacionário acumulado será transferido, para a pessoa jurídica que absorver o patrimônio da empresa cindida, na proporção das contas do ativo, sujeitas a correção monetária até 31 de dezembro de 1995, que houverem sido vertidas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O lucro inflacionário transferido na forma deste artigo será realizado e submetido a tributação, na pessoa jurídica sucessora, com observância do disposto na legislação vigente. </P>
+<P>Fretes Internacionais&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 85.&nbsp;Ficam sujeitos ao imposto de renda na fonte, à alíquota de quinze por cento, os rendimentos recebidos por companhias de navegação aérea e marítima, domiciliadas no exterior, de pessoas físicas ou jurídicas residentes ou domiciliadas no Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único</EM>. O imposto de que trata este artigo não será exigido das companhias aéreas e marítimas domiciliadas em países que não tributam, em decorrência da legislação interna ou de acordos internacionais, os rendimentos auferidos por empresas brasileiras que exercem o mesmo tipo de atividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 86.&nbsp;Nos casos de pagamento de contraprestação de arrendamento mercantil, do tipo financeiro, a beneficiária pessoa jurídica domiciliada no exterior, a Secretaria da Receita Federal expedirá normas para excluir da base de cálculo do imposto de renda incidente na fonte a parcela remetida que corresponder ao valor do bem arrendado. </P>
+<P>Vigência <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 87.&nbsp;Esta Lei entra em vigor na data da sua publicação, produzindo efeitos financeiros a partir de 1º de janeiro de 1997. <BR><BR>Revogação&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 88.&nbsp;Revogam-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o § 2º do art. 97 do Decreto-lei nº 5.844, de 23 de setembro de 1943, o Decreto-lei nº 7.885, de 21 de agosto de 1945, o art. 46 da Lei nº 4.862, de 29 de novembro de 1965 e o art. 56 da Lei nº 7.713, de 22 de dezembro de 1988; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o Decreto-lei nº 165, de 13 de fevereiro de 1967; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o § 3º do art. 21 do Decreto-lei nº 401, de 30 de dezembro de 1968; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - o Decreto-lei nº 716, de 30 de julho de 1969; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - o Decreto-lei nº 815, de 4 de setembro de 1969, o Decreto-lei nº 1.139, de 21 de dezembro de 1970, o art. 87 da Lei nº 7.450, de 23 de dezembro de 1985 e os arts. 11 e 12 do Decreto-lei nº 2.303, de 21 de novembro de 1986; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - o art. 3º do Decreto-lei nº 1.118, de 10 de agosto de 1970, o art. 6º do Decreto-lei nº 1.189, de 24 de setembro de 1971 e o inciso IX do art. 1º da Lei nº 8.402, de 8 de janeiro de 1992; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - o art. 9º do Decreto-lei nº 1.351, de 24 de outubro de 1974, o Decreto-lei nº 1.411, de 31 de julho de 1975 e o Decreto-lei nº 1.725, de 7 de dezembro de 1979; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - o art. 9º do Decreto-lei nº 1.633, de 9 de agosto de 1978; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - o número 4 da alínea <EM>b</EM> do § 1º do art. 35 do Decreto-lei nº 1.598, de 26 de dezembro de 1977, com a redação dada pelo inciso VI do art. 1º do Decreto-lei nº 1.730, de 17 de dezembro de 1979; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - o Decreto-lei nº 1.811, de 27 de outubro de 1980, e o art. 3º da Lei nº 7.132, de 26 de outubro de 1983; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - o art. 7º do Decreto-lei nº 1.814, de 28 de novembro de 1980; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XII - o Decreto-lei nº 2.227, de 16 de janeiro de 1985; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIII - os arts. 29 e 30 do Decreto-lei nº 2.341, de 29 de junho de 1987; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIV - os arts. 1º e 2º do Decreto-lei nº 2.397, de 21 de dezembro de 1987; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XV - o art. 8º do Decreto-lei nº 2.429, de 14 de abril de 1988; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XVI - o inciso II do art. 11 do Decreto-lei nº 2.452, de 29 de julho de 1988; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XVII - o art. 40 da Lei nº 7.799, de 10 de julho de 1989; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XVIII - o § 5º do art. 6º da Lei nº 8.021, de 1990; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIX - o art. 22 da Lei nº 8.218, de 29 de agosto de 1991; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XX - o art. 92 da Lei nº 8.383, de 30 de dezembro de 1991; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXI - o art. 6º da Lei nº 8.661, de 2 de junho de 1993; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXII - o art. 1º da Lei nº 8.696, de 26 de agosto de 1993; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXIII - o parágrafo único do art. 3º da Lei nº 8.846, de 21 de janeiro de 1994; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXIV - o art. 33, o § 4º do art. 37 e os arts. 38, 50, 52 e 53, o § 1º do art. 82 e art. 98, todos da Lei nº 8.981, de 20 de janeiro de 1995; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXV - o art. 89 da Lei nº 8.981, de 20 de janeiro de 1995, com a redação dada pela Lei nº 9.065, de 20 de junho de 1995; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXVI - os §§ 4º, 9º e 10 do art. 9º, o § 2º do art. 11, e o § 3º do art. 24, todos da Lei nº 9.249, de 26 de dezembro de 1995; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXVII - a partir de 1º de abril de 1997, o art. 40 da Lei nº 8.981, de 1995, com as alterações introduzidas pela Lei nº 9.065, de 20 de junho de 1995.&nbsp;<BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp; </STRONG>Brasília, 27 de dezembro de 1996; 175º da Independência e 108º da República. </P>
+<P>FERNANDO HENRIQUE CARDOSO <BR>Pedro Malan</P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 30/12/1996
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 30/12/1996, Página 28805 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1996, Página 6646 
+                                                        Vol. 12         
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+
+<!-- JS do portal-tema: necessário para o botão de compartilhamento -->
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/vendor-bundle.js"></script>
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/camara-bundle.js"></script>
+
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

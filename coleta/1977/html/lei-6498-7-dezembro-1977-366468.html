@@ -1,0 +1,960 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 6.498, DE 7 DE DEZEMBRO DE 1977 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre o Magistério da Marinha e dá outras providências." />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 6.498, DE 7 DE DEZEMBRO DE 1977 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=220927">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-6498-7-dezembro-1977-366468-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 6.498, DE 7 DE DEZEMBRO DE 1977</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre o Magistério da Marinha e dá outras providências.
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA, <BR>     Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º &nbsp;Esta Lei organiza o Magistério da Marinha e estabelece o regime jurídico do seu pessoal. 
+<BR><BR>
+<CENTER>TÍTULO I <BR>  
+Das Disposições Gerais<BR><BR></CENTER>
+<CENTER>CAPÍTULO I 
+<BR>  
+Da Organização </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º &nbsp;As atividades inerentes ao Magistério da Marinha compreendem o ensino e a pesquisa. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 
+3º &nbsp;O pessoal do Magistério da Marinha está sujeito à legislação trabalhista ou ao Estatuto dos Funcionários Públicos Civis da União (EFPCU), conforme o seu regime jurídico; a esta Lei; à Lei nº 5.645, de 10 de dezembro de 1970 e sua regulamentação; à Lei nº 6.182, de 11 de dezembro de 1974; e aos regulamentos dos estabelecimentos de ensino onde desempenhar suas atividades. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º &nbsp;Os professores do Magistério da Marinha serão dos seguintes níveis de ensino: Professores de Ensino Superior e Professores de Ensino de 1º e 2º graus. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º&nbsp; &nbsp;No ensino superior, os professores pertencerão às seguintes classes: Professor Titular, Professor Adjunto e Professor Assistente. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 
+2º&nbsp; &nbsp;No ensino de 1º e 2º graus, os professores pertencerão à classe 
+<EM>C</EM>               , de Professor de Ensino de 1º e 2º graus. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º &nbsp;A lotação dos professores do Magistério da Marinha será fixada pelo Presidente da República, na forma da legislação pertinente. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º  &nbsp;Os estabelecimentos de ensino, após autorizados pelo Ministro da Marinha, poderão contratar, além dos professores especificados no artigo anterior, profissionais de reconhecida capacidade, para a realização de cursos, programas de pesquisas, ciclos de conferências, palestras, seminários e outras atividades correlatas, de duração limitada. 
+<BR><BR>
+<CENTER>CAPÍTULO II 
+<BR>  
+Da Admissão e do Provimento 
+</CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º &nbsp;O ingresso de 
+professor nos empregos integrantes das classes de Professor Titular, Professor 
+Assistente e de Professor de Ensino de 1º e 2º graus, classe <EM>C </EM>                             , será feito, exclusivamente, mediante concurso público de provas e títulos. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I> Parágrafo único. </I>O ingresso nos empregos integrantes da classe de Professor Adjunto será feito no limite de 50% (cinqüenta por cento) das vagas, mediante concurso público de provas e títulos, e, nas vagas restantes, mediante progressão funcional de Professor Assistente, na conformidade do que for estabelecido em regulamento. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 
+8º &nbsp;Para o provimento dos empregos do Magistério da Marinha, além da exigência do concurso público de provas e títulos, na forma prevista no artigo anterior, serão observadas as seguintes condições: 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - aos empregos de Professor 
+Titular poderão concorrer Professores Adjuntos, Professores Assistentes ou 
+pessoas de alta qualificação científica, reconhecida pelo colegiado superior da 
+instituição ou órgão equivalente, e possuidores do título de Doutor ou de 
+Livre-Docente;&nbsp;<BR>                                     
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;II - 
+aos empregos de Professor Adjunto poderão concorrer os portadores de título de 
+Doutor e de Livre-Docente;&nbsp;<BR>                  
+<BR>&nbsp;&nbsp;&nbsp;III - aos empregos de Professor 
+Assistente poderão concorrer os portadores de título de Doutor, Livre-Docente ou 
+Mestre, dando-se preferência, em igualdade de condições, aos que tenham 
+realizado estágio probatório como Auxiliar de Ensino de Curso Superior da 
+Marinha;&nbsp;<BR>                                       
+<BR>&nbsp;&nbsp;&nbsp;IV - aos empregos de Professor de Ensino 
+de 1º e 2º graus, classe<EM> C</EM>               , poderá concorrer quem possuir habilitação específica obtida em curso superior de licenciatura plena. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 
+9º  &nbsp;Além das condições específicas para cada classe, o candidato ao Magistério da Marinha deverá satisfazer os requisitos de idade, idoneidade moral, capacidade física e aptidão psicológica compatíveis com a atividade docente. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.  Poderão candidatar-se ao Magistério da Marinha: 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o civil ou militar da 
+reserva que satisfizer todos os requisitos previstos na legislação federal 
+referente ao exercício do magistério no nível de ensino a que se 
+candidatar;&nbsp;<BR>                              
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;II - o Oficial da Marinha, da ativa, procedente da Escola Naval, ou, no caso de outra origem, portador de diploma de curso superior que o habilite para o exercício do magistério na área a que se candidatar, conforme definido na regulamentação desta Lei. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I> Parágrafo único. </I>O militar a que se refere o inciso II deste artigo, ao ser nomeado no Magistério da Marinha, será transferido para a Reserva Remunerada, de conformidade com o disposto no art. 102, item XIII, § 2º, da Lei nº 5.774, de 23 de dezembro de 1971 (Estatuto dos Militares). 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 
+11.  Poderá haver contratação por prazo determinado, de acordo com a necessidade de cada estabelecimento, na forma da legislação trabalhista, para o desempenho de atividades de magistério superior, exclusivamente nas seguintes condições: 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - 
+de Auxiliar de Ensino, em caráter probatório, para iniciação nas atividades de 
+ensino superior, pelo prazo de dois anos, com possibilidade de renovação por 
+igual prazo;&nbsp;<BR>                            
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;II - de 
+Professor Colaborador, para atender a eventuais necessidades do ensino e da 
+pesquisa; e&nbsp;<BR>                
+<BR>&nbsp;&nbsp;&nbsp;III - de Professor Visitante, de reconhecido saber. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I> Parágrafo único. </I>As contratações previstas no inciso I deste artigo recairão em graduado de curso superior, à vista do currículo e de outros elementos comprobatórios de idoneidade, experiência e capacidade profissional do candidato, mediante seleção do estabelecimento de ensino interessado. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 
+12.  Os empregos de Professor de Educação Física e Técnico Esportivo serão preenchidos por intermédio de contratação por prazo determinado, na forma da legislação trabalhista. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I> Parágrafo único. </I>As contratações previstas neste artigo recairão sobre pessoas de comprovada idoneidade, experiência e capacidade profissional, mediante seleção do estabelecimento de ensino interessado. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 
+13.  Para o preenchimento de vagas de professor do Magistério da Marinha, o Ministro da Marinha mandará abrir inscrições para o concurso de provas e títulos destinado ao respectivo provimento. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º - O concurso será organizado, realizado e julgado de acordo com a regulamentação desta Lei. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º - O candidato a professor, selecionado no concurso de que trata este artigo, será admitido no Magistério da Marinha, mediante ato do Ministro da Marinha. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 
+14.  Os professores de que tratam os arts. 11 e 12 desta Lei serão admitidos mediante ato da direção do estabelecimento de ensino interessado. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 
+15.  Em casos especiais, o Ministro da Marinha poderá nomear militar da ativa da Marinha para o emprego de Auxiliar de Ensino, mediante proposta do estabelecimento de ensino interessado. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I> Parágrafo único. </I>Ao militar a que se refere este artigo será aplicado o 
+disposto nos arts. 86, § 1º, alínea <EM>d</EM>                   , item XIII, e 102, item XIV, § 4º, da Lei nº 5.774, de 23 de dezembro de 1971 (Estatuto dos Militares). 
+<BR><BR>
+<CENTER>CAPÍTULO III 
+<BR>  
+Das Atribuições e do Regime de 
+Trabalho </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16. 
+Compete ao professor o exercício do magistério, de acordo com as modernas 
+técnicas pedagógicas e com a orientação estabelecida pelo órgão competente da 
+Marinha, achando-se nele compreendidos: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; a) o planejamento das atividades docentes e 
+discentes e a preparação de aulas a seu cargo, segundo as normas do 
+estabelecimento de ensino onde lecionar;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; b) a 
+participação na elaboração do material 
+didático;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; c) a orientação da aprendizagem dos 
+alunos, tendo em vista a sua formação 
+integral;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; d) a realização de estudos de 
+atualização e de aperfeiçoamento;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; e) a 
+execução de outras tarefas concernentes à disciplina que lecionar, no interesse 
+da Administração Naval;&nbsp;<BR>                             
+                         
+        
+              
+          
+               &nbsp;&nbsp;&nbsp;&nbsp; 
+f) a participação em atividades extra-classe e em solenidades cívico-militares. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I> Parágrafo único. </I>O professor somente poderá exercer cargo, função ou emprego na administração do estabelecimento de ensino que se relacionar diretamente com as atividades de magistério. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 
+17.  O pessoal do Magistério da Marinha ficará sujeito, no estabelecimento de ensino onde lecionar, ao seguinte regime de trabalho: 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - 20 (vinte) horas 
+semanais, em um turno diário completo, se vinculado unicamente às atividades de 
+ensino; </P>
+<P>                 &nbsp;&nbsp;&nbsp; 
+II - 40 (quarenta) horas semanais, em dois turnos diários completos, vinculados às atividades de ensino, pesquisa, extensão e administração escolar. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.  O Ministro da Marinha baixará instruções regulamentando os critérios para a concessão de regime de 40 (quarenta) horas semanais de trabalho aos professores do Magistério da Marinha. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.  O órgão competente da Marinha baixará instruções regulamentando: 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - 
+a carga horária mínima de aulas dos professores, em qualquer regime de 
+trabalho;&nbsp;<BR>               
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;II - o acompanhamento e a avaliação das atividades desempenhadas pelos professores no regime de 40 (quarenta) horas semanais de trabalho. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I> Parágrafo único. </I>As horas excedentes da carga horária 
+mínima de aulas serão obrigatoriamente dedicadas ao estabelecimento de ensino a 
+que pertencer o professor, no desempenho das atividades constantes do art. 16 
+desta Lei. </P>
+<CENTER>CAPÍTULO IV 
+<BR>  
+Da Remuneração </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.  A retribuição a que fizerem jus os professores do Magistério da Marinha será a constante da legislação vigente. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º - A retribuição do professor colaborador, contratado na forma do inciso II do art. 11 desta Lei, poderá ser fixada em termos de salário-hora, consideradas as qualificações do candidato. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º - A retribuição do professor visitante, contratado na forma do inciso III do art. 11 desta Lei, será fixada em cada caso, conforme a qualificação do contratado, de acordo com as condições vigentes no mercado de trabalho nacional ou internacional, observadas, sempre, as disponibilidades orçamentárias. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º - A retribuição do Professor de Educação Física e do Técnico Esportivo, contratados na forma do art. 12 desta Lei, será fixada considerando a habilitação e a qualificação do contratado. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.  O professor do Magistério da Marinha, quando no exercício efetivo de suas atribuições, fará jus às seguintes gratificações: 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - adicional por tempo de 
+serviço, se funcionário;&nbsp;<BR>         
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;II - aos incentivos funcionais previstos na Lei nº 6.182, de 11 de dezembro de 1974. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I> Parágrafo único. </I>Ao Auxiliar de Ensino será aplicado o disposto no art. 14 da Lei nº 6.182, de 1974. 
+<BR><BR>
+<CENTER>CAPÍTULO V 
+<BR>  
+Da Movimentação </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.  O pessoal do Magistério da Marinha poderá ser movimentado por conveniência do ensino, por motivo de saúde e por interesse próprio se não houver inconveniência para o serviço. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I> Parágrafo único. </I>No caso de extinção do estabelecimento de ensino, a movimentação do pessoal de que trata este artigo será feita por necessidade de serviço. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.  Além dos casos previstos na legislação vigente, poderá ser concedida licença, no interesse do ensino e da pesquisa, ao professor, para se afastar temporariamente do serviço, a fim de fazer cursos de atualização, aperfeiçoamento, especialização ou pós-graduação, em instituições nacionais ou estrangeiras, e para comparecer a congressos ou encontros relacionados com a respectiva atividade de magistério. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I> Parágrafo único. </I>O afastamento previsto neste artigo será concedido por indicação do estabelecimento de ensino a que ele pertencer ou mediante requerimento do interessado, ouvido, em ambos os casos, o órgão competente da Marinha, mediante ato do: 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - Presidente da República, 
+quando for para o exterior e do interesse do estabelecimento de 
+ensino;&nbsp;<BR>                 
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;II - Ministro 
+da Marinha, quando for para o exterior, a requerimento do 
+interessado;<BR>             &nbsp; 
+<BR>&nbsp;&nbsp;&nbsp;III - Diretor Geral do Pessoal da Marinha, quando no território nacional. 
+<BR><BR>
+<CENTER>CAPÍTULO VI 
+<BR>  
+Da Aposentadoria e da Dispensa 
+</CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.  A aposentadoria do professor do Magistério da Marinha obedecerá às normas estabelecidas na legislação vigente. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25. O professor 
+do Magistério da Marinha será dispensado mediante rescisão do contrato de 
+trabalho, de acordo com a legislação trabalhista, constituindo "justa causa", 
+para esse efeito, dentre outros, os seguintes motivos: </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; a) incapacidade moral; <BR>&nbsp;&nbsp;&nbsp;&nbsp; 
+b) conveniência da disciplina; <BR>&nbsp;&nbsp;&nbsp;&nbsp; c) inaptidão no 
+exercício de função docente, comprovada em processo regular. </P>
+<CENTER>CAPÍTULO VII 
+<BR>  
+Das Proibições </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.  Ao pessoal regido por esta Lei será vedado: 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ensinar, a qualquer 
+título, individual ou coletivamente, em caráter particular, mediante 
+remuneração, a alunos do estabelecimento onde leciona;&nbsp;<BR>                    
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;II - ensinar em curso ou unidade semelhante que se dedique à preparação de alunos para o ingresso na Marinha ou em cursos de recuperação onde estejam matriculados alunos do estabelecimento de ensino onde leciona. 
+<BR><BR>
+<CENTER>TÍTULO II <BR>  
+Das Disposições Especiais e 
+Transitórias<BR><BR></CENTER><CENTER>CAPÍTULO ÚNICO 
+</CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.  O professor efetivo militar, a que se refere a Lei nº 4.128, de 27 de agosto de 1962, permanecerá no cargo que ocupa, em regime de extinção, sendo por ela regido no que diz respeito à promoção e remuneração, enquanto permanecer no Magistério da Marinha. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I> Parágrafo único. </I>O professor militar a que se refere este artigo está sujeito à legislação militar em vigor, a esta Lei e aos regulamentos dos estabelecimentos de ensino onde servir. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.  O professor efetivo militar, a que se refere o art. 27, poderá deixar suas atividades de magistério, passando para a situação de reformado, a pedido, no posto em que se encontrar, nas seguintes situações: 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - se contar mais de 35 
+(trinta e cinco) anos de serviço, quando terá direito aos proventos do posto 
+imediatamente superior;&nbsp;<BR>                      
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;II - se contar mais de 30 (trinta) anos de serviço, quando terá direito aos proventos do posto em que se encontrar. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I> Parágrafo único. </I>O professor efetivo militar, para beneficiar-se do contido neste artigo, deverá ter exercido suas funções no Magistério da Marinha, como professor efetivo, por um período mínimo de 10 (dez) anos. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 
+29.  O professor a que se refere o artigo anterior poderá solicitar demissão do Magistério da Marinha antes de completar 30 (trinta) anos de serviço; nesse caso, deixará de perceber qualquer provento, permanecendo no posto em que se encontrar, na condição de Reserva Não Remunerada. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.  O professor efetivo militar, a que se refere o art. 27, está obrigado ao uso de uniformes, obedecendo à regulamentação para os Oficiais da Ativa. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 
+31.  O professor efetivo militar, a que se refere o art. 27, poderá optar pelo emprego de Professor Assistente de que trata a presente Lei, independente das condições estabelecidas no art. 7º e no item III do art. 8º, no prazo de 365 (trezentos e sessenta e cinco) dias, a contar da data da vigência desta Lei. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º&nbsp; &nbsp;Ao professor efetivo militar de Práticas Educativas (Educação Física) não se aplicará o disposto neste artigo, tendo em vista o estabelecido no art. 12. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º&nbsp; &nbsp;O militar de que trata este artigo, ao assumir o emprego de Professor Assistente, deixará de ser regido pela Lei nº 4.128, de 27 de agosto de 1962. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º&nbsp; &nbsp;Ao militar, na situação do parágrafo anterior, será aplicado o disposto no 2º do art. 102 da Lei nº 5.774, de 23 de dezembro de 1971, devendo ter seus proventos calculados de conformidade com o que estabelecem os arts. 118, 119 e 120 da Lei nº 5.787, de 27 de junho de 1972, computado o tempo de serviço até a data de assunção do emprego referido neste artigo. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.  O professor efetivo civil de ensino superior, regido pela Lei nº 4.128, de 27 de agosto de 1962, desde que admitido por concurso público de provas e títulos, passa a ocupar o cargo de Professor Assistente de que trata a presente Lei, ressalvado o disposto no art. 33. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I> Parágrafo único. </I>O professor que não passar a Professor Assistente permanecerá no cargo que ocupa, o qual será considerado extinto quando vagar. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.  Os atuais Professores civis de Práticas Educativas (Educação Física), do Ministério da Marinha, continuarão em seus cargos, que serão extintos quando vagarem, salvo se regidos pela Legislação Trabalhista, caso em que serão dispensados. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 
+34. Os atuais Professores de Ensino Secundário, Ensino Industrial Básico, Ensino 
+Industrial Técnico, Ensino Pré-Primário e Primário, Ensino Especializado e de 
+Cursos Isolados, do Ministério da Marinha, serão aproveitados como Professores 
+de Ensino de 1º e 2º graus, <EM>C , B</EM> e <EM>A</EM> 
+                                            , conforme sua habilitação em face da legislação específica em vigor e da lotação aprovada, observados os critérios para o aproveitamento previstos no Decreto nº 74.786, de 30 de outubro de 1974. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º&nbsp; &nbsp;Os professores que não lograrem o aproveitamento de que trata este artigo continuarão em seus cargos, que serão extintos à medida que vagarem, salvo se regidos pela Legislação Trabalhista, caso em que serão dispensados. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 
+2º&nbsp; &nbsp;Os cargos ou empregos de Professor de 1º e 2º graus, <EM>A</EM> 
+e<EM> B</EM> , serão extintos à medida que vagarem, ressalvados os destinados a 
+progressão funcional dos Professores da Classe <EM>A</EM>       
+                 
+           . 
+</P>
+<P>                                   &nbsp;&nbsp;&nbsp;&nbsp;
+§ 3º&nbsp; &nbsp;O aproveitamento de que trata este artigo vigorará a partir de 1º de março de 1976. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 
+35.  A extinção da área em que o professor efetivo estiver habilitado a lecionar não implicará no seu afastamento do Magistério da Marinha; quando tal ocorrer, o professor será aproveitado em outras funções relacionadas com o exercício do Magistério. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36. A 
+precedência funcional entre militares e professores do Magistério da Marinha, 
+nos estabelecimentos de ensino, será prevista na regulamentação desta Lei. </P>
+<CENTER>TÍTULO III 
+<BR>  
+Das Disposições Finais<BR><BR></CENTER><CENTER>CAPÍTULO ÚNICO 
+</CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.  Esta Lei será regulamentada pelo Poder Executivo, no prazo de 90 (noventa) dias, a contar da data da sua publicação. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.  Esta Lei entrará em vigor na data da sua publicação. 
+<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39. Ficam 
+revogadas a Lei nº 4.128, de 27 de agosto de 1962, e demais disposições em 
+contrário, ressalvados os dispositivos da citada Lei nº 4.128, de 1962, 
+aplicáveis nos casos de promoção e remuneração, na forma prevista no art. 27 
+desta Lei. </P>
+<P>Brasília, em 07 de dezembro de 1977; 156º da Independência e 89º da 
+República. </P>
+<P>ERNESTO GEISEL <BR>Geraldo Azevedo Henning </P>
+
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 12/12/1977
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 12/12/1977, Página 16929 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1977, Página 290 
+                                                        Vol. 7          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,950 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 4.870, DE 1º DE DEZEMBRO DE 1965 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sôbre a produção açucareira a receita do Instituto do Açúcar e do Álcool e sua aplicação, e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 4.870, DE 1º DE DEZEMBRO DE 1965 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-4870-1-dezembro-1965-368377-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-4870-1-dezembro-1965-368377-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-4870-1-dezembro-1965-368377-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-4870-1-dezembro-1965-368377-retificacao-50659-pl.html">Retificação</a>
+                                            </li>
+                                            <li>  	
+                                                <a href="lei-4870-1-dezembro-1965-368377-promulgacaodevetos-50660-pl.html">Promulgação de Vetos</a>
+                                            </li>
+                                    <li>
+                                        <a href="lei-4870-1-dezembro-1965-368377-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 4.870, DE 1º DE DEZEMBRO DE 1965</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sôbre a produção açucareira a receita do Instituto do Açúcar e do Álcool e sua aplicação, e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA, <BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Da Produção </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Os aumentos ou reduções de quota de produção de açúcar no País serão fixados pelo Instituto do Açúcar e do Álcool (I.A.A.), tendo em vista as necessidades de consumo interno e as possibilidades de exportação para o mercado internacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A parcela destinada ao atendimento de compromissos de exportação constituirá um contingente móvel nacional, a ser atribuído, em cada safra, nos respectivos planos de comercialização, às regiões mais indicadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A parcela de exportação referida neste artigo destinar-se-á, preferencialmente, a atender ao escoamento da produção infralimite das regiões produtoras, cujos contingentes não sejam totalmente absorvidos pelo consumo das respectivas áreas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A distribuição da parcela de aumento de quota, para atender às necessidades do mercado interno, far-se-á entre as usinas, tendo em vista as suas condições industriais e possibilidades agrícolas, na forma que fôr estabelecida em Resolução da Comissão Executiva do I.A.A. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Na distibuição a que se refere o parágrafo anterior, levar-se-ão em conta as possibilidades dos fundos agrícolas pertencentes aos fornecedores de cana vinculados à Usina, a êles distribuindo-se os aumentos que lhes correspondem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º A distribuição da quota agrícola correspondente ao aumento de que trata o parágrafo anterior, não poderá ser inferior a 60% (sessenta por cento) da quota industrial atribuída à usina e à média de entrega de cada fornecedor, no último triênio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Reconhecida pelo I.A.A., a falta de capacidade de produção dos fornecedores vinculados às usinas para utilização dos aumentos das referidas quotas de fornecimento, na percentagem estabelecida no parágrafo anterior, serão admitidos novos fornecedores de cana ou, se verificada essa impossibilidade, serão essas quotas aproveitadas pelas usinas com lavouras próprias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º O I.A.A. poderá destinar parte do aumento a que se refere êste artigo à montagem de novas usinas para instalação em regiões ecológicas adequadas à exploração de cana de açúcar e onde os índices de consumo sejam superiores à produção do Estado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º A fim de assegurar o ritmo adequado da produção do açúcar, o I.A.A., nos Planos Anuais de Safra, estabelecerá o mínimo indispensável de produção para as duas safras subseqüentes, tendo em vista a projeção do consumo do mercado interno e os compromissos internacionais do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Da parcela do aumento que resultar do disposto nos parágrafos 3º e 4º do artigo anterior, o I.A.A., destinará até 20% (vinte por cento) do seu total, a novos fornecedores que lavrem diretamente a terra, pessoalmente ou com o auxílio de familiares. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Não havendo possibilidade de distribuição nos têrmos dêste artigo, devidamente comprovada pelo I.A.A., a referida percentagem poderá, desde logo, ser distribuída entre as usinas e seus fornecedores, na proporção das respectivas possibilidades agrícolas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;O I.A.A., tendo em vista as quotas das usinas e o limite global da produção de açúcar no País, fixará, nos Planos Anuais de safra, os contingentes destinados ao abastecimento do mercado interno e as parcelas a serem exportadas para o mercado internacional, observado o disposto no artigo 1º e seus parágrafos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os contingentes de açúcar referidos nêste artigo terão assegurada sua defesa, de conformidade com as normas a serem estabelecidas nos Planos Anuais de Safra. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A produção realizada pelas usinas, acima dos contingentes de que trata êste artigo, ressalvada a redistribuição de quotas estaduais, será considerada extra-limite, na forma prevista no artigo 61 e seus parágrafos do Decreto-lei nº 3.855, de 21 de novembro de 1941. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O açúcar extra-limite, produzido nos têrmos do parágrafo anterior, será destinado à exportação, se o permitirem as condições do mercado internacional, ou transformado em álcool, correndo por conta do produtor os eventuais prejuízos dessas operações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º A liquidação dos preços da produção extra-limite que fôr destinada à exportação ou transformação em álcool não poderá, em hipótese alguma, realizar-se em condições mais favoráveis, para o produtor, do que a de produção infralimite, revertendo para o Fundo de Exportação criado nesta Lei, as eventuais margens sôbre os preços internos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º A Comunicação a que se refere o artigo 3º do Decreto-lei número 1.831, de 4 de dezembro de 1939, sòmente permitirá a moagem, mediante expressa autorização do I.A.A., considerando-se clandestino, nos têrmos do parágrafo 2º do artigo 61 do Decreto-lei número 3.855, de 21 de novembro de 1941, o açúcar que vier a ser produzido sem essa autorização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Os resultados líquidos das operações que eventualmente vierem a ser realizadas para o aproveitamento da produção que se verificar com a inobservância do disposto no parágrafo anterior, reverterão para o Fundo de Exportação de que trata o art. 28. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;As usinas que produzirem açúcar clandestino, como tal considerado na forma da lei, além das penalidades previstas nos Decretos-leis ns. 1.831, de 4 de dezembro de 1939, e 3.855, de 21 de novembro de 1941, terão as suas quotas de produção reduzidas na proporção do açúcar produzido clandestinamente, com a revisão do seu rendimento industrial para o efeito de reajustamento das tabelas de pagamento de cana de fornecedor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A redução imposta neste artigo será convertida em multa equivalente a dez vêzes o valor de cada saco de açúcar clandestino, e o dôbro na reincidência, quando as usinas não possuírem cana própria ou quando a redução possa atingir o contingente de cana de fornecedores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;O I.A.A. poderá fixar, nos seus Planos Anuais de Safra, uma quota de retenção de até 20% (vinte por cento) da produção nacional de açúcar, para a constituição de um estoque regulador do abastecimento dos centros consumidores, estabilização dos preços no mercado interno e cumprimento de acôrdos internacionais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O estoque de retenção a que se refere êste artigo será financiado pelos estabelecimentos oficiais de crédito, por órgãos supletivos de abastecimento, ou, mediante ajuste, pelos órgãos internacionais de financiamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os fornecedores de cana participarão dos ônus da quota de retenção a que se refere êste artigo, recebendo, como adiantamento, pelas canas fornecidas na proporção de financiamento que fôr deferido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Não poderá o I.A.A., qualquer que seja a hipótese, permitir a transferência de açúcar para região onde a produção exceda às necessidades do consumo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;A quota de produção global do País poderá ser reduzida, a título provisório, com base no comportamento do mercado de consumo, devendo o I.A.A., na redução dessa quota, considerar as condições regionais e a dominância setorial do açúcar nas diferentes áreas do País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;A região Norte-Nordeste, em vista do seu atual estágio de desenvolvimento econômico, será atribuído, prioritàriamente, o contingente de açúcar destinado aos mercados preferenciais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Na fixação do contingente de exportação de açúcar para o mercada externo, o I.A.A. utilizará recursos da taxa específica, saldos de dotações do seu orçamento e recursos públicos criados ou que venham a ser criados para o fomento da exportação de produtos gravosos, a fim de assegurar a defesa do preço e o equilíbrio estatístico entre a produção e o consumo. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Dos Preços </B><BR><BR></CENTER>
+<CENTER><B>Seção 1ª </CENTER></B>
+<CENTER><B>Do Levantamento dos Custos </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;O I.A.A., quando do levantamento dos custos de produção agrícola e industrial, apurará, em relação às usinas das regiões Centro-Sul e Norte-Nordeste, as funções custo dos respectivos fatôres de produção, para vigorarem no triênio posterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As funções custo a que se refere êste artigo serão valorizadas anualmente, através de pesquisas contábeis e de outras técnicas complementares, estimados, em cada caso, os fatôres que não possam ser objeto de mensuração física. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Após o levantamento dos custos estaduais, serão apurados o custo médio nacional ponderado e custos médios regionais ponderados, observados sempre que possível, índices mínimos de produtividade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O I.A.A. promoverá, permanentemente, o levantamento de custos de produção, para o conhecimento de suas variações, ficando a cargo do seu órgão especializado a padronização obrigatória da contabilidade das usinas de açúcar. <BR><BR>
+<CENTER><B>Seção 2ª </CENTER></B>
+<CENTER><B>Do Preço da Cana </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;O preço da tonelada de cana fornecida às usinas será fixado, para cada Estado, por ocasião do Plano de Safra, tendo-se em vista a apuração dos custos de produção referidos no artigo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Ao valor básico do pagamento da cana, fixado na forma do artigo anterior, será acrescida a parcela correspondente a percentagem da participação do fornecedor no rendimento industrial situado acima do rendimento médio do Estado, considerado, para êsse fim, o teor de sacarose e pureza da cana que fornecer. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A matéria-prima entregue pelo fornecedor com o teor de sacarose na cana e pureza no caldo, inferior ao que fôr fixado pela Comissão Executiva do I.A.A., sofrerá o desconto que êsse órgão estabelecer. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para a fixação dos rendimentos industriais, o I.A.A. tomará em consideração os que forem apurados no triênio imediatamente anterior, tomando-se por base os primeiros cento e cinqüenta dias de moagem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O teor de sacarose e pureza da cana, para os fins de pagamento, será apurado na usina recebedora, podendo os fornecedores ou os seus órgãos de representação manter fiscalização nos respectivos locais de inspeção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º A entrega da cana pelo fornecedor, em condições de moagem, far-se-á dentro de (48) quarenta e oito horas do respectivo corte. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º No caso em que o retardamento da moagem, além do prazo referido no parágrafo anterior, ocorrer por culpa da usina recebedora, será considerado válido o teor máximo de sacarose e pureza da cana do fornecedor, apurado na usina até a data do fornecimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Não estando a usina habilitada à determinação dos índices de sacarose e pureza de que trata êste artigo, nenhuma dedução poderá ser feita, a êste título, dos fornecedores, até que seja apurada, pelo I.A.A., a existência de condições técnicas adequadas àquele fim. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º Para os efeitos do § 3º dêste artigo, fica o I.A.A. com podêres para fixar critérios e métodos de apuração do teor de sacarose e pureza contido na cana recebida pelas usinas. <BR><BR>
+<CENTER><B>Seção 3ª </CENTER></B>
+<CENTER><B>Do Preço do Açúcar </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;No caso de fixação de preço médio nacional ponderado, o I.A.A. providenciará sôbre a constituição de um fundo de equalização de preços e de defesa da produção em geral, mediante o recolhimento de contribuição correspondente à diferença verificada entre os custos apurados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A contribuição a que se refere êste artigo será obrigatòriamente recolhida ao I.A.A., independentemente de ajuste entre vendedor e comprador quanto ao preço de venda constante dos respectivos efeitos comerciais, não podendo ser superior a 10% (dez por cento) do preço médio nacional ponderado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na distribuição de recursos do Fundo de Equalização de Preços e Defesa da Produção em Geral, não serão beneficiadas as produções agrícolas de fornecedores e usineiros que revelarem em diagnóstico econômico realizado no prazo de 2 (dois) anos, condições de produtividade idênticas às da região de menor custo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As produções agrícolas beneficiadas que, no prazo de 5 (cinco) anos, não revelarem melhoria de produtividade, serão excluídas da distribuição a que se refere êste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º A parcela mínima de 1/3 (um têrço) dos recursos será destinada a complementar o financiamento dos estoques. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;No caso de fixação de preços médios regionais, o I.A.A. estabelecerá as áreas compreendidas nas regiões açucareiras respectivas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Dependerá de prévia autorização do I.A.A. a transferência do açúcar, de uma para outra região de preços diferentes de venda, tendo em vista a necessidade de proteger a produção açucareira, assegurar os interêsses do fornecedor de cana, garantir o abastecimento do mercado interno e evitar o abuso do poder econômico e o eventual aumento arbitrário dos lucros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A violação do disposto neste artigo sujeitará o infrator ao pagamento de multa igual ao valor do açúcar, vendido ou encontrado na região, sem a autorização de que trata o parágrafo anterior. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Do Fornecimento de Cana </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;As usinas são obrigadas a receber os contingentes totais de cada fornecedor de acôrdo com as quotas aprovadas pelo I.A.A. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Cada usina submeterá ao órgão de classe de fornecedores, no mínimo 30 (trinta) dias antes do início da safra, o plano de recebimento da cana. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Quaisquer divergências sôbre o mesmo serão resolvidas por meio de acôrdo ou arbitramento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As usinas são obrigadas a moer a cana dos seus fornecedores no período de 150 (cento e cinqüenta) dias efetivos de moagem, na região Centro-Sul e, até 180 (cento e oitenta) dias, na região Norte-Nordeste, distribuindo-se a respectiva quota, durante aquêle período, na forma que fôr estabelecida pelos interessados e aprovada pelo I.A.A. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Responderá por perdas e danos a usina que não tenha moído a totalidade das quotas dos seus fornecedores, após decorridos aquêles períodos, acrescidos de multa de 50% (cinqüenta por cento) sôbre o valor da cana que deixou de receber, ressalvado motivo de fôrça maior, admitido em direito e reconhecido pelo I.A.A. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;As entregas de cana poderão ser feitas pelo fornecedor, diretamente, ou, em seu nome, pela cooperativa de plantadores a que seja filiado; neste caso, a cooperativa poderá efetuar o seu faturamento de acôrdo com as disposições legais vigentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;O não cumprimento do disposto nos arts. 15, 16 e seus parágrafos, e 17, acarretará para as usinas faltosas, após decisão do I.A.A., além da indenização do valor de cana não recebida, um acréscimo de valor correspondente à multa de 50% (cinqüenta por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;A cana entregue será pesada, obrigatòriamente, em balanças registradoras automáticas, invioláveis, a serem instaladas pelas usinas, financiadas pelo I.A.A., no prazo improrrogável de um ano a contar da vigência desta Lei. O I.A.A. manterá fiscalização permanente do funcionamento das balanças, podendo fiscalizá-las, também, os órgãos regionais de representação dos lavradores. <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Dos Recursos Financeiros e Sua Aplicação </CENTER></B><BR>
+<CENTER><B>Seção 1ª </CENTER></B>
+<CENTER><B>Da Receita </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;A receita do I.A.A. será constituída pelos seguintes recursos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - do produto da taxa de 10% (dez por cento) sôbre o preço oficial do saco de açúcar de sessenta quilos, de qualquer tipo;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - do produto da taxa de até 3% (três por cento) sôbre o preço oficial do saco de açúcar de qualquer tipo, a ser fixado pela Comissão Executiva do I.A.A. para atender à política de exportação;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;III - do produto da taxa <EM>ad valorem</EM> de 10% (dez por cento) sôbre os preços oficiais do álcool de qualquer tipo e graduação por litro destinado ao consumo interno, exclusive o álcool anidro para mistura carburante;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;IV - dos eventuais resultados líquidos de exportação de açúcar, pelo I.A.A., para o mercado internacional;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - dos resultados líquidos das operações industriais e comerciais a cargo do I.A.A.;&nbsp; <BR>&nbsp;&nbsp;&nbsp; VI - das operações financeiras que realizar, bem como das oriundas de títulos públicos e de ações que possuir;&nbsp; <BR>&nbsp;&nbsp;&nbsp;VII - das receitas de qualquer natureza que, por fôrça de disposições legais ou regulamentares, inclusive as de contabilidade pública se devam incorporar ao seu orçamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º da receita prevista neste artigo, inciso I, III, V e VI, serão deduzidos até 25% (vinte e cinco por cento) do seu valor global para atender às despesas com o custeio da administração geral do I.A.A. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para fins de atendimento dos encargos relativos à aposentadoria dos servidores do I.A.A., a percentagem referida no parágrafo anterior poderá ser elevada de 3% (três por cento) desde que êsse acréscimo se destine à constituição de fundo próprio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O Instituto do Açúcar e do Álcool poderá, tendo em vista as condições do mercado e as dificuldades de escoamento da produção, estabelecer, mensalmente, uma variação para menos de até 20% (vinte por cento) do preço oficial de venda do açúcar sôbre o qual incidirá o <EM>ad valorem</EM> de 10% (dez por cento) da taxa de que trata o item I dêste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;As taxas de que tratam os itens I, II e III do artigo 20 e as sobretaxas e quaisquer outras contribuições previstas em lei serão recolhidas aos órgãos arrecadadores do I.A.A. ou da União, ao Banco do Brasil ou outros estabelecimentos oficiais de crédito autorizados pelo I.A.A., até o último dia da quinzena subseqüente ao término do mês em que ocorrer o fato gerador. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O recolhimento das taxas constantes desta lei incidentes sôbre as vendas realizadas em cada mês, será obrigatòriamente feito até o último dia do mês subseqüente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A falta do recolhimento das taxas na data em que se tornarem exigíveis, sujeitará o infrator a uma multa de 50% (cinqüenta por cento) do respectivo valor, sem prejuízo do recolhimento das importâncias devidas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O infrator que, espontâneamente, antes de qualquer procedimento fiscal, recolher as importâncias devidas incorrerá, tão-sòmente, na multa moratória de 10% (dez por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Para os fins dêste artigo entende-se como fato gerador a saída da mercadoria do respectivo estabelecimento produtor com emissão de efeitos comerciais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Sendo reincidente o infrator, a multa a que se refere o parágrafo segundo dêste artigo será imposta em dôbro. <BR><BR>
+<CENTER><B>Seção 2ª </CENTER></B>
+<CENTER><B>Da Aplicação da Receita </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;A receita líquida da taxa a que se refere o art. 20, inciso I, desta Lei, deduzida a parcela mencionada no § 1º do mesmo artigo, terá a seguinte aplicação:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>parcela correspondente até 45% (quarenta e cinco por cento) será destinada à região Norte-Nordeste; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>parcela correspondente até 30% (trinta por cento) será destinada à região Centro Sul; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>parcela de até 10% (dez por cento) será destinada a atender ao financiamento do capital de giro das cooperativas de produtores agrícolas e industriais; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>o saldo será destinado às medidas complementares de defesa da agro-indústria e ao atendimento dos demais encargos orçamentários do I.A.A. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;As parcelas referidas nas letras <EM>a</EM> e<EM> b</EM> do artigo anterior terão a seguinte aplicação:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>até 70% (setenta por cento) para investimento na agricultura, compreendendo pesquisa, experimentação, transporte, mecanização, irrigação, fomento e aperfeiçoamento de padrões, e, na indústria compreendendo investimento e financiamento para relocalização, fusão, equipamento e reequipamento de usinas, destilarias e financiamento de fábricas de sub-produtos e derivados; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>até 10% (dez por cento) para financiamento e custeio de serviços de assistência aos trabalhadores da agro-indústria canavieira e seus dependentes; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o saldo para complementar o financiamento da entresafra, e de adubos a fornecedores de cana. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;A receita líquida de que trata o inciso II do art. 20 não excluirá a complementação de qualquer fundo instituído para êsse fim ou de crédito orçamentário específico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os resultados líquidos eventuais a que se refere o inciso IV do artigo 20 serão incorporados à receita de que trata êste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;A receita resultante da taxa referida no inciso III do artigo 20 será aplicada na execução alcooleira nacional, no custeio de medidas concernentes ao fomento e à implantação de indústrias de derivados e sub-produtos de melaço e de álcool, no financiamento de destilarias anexas às usinas no escoamento de álcool e, inclusive na cobertura do ônus decorrentes da eventual gravosidade dos preços de sua exportação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;O Fundo a que se refere o parágrafo segundo do art. 20 será naquele artigo, da contribuição de 3% (três por cento) sôbre os vencimentos e salários dos servidores do I.A.A., dêstes descontados em fôlha. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo Único. </I>O I.A.A., mediante resolução de sua Comissão Executiva, regulamentará a aplicação dos recursos do Fundo e proverá, com os respectivos recursos, o pagamento das aposentadorias que se verificarem a partir da vigência desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;As amortizações ou remissões, bem como os juros de operações financeiras, poderão ser reaplicadas, com a mesma destinação para a qual tenha sido realizado o empréstimo ou financiamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;A receita líquida da taxa <EM>ad valorem</EM> referida no inciso II do artigo 20, bem como eventuais resultados líquidos de exportação de açúcar e de álcool, constituirão Fundo Especial de Exportação, destinado à complementação da cobertura de eventuais prejuízos, não podendo, em nenhuma hipótese, ter aplicação diversa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Quando não ocorrer exportação ou dela não resultar prejuízo, continuará a ser feito o recolhimento da taxa referida neste artigo, para atender à gravosidade dos preços de exportação, quando oportuno. <BR><BR>
+<CENTER><B>Seção 3ª </CENTER></B>
+<CENTER><B>Dos Financiamentos </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Terão prioridades, na concessão dos financiamentos de que tratam as letras <EM>a</EM> e <EM>c</EM> do artigo 23, na forma que fôr estabelecida pela Comissão Executiva do I.A.A.: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - quando fôr o caso, os fornecedores de cana e as usinas que demonstrem haver liberado ou se proponham a liberar terras de sua propriedade aos órgãos oficiais de habitação, colonização e reforma agrária, desde que os recursos obtidos venham a representar parcela complementar do respectivo plano de aplicação;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - as usinas que proponham a democratização de seu capital. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Nenhum empréstimo ou financiamento será concedido às usinas, destilarias, fornecedores de cana, seja qual fôr a sua destinação, sem que o pedido seja instruído com o plano de aplicação correspondente e parecer dos órgãos técnicos do I.A.A. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;VETADO.&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>VETADO. </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>VETADO. </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>VETADO. </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>VETADO. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;O I.A.A. manterá, em sua contabilidade, contas especiais para o lançamento de ocorrências contábeis relativas à aplicação dos recursos previstos nesta lei, transferindo, para utilização no exercício seguinte, os saldos dos créditos não utilizados ou destinando-os à suplementação de recursos de qualquer das aplicações de que trata esta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;O Presidente do I.A.A., mediante autorização do Ministro da Indústria e do Comércio, realizará com o Banco Central, o Banco do Brasil e outros estabelecimentos de crédito, as operações financeiras necessárias à execução dos programas de defesa da produção e escoamento das safras. <BR><BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Da Assistência aos Trabalhadores </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;A parcela resultante do percentual estabelecido na alínea <EM>b</EM> do art. 23 será aplicada em programas de assistência social aos trabalhadores da agro-indústria canavieira, tendo por objeto:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>higiene e saúde, por meio de assistência médica, hospitalar e farmacêutica, bem como à maternidade e à infância, complementando a assistência prestada pela usinas e fornecedores de cana; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>complementação dos programas de educação profissional e de tipo médio gratuitas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>estímulo e financiamento a cooperativas de consumo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>financiamento de culturas de subsistência, nas áreas de terras utilizadas pelos trabalhadores rurais, de acôrdo com o disposto no art. 23, do Decreto-lei nº 6.969, de 19 de outubro de 1944; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>promoção e estímulo de programas educativos, culturais e de recreação. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;Ficam os produtores de cana, açúcar e álcool obrigados a aplicar, em benefício dos trabalhadores industriais e agrícolas das usinas, destilarias e fornecedores, em serviços de assistências médica, hospitalar, farmacêutica e social, importância correspondente no mínimo, às seguintes percentagens:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>de 1% (um por cento) sôbre preço oficial de saco de açúcar de 60 (sessenta) quilos, de qualquer tipo, revogado o disposto no art. 8º do Decreto-lei nº 9.827, de 10 de setembro de 1946; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>de 1% (um por cento) sôbre o valor oficial da tonelada de cana entregue, a qualquer título, às usinas, destilarias anexas ou autônomas, pelos fornecedores ou lavradores da referida matéria; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>de 2% (dois por cento) sôbre o valor oficial do litro de álcool de qualquer tipo produzido nas destilarias. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os recursos previstos neste artigo serão aplicados diretamente pelas usinas, destilarias e fornecedores de cana, individualmente ou através das respectivas associações de classe, mediante plano de sua iniciativa, submetido à aprovação e fiscalização do I.A.A. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Ficam as usinas obrigadas a descontar e recolher, até o dia 15 do mês seguinte, a taxa de que trata a alínea "b" dêste artigo, depositando seu produto em conta vinculada, em estabelecimento indicado pelo órgão específico da classe dos fornecedores e à ordem do mesmo.&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O descumprimento desta obrigação acarretará a multa de 50% (cinqüenta por cento) da importância retida, até o prazo de 30 (trinta) dias, e mais 20% (vinte por cento) sôbre aquela importância, por mês excedente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A falta de aplicação total ou parcial, dos recursos previstos neste artigo, sujeita o infrator à multa equivalente ao dôbro da importância que tiver deixado de aplicar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;Na execução do programa de assistência social, o I.A.A. coordenará, sempre que possível, sua atividade com os órgãos da União, dos Estados e dos Municípios e de entidades privadas que sirvam aos mesmos objetivos e procurará conjugá-la com os planos de assistência de que trata o artigo anterior. <BR><BR>
+<CENTER><B>CAPÍTULO VI </CENTER></B>
+<CENTER><B>Disposições Gerais </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;O I.A.A. e o Conselho Nacional de Petróleo estabelecerão, em convênio, os volumes de álcool a serem destinados à mistura carburante, visando a assegurar a utilização do parque alcooleiro do País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;O I.A.A. disciplinará as operações de exportação de açúcar para o mercado externo, inclusive, dispondo sôbre a padronização de tipos e estabelecendo quais as regiões e Estados que, em face das necessidades de escoamento de sua produção, podem realizar as exportações, distribuindo as respectivas quotas entre as usinas que ofereçam melhores condições técnicas e econômicas, de realizá-las, observado o disposto no artigo 1º, parágrafos 1º e 2º desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O disposto neste artigo aplicar-se-á, no que couber, às operações de exportação de melaço, álcool, aguardente e demais produtos e subprodutos da cana de açúcar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;Nenhuma usina poderá ser instalada, no País, com quota de produção inferior a 100.000 (cem mil) sacos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;O I.A.A. fomentará a organização de cooperativas de comercialização de açúcar, centralizadoras de vendas e vendedoras únicas, podendo adotar medidas financeiras que objetivem a ampliação de seu capital de giro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;O valor das multas estabelecidas nesta lei e na legislação em vigor, será atualizado monetàriamente, segundo o critério estabelecido na parte final do art. 9º da Lei número 4.357, de 16 de julho de 1964. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A primeira atualização das multas a que se refere êste artigo será feita dentro do prazo de noventa (90) dias da data de vigência desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Para os efeitos do disposto no art. 60 do Decreto-lei número 1.831, de 4 de dezembro de 1939, considera-se em trânsito todo o açúcar produzido pelas usinas, desde a saída da fábrica até ser entregue ao consumidor, mesmo quando encontrado em armazéns ou depósitos da própria usina ou de terceiros, ainda que comerciantes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O disposto neste artigo não abrange o açúcar quando entregue ao consumidor, no varêjo, em quantidades inferiores a 60 (sessenta) quilos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;As pessoas físicas ou jurídicas, constituídas depositárias de açúcar apreendido pela fiscalização do I.A.A., que derem saída ao produto ou dêle se utilizarem, a qualquer título, sem o consentimento expresso do I.A.A., além das sanções penais a que estiverem sujeitas, incorrerão em multa equivalente ao dôbro do valor da mercadoria depositada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;Os recursos das decisões das Turmas de Julgamento da Comissão Executiva do I.A.A. que importem condenação em dinheiro, deverão ser acompanhados da prova de depósito da quantia a que a parte tiver sido condenada, ou de caução de títulos de entidades públicas ou ainda da fiança idônea. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Considerar-se-á deserto o recurso se interposto sem a prova da exigência a que se refere êste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;O Procurador-Geral, no uso das atribuições que lhe confere a legislação em vigor, oporá embargos às decisões da Comissão Executiva sempre que, tomadas por maioria de votos, sejam contrárias à Constituição e às leis do País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Sempre que a decisão não fôr unânime, será aberta vista do processo ao Procurador-Geral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os embargos serão opostos no prazo de 15 (quinze) dias, contados da data do recebimento do processo pelo Procurador-Geral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;No caso do artigo anterior, os Procuradores junto às Turmas de Julgamento recorrerão da respectiva decisão, no mesmo prazo estabelecido para as partes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;Os Procuradores do I.A.A. sempre que, no uso de suas atribuições, tomarem conhecimento de decisões contrárias à Constituição, às leis do País e às resoluções do I.A.A., usarão do direito de representação ao Procurador-Geral, para as providências que no caso couberem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;As infrações ao disposto nesta lei e na legislação do I.A.A. serão apuradas, mediante processo fiscal que terá por base o auto processado e julgado pelos órgãos competentes do Instituto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;Continuam em vigor tôdas as disposições da legislação especial relativas à agro-indústria canavieira, em tudo que não fôr incompatível com o disposto nesta lei ou que por ela não esteja expressamente revogada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;A fim de disciplinar o ritmo do escoamento da produção e complementar as medidas de estabilização do preço do açúcar no mercado interno, poderá o I.A.A. estabelecer quotas mensais de comercialização de açúcar, a serem atribuídos às cooperativas de produtores e às usinas não cooperadas, onde as houver. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As quotas mensais de comercialização de açúcar poderão ser reduzidas ou ampliadas, de acôrdo com a posição estatística e o comportamento dos mercados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Todo açúcar vendido além das quotas mensais de comercialização deferidas às cooperativas de produtores e usinas não cooperadas, saído das usinas antes dos prazos previstos, será considerado clandestino, sujeito a apreensão pelo I.A.A. e os resultados de seu aproveitamento não poderão, em hipótese alguma, beneficiar o infrator. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Na hipótese de não ser possível a apreensão do açúcar, o infrator ficará sujeito à multa equivalente ao seu valor comercializado além das quotas mensais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Para o efeito do disposto neste artigo e nos parágrafos anteriores o I.A.A. fica obrigado a financiar os estoques retidos, na base de 60 por cento do preço fixado na região Centro-Sul e, de 80 por cento na região Norte-Nordeste, com recursos próprios ou suplementados por financiamento do Banco do Brasil, de acôrdo com instruções adequadas do Banco Central da República do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Os fornecedores de cana participarão da retenção dos estoques conseqüentes de fixação das quotas mensais de comercialização e receberão, sob a forma de adiantamento, por tonelada de cana, parcela proporcional aos fornecimentos realizados e ao financiamento que fôr deferido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;A Comissão Executiva do Instituto do Açúcar e do Álcool implantará, dentro de 60 (sessenta) dias da publicação desta Lei, as Comissões de Conciliação a que se referem os artigos 113, e seguintes do Decreto-lei nº 3.855, de 21 de novembro de 1941, para compor ou dirimir os litígios decorrentes de entregas e pagamentos de canas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Sempre que não houver conciliação, as Comissões decidirão sôbre o litígio, dentro do prazo de 60 (sessenta) dias, contados da apresentação da reclamação, cabendo recurso, no prazo de 10 (dez) dias, para a Comissão Executiva, sem efeito suspensivo. Nesta hipótese, a Comissão Executiva, também dentro do prazo de 60 (sessenta) dias, contados da data da interposição do recurso, decidirá definitivamente o litígio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A Comissão Executiva do I.A.A. expedirá Resolução, 30 (trinta) dias após a criação das Comissões a que se refere êste artigo, disciplinando o processo daqueles litígios e o regimento interno das mencionadas Comissões, as quais serão imediatamente instaladas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;Os planos Anuais de Safra deverão ser aprovados pela Comissão Executiva do I.A.A. até 31 de dezembro de cada ano. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Se o nôvo Plano de Safra não fôr aprovado no prazo estabelecido neste artigo, permanecerá em vigor o Plano anterior, com as modificações que forem propostas pelo Presidente do I.A.A. e aprovadas pelo Ministro da Indústria e do Comércio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Em qualquer hipótese os Planos de Safra poderão ser revistos até o mês de junho mediante proposta do Presidente do I.A.A. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;A venda, permuta, cessão ou transferência, a qualquer título, de maquinaria ou de implementos destinados à fabricação de açúcar ou de álcool, novos ou já usados, somente poderá realizar-se mediante autorização prévia e expressa do I.A.A. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A inobservância ao disposto neste artigo sujeitará o infrator a multa no valor da maquinaria ou implementos vendidos, permutados, cedidos ou transferidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;É o I.A.A. autorizado a proceder, no desempenho de suas tarefas básicas e por intermédio de sua fiscalização, ou através de funcionários especializados que designar, ao exame periódico nas escritas e demais elementos de contabilidade das usinas e refinarias de açúcar e das destilarias de álcool. <BR><BR>
+<CENTER><B>CAPÍTULO VII </CENTER></B>
+<CENTER><B>Disposições Especiais </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;As usinas ou destilarias e os fornecedores de cana em atraso no pagamento das taxas, sobretaxas e contribuições devidas ao I.A.A., ou que deixarem de cumprir o disposto no art. 29 e seus parágrafos, além das penalidades previstas&nbsp;nesta Lei, terão os respectivos financiamentos suspensos pelo I.A.A. até que realizem os pagamentos ou aplicações que forem devidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Em igual sanção incorrerão as usinas ou destilarias:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>que não tenham pago a cana dos seus fornecedores no prazo estabelecido em lei, em resolução do I.A.A., ou nos Planos Anuais de Defesa da Safra, sem prejuízo de obrigação estabelecida no art. 4º da Lei nº 4.071, de 15 de junho de 1962 e da sanção estabelecida no artigo 5º da mesma Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>que retiverem as importâncias descontadas dos seus fornecedores, a qualquer título, para crédito do I.A.A., do Banco do Brasil ou de outras entidades públicas ou privadas, inclusive as de classe, sem prejuízo das sanções que a lei determinar; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>que estiverem em mora com o I.A.A., em conseqüência de inadimplemento contratual ou obrigação legal, inclusive as estabelecidas nos Planos Anuais de Safra, Resoluções de Safra ou Resoluções da Comissão Executiva; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>que derem saída a açúcar financiado pelo Banco do Brasil, pelo I.A.A. ou outros estabelecimentos oficiais de crédito, sem o recolhimento das remissões contratadas. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Na hipótese a que se refere a alínea <EM>a </EM>do § 1º dêste artigo, poderão ser concedidos financiamentos desde que condicionados a pagamentos de cana devidos aos fornecedores, na proporção do valor do financiamento por saco de açúcar feito às usinas pelos órgãos oficiais de crédito ou das quantias que a qualquer título venham completar o preço, devendo o respectivo saldo ser pago por ocasião da venda do açúcar no mercado interno ou sua liquidação pelo I.A.A., no caso de se tratar de açúcar entregue para exportação, observadas as normas baixadas pela Comissão Executiva do I.A.A. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A constituição do devedor em mora, nos casos dêste artigo, se opera pela simples falta de pagamento ou de cumprimento da obrigação nos prazos estabelecidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º A falta de pagamento nos prazos estabelecidos nos contratos, além das sanções previstas na Lei, acarreta o vencimento integral da dívida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º As sanções previstas neste artigo incidirão em igualdade de condições, sôbre os fornecedores de cana e entidades de produtores, agrícolas ou industriais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;Os empréstimos ou financiamentos a usineiros ou fornecedores de cana, sujeitos às sanções do artigo anterior, poderão ser regularmente processados, mas sòmente serão deferidos mediante prova de cumprimento da obrigação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Quando se tratar da falta de cumprimento de obrigação legal, inclusive as resultantes dos Planos Anuais de Safra e outras Resoluções da Comissão Executiva do I.A.A., os empréstimos ou financiamentos sòmente poderão ser deferidos, após o cumprimento da obrigação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;As usinas que deixarem de entregar, às refinarias, as quotas de abastecimento dos centros consumidores, nos prazos estabelecidos nos Planos Anuais de Safra ou nas Resoluções da Comissão Executiva do I.A.A., além das sanções previstas nesta Lei, incidirão em multa equivalente ao valor oficial do volume de açúcar que deixarem de entregar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Incidirá na mesma multa a refinaria que deixar de receber, pelo preço oficial, as quotas de açúcar cristal para o suprimento de suas fábricas, fixadas pelo I.A.A. nos têrmos dêste artigo, para atendimento das necessidades dos centros consumidores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;O abastecimento de açúcar refinado dos grandes centros de consumo, já atendidos pelas refinarias autônomas nêles sediadas, continuará a cargo de refinarias autônomas, observadas as seguintes normas:&nbsp; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1 - O I.A.A. fixará, nos planos Anuais de Safra, as quotas de açúcar cristal necessárias ao suprimento das refinarias autônomas, a que alude êste artigo;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 - as quotas a que se refere o número precedente serão rateadas entre as usinas localizadas nas Unidades Federativas de procedência dos açúcares destinados a refinagem, proporcionalmente aos limites ou à estimativa de produção, conforme a situação de cada safra;&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 - as quotas-partes deferidas às usinas serão remetidas às refinarias, em parcelas mensais, na conformidade do que fôr estabelecido pelo I.A.A., nos Planos Anuais de Defesa da Safra. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;Nenhuma usina poderá remeter açúcar refinado ou outro tipo assemelhado de açúcar beneficiado em refinaria anexa ou não, de sua propriedade, ou de terceiros, para os centros de consumo a que se refere o artigo anterior, sob pena de multa igual ao valor do açúcar negociado, a qualquer título ou sob qualquer forma, para os mencionados centros de consumo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;As usinas com refinarias anexas participarão das quotas de açúcar cristal fixadas pelo I.A.A. para entrega às refinarias autônomas responsáveis pelo abastecimento dos respectivos centros de consumo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>São excluídas da participação referida neste artigo as refinarias anexas que refinem a totalidade da produção de açúcar cristal e realizem a distribuição direta aos respectivos mercados de consumo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;A taxa de Cr$1 (um cruzeiro) prevista no art. 144 do Decreto-lei nº 3.855, de 21 de novembro de 1941 (ELC), é tornada <EM>ad valorem</EM> e fixada em 1,5 (um e meio por cento) sôbre o preço oficial da tonelada de cana, destinando-se às cooperativas de crédito de fornecedores, aos órgãos regionais específicos de representação dos mesmos e à respectiva Federação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A distribuição da taxa será, salvo convênio entre os beneficiários, a seguinte:&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>1% (um por cento) para aumento das quotas de capital, nas cooperativas de crédito de fornecedores; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>0,45% (quarenta e cinco centésimos por cento) para a manutenção dos órgãos específicos dos fornecedores; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>0,05% (cinco centésimos por cento) para manutenção da Federação dos Plantadores de Cana do Brasil. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;Poderão ser reconhecidas fornecedores de cana, a critério do I.A.A., observado o disposto no art. 1º do Decreto-lei nº 3.855, de 21 de novembro de 1941, as pessoas jurídicas organizadas sob a forma de sociedade de ações nominativas, quando se tratar de sociedades anônimas que, a título permanente, exerçam a exploração agrícola e das quais não participem sócios, empregados, interessados ou acionistas de usinas ou destilarias, ou seus parentes até o segundo grau. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Do preenchimento das exigências dêste artigo, deverá ser feita, periòdicamente, prova perante o I.A.A., que baixará instruções dispondo sôbre a forma e o tempo em que deva ser produzida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;Serão transferidos para o débito da União Federal, os débitos do Instituto do Açúcar e do Álcool, na data da vigência desta Lei, resultantes de medidas de defesa da agroindústria do açúcar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;As taxas referidas no artigo 20, incisos I, II e III, desta Lei, sòmente serão exigíveis a partir de 1º de janeiro de 1966. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As guias de recolhimento das taxas e contribuições, expedidas anteriormente a 1º de janeiro de 1966, e não utilizadas, serão revalidadas pelo produtor perante o órgão competente, para o efeito da atualização do respectivo valor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;VETADO. <BR><BR>
+<CENTER><B>CAPÍTULO VIII </CENTER></B>
+<CENTER><B>Disposições Transitórias </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;O I.A.A., tendo em vista a demanda do consumo no mercado interno, fixará, dentro do prazo de 120 (cento e vinte) dias, mediante resolução de sua Comissão Executiva, a produção a ser realizada pelas usinas do País, em cada uma das safras de 1966-67 a 1970-71, observado o disposto no artigo 6º, parte final, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A fixação do volume de produção de açúcar, a que se refere êste artigo, será feita por conta do contingente de 100 milhões de sacos, autorizado para efetivação até a safra de 1970-71, pela Resolução nº 1.761, de 12 de dezembro de 1963, da Comissão Executiva do I.A.A. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No caso de a projeção do consumo não absorver o contingente até a safra 1970-71, será o mesmo distribuído pelas safras subseqüentes até a sua completa absorção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O I.A.A. poderá destinar, total ou parcialmente os saldos de aumentos das quotas fixadas pela Resolução nº 1.761, de 12 de dezembro de 1963, e não utilizadas pelas respectivas usinas até a safra de 1970-71, para a complementação de quotas de novas centrais açucareiras, constituídas pela fusão ou incorporação de usinas existentes nos respectivos Estados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;Para os efeitos da distribuição das parcelas de aumento de quota a que referem os parágrafos 3º e 4º do artigo 1º desta lei, até a completa utilização das atuais possibilidades agrícolas e industriais das usinas do país, levar-se-ão em conta as terras das usinas e fornecedores de cana adquiridas até 31 de dezembro de 1964 e os respectivos rendimentos agrícolas, bem assim, a capacidade das moendas cuja aquisição tenha sido comunicada ao I.A.A., até aquela data, nos têrmos da legislação em vigor, sem prejuízo de outros critérios que venham a ser estabelecidos pela Comissão Executiva do I A.A. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;O I.A.A. promoverá dentro do prazo de 24 (vinte e quatro) meses, o tombamento da capacidade industrial existente na data de vigência desta Lei, para a produção de açúcar e álcool de tôdas as usinas e&nbsp;destilarias do País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Será feito, também, na oportunidade, o levantamento da possibilidade da zona canavieira de cada unidade agro-industrial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;Na região Norte-Nordeste o I.A.A. antecipará, como devolução a importância integral correspondente às aludidas taxas, incidentes sôbre o açúcar produzido a partir de 1º de janeiro de 1966 e até o término da safra 1965-1966, a título de parcela complementar ao respectivo preço, procedendo-se, entretanto, ao recolhimento das taxas e sobretaxas do Plano de Safra de 1965-66, e que vinham sendo recolhidas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;VETADO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;O I.A.A. realizará dentro do prazo de 180 (cento e oitenta) dias, estudo a ser apresentado ao Presidente da República, através do Ministério da Indústria e Comércio, sôbre a conveniência de se transferirem aos produtores as ações de sua propriedade na Companhia Usinas Nacionais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Caso haja autorização para a venda, a mesma deverá ser efetuada atendendo-se às exigências legais que regulam a alienação do patrimônio público e com a audiência das autoridades monetárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º No estudo de que trata êste artigo dever-se-á ter em conta a função supletiva do abastecimento exercida pela Companhia Usinas Nacionais, bem como a orientação político-econômica de democratização do capital das emprêsas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76.&nbsp;O prazo a que se refere o artigo 54 será prorrogado para o Plano de Safra 1965-67, até o dia 1º de maio de 1967. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 77.&nbsp;VETADO.&nbsp; <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>VETADO. </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>VETADO. </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 78.&nbsp;A presente lei entrará em vigor na data de sua publicação, revogadas as disposições em contrário. </P>
+<P>Brasília, em 1º de dezembro de 1965; 144º da Independência e 77º da República. </P>
+<P>H. CASTELLO BRANCO<BR>Daniel Faraco <BR></P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 02/12/1965
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 2/12/1965, Página 12251      
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1965, Página 147 
+                                                        Vol. 7          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

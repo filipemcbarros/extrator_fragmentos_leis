@@ -1,0 +1,989 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 12.462, DE 4 DE AGOSTO DE 2011 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Institui o Regime Diferenciado de Contratações Públicas - RDC; altera a Lei nº 10.683, de 28 de maio de 2003, que dispõe sobre a organização da Presidência da República e dos Ministérios, a legislação da Agência Nacional de Aviação Civil (Anac) e a legislação da Empresa Brasileira de Infraestrutura Aeroportuária (Infraero); cria a Secretaria de Aviação Civil, cargos de Ministro de Estado, cargos em comissão e cargos de Controlador de Tráfego Aéreo; autoriza a contratação de controladores de tráfego aéreo temporários; altera as Leis nºs 11.182, de 27 de setembro de 2005, 5.862, de 12 de dezembro de 1972, 8.399, de 7 de janeiro de 1992, 11.526, de 4 de outubro de 2007, 11.458, de 19 de março de 2007, e 12.350, de 20 de dezembro de 2010, e a Medida Provisória nº 2.185-35, de 24 de agosto de 2001; e revoga dispositivos da Lei nº 9.649, de 27 de maio de 1998. " />
+
+<!-- CSS do portal-tema: necessário para o botão de compartilhamento -->
+<link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T3NRZN7V');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T3NRZN7V"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 12.462, DE 4 DE AGOSTO DE 2011 - Publicação Original</h2>
+
+			<div class="g-contexto-compartilhamento g-contexto-compartilhamento--extendido g-impressao">
+				<!-- Elemento propositalmente vazio, preenchido pelo JS de compartilhamento do portal -->
+			</div>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-12462-4-agosto-2011-611147-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-12462-4-agosto-2011-611147-normaatualizada-pl.docx">formato docx</a>)
+                                                &nbsp;
+                                                    (<a href="lei-12462-4-agosto-2011-611147-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-12462-4-agosto-2011-611147-retificacao-133329-pl.html">Retificação</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=495378">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-12462-4-agosto-2011-611147-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 12.462, DE 4 DE AGOSTO DE 2011</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Institui o Regime Diferenciado de Contratações Públicas - RDC; altera a Lei nº 10.683, de 28 de maio de 2003, que dispõe sobre a organização da Presidência da República e dos Ministérios, a legislação da Agência Nacional de Aviação Civil (Anac) e a legislação da Empresa Brasileira de Infraestrutura Aeroportuária (Infraero); cria a Secretaria de Aviação Civil, cargos de Ministro de Estado, cargos em comissão e cargos de Controlador de Tráfego Aéreo; autoriza a contratação de controladores de tráfego aéreo temporários; altera as Leis nºs 11.182, de 27 de setembro de 2005, 5.862, de 12 de dezembro de 1972, 8.399, de 7 de janeiro de 1992, 11.526, de 4 de outubro de 2007, 11.458, de 19 de março de 2007, e 12.350, de 20 de dezembro de 2010, e a Medida Provisória nº 2.185-35, de 24 de agosto de 2001; e revoga dispositivos da Lei nº 9.649, de 27 de maio de 1998. <BR>
+						</p>
+				
+						<div class="texto">
+							&nbsp;<STRONG>&nbsp;&nbsp;&nbsp; A PRESIDENTA DA REPÚBLICA</STRONG> <BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER>CAPÍTULO I <BR>DO REGIME DIFERENCIADO DE CONTRATAÇÕES PÚBLICAS - RDC </CENTER><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Aspectos Gerais </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;É instituído o Regime Diferenciado de Contratações Públicas (RDC), aplicável exclusivamente às licitações e contratos necessários à realização: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - dos Jogos Olímpicos e Paraolímpicos de 2016, constantes da Carteira de Projetos Olímpicos a ser definida pela Autoridade Pública Olímpica (APO); e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - da Copa das Confederações da Federação Internacional de Futebol Associação - Fifa 2013 e da Copa do Mundo Fifa 2014, definidos pelo Grupo Executivo - Gecopa 2014 do Comitê Gestor instituído para definir, aprovar e supervisionar as ações previstas no Plano Estratégico das Ações do Governo Brasileiro para a realização da Copa do Mundo Fifa 2014 - CGCOPA 2014, restringindo-se, no caso de obras públicas, às constantes da matriz de responsabilidades celebrada entre a União, Estados, Distrito Federal e Municípios; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - de obras de infraestrutura e de contratação de serviços para os aeroportos das capitais dos Estados da Federação distantes até 350 km (trezentos e cinquenta quilômetros) das cidades sedes dos mundiais referidos nos incisos I e II. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O RDC tem por objetivos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ampliar a eficiência nas contratações públicas e a competitividade entre os licitantes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - promover a troca de experiências e tecnologias em busca da melhor relação entre custos e benefícios para o setor público; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - incentivar a inovação tecnológica; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - assegurar tratamento isonômico entre os licitantes e a seleção da proposta mais vantajosa para a administração pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A opção pelo RDC deverá constar de forma expressa do instrumento convocatório e resultará no afastamento das normas contidas na Lei nº 8.666, de 21 de junho de 1993, exceto nos casos expressamente previstos nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Na aplicação do RDC, deverão ser observadas as seguintes definições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - empreitada integral: quando se contrata um empreendimento em sua integralidade, compreendendo a totalidade das etapas de obras, serviços e instalações necessárias, sob inteira responsabilidade da contratada até a sua entrega ao contratante em condições de entrada em operação, atendidos os requisitos técnicos e legais para sua utilização em condições de segurança estrutural e operacional e com as características adequadas às finalidades para a qual foi contratada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - empreitada por preço global: quando se contrata a execução da obra ou do serviço por preço certo e total; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - empreitada por preço unitário: quando se contrata a execução da obra ou do serviço por preço certo de unidades determinadas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - projeto básico: conjunto de elementos necessários e suficientes, com nível de precisão adequado, para, observado o disposto no parágrafo único deste artigo: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>caracterizar a obra ou serviço de engenharia, ou complexo de obras ou serviços objeto da licitação, com base nas indicações dos estudos técnicos preliminares; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>assegurar a viabilidade técnica e o adequado tratamento do impacto ambiental do empreendimento; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>possibilitar a avaliação do custo da obra ou serviço e a definição dos métodos e do prazo de execução; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - projeto executivo: conjunto dos elementos necessários e suficientes à execução completa da obra, de acordo com as normas técnicas pertinentes; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - tarefa: quando se ajusta mão de obra para pequenos trabalhos por preço certo, com ou sem fornecimento de materiais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O projeto básico referido no inciso IV do <EM>caput</EM> deste artigo deverá conter, no mínimo, sem frustrar o caráter competitivo do procedimento licitatório, os seguintes elementos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - desenvolvimento da solução escolhida de forma a fornecer visão global da obra e identificar seus elementos constitutivos com clareza; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - soluções técnicas globais e localizadas, suficientemente detalhadas, de forma a restringir a necessidade de reformulação ou de variantes durante as fases de elaboração do projeto executivo e de realização das obras e montagem a situações devidamente comprovadas em ato motivado da administração pública; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - identificação dos tipos de serviços a executar e de materiais e equipamentos a incorporar à obra, bem como especificações que assegurem os melhores resultados para o empreendimento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - informações que possibilitem o estudo e a dedução de métodos construtivos, instalações provisórias e condições organizacionais para a obra; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - subsídios para montagem do plano de licitação e gestão da obra, compreendendo a sua programação, a estratégia de suprimentos, as normas de fiscalização e outros dados necessários em cada caso, exceto, em relação à respectiva licitação, na hipótese de contratação integrada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - orçamento detalhado do custo global da obra, fundamentado em quantitativos de serviços e fornecimentos propriamente avaliados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;As licitações e contratações realizadas em conformidade com o RDC deverão observar os princípios da legalidade, da impessoalidade, da moralidade, da igualdade, da publicidade, da eficiência, da probidade administrativa, da economicidade, do desenvolvimento nacional sustentável, da vinculação ao instrumento convocatório e do julgamento objetivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Nas licitações e contratos de que trata esta Lei serão observadas as seguintes diretrizes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - padronização do objeto da contratação relativamente às especificações técnicas e de desempenho e, quando for o caso, às condições de manutenção, assistência técnica e de garantia oferecidas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - padronização de instrumentos convocatórios e minutas de contratos, previamente aprovados pelo órgão jurídico competente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - busca da maior vantagem para a administração pública, considerando custos e benefícios, diretos e indiretos, de natureza econômica, social ou ambiental, inclusive os relativos à manutenção, ao desfazimento de bens e resíduos, ao índice de depreciação econômica e a outros fatores de igual relevância; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - condições de aquisição, de seguros e de pagamento compatíveis com as do setor privado, inclusive mediante pagamento de remuneração variável conforme desempenho, na forma do art. 10 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - utilização, sempre que possível, nas planilhas de custos constantes das propostas oferecidas pelos licitantes, de mão de obra, materiais, tecnologias e matérias-primas existentes no local da execução, conservação e operação do bem, serviço ou obra, desde que não se produzam prejuízos à eficiência na execução do respectivo objeto e que seja respeitado o limite do orçamento estimado para a contratação; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - parcelamento do objeto, visando à ampla participação de licitantes, sem perda de economia de escala. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As contratações realizadas com base no RDC devem respeitar, especialmente, as normas relativas à: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - disposição final ambientalmente adequada dos resíduos sólidos gerados pelas obras contratadas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - mitigação por condicionantes e compensação ambiental, que serão definidas no procedimento de licenciamento ambiental; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - utilização de produtos, equipamentos e serviços que, comprovadamente, reduzam o consumo de energia e recursos naturais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - avaliação de impactos de vizinhança, na forma da legislação urbanística; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - proteção do patrimônio cultural, histórico, arqueológico e imaterial, inclusive por meio da avaliação do impacto direto ou indireto causado pelas obras contratadas; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - acessibilidade para o uso por pessoas com deficiência ou com mobilidade reduzida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O impacto negativo sobre os bens do patrimônio cultural, histórico, arqueológico e imaterial tombados deverá ser compensado por meio de medidas determinadas pela autoridade responsável, na forma da legislação aplicável. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Das Regras Aplicáveis às Licitações no Âmbito do RDC </CENTER></B><BR>
+<CENTER><B>Subseção I </CENTER></B>
+<CENTER><B>Do Objeto da Licitação </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;O objeto da licitação deverá ser definido de forma clara e precisa no instrumento convocatório, vedadas especificações excessivas, irrelevantes ou desnecessárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Observado o disposto no § 3º, o orçamento previamente estimado para a contratação será tornado público apenas e imediatamente após o encerramento da licitação, sem prejuízo da divulgação do detalhamento dos quantitativos e das demais informações necessárias para a elaboração das propostas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Nas hipóteses em que for adotado o critério de julgamento por maior desconto, a informação de que trata o <EM>caput</EM> deste artigo constará do instrumento convocatório. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No caso de julgamento por melhor técnica, o valor do prêmio ou da remuneração será incluído no instrumento convocatório. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Se não constar do instrumento convocatório, a informação referida no <EM>caput</EM> deste artigo possuirá caráter sigiloso e será disponibilizada estrita e permanentemente aos órgãos de controle externo e interno. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;No caso de licitação para aquisição de bens, a administração pública poderá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - indicar marca ou modelo, desde que formalmente justificado, nas seguintes hipóteses: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>em decorrência da necessidade de padronização do objeto; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>quando determinada marca ou modelo comercializado por mais de um fornecedor for a única capaz de atender às necessidades da entidade contratante; ou </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>quando a descrição do objeto a ser licitado puder ser melhor compreendida pela identificação de determinada marca ou modelo aptos a servir como referência, situação em que será obrigatório o acréscimo da expressão "ou similar ou de melhor qualidade"; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - exigir amostra do bem no procedimento de pré-qualificação, na fase de julgamento das propostas ou de lances, desde que justificada a necessidade da sua apresentação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - solicitar a certificação da qualidade do produto ou do processo de fabricação, inclusive sob o aspecto ambiental, por qualquer instituição oficial competente ou por entidade credenciada; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - solicitar, motivadamente, carta de solidariedade emitida pelo fabricante, que assegure a execução do contrato, no caso de licitante revendedor ou distribuidor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Na execução indireta de obras e serviços de engenharia, são admitidos os seguintes regimes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - empreitada por preço unitário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - empreitada por preço global; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - contratação por tarefa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - empreitada integral; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - contratação integrada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Nas licitações e contratações de obras e serviços de engenharia serão adotados, preferencialmente, os regimes discriminados nos incisos II, IV e V do <EM>caput</EM> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No caso de inviabilidade da aplicação do disposto no § 1º deste artigo, poderá ser adotado outro regime previsto no <EM>caput</EM> deste artigo, hipótese em que serão inseridos nos autos do procedimento os motivos que justificaram a exceção. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O custo global de obras e serviços de engenharia deverá ser obtido a partir de custos unitários de insumos ou serviços menores ou iguais à mediana de seus correspondentes ao Sistema Nacional de Pesquisa de Custos e Índices da Construção Civil (Sinapi), no caso de construção civil em geral, ou na tabela do Sistema de Custos de Obras Rodoviárias (Sicro), no caso de obras e serviços rodoviários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º No caso de inviabilidade da definição dos custos consoante o disposto no § 3º deste artigo, a estimativa de custo global poderá ser apurada por meio da utilização de dados contidos em tabela de referência formalmente aprovada por órgãos ou entidades da administração pública federal, em publicações técnicas especializadas, em sistema específico instituído para o setor ou em pesquisa de mercado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Nas licitações para a contratação de obras e serviços, com exceção daquelas onde for adotado o regime previsto no inciso V do <EM>caput</EM> deste artigo, deverá haver projeto básico aprovado pela autoridade competente, disponível para exame dos interessados em participar do processo licitatório. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º No caso de contratações realizadas pelos governos municipais, estaduais e do Distrito Federal, desde que não envolvam recursos da União, o custo global de obras e serviços de engenharia a que se refere o § 3º deste artigo poderá também ser obtido a partir de outros sistemas de custos já adotados pelos respectivos entes e aceitos pelos respectivos tribunais de contas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 7º É vedada a realização, sem projeto executivo, de obras e serviços de engenharia para cuja concretização tenha sido utilizado o RDC, qualquer que seja o regime adotado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Nas licitações de obras e serviços de engenharia, no âmbito do RDC, poderá ser utilizada a contratação integrada, desde que técnica e economicamente justificada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A contratação integrada compreende a elaboração e o desenvolvimento dos projetos básico e executivo, a execução de obras e serviços de engenharia, a montagem, a realização de testes, a préoperação e todas as demais operações necessárias e suficientes para a entrega final do objeto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No caso de contratação integrada: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o instrumento convocatório deverá conter anteprojeto de engenharia que contemple os documentos técnicos destinados a possibilitar a caracterização da obra ou serviço, incluindo: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a demonstração e a justificativa do programa de necessidades, a visão global dos investimentos e as definições quanto ao nível de serviço desejado; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>as condições de solidez, segurança, durabilidade e prazo de entrega, observado o disposto no <EM>caput</EM> e no § 1º do art. 6º desta Lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>a estética do projeto arquitetônico; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>os parâmetros de adequação ao interesse público, à economia na utilização, à facilidade na execução, aos impactos ambientais e à acessibilidade; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o valor estimado da contratação será calculado com base nos valores praticados pelo mercado, nos valores pagos pela administração pública em serviços e obras similares ou na avaliação do custo global da obra, aferida mediante orçamento sintético ou metodologia expedita ou paramétrica; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - será adotado o critério de julgamento de técnica e preço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Caso seja permitida no anteprojeto de engenharia a apresentação de projetos com metodologias diferenciadas de execução, o instrumento convocatório estabelecerá critérios objetivos para avaliação e julgamento das propostas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Nas hipóteses em que for adotada a contratação integrada, é vedada a celebração de termos aditivos aos contratos firmados, exceto nos seguintes casos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - para recomposição do equilíbrio econômico-financeiro decorrente de caso fortuito ou força maior; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - por necessidade de alteração do projeto ou das especificações para melhor adequação técnica aos objetivos da contratação, a pedido da administração pública, desde que não decorrentes de erros ou omissões por parte do contratado, observados os limites previstos no § 1º do art. 65 da Lei nº 8.666, de 21 de junho de 1993. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Na contratação das obras e serviços, inclusive de engenharia, poderá ser estabelecida remuneração variável vinculada ao desempenho da contratada, com base em metas, padrões de qualidade, critérios de sustentabilidade ambiental e prazo de entrega definidos no instrumento convocatório e no contrato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A utilização da remuneração variável será motivada e respeitará o limite orçamentário fixado pela administração pública para a contratação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;A administração pública poderá, mediante justificativa expressa, contratar mais de uma empresa ou instituição para executar o mesmo serviço, desde que não implique perda de economia de escala, quando: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o objeto da contratação puder ser executado de forma concorrente e simultânea por mais de um contratado; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a múltipla execução for conveniente para atender à administração pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Nas hipóteses previstas no <EM>caput</EM> deste artigo, a administração pública deverá manter o controle individualizado da execução do objeto contratual relativamente a cada uma das contratadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O disposto no <EM>caput</EM> deste artigo não se aplica aos serviços de engenharia. <BR><BR>
+<CENTER><B>Subseção II </CENTER></B>
+<CENTER><B>Do Procedimento Licitatório </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;O procedimento de licitação de que trata esta Lei observará as seguintes fases, nesta ordem: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - preparatória; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - publicação do instrumento convocatório; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - apresentação de propostas ou lances; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - julgamento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - habilitação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - recursal; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - encerramento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A fase de que trata o inciso V do <EM>caput</EM> deste artigo poderá, mediante ato motivado, anteceder as referidas nos incisos III e IV do <EM>caput</EM> deste artigo, desde que expressamente previsto no instrumento convocatório. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;As licitações deverão ser realizadas preferencialmente sob a forma eletrônica, admitida a presencial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Nos procedimentos realizados por meio eletrônico, a administração pública poderá determinar, como condição de validade e eficácia, que os licitantes pratiquem seus atos em formato eletrônico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Na fase de habilitação das licitações realizadas em conformidade com esta Lei, aplicar-se-á, no que couber, o disposto nos arts. 27 a 33 da Lei nº 8.666, de 21 de junho de 1993, observado o seguinte: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - poderá ser exigida dos licitantes a declaração de que atendem aos requisitos de habilitação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - será exigida a apresentação dos documentos de habilitação apenas pelo licitante vencedor, exceto no caso de inversão de fases; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - no caso de inversão de fases, só serão recebidas as propostas dos licitantes previamente habilitados; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - em qualquer caso, os documentos relativos à regularidade fiscal poderão ser exigidos em momento posterior ao julgamento das propostas, apenas em relação ao licitante mais bem classificado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Nas licitações disciplinadas pelo RDC: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - será admitida a participação de licitantes sob a forma de consórcio, conforme estabelecido em regulamento; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - poderão ser exigidos requisitos de sustentabilidade ambiental, na forma da legislação aplicável. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Será dada ampla publicidade aos procedimentos licitatórios e de pré-qualificação disciplinados por esta Lei, ressalvadas as hipóteses de informações cujo sigilo seja imprescindível à segurança da sociedade e do Estado, devendo ser adotados os seguintes prazos mínimos para apresentação de propostas, contados a partir da data de publicação do instrumento convocatório: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - para aquisição de bens: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>5 (cinco) dias úteis, quando adotados os critérios de julgamento pelo menor preço ou pelo maior desconto; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>10 (dez) dias úteis, nas hipóteses não abrangidas pela alínea a deste inciso; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - para a contratação de serviços e obras: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>15 (quinze) dias úteis, quando adotados os critérios de julgamento pelo menor preço ou pelo maior desconto; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>30 (trinta) dias úteis, nas hipóteses não abrangidas pela alínea a deste inciso; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - para licitações em que se adote o critério de julgamento pela maior oferta: 10 (dez) dias úteis; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - para licitações em que se adote o critério de julgamento pela melhor combinação de técnica e preço, pela melhor técnica ou em razão do conteúdo artístico: 30 (trinta) dias úteis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A publicidade a que se refere o <EM>caput</EM> deste artigo, sem prejuízo da faculdade de divulgação direta aos fornecedores, cadastrados ou não, será realizada mediante: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - publicação de extrato do edital no Diário Oficial da União, do Estado, do Distrito Federal ou do Município, ou, no caso de consórcio público, do ente de maior nível entre eles, sem prejuízo da possibilidade de publicação de extrato em jornal diário de grande circulação; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - divulgação em sítio eletrônico oficial centralizado de divulgação de licitações ou mantido pelo ente encarregado do procedimento licitatório na rede mundial de computadores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No caso de licitações cujo valor não ultrapasse R$ 150.000,00 (cento e cinquenta mil reais) para obras ou R$ 80.000,00 (oitenta mil reais) para bens e serviços, inclusive de engenharia, é dispensada a publicação prevista no inciso I do § 1º deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º No caso de parcelamento do objeto, deverá ser considerado, para fins da aplicação do disposto no § 2º deste artigo, o valor total da contratação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º As eventuais modificações no instrumento convocatório serão divulgadas nos mesmos prazos dos atos e procedimentos originais, exceto quando a alteração não comprometer a formulação das propostas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Nas licitações, poderão ser adotados os modos de disputa aberto e fechado, que poderão ser combinados na forma do regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;O regulamento disporá sobre as regras e procedimentos de apresentação de propostas ou lances, observado o seguinte: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - no modo de disputa aberto, os licitantes apresentarão suas ofertas por meio de lances públicos e sucessivos, crescentes ou decrescentes, conforme o critério de julgamento adotado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - no modo de disputa fechado, as propostas apresentadas pelos licitantes serão sigilosas até a data e hora designadas para que sejam divulgadas; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - nas licitações de obras ou serviços de engenharia, após o julgamento das propostas, o licitante vencedor deverá reelaborar e apresentar à administração pública, por meio eletrônico, as planilhas com indicação dos quantitativos e dos custos unitários, bem como do detalhamento das Bonificações e Despesas Indiretas (BDI) e dos Encargos Sociais (ES), com os respectivos valores adequados ao lance vencedor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Poderão ser admitidos, nas condições estabelecidas em regulamento: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a apresentação de lances intermediários, durante a disputa aberta; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o reinício da disputa aberta, após a definição da melhor proposta e para a definição das demais colocações, sempre que existir uma diferença de pelo menos 10% (dez por cento) entre o melhor lance e o do licitante subsequente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Consideram-se intermediários os lances: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - iguais ou inferiores ao maior já ofertado, quando adotado o julgamento pelo critério da maior oferta; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - iguais ou superiores ao menor já ofertado, quando adotados os demais critérios de julgamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Poderão ser utilizados os seguintes critérios de julgamento: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - menor preço ou maior desconto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - técnica e preço; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - melhor técnica ou conteúdo artístico; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - maior oferta de preço; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - maior retorno econômico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O critério de julgamento será identificado no instrumento convocatório, observado o disposto nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O julgamento das propostas será efetivado pelo emprego de parâmetros objetivos definidos no instrumento convocatório. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Não serão consideradas vantagens não previstas no instrumento convocatório, inclusive financiamentos subsidiados ou a fundo perdido. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;O julgamento pelo menor preço ou maior desconto considerará o menor dispêndio para a administração pública, atendidos os parâmetros mínimos de qualidade definidos no instrumento convocatório. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os custos indiretos, relacionados com as despesas de manutenção, utilização, reposição, depreciação e impacto ambiental, entre outros fatores, poderão ser considerados para a definição do menor dispêndio, sempre que objetivamente mensuráveis, conforme dispuser o regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O julgamento por maior desconto terá como referência o preço global fixado no instrumento convocatório, sendo o desconto estendido aos eventuais termos aditivos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º No caso de obras ou serviços de engenharia, o percentual de desconto apresentado pelos licitantes deverá incidir linearmente sobre os preços de todos os itens do orçamento estimado constante do instrumento convocatório. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;No julgamento pela melhor combinação de técnica e preço, deverão ser avaliadas e ponderadas as propostas técnicas e de preço apresentadas pelos licitantes, mediante a utilização de parâmetros objetivos obrigatoriamente inseridos no instrumento convocatório. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O critério de julgamento a que se refere o <EM>caput</EM> deste artigo será utilizado quando a avaliação e a ponderação da qualidade técnica das propostas que superarem os requisitos mínimos estabelecidos no instrumento convocatório forem relevantes aos fins pretendidos pela administração pública, e destinar-se-á exclusivamente a objetos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - de natureza predominantemente intelectual e de inovação tecnológica ou técnica; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - que possam ser executados com diferentes metodologias ou tecnologias de domínio restrito no mercado, pontuando-se as vantagens e qualidades que eventualmente forem oferecidas para cada produto ou solução. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º É permitida a atribuição de fatores de ponderação distintos para valorar as propostas técnicas e de preço, sendo o percentual de ponderação mais relevante limitado a 70% (setenta por cento). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;O julgamento pela melhor técnica ou pelo melhor conteúdo artístico considerará exclusivamente as propostas técnicas ou artísticas apresentadas pelos licitantes com base em critérios objetivos previamente estabelecidos no instrumento convocatório, no qual será definido o prêmio ou a remuneração que será atribuída aos vencedores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O critério de julgamento referido no <EM>caput</EM> deste artigo poderá ser utilizado para a contratação de projetos, inclusive arquitetônicos, e trabalhos de natureza técnica, científica ou artística, excluindo-se os projetos de engenharia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;O julgamento pela maior oferta de preço será utilizado no caso de contratos que resultem em receita para a administração pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Quando utilizado o critério de julgamento pela maior oferta de preço, os requisitos de qualificação técnica e econômicofinanceira poderão ser dispensados, conforme dispuser o regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No julgamento pela maior oferta de preço, poderá ser exigida a comprovação do recolhimento de quantia a título de garantia, como requisito de habilitação, limitada a 5% (cinco por cento) do valor ofertado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Na hipótese do § 2º deste artigo, o licitante vencedor perderá o valor da entrada em favor da administração pública caso não efetive o pagamento devido no prazo estipulado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;No julgamento pelo maior retorno econômico, utilizado exclusivamente para a celebração de contratos de eficiência, as propostas serão consideradas de forma a selecionar a que proporcionará a maior economia para a administração pública decorrente da execução do contrato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O contrato de eficiência terá por objeto a prestação de serviços, que pode incluir a realização de obras e o fornecimento de bens, com o objetivo de proporcionar economia ao contratante, na forma de redução de despesas correntes, sendo o contratado remunerado com base em percentual da economia gerada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Na hipótese prevista no <EM>caput</EM> deste artigo, os licitantes apresentarão propostas de trabalho e de preço, conforme dispuser o regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Nos casos em que não for gerada a economia prevista no contrato de eficiência: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a diferença entre a economia contratada e a efetivamente obtida será descontada da remuneração da contratada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - se a diferença entre a economia contratada e a efetivamente obtida for superior à remuneração da contratada, será aplicada multa por inexecução contratual no valor da diferença; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - a contratada sujeitar-se-á, ainda, a outras sanções cabíveis caso a diferença entre a economia contratada e a efetivamente obtida seja superior ao limite máximo estabelecido no contrato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Serão desclassificadas as propostas que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - contenham vícios insanáveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - não obedeçam às especificações técnicas pormenorizadas no instrumento convocatório; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - apresentem preços manifestamente inexequíveis ou permaneçam acima do orçamento estimado para a contratação, inclusive nas hipóteses previstas no art. 6º desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - não tenham sua exequibilidade demonstrada, quando exigido pela administração pública; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - apresentem desconformidade com quaisquer outras exigências do instrumento convocatório, desde que insanáveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A verificação da conformidade das propostas poderá ser feita exclusivamente em relação à proposta mais bem classificada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A administração pública poderá realizar diligências para aferir a exequibilidade das propostas ou exigir dos licitantes que ela seja demonstrada, na forma do inciso IV do <EM>caput</EM> deste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º No caso de obras e serviços de engenharia, para efeito de avaliação da exequibilidade e de sobrepreço, serão considerados o preço global, os quantitativos e os preços unitários considerados relevantes, conforme dispuser o regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Em caso de empate entre 2 (duas) ou mais propostas, serão utilizados os seguintes critérios de desempate, nesta ordem: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - disputa final, em que os licitantes empatados poderão apresentar nova proposta fechada em ato contínuo à classificação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a avaliação do desempenho contratual prévio dos licitantes, desde que exista sistema objetivo de avaliação instituído; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - os critérios estabelecidos no art. 3º da Lei nº 8.248, de 23 de outubro de 1991, e no § 2º do art. 3º da Lei nº 8.666, de 21 de junho de 1993; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - sorteio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>As regras previstas no <EM>caput</EM> deste artigo não prejudicam a aplicação do disposto no art. 44 da Lei Complementar no 123, de 14 de dezembro de 2006. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;Definido o resultado do julgamento, a administração pública poderá negociar condições mais vantajosas com o primeiro colocado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A negociação poderá ser feita com os demais licitantes, segundo a ordem de classificação inicialmente estabelecida, quando o preço do primeiro colocado, mesmo após a negociação, for desclassificado por sua proposta permanecer acima do orçamento estimado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Salvo no caso de inversão de fases, o procedimento licitatório terá uma fase recursal única, que se seguirá à habilitação do vencedor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Na fase recursal, serão analisados os recursos referentes ao julgamento das propostas ou lances e à habilitação do vencedor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Exauridos os recursos administrativos, o procedimento licitatório será encerrado e encaminhado à autoridade superior, que poderá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - determinar o retorno dos autos para saneamento de irregularidades que forem supríveis; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - anular o procedimento, no todo ou em parte, por vício insanável; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - revogar o procedimento por motivo de conveniência e oportunidade; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - adjudicar o objeto e homologar a licitação. <BR><BR>
+<CENTER><B>Subseção III </CENTER></B>
+<CENTER><B>Dos Procedimentos Auxiliares das Licitações no Âmbito do </CENTER></B>
+<CENTER><B>RDC </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;São procedimentos auxiliares das licitações regidas pelo disposto nesta Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - pré-qualificação permanente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - cadastramento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - sistema de registro de preços; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - catálogo eletrônico de padronização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Os procedimentos de que trata o <EM>caput</EM> deste artigo obedecerão a critérios claros e objetivos definidos em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;Considera-se pré-qualificação permanente o procedimento anterior à licitação destinado a identificar: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - fornecedores que reúnam condições de habilitação exigidas para o fornecimento de bem ou a execução de serviço ou obra nos prazos, locais e condições previamente estabelecidos; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - bens que atendam às exigências técnicas e de qualidade da administração pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O procedimento de pré-qualificação ficará permanentemente aberto para a inscrição dos eventuais interessados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A administração pública poderá realizar licitação restrita aos pré-qualificados, nas condições estabelecidas em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A pré-qualificação poderá ser efetuada nos grupos ou segmentos, segundo as especialidades dos fornecedores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A pré-qualificação poderá ser parcial ou total, contendo alguns ou todos os requisitos de habilitação ou técnicos necessários à contratação, assegurada, em qualquer hipótese, a igualdade de condições entre os concorrentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º A pré-qualificação terá validade de 1 (um) ano, no máximo, podendo ser atualizada a qualquer tempo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;Os registros cadastrais poderão ser mantidos para efeito de habilitação dos inscritos em procedimentos licitatórios e serão válidos por 1 (um) ano, no máximo, podendo ser atualizados a qualquer tempo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os registros cadastrais serão amplamente divulgados e ficarão permanentemente abertos para a inscrição de interessados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os inscritos serão admitidos segundo requisitos previstos em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A atuação do licitante no cumprimento de obrigações assumidas será anotada no respectivo registro cadastral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A qualquer tempo poderá ser alterado, suspenso ou cancelado o registro do inscrito que deixar de satisfazer as exigências de habilitação ou as estabelecidas para admissão cadastral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;O Sistema de Registro de Preços, especificamente destinado às licitações de que trata esta Lei, reger-se-á pelo disposto em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Poderá aderir ao sistema referido no <EM>caput</EM> deste artigo qualquer órgão ou entidade responsável pela execução das atividades contempladas no art. 1º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O registro de preços observará, entre outras, as seguintes condições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - efetivação prévia de ampla pesquisa de mercado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - seleção de acordo com os procedimentos previstos em regulamento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - desenvolvimento obrigatório de rotina de controle e atualização periódicos dos preços registrados; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - definição da validade do registro; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - inclusão, na respectiva ata, do registro dos licitantes que aceitarem cotar os bens ou serviços com preços iguais ao do licitante vencedor na sequência da classificação do certame, assim como dos licitantes que mantiverem suas propostas originais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A existência de preços registrados não obriga a administração pública a firmar os contratos que deles poderão advir, sendo facultada a realização de licitação específica, assegurada ao licitante registrado preferência em igualdade de condições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;O catálogo eletrônico de padronização de compras, serviços e obras consiste em sistema informatizado, de gerenciamento centralizado, destinado a permitir a padronização dos itens a serem adquiridos pela administração pública que estarão disponíveis para a realização de licitação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O catálogo referido no <EM>caput</EM> deste artigo poderá ser utilizado em licitações cujo critério de julgamento seja a oferta de menor preço ou de maior desconto e conterá toda a documentação e procedimentos da fase interna da licitação, assim como as especificações dos respectivos objetos, conforme disposto em regulamento. <BR><BR>
+<CENTER><B>Subseção IV </CENTER></B>
+<CENTER><B>Da Comissão de Licitação </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;As licitações promovidas consoante o RDC serão processadas e julgadas por comissão permanente ou especial de licitações, composta majoritariamente por servidores ou empregados públicos pertencentes aos quadros permanentes dos órgãos ou entidades da administração pública responsáveis pela licitação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As regras relativas ao funcionamento das comissões de licitação e da comissão de cadastramento de que trata esta Lei serão estabelecidas em regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os membros da comissão de licitação responderão solidariamente por todos os atos praticados pela comissão, salvo se posição individual divergente estiver registrada na ata da reunião em que houver sido adotada a respectiva decisão. <BR><BR>
+<CENTER><B>Subseção V </CENTER></B>
+<CENTER><B>Da Dispensa e Inexigibilidade de Licitação </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;As hipóteses de dispensa e inexigibilidade de licitação estabelecidas nos arts. 24 e 25 da Lei nº 8.666, de 21 de junho de 1993, aplicam-se, no que couber, às contratações realizadas com base no RDC. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O processo de contratação por dispensa ou inexigibilidade de licitação deverá seguir o procedimento previsto no art. 26 da Lei nº 8.666, de 21 de junho de 1993. <BR><BR>
+<CENTER><B>Subseção VI </CENTER></B>
+<CENTER><B>Das Condições Específicas para a Participação nas Licitações </CENTER></B>
+<CENTER><B>e para a Contratação no RDC </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;É vedada a participação direta ou indireta nas licitações de que trata esta Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - da pessoa física ou jurídica que elaborar o projeto básico ou executivo correspondente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - da pessoa jurídica que participar de consórcio responsável pela elaboração do projeto básico ou executivo correspondente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - da pessoa jurídica da qual o autor do projeto básico ou executivo seja administrador, sócio com mais de 5% (cinco por cento) do capital votante, controlador, gerente, responsável técnico ou subcontratado; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - do servidor, empregado ou ocupante de cargo em comissão do órgão ou entidade contratante ou responsável pela licitação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Não se aplica o disposto nos incisos I, II e III do <EM>caput</EM> deste artigo no caso das contratações integradas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O disposto no <EM>caput</EM> deste artigo não impede, nas licitações para a contratação de obras ou serviços, a previsão de que a elaboração de projeto executivo constitua encargo do contratado, consoante preço previamente fixado pela administração pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º É permitida a participação das pessoas físicas ou jurídicas de que tratam os incisos II e III do <EM>caput</EM> deste artigo em licitação ou na execução do contrato, como consultor ou técnico, nas funções de fiscalização, supervisão ou gerenciamento, exclusivamente a serviço do órgão ou entidade pública interessados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Para fins do disposto neste artigo, considera-se participação indireta a existência de qualquer vínculo de natureza técnica, comercial, econômica, financeira ou trabalhista entre o autor do projeto, pessoa física ou jurídica, e o licitante ou responsável pelos serviços, fornecimentos e obras, incluindo-se os fornecimentos de bens e serviços a estes necessários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º O disposto no § 4º deste artigo aplica-se aos membros da comissão de licitação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;É vedada a contratação direta, sem licitação, de pessoa jurídica na qual haja administrador ou sócio com poder de direção que mantenha relação de parentesco, inclusive por afinidade, até o terceiro grau civil com: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - detentor de cargo em comissão ou função de confiança que atue na área responsável pela demanda ou contratação; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - autoridade hierarquicamente superior no âmbito de cada órgão ou entidade da administração pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Nos processos de contratação abrangidos por esta Lei, aplicam-se as preferências para fornecedores ou tipos de bens, serviços e obras previstos na legislação, em especial as referidas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - no art. 3º da Lei nº 8.248, de 23 de outubro de 1991; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - no art. 3º da Lei nº 8.666, de 21 de junho de 1993; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - nos arts. 42 a 49 da Lei Complementar no 123, de 14 de dezembro de 2006. <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Das Regras Específicas Aplicáveis aos Contratos Celebrados no </CENTER></B>
+<CENTER><B>Âmbito do RDC </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Os contratos administrativos celebrados com base no RDC reger-se-ão pelas normas da Lei nº 8.666, de 21 de junho de 1993, com exceção das regras específicas previstas nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;É facultado à administração pública, quando o convocado não assinar o termo de contrato ou não aceitar ou retirar o instrumento equivalente no prazo e condições estabelecidos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - revogar a licitação, sem prejuízo da aplicação das cominações previstas na Lei nº 8.666, de 21 de junho de 1993, e nesta Lei; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - convocar os licitantes remanescentes, na ordem de classificação, para a celebração do contrato nas condições ofertadas pelo licitante vencedor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Na hipótese de nenhum dos licitantes aceitar a contratação nos termos do inciso II do <EM>caput</EM> deste artigo, a administração pública poderá convocar os licitantes remanescentes, na ordem de classificação, para a celebração do contrato nas condições ofertadas por estes, desde que o respectivo valor seja igual ou inferior ao orçamento estimado para a contratação, inclusive quanto aos preços atualizados nos termos do instrumento convocatório. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;Na hipótese do inciso XI do art. 24 da Lei nº 8.666, de 21 de junho de 1993, a contratação de remanescente de obra, serviço ou fornecimento de bens em consequência de rescisão contratual observará a ordem de classificação dos licitantes remanescentes e as condições por estes ofertadas, desde que não seja ultrapassado o orçamento estimado para a contratação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;Os contratos para a execução das obras previstas no plano plurianual poderão ser firmados pelo período nele compreendido, observado o disposto no <EM>caput</EM> do art. 57 da Lei nº 8.666, de 21 de junho de 1993. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Na hipótese do inciso II do art. 57 da Lei nº 8.666, de 21 de junho de 1993, os contratos celebrados pelos entes públicos responsáveis pelas atividades descritas no art. 1º desta Lei poderão ter sua vigência estabelecida até a data da extinção da APO. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;As normas referentes à anulação e revogação das licitações previstas no art. 49 da Lei nº 8.666, de 21 de junho de 1993, aplicar-se-ão às contratações realizadas com base no disposto nesta Lei. <BR><BR>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Dos Pedidos de Esclarecimento, Impugnações e Recursos </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;Dos atos da administração pública decorrentes da aplicação do RDC caberão: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - pedidos de esclarecimento e impugnações ao instrumento convocatório no prazo mínimo de: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>até 2 (dois) dias úteis antes da data de abertura das propostas, no caso de licitação para aquisição ou alienação de bens; ou </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>até 5 (cinco) dias úteis antes da data de abertura das propostas, no caso de licitação para contratação de obras ou serviços; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - recursos, no prazo de 5 (cinco) dias úteis contados a partir da data da intimação ou da lavratura da ata, em face: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>do ato que defira ou indefira pedido de pré-qualificação de interessados; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>do ato de habilitação ou inabilitação de licitante; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>do julgamento das propostas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>da anulação ou revogação da licitação; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>do indeferimento do pedido de inscrição em registro cadastral, sua alteração ou cancelamento; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>da rescisão do contrato, nas hipóteses previstas no inciso I do art. 79 da Lei nº 8.666, de 21 de junho de 1993; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>da aplicação das penas de advertência, multa, declaração de inidoneidade, suspensão temporária de participação em licitação e impedimento de contratar com a administração pública; e </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - representações, no prazo de 5 (cinco) dias úteis contados a partir da data da intimação, relativamente a atos de que não caiba recurso hierárquico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os licitantes que desejarem apresentar os recursos de que tratam as alíneas a, b e c do inciso II do <EM>caput</EM> deste artigo deverão manifestar imediatamente a sua intenção de recorrer, sob pena de preclusão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O prazo para apresentação de contrarrazões será o mesmo do recurso e começará imediatamente após o encerramento do prazo recursal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º É assegurado aos licitantes vista dos elementos indispensáveis à defesa de seus interesses. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Na contagem dos prazos estabelecidos nesta Lei, excluir- se-á o dia do início e incluir-se-á o do vencimento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Os prazos previstos nesta Lei iniciam e expiram exclusivamente em dia de expediente no âmbito do órgão ou entidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º O recurso será dirigido à autoridade superior, por intermédio da autoridade que praticou o ato recorrido, cabendo a esta reconsiderar sua decisão no prazo de 5 (cinco) dias úteis ou, nesse mesmo prazo, fazê-lo subir, devidamente informado, devendo, neste caso, a decisão do recurso ser proferida dentro do prazo de 5 (cinco) dias úteis, contados do seu recebimento, sob pena de apuração de responsabilidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Aplica-se ao RDC o disposto no art. 113 da Lei nº 8.666, de 21 de junho de 1993. <BR><BR>
+<CENTER><B>Seção V </CENTER></B>
+<CENTER><B>Das Sanções Administrativas </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;Ficará impedido de licitar e contratar com a União, Estados, Distrito Federal ou Municípios, pelo prazo de até 5 (cinco) anos, sem prejuízo das multas previstas no instrumento convocatório e no contrato, bem como das demais cominações legais, o licitante que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - convocado dentro do prazo de validade da sua proposta não celebrar o contrato, inclusive nas hipóteses previstas no parágrafo único do art. 40 e no art. 41 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - deixar de entregar a documentação exigida para o certame ou apresentar documento falso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - ensejar o retardamento da execução ou da entrega do objeto da licitação sem motivo justificado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - não mantiver a proposta, salvo se em decorrência de fato superveniente, devidamente justificado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - fraudar a licitação ou praticar atos fraudulentos na execução do contrato; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - comportar-se de modo inidôneo ou cometer fraude fiscal; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - der causa à inexecução total ou parcial do contrato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A aplicação da sanção de que trata o <EM>caput</EM> deste artigo implicará ainda o descredenciamento do licitante, pelo prazo estabelecido no <EM>caput</EM> deste artigo, dos sistemas de cadastramento dos entes federativos que compõem a Autoridade Pública Olímpica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º As sanções administrativas, criminais e demais regras previstas no Capítulo IV da Lei nº 8.666, de 21 de junho de 1993, aplicam-se às licitações e aos contratos regidos por esta Lei. <BR><BR>
+<CENTER>CAPÍTULO II <BR>OUTRAS DISPOSIÇÕES </CENTER><BR>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Alterações da Organização da Presidência da República e dos </CENTER></B>
+<CENTER><B>Ministérios </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;A Lei nº 10.683, de 28 de maio de 2003, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 1º&nbsp;A Presidência da República é constituída, essencialmente: <BR><BR>I - pela Casa Civil; <BR><BR>II - pela Secretaria-Geral; <BR><BR>III - pela Secretaria de Relações Institucionais; <BR><BR>IV - pela Secretaria de Comunicação Social; <BR><BR>V - pelo Gabinete Pessoal; <BR><BR>VI - pelo Gabinete de Segurança Institucional; <BR><BR>VII - pela Secretaria de Assuntos Estratégicos; <BR><BR>VIII - pela Secretaria de Políticas para as Mulheres; <BR><BR>IX - pela Secretaria de Direitos Humanos; <BR><BR>X - pela Secretaria de Políticas de Promoção da Igualdade Racial; <BR><BR>XI - pela Secretaria de Portos; e <BR><BR>XII - pela Secretaria de Aviação Civil. <BR><BR>§ 1º .................................................................................... <BR>............................................................................................ <BR><BR>X - o Conselho de Aviação Civil.<BR>....................................................................................." (NR)</DIR>
+<DIR>"Art. 2º&nbsp;À Casa Civil da Presidência da República compete: <BR><BR>I - assistir direta e imediatamente ao Presidente da República no desempenho de suas atribuições, especialmente: <BR><BR><EM>a) </EM>na coordenação e na integração das ações do Governo; <BR><EM>b) </EM>na verificação prévia da constitucionalidade e legalidade dos atos presidenciais;<BR><EM>c)</EM>&nbsp;na análise do mérito, da oportunidade e da compatibilidade das propostas, inclusive das matérias em tramitação no Congresso Nacional, com as diretrizes governamentais; <BR><EM>d) </EM>na avaliação e monitoramento da ação governamental e da gestão dos órgãos e entidades da administração pública federal; <BR><BR>II - promover a publicação e a preservação dos atos oficiais. <BR><BR><I>Parágrafo único. </I>A Casa Civil tem como estrutura básica: <BR><BR>I - o Conselho Deliberativo do Sistema de Proteção da Amazônia; <BR><BR>II - a Imprensa Nacional; <BR><BR>III - o Gabinete; <BR><BR>IV - a Secretaria-Executiva; e <BR><BR>V - até 3 (três) Subchefias." (NR)</DIR>
+<DIR>Art. 3º&nbsp;............................................................................<BR>........................................................................................ <BR><BR>§ 1º À Secretaria-Geral da Presidência da República compete ainda: <BR><BR>I - supervisão e execução das atividades administrativas da Presidência da República e, supletivamente, da Vice-Presidência da República; e <BR><BR>II - avaliação da ação governamental e do resultado da gestão dos administradores, no âmbito dos órgãos integrantes da Presidência da República e Vice-Presidência da República, além de outros determinados em legislação específica, por intermédio da fiscalização contábil, financeira, orçamentária, operacional e patrimonial. <BR><BR>§ 2º A Secretaria-Geral da Presidência da República tem como estrutura básica: <BR><BR>I - o Conselho Nacional de Juventude; <BR><BR>II - o Gabinete; <BR><BR>III - a Secretaria-Executiva; <BR><BR>IV - a Secretaria Nacional de Juventude; <BR><BR>V - até 5 (cinco) Secretarias; e <BR><BR>VI - 1 (um) órgão de Controle Interno. <BR><BR>§ 3º Caberá ao Secretário-Executivo da Secretaria-Geral da Presidência da República exercer, além da supervisão e da coordenação das Secretarias integrantes da estrutura da Secretaria- Geral da Presidência da República subordinadas ao Ministro de Estado, as funções que lhe forem por este atribuídas." (NR)</DIR><BR>
+<DIR>"Art. 6º&nbsp;Ao Gabinete de Segurança Institucional da Presidência da República compete: <BR><BR>I - assistir direta e imediatamente ao Presidente da República no desempenho de suas atribuições; <BR><BR>II - prevenir a ocorrência e articular o gerenciamento de crises, em caso de grave e iminente ameaça à estabilidade institucional; <BR><BR>III - realizar o assessoramento pessoal em assuntos militares e de segurança; <BR><BR>IV - coordenar as atividades de inteligência federal e de segurança da informação; <BR><BR>V - zelar, assegurado o exercício do poder de polícia, pela segurança pessoal do Chefe de Estado, do Vice-Presidente da República e respectivos familiares, dos titulares dos órgãos essenciais da Presidência da República e de outras autoridades ou personalidades quando determinado pelo Presidente da República, bem como pela segurança dos palácios presidenciais e das residências do Presidente e do Vice-Presidente da República. <BR><BR>§ 1º (Revogado). <BR><BR>§ 2º (Revogado). <BR><BR>§ 4º O Gabinete de Segurança Institucional da Presidência da República tem como estrutura básica: <BR><BR>I - a Agência Brasileira de Inteligência (Abin); <BR><BR>II - o Gabinete; <BR><BR>III - a Secretaria-Executiva; e <BR><BR>IV - até 3 (três) Secretarias." (NR)</DIR>
+<DIR>"Art. 11-A.&nbsp;Ao Conselho de Aviação Civil, presidido pelo Ministro de Estado Chefe da Secretaria de Aviação Civil da Presidência da República, com composição e funcionamento estabelecidos pelo Poder Executivo, compete estabelecer as diretrizes da política relativa ao setor de aviação civil."</DIR>
+<DIR>"Art. 24-D.&nbsp;À Secretaria de Aviação Civil compete: <BR><BR>I - formular, coordenar e supervisionar as políticas para o desenvolvimento do setor de aviação civil e das infraestruturas aeroportuária e aeronáutica civil, em articulação, no que couber, com o Ministério da Defesa; <BR><BR>II - elaborar estudos e projeções relativos aos assuntos de aviação civil e de infraestruturas aeroportuária e aeronáutica civil e sobre a logística do transporte aéreo e do transporte intermodal e multimodal, ao longo de eixos e fluxos de produção em articulação com os demais órgãos governamentais competentes, com atenção às exigências de mobilidade urbana e acessibilidade; <BR><BR>III - formular e implementar o planejamento estratégico do setor, definindo prioridades dos programas de investimentos; <BR><BR>IV - elaborar e aprovar os planos de outorgas para exploração da infraestrutura aeroportuária, ouvida a Agência Nacional de Aviação Civil (Anac); <BR><BR>V - propor ao Presidente da República a declaração de utilidade pública, para fins de desapropriação ou instituição de servidão administrativa, dos bens necessários à construção, manutenção e expansão da infraestrutura aeronáutica e aeroportuária; <BR><BR>VI - administrar recursos e programas de desenvolvimento da infraestrutura de aviação civil; <BR><BR>VII - coordenar os órgãos e entidades do sistema de aviação civil, em articulação com o Ministério da Defesa, no que couber; e <BR><BR>VIII - transferir para Estados, Distrito Federal e Municípios a implantação, administração, operação, manutenção e exploração de aeródromos públicos, direta ou indiretamente. <BR><BR><I>Parágrafo único. </I>A Secretaria de Aviação Civil tem como estrutura básica o Gabinete, a Secretaria-Executiva e até 3 (três) Secretarias."</DIR>
+<DIR>"Art. 25.&nbsp;...........................................................................<BR>.......................................................................................... <BR><BR><I>Parágrafo único. </I>São Ministros de Estado: <BR><BR>I - os titulares dos Ministérios; <BR><BR>II - os titulares das Secretarias da Presidência da República; <BR><BR>III - o Advogado-Geral da União; <BR><BR>IV - o Chefe da Casa Civil da Presidência da República; <BR><BR>V - o Chefe do Gabinete de Segurança Institucional da Presidência da República; <BR><BR>VI - o Chefe da Controladoria-Geral da União; <BR><BR>VII - o Presidente do Banco Central do Brasil." (NR)</DIR>
+<DIR>"Art. 27.&nbsp;........................................................................... <BR>......................................................................................... <BR><BR>VII - Ministério da Defesa: <BR>..........................................................................................<BR><BR><EM>y) </EM>infraestrutura aeroespacial e aeronáutica; <BR><EM>z) </EM>operacionalização do Sistema de Proteção da Amazônia (Sipam);<BR>..........................................................................<BR><BR>XII - ................................................................................. <BR>..........................................................................................<BR><BR><EM>i) </EM>...........................................................................<BR>........................................................................... </DIR>
+<DIR>6. (revogado); ....................................................</DIR>
+<DIR>&nbsp;XIV - .................................................................................<BR>...........................................................................................<BR><BR><EM>m) </EM>articulação, coordenação, supervisão, integração e proposição das ações do Governo e do Sistema Nacional de Políticas sobre Drogas nos aspectos relacionados com as atividades de prevenção, repressão ao tráfico ilícito e à produção não autorizada de drogas, bem como aquelas relacionadas com o tratamento, a recuperação e a reinserção social de usuários e dependentes e ao Plano Integrado de Enfrentamento ao Crack e outras Drogas; <BR><EM>n) </EM>política nacional de arquivos; e<BR><EM>o) </EM>assistência ao Presidente da República em matérias não afetas a outro Ministério;<BR>.........................................................................." (NR) </DIR>
+<DIR>"Art. 29.&nbsp;..........................................................................<BR>......................................................................................... <BR><BR>VI - do Ministério da Cultura: o Conselho Superior do Cinema, o Conselho Nacional de Política Cultural, a Comissão Nacional de Incentivo à Cultura e até 6 (seis) Secretarias; <BR><BR>VII - do Ministério da Defesa: o Conselho Militar de Defesa, o Comando da Marinha, o Comando do Exército, o Comando da Aeronáutica, o Estado-Maior Conjunto das Forças Armadas, a Escola Superior de Guerra, o Centro Gestor e Operacional do Sistema de Proteção da Amazônia (Censipam), o Hospital das Forças Armadas, a Representação Brasileira na Junta Interamericana de Defesa, até 3 (três) Secretarias e um órgão de Controle Interno;<BR>.......................................................................................... </DIR>
+<DIR>XIV - do Ministério da Justiça: o Conselho Nacional de Política Criminal e Penitenciária, o Conselho Nacional de Segurança Pública, o Conselho Federal Gestor do Fundo de Defesa dos Direitos Difusos, o Conselho Nacional de Combate à Pirataria e Delitos contra a Propriedade Intelectual, o Conselho Nacional de Arquivos, o Conselho Nacional de Políticas sobre Drogas, o Departamento de Polícia Federal, o Departamento de Polícia Rodoviária Federal, o Departamento de Polícia Ferroviária Federal, a Defensoria Pública da União, o Arquivo Nacional e até 6 (seis) Secretarias;<BR>........................................................................................... </DIR>
+<DIR>§ 3º (Revogado).<BR>............................................................................................ <BR><BR>§ 8º Os profissionais da Segurança Pública Ferroviária oriundos do grupo Rede, Rede Ferroviária Federal (RFFSA), da Companhia Brasileira de Trens Urbanos (CBTU) e da Empresa de Trens Urbanos de Porto Alegre (Trensurb) que estavam em exercício em 11 de dezembro de 1990, passam a integrar o Departamento de Polícia Ferroviária Federal do Ministério da Justiça." (NR)</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;São transferidas as competências referentes à aviação civil do Ministério da Defesa para a Secretaria de Aviação Civil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;O acervo patrimonial dos órgãos transferidos, incorporados ou desmembrados por esta Lei será transferido para os Ministérios, órgãos e entidades que tiverem absorvido as correspondentes competências. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O quadro de servidores efetivos dos órgãos de que trata este artigo será transferido para os Ministérios e órgãos que tiverem absorvido as correspondentes competências. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;O Ministério da Defesa e o Ministério do Planejamento, Orçamento e Gestão adotarão, até 1º de junho de 2011, as providências necessárias para a efetivação das transferências de que trata esta Lei, inclusive quanto à movimentação das dotações orçamentárias destinadas aos órgãos transferidos.&nbsp;</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>No prazo de que trata o <EM>caput</EM>, o Ministério da Defesa prestará o apoio administrativo e jurídico necessário para garantir a continuidade das atividades da Secretaria de Aviação Civil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;Os servidores e militares requisitados pela Presidência da República em exercício, em 31 de dezembro de 2010, no Centro Gestor e Operacional do Sistema de Proteção da Amazônia, no Arquivo Nacional e na Secretaria Nacional de Políticas sobre Drogas, poderão permanecer à disposição, respectivamente, do Ministério da Defesa e do Ministério da Justiça, para exercício naquelas unidades, bem como ser novamente requisitados caso tenham retornado aos órgãos ou entidades de origem antes de 18 de março de 2011. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Os servidores e militares de que trata o <EM>caput</EM> poderão ser designados para o exercício de Gratificações de Representação da Presidência da República ou de Gratificação de Exercício em Cargo de Confiança nos órgãos da Presidência da República devida aos militares enquanto permanecerem nos órgãos para os quais foram requisitados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Na hipótese do § 1º deste artigo, as Gratificações de Representação e as Gratificações de Exercício em Cargo de Confiança nos órgãos da Presidência da República devidas aos militares serão restituídas à Presidência da República quando cessar o exercício do servidor ou do militar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Aplica-se o disposto no parágrafo único do art. 2º da Lei nº 9.007, de 17 de março de 1995, aos servidores referidos neste artigo. <BR><BR></P>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Das Adaptações da Legislação da Anac </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;A Lei nº 11.182, de 27 de setembro de 2005, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 3º&nbsp;A Anac, no exercício de suas competências, deverá observar e implementar as orientações, diretrizes e políticas estabelecidas pelo governo federal, especialmente no que se refere a: <BR>........................................................................................" (NR)</DIR>
+<DIR>"Art. 8º&nbsp;........................................................................... <BR>....................................................................................... <BR><BR>XXII - aprovar os planos diretores dos aeroportos; <BR><BR>XXIII - (revogado); <BR>.......................................................................................... </DIR>
+<DIR>XXVII - (revogado);<BR><BR>XXVIII - fiscalizar a observância dos requisitos técnicos na construção, reforma e ampliação de aeródromos e aprovar sua abertura ao tráfego; <BR>.......................................................................................... </DIR>
+<DIR>XXXIX - apresentar ao Ministro de Estado Chefe da Secretaria de Aviação Civil da Presidência da República proposta de orçamento; <BR><BR>XL - elaborar e enviar o relatório anual de suas atividades à Secretaria de Aviação Civil da Presidência da República e, por intermédio da Presidência da República, ao Congresso Nacional; <BR>......................................................................................... </DIR>
+<DIR>XLVII - (revogado); <BR>........................................................................................" (NR)</DIR>
+<DIR>"Art. 11............................................................................&nbsp; <BR><BR>I - propor, por intermédio do Ministro de Estado Chefe da Secretaria de Aviação Civil da Presidência da República, ao Presidente da República, alterações do regulamento da Anac; .<BR>......................................................................................." (NR)</DIR>
+<DIR>"Art. 14.&nbsp;......................................................................... <BR>........................................................................................ <BR><BR>§ 2º Cabe ao Ministro de Estado Chefe da Secretaria de Aviação Civil da Presidência da República instaurar o processo administrativo disciplinar, que será conduzido por comissão especial constituída por servidores públicos federais estáveis, competindo ao Presidente da República determinar o afastamento preventivo, quando for o caso, e proferir julgamento." (NR)</DIR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Da Adaptação da Legislação da Infraero </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;O art. 2º da Lei nº 5.862, de 12 de dezembro de 1972, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 2º&nbsp;A Infraero terá por finalidade implantar, administrar, operar e explorar industrial e comercialmente a infraestrutura aeroportuária que lhe for atribuída pela Secretaria de Aviação Civil da Presidência da República. ........................................................................................." (NR)</DIR><BR><BR>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Da Adaptação do Programa Federal de Auxílio a Aeroportos </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;O art. 1º da Lei nº 8.399, de 7 de janeiro de 1992, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 1º&nbsp;............................................................................. <BR>.......................................................................................... <BR><BR>§ 2º A parcela de 20% (vinte por cento) especificada neste artigo constituirá o suporte financeiro do Programa Federal de Auxílio a Aeroportos a ser proposto e instituído de acordo com os Planos Aeroviários Estaduais e estabelecido por meio de convênios celebrados entre os Governos Estaduais e a Secretaria de Aviação Civil da Presidência da República. <BR><BR>§ 3º Serão contemplados com os recursos dispostos no § 2º os aeroportos estaduais constantes dos Planos Aeroviários e que sejam objeto de convênio específico firmado entre o Governo Estadual interessado e a Secretaria de Aviação Civil da Presidência da República. <BR>........................................................................................." (NR)</DIR><BR><BR>
+<CENTER><B>Seção V </CENTER></B>
+<CENTER><B>Dos Cargos Decorrentes da Reestruturação da Secretaria de </CENTER></B>
+<CENTER><B>Aviação Civil </CENTER></B>
+<P><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;É criado o cargo de Ministro de Estado Chefe da Secretaria de Aviação Civil da Presidência da República. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;É criado o cargo em comissão, de Natureza Especial, de Secretário-Executivo da Secretaria de Aviação Civil da Presidência da República. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;São criados, no âmbito da administração pública federal, os seguintes cargos em comissão do Grupo-Direção e Assessoramento Superiores destinados à Secretaria de Aviação Civil: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - 2 (dois) DAS-6; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - 9 (nove) DAS-5; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - 23 (vinte e três) DAS-4; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - 39 (trinta e nove) DAS-3; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - 35 (trinta e cinco) DAS-2; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - 19 (dezenove) DAS-1. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;É transformado o cargo, de Natureza Especial, de Secretário Nacional de Políticas sobre Drogas no cargo, de Natureza Especial, de Assessor Chefe da Assessoria Especial do Presidente da República. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;A Tabela a do Anexo I da Lei nº 11.526, de 4 de outubro de 2007, passa a vigorar acrescida da seguinte linha: </P>
+<P>
+<TABLE class=MsoTableGrid style="BORDER-TOP: medium none; BORDER-RIGHT: medium none; BORDER-COLLAPSE: collapse; BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt" cellSpacing=0 cellPadding=0 align=center border=1>
+<TBODY>
+<TR style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; mso-yfti-lastrow: yes">
+<TD style="BORDER-TOP: windowtext 1pt solid; BORDER-RIGHT: windowtext 1pt solid; WIDTH: 216.1pt; BORDER-BOTTOM: windowtext 1pt solid; PADDING-BOTTOM: 0cm; PADDING-TOP: 0cm; PADDING-LEFT: 5.4pt; BORDER-LEFT: windowtext 1pt solid; PADDING-RIGHT: 5.4pt; BACKGROUND-COLOR: transparent; mso-border-alt: solid windowtext .5pt" vAlign=top width=288>
+<P class=MsoNormal style="TEXT-ALIGN: center; MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal" align=center><SPAN style="FONT-FAMILY: 'Times New Roman','serif'">Assessor Chefe da Assessoria Especial do Presidente da República<?xml:namespace prefix = "o" ns = "urn:schemas-microsoft-com:office:office" /><o:p></o:p></SPAN></P></TD>
+<TD style="BORDER-TOP: windowtext 1pt solid; BORDER-RIGHT: windowtext 1pt solid; WIDTH: 216.1pt; BORDER-BOTTOM: windowtext 1pt solid; PADDING-BOTTOM: 0cm; PADDING-TOP: 0cm; PADDING-LEFT: 5.4pt; BORDER-LEFT: #d4d0c8; PADDING-RIGHT: 5.4pt; BACKGROUND-COLOR: transparent; mso-border-alt: solid windowtext .5pt; mso-border-left-alt: solid windowtext .5pt" vAlign=top width=288>
+<P class=MsoNormal style="TEXT-ALIGN: center; MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal" align=center><SPAN style="FONT-FAMILY: 'Times New Roman','serif'">11.179,36<o:p></o:p></SPAN></P></TD></TR></TBODY></TABLE><SPAN style="FONT-FAMILY: 'Times New Roman','serif'"><o:p></o:p></SPAN></P>
+<P align=center>&nbsp; <B>Seção VI <BR></B><B>Do Pessoal Destinado ao Controle de Tráfego Aéreo </P></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;O art. 2º da Lei nº 11.458, de 19 de março de 2007, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 2º&nbsp;A contratação de que trata esta Lei será de, no máximo, 160 (cento e sessenta) pessoas, com validade de até 2 (dois) anos, podendo ser prorrogada por sucessivos períodos até 18 de março de 2013. <BR><BR>§ 1º Prorrogações para períodos posteriores à data prevista no <EM>caput</EM> deste artigo poderão ser autorizadas, por ato conjunto dos Ministros de Estado da Defesa e do Planejamento, Orçamento e Gestão, mediante justificativa dos motivos que impossibilitaram a total substituição dos servidores temporários por servidores efetivos admitidos nos termos do inciso II do art. 37 da Constituição Federal. <BR><BR>§ 2º Na hipótese do § 1º deste artigo, regulamento estabelecerá critérios de substituição gradativa dos servidores temporários. <BR><BR>§ 3º Nenhum contrato de que trata esta Lei poderá superar a data limite de 1º de dezembro de 2016." (NR)</DIR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;São criados, no Quadro de Pessoal do Comando da Aeronáutica, 100 (cem) cargos efetivos de Controlador de Tráfego Aéreo, de nível intermediário, integrantes do Grupo-Defesa Aérea e Controle de Tráfego Aéreo, código Dacta-1303. <BR><BR>
+<CENTER><B>Seção VII </CENTER></B>
+<CENTER><B>Da Criação do Fundo Nacional de Aviação Civil (FNAC) </CENTER></B><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;É instituído o Fundo Nacional de Aviação Civil (FNAC), de natureza contábil, vinculado à Secretaria de Aviação Civil da Presidência da República, para destinação dos recursos do sistema de aviação civil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º São recursos do FNAC aqueles referentes ao Programa Federal de Auxílio a Aeroportos, conforme disposto na Lei nº 8.399, de 7 de janeiro de 1992, e demais recursos que lhe forem atribuídos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Os recursos do FNAC serão aplicados no desenvolvimento e fomento das infraestruturas aeroportuária e aeronáutica civil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º As despesas do FNAC correrão à conta de dotações orçamentárias específicas alocadas no orçamento geral da União, observados os limites anuais de movimentação e empenho e de pagamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Deverão ser disponibilizadas, anualmente, pela Secretaria de Aviação Civil da Presidência da República, em seu sítio eletrônico, informações contábeis e financeiras, além de descrição dos resultados econômicos e sociais obtidos pelo FNAC. <BR><BR>
+<CENTER>CAPÍTULO III <BR>DISPOSIÇÕES FINAIS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;O Poder Executivo federal regulamentará o disposto no Capítulo I desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;Até que a Autoridade Pública Olímpica defina a Carteira de Projetos Olímpicos, aplica-se, excepcionalmente, o disposto nesta Lei às contratações decorrentes do inciso I do art. 1º desta Lei, desde que sejam imprescindíveis para o cumprimento das obrigações assumidas perante o Comitê Olímpico Internacional e o Comitê Paraolímpico Internacional, e sua necessidade seja fundamentada pelo contratante da obra ou serviço. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;Para os projetos de que tratam os incisos I a III do art. 1º desta Lei, o prazo estabelecido no inciso II do § 1º do art. 8º da Medida Provisória nº 2.185-35, de 24 de agosto de 2001, passa a ser o de 31 de dezembro de 2013. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;A Lei nº 12.350, de 20 de dezembro de 2010, passa a vigorar acrescida do seguinte art. 62-A: <BR><BR>
+<DIR>"Art. 62-A.&nbsp;Para efeito da análise das operações de crédito destinadas ao financiamento dos projetos para os Jogos Olímpicos e Paraolímpicos, para a Copa das Confederações da Federação Internacional de Futebol Associação - Fifa 2013 e para a Copa do Mundo Fifa 2014, a verificação da adimplência será efetuada pelo número do registro no Cadastro Nacional da Pessoa Jurídica (CNPJ) principal que represente a pessoa jurídica do mutuário ou tomador da operação de crédito."</DIR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;O inciso II do § 1º do art. 8º da Medida Provisória nº 2.185-35, de 24 de agosto de 2001, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 8º&nbsp;..............................................................................<BR>........................................................................................... <BR><BR>§ 1º ................................................................................... <BR>........................................................................................... <BR><BR>II - os empréstimos ou financiamentos tomados perante organismos financeiros multilaterais e instituições de fomento e cooperação ligadas a governos estrangeiros, o Banco Nacional de Desenvolvimento Econômico e Social (BNDES) e a Caixa Econômica Federal, que tenham avaliação positiva da agência financiadora, e desde que contratados no prazo de 2 (dois) anos, contados a partir da publicação da Lei de conversão da Medida Provisória nº 527, de 18 de março de 2011, e destinados exclusivamente à complementação de programas em andamento; <BR>..........................................................................................." (NR)</DIR><BR>
+<CENTER>CAPÍTULO IV <BR>DAS REVOGAÇÕES </CENTER>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;Revogam-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - os §§ 1º e 2º do art. 6º, o item 6 da alínea i do inciso XII do art. 27 e o § 3º do art. 29, todos da Lei nº 10.683, de 28 de maio de 2003; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - os §§ 4º e 5º do art. 16 da Lei nº 9.649, de 27 de maio de 1998; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - os incisos XXIII, XXVII e XLVII do art. 8º e o § 2º do art. 10 da Lei nº 11.182, de 27 de setembro de 2005. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;Esta Lei entra em vigor na data de sua publicação, produzindo efeitos financeiros, no tocante ao art. 52 desta Lei, a contar da transferência dos órgãos ali referidos. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 4 de agosto de 2011; 190º da Independência e 123º da República. </P>
+<P>DILMA ROUSSEFF <BR>Jose Eduardo Cardozo <BR>Nelson Henrique Barbosa Filho <BR>Iraneth Rodrigues Monteiro <BR>Orlando Silva de Jesus Júnior <BR>Luís Inácio Lucena Adams <BR>Wagner Bittencourt de Oliveira </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 - Edição Extra de 05/08/2011
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1 - Edição Extra
+                                                         - 5/8/2011, Página 1 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+
+<!-- JS do portal-tema: necessário para o botão de compartilhamento -->
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/vendor-bundle.js"></script>
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/camara-bundle.js"></script>
+
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

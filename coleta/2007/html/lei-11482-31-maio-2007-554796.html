@@ -1,0 +1,968 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 11.482, DE 31 DE MAIO DE 2007 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Efetua alterações na tabela do imposto de renda da pessoa física; dispõe sobre a redução a 0 (zero) da alíquota da CPMF nas hipóteses que menciona; altera as Leis nºs 7.713, de 22 de dezembro de 1988, 9.250, de 26 de dezembro de 1995, 11.128, de 28 de junho de 2005, 9.311, de 24 de outubro de 1996, 10.260, de 12 de julho de 2001, 6.194, de 19 de dezembro de 1974, 8.387, de 30 de dezembro de 1991, 9.432, de 8 de janeiro de 1997, 5.917, de 10 de setembro de 1973, 8.402, de 8 de janeiro de 1992, 6.094, de 30 de agosto de 1974, 8.884, de 11 de junho de 1994, 10.865, de 30 de abril de 2004, 8.706, de 14 de setembro de 1993; revoga dispositivos das Leis nºs 11.119, de 25 de maio de 2005, 11.311, de 13 de junho de 2006, 11.196, de 21 de novembro de 2005, e do Decreto-Lei nº 2.433, de 19 de maio de 1988; e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 11.482, DE 31 DE MAIO DE 2007 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-11482-31-maio-2007-554796-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-11482-31-maio-2007-554796-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-11482-31-maio-2007-554796-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-11482-31-maio-2007-554796-veto-73754-pl.html">Veto</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=339696">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-11482-31-maio-2007-554796-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 11.482, DE 31 DE MAIO DE 2007</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Efetua alterações na tabela do imposto de renda da pessoa física; dispõe sobre a redução a 0 (zero) da alíquota da CPMF nas hipóteses que menciona; altera as Leis nºs 7.713, de 22 de dezembro de 1988, 9.250, de 26 de dezembro de 1995, 11.128, de 28 de junho de 2005, 9.311, de 24 de outubro de 1996, 10.260, de 12 de julho de 2001, 6.194, de 19 de dezembro de 1974, 8.387, de 30 de dezembro de 1991, 9.432, de 8 de janeiro de 1997, 5.917, de 10 de setembro de 1973, 8.402, de 8 de janeiro de 1992, 6.094, de 30 de agosto de 1974, 8.884, de 11 de junho de 1994, 10.865, de 30 de abril de 2004, 8.706, de 14 de setembro de 1993; revoga dispositivos das Leis nºs 11.119, de 25 de maio de 2005, 11.311, de 13 de junho de 2006, 11.196, de 21 de novembro de 2005, e do Decreto-Lei nº 2.433, de 19 de maio de 1988; e dá outras providências. <BR>
+						</p>
+				
+						<div class="texto">
+							<P>&nbsp;&nbsp;&nbsp;&nbsp; <STRONG>O PRESIDENTE DA REPÚBLICA </STRONG><BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;O imposto de renda incidente sobre os rendimentos de pessoas físicas será calculado de acordo com as seguintes tabelas progressivas mensais, em reais: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - para o ano-calendário de 2007: </P>
+<P align=center>Tabela Progressiva Mensal </P>
+<P>
+<TABLE style="HEIGHT: 107px; WIDTH: 747px" cellSpacing=1 cellPadding=4 width=747 align=center border=1>
+<TBODY>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Base de Cálculo (R$)</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>Alíquota (%)</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Parcela a Deduzir do IR (R$)</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Até 1.313,69</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>-</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>-</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>De 1.313,70 até 2.625,12</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>15</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>197,05</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Acima de 2.625,13</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>27,5</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>525,19</FONT></P></TD></TR></TBODY></TABLE></P>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - para o ano-calendário de 2008: </P>
+<P align=center>Tabela Progressiva Mensal </P>
+<P>
+<TABLE style="HEIGHT: 107px; WIDTH: 728px" cellSpacing=1 cellPadding=4 width=728 align=center border=1>
+<TBODY>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Base de Cálculo (R$)</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>Alíquota (%)</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Parcela a Deduzir do IR (R$)</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Até 1.372,81</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>-</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>-</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>De 1.372,82 até 2.743,25</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>15</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>205,92</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Acima de 2.743,25</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>27,5</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>548,82</FONT></P></TD></TR></TBODY></TABLE></P>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - para o ano-calendário de 2009: </P>
+<P align=center>Tabela Progressiva Mensal </P>
+<P>
+<TABLE style="HEIGHT: 107px; WIDTH: 737px" cellSpacing=1 cellPadding=4 width=737 align=center border=1>
+<TBODY>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Base de Cálculo (R$)</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>Alíquota (%)</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Parcela a Deduzir do IR (R$)</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Até 1.434,59</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>-</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>-</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>De 1.434,60 até 2.866,70</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>15</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>215,19</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Acima de 2.866,70</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>27,5</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>573,52</FONT></P></TD></TR></TBODY></TABLE></P>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a partir do ano-calendário de 2010: </P>
+<P align=center>Tabela Progressiva Mensal </P>
+<DIV align=center>
+<TABLE style="HEIGHT: 107px; WIDTH: 747px" cellSpacing=1 cellPadding=4 width=747 align=center border=1>
+<TBODY>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Base de Cálculo (R$)</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>Alíquota (%)</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Parcela a Deduzir do IR (R$)</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Até 1.499,15</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>-</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>-</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>De 1.499,20 até 2.995,70</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>15</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>224,87</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>Acima de 2.995,70</FONT></P></TD>
+<TD vAlign=top width="23%"><FONT size=2>
+<P align=center>27,5</FONT></P></TD>
+<TD vAlign=top width="39%"><FONT size=2>
+<P align=center>599,34</FONT></P></TD></TR></TBODY></TABLE></DIV>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O imposto de renda anual devido incidente sobre os rendimentos de que trata o <EM><I>caput</I></EM> deste artigo será calculado de acordo com tabela progressiva anual correspondente à soma das tabelas progressivas mensais vigentes nos meses de cada ano-calendário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;O inciso XV do <EM><I>caput</I></EM> do art. 6º da Lei nº 7.713, de 22 de dezembro de 1988, passa a vigorar com a seguinte redação: </P>
+<DIR>"Art. 6º&nbsp;...............................................................................................<BR>............................................................................................................ <BR><BR>XV - os rendimentos provenientes de aposentadoria e pensão, de transferência para a reserva remunerada ou de reforma pagos pela Previdência Social da União, dos Estados, do Distrito Federal e dos Municípios, por qualquer pessoa jurídica de direito público interno ou por entidade de previdência privada, a partir do mês em que o contribuinte completar 65 (sessenta e cinco) anos de idade, sem prejuízo da parcela isenta prevista na tabela de incidência mensal do imposto, até o valor de:</DIR>
+<DIR><EM>a) </EM>R$ 1.313,69 (mil, trezentos e treze reais e sessenta e nove centavos), por mês, para o anocalendário de 2007; <BR><EM>b) </EM>R$ 1.372,81 (mil, trezentos e setenta e dois reais e oitenta e um centavos), por mês, para o ano-calendário de 2008; <BR><EM>c) </EM>R$ 1.434,59 (mil, quatrocentos e trinta e quatro reais e cinqüenta e nove centavos), por mês, para o ano-calendário de 2009; <BR><EM>d) </EM>R$ 1.499,15 (mil, quatrocentos e noventa e nove reais e quinze centavos), por mês, a partir do ano-calendário de 2010; <BR>....................................................................................................... " (NR) <BR><BR></DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;Os arts. 4º, 8º e 10 da Lei nº 9.250, de 26 de dezembro de 1995, passam a vigorar com a seguinte redação:</P>
+<DIR>"Art. 4º&nbsp;..................................................................................................<BR>............................................................................................................... <BR><BR>III - a quantia, por dependente, de: </DIR>
+<DIR><EM>a) </EM>R$ 132,05 (cento e trinta e dois reais e cinco centavos), para o ano-calendário de 2007; <BR><EM>b) </EM>R$ 137,99 (cento e trinta e sete reais e noventa e nove centavos), para o ano-calendário de 2008; <BR><EM>c) </EM>R$ 144,20 (cento e quarenta e quatro reais e vinte centavos), para o ano-calendário de 2009; <BR><EM>d) </EM>R$ 150,69 (cento e cinqüenta reais e sessenta e nove centavos), a partir do ano-calendário de 2010; <BR>..............................................................................................................<BR><BR>VI - a quantia, correspondente à parcela isenta dos rendimentos provenientes de aposentadoria e pensão, transferência para a reserva remunerada ou reforma, pagos pela Previdência Social da União, dos Estados, do Distrito Federal e dos Municípios, por qualquer pessoa jurídica de direito público interno ou por entidade de previdência privada, a partir do mês em que o contribuinte completar 65 (sessenta e cinco) anos de idade, de: </DIR>
+<DIR><EM>a) </EM>R$ 1.313,69 (mil, trezentos e treze reais e sessenta e nove centavos), por mês, para o anocalendário de 2007; <BR><EM>b) </EM>R$ 1.372,81 (mil, trezentos e setenta e dois reais e oitenta e um centavos), por mês, para o ano-calendário de 2008; <BR><EM>c) </EM>R$ 1.434,59 (mil, quatrocentos e trinta e quatro reais e cinqüenta e nove centavos), por mês, para o ano-calendário de 2009; <BR><EM>d) </EM>R$ 1.499,15 (mil, quatrocentos e noventa e nove reais e quinze centavos), por mês, a partir do ano-calendário de 2010. <BR>................................................................................................................"&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <BR>"Art. 8º&nbsp;................................................................................................... <BR>................................................................................................................<BR><BR>II - ...........................................................................................................<BR>.................................................................................................................</DIR>
+<DIR><EM>b) </EM>a pagamentos de despesas com instrução do contribuinte e de seus dependentes, efetuados a estabelecimentos de ensino, relativamente à educação infantil, compreendendo as creches e as préescolas; ao ensino fundamental; ao ensino médio; à educação superior, compreendendo os cursos de graduação e de pós-graduação (mestrado, doutorado e especialização); e à educação profissional, compreendendo o ensino técnico e o tecnológico, até o limite anual individual de: <BR>1. R$ 2.480,66 (dois mil, quatrocentos e oitenta reais e sessenta e seis centavos) para o anocalendário de 2007; <BR>2. R$ 2.592,29 (dois mil, quinhentos e noventa e dois reais e vinte e nove centavos) para o anocalendário de 2008; <BR>3. R$ 2.708,94 (dois mil, setecentos e oito reais e noventa e quatro centavos) para o anocalendário de 2009; <BR>4. R$ 2.830,84 (dois mil, oitocentos e trinta reais e oitenta e quatro centavos) a partir do anocalendário de 2010; <BR>5. (revogado); <BR><EM>c) </EM>à quantia, por dependente, de: <BR>1. R$ 1.584,60 (mil, quinhentos e oitenta e quatro reais e sessenta centavos) para o anocalendário de 2007; <BR>2. R$ 1.655,88 (mil, seiscentos e cinqüenta e cinco reais e oitenta e oito centavos) para o anocalendário de 2008; <BR>3. R$ 1.730,40 (mil, setecentos e trinta reais e quarenta centavos) para o ano-calendário de 2009; <BR>4. R$ 1.808,28 (mil, oitocentos e oito reais e vinte e oito centavos) a partir do ano-calendário de 2010; <BR>.............................................................................................................. " (NR) <BR><BR>"Art. 10.&nbsp;O contribuinte poderá optar por desconto simplificado, que substituirá todas as deduções admitidas na legislação, correspondente à dedução de 20% (vinte por cento) do valor dos rendimentos tributáveis na Declaração de Ajuste Anual, independentemente do montante desses rendimentos, dispensadas a comprovação da despesa e a indicação de sua espécie, limitada a: <BR><BR>I - R$ 11.669,72 (onze mil, seiscentos e sessenta e nove reais e setenta e dois centavos) para o ano-calendário de 2007; <BR><BR>II - R$ 12.194,86 (doze mil, cento e noventa e quatro reais e oitenta e seis centavos) para o anocalendário de 2008;<BR><BR>III - R$ 12.743,63 (doze mil, setecentos e quarenta e três reais e sessenta e três centavos) para o ano-calendário de 2009;<BR><BR>IV - R$ 13.317,09 (treze mil, trezentos e dezessete reais e nove centavos) a partir do anocalendário de 2010. <BR><BR><I>Parágrafo único. </I>O valor deduzido não poderá ser utilizado para comprovação de acréscimo patrimonial, sendo considerado rendimento consumido." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;O parágrafo único do art. 1º da Lei nº 11.128, de 28 de junho de 2005, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 1º&nbsp;.....................................................................................................<BR><BR><I>Parágrafo único. </I>O atendimento ao disposto no art. 60 da Lei nº 9.069, de 29 de junho de 1995, para as instituições que aderirem ao Programa até 31 de dezembro de 2006 poderá ser efetuado, excepcionalmente, até 31 de dezembro de 2008." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;Os arts. 8º e 16 da Lei nº 9.311, de 24 de outubro de 1996, passam a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 8º&nbsp;..................................................................................................... <BR>...................................................................................................................<BR><BR>XI - na liquidação antecipada por instituição financeira, por conta e ordem do mutuário, de contrato de concessão de crédito que o mesmo mutuário tenha contratado em outra instituição financeira, desde que a referida liquidação esteja vinculada à abertura de nova linha de crédito, em valor idêntico ao do saldo devedor liquidado antecipadamente pela instituição que proceder à liquidação da operação, na forma regulamentada pelo Conselho Monetário Nacional;<BR><BR>XII - nos lançamentos a débito em conta corrente de depósito de titularidade de entidade fechada de previdência complementar para pagamento de benefícios do Regime Geral de Previdência Social, relativos a aposentadoria e pensão, no âmbito de convênio firmado entre a entidade e o Instituto Nacional de Seguro Social - INSS; <BR><BR>XIII - nos lançamentos a débito em conta especial destinada ao registro e controle do fluxo de recursos, aberta exclusivamente para pagamento de salários, proventos, soldos, vencimentos, aposentadorias, pensões e similares, decorrente de transferência para conta corrente de depósito de titularidade do mesmo beneficiário, conjunta ou não, na forma regulamentada pelo Conselho Monetário Nacional. <BR><BR>§ 1º O Banco Central do Brasil, no exercício de sua competência, expedirá normas para assegurar o cumprimento do disposto nos incisos I, II, VI, VII, X, XI, XII e XIII do <EM><I>caput</I></EM> deste artigo, objetivando, inclusive por meio de documentação específica, a identificação dos lançamentos previstos nos referidos incisos.<BR>........................................................................................................................" (NR)</DIR>
+<DIR>"Art. 16.&nbsp;......................................................................................................<BR>........................................................................................................................ <BR><BR>§ 6º O disposto no inciso II do <EM><I>caput</I></EM> deste artigo não se aplica na hipótese de liquidação antecipada de contrato de concessão de crédito, por instituição financeira, prevista no inciso XI do art. 8º desta Lei." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;O § 3º do art. 2º da Lei nº 10.260, de 12 de julho de 2001, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 2º&nbsp;......................................................................................................... <BR>......................................................................................................................<BR><BR>§ 3º ................................................................................................................<BR>........................................................................................................................ <BR><BR>III - até 1,5% (um vírgula cinco por cento) ao ano aos agentes financeiros, calculado sobre o saldo devedor dos financiamentos concedidos até 30 de junho de 2006, pela administração dos créditos e absorção do risco de crédito efetivamente caracterizado, no percentual estabelecido no inciso V do <EM><I>caput</I></EM> do art. 5º desta Lei;<BR><BR>IV - percentual a ser estabelecido semestralmente em Portaria Interministerial dos Ministros de Estado da Fazenda e da Educação, incidente sobre o saldo devedor dos financiamentos concedidos a partir de 1º de julho de 2006 pela administração dos créditos e absorção do risco de crédito efetivamente caracterizado, no percentual estabelecido no inciso V do <EM><I>caput</I></EM> do art. 5º desta Lei. <BR>..........................................................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;A Lei nº 10.260, de 12 de julho de 2001, passa a vigorar acrescida do seguinte art. 6º-A: <BR><BR>
+<DIR>"Art. 6º-A.&nbsp;Em caso de falecimento ou invalidez permanente, devidamente comprovada na forma da legislação pertinente, do estudante tomador do financiamento, o débito será absorvido pelo agente financeiro e pela instituição de ensino, observada a proporção estabelecida no inciso V do <EM><I>caput</I></EM> do art. 5º desta Lei."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Os arts. 3º, 4º, 5º e 11 da Lei nº 6.194, de 19 de dezembro de 1974, passam a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 3º&nbsp;Os danos pessoais cobertos pelo seguro estabelecido no art. 2º desta Lei compreendem as indenizações por morte, invalidez permanente e despesas de assistência médica e suplementares, nos valores que se seguem, por pessoa vitimada:&nbsp; </DIR>
+<DIR><EM>a) </EM>(revogada); <BR><EM>b) </EM>(revogada); <BR><EM>c) </EM>(revogada); <BR><BR>I - R$ 13.500,00 (treze mil e quinhentos reais) - no caso de morte; <BR><BR>II - até R$ 13.500,00 (treze mil e quinhentos reais) - no caso de invalidez permanente; e<BR><BR>III - até R$ 2.700,00 (dois mil e setecentos reais) - como reembolso à vítima - no caso de despesas de assistência médica e suplementares devidamente comprovadas." (NR)</DIR>
+<DIR>"Art. 4º&nbsp;A indenização no caso de morte será paga de acordo com o disposto no art. 792 da Lei nº 10.406, de 10 de janeiro de 2002 - Código Civil. <BR><BR><I>Parágrafo único. </I>(Revogado pela Lei nº 8.441, de 1992). <BR><BR>§ 1º (Revogado). <BR><BR>§ 2º (Revogado). <BR><BR>§ 3º Nos demais casos, o pagamento será feito diretamente à vítima na forma que dispuser o Conselho Nacional de Seguros Privados - CNSP." (NR)</DIR>
+<DIR>"Art. 5º&nbsp;............................................................................................................ <BR><BR>§ 1º A indenização referida neste artigo será paga com base no valor vigente na época da ocorrência do sinistro, em cheque nominal aos beneficiários, descontável no dia e na praça da sucursal que fizer a liqüidação, no prazo de 30 (trinta) dias da entrega dos seguintes documentos: <BR>......................................................................................................................... <BR><BR>§ 6º O pagamento da indenização também poderá ser realizado por intermédio de depósito ou Transferência Eletrônica de Dados - TED para a conta corrente ou conta de poupança do beneficiário, observada a legislação do Sistema de Pagamentos Brasileiro. <BR><BR>§ 7º Os valores correspondentes às indenizações, na hipótese de não cumprimento do prazo para o pagamento da respectiva obrigação pecuniária, sujeitam-se à correção monetária segundo índice oficial regularmente estabelecido e juros moratórios com base em critérios fixados na regulamentação específica de seguro privado." (NR)</DIR>
+<DIR>"Art. 11.&nbsp;A sociedade seguradora que infringir as disposições desta Lei estará sujeita às penalidades previstas no art. 108 do Decreto-Lei nº 73, de 21 de novembro de 1966, de acordo com a gravidade da irregularidade, observado o disposto no art. 118 do referido Decreto-Lei." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;As pessoas jurídicas com débitos vencidos relativos à Taxa de Fiscalização instituída pela Lei nº 7.940, de 20 de dezembro de 1989, poderão efetuar o pagamento dos seus débitos com redução de 30% (trinta por cento) nas multas e nos juros legalmente exigíveis, bem como mediante parcelamento em até 120 (cento e vinte) prestações mensais e sucessivas, desde que formulado requerimento com este sentido à Comissão de Valores Mobiliários - CVM no prazo de 120 (cento e vinte) dias após a publicação da Medida Provisória nº 340, de 29 de dezembro de 2006. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Apresentado requerimento de parcelamento nos termos previstos no <EM><I>caput</I></EM> deste artigo, a CVM promoverá a consolidação dos débitos respectivos e adotará as demais providências administrativas cabíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A parcela mínima para fins do parcelamento de que trata o <EM><I>caput</I></EM> deste artigo não poderá ser inferior ao valor de R$ 200,00 (duzentos reais). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Além do disposto neste artigo, o parcelamento previsto no <EM><I>caput</I></EM> deste artigo deverá observar a regulamentação da CVM aplicável ao assunto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;O § 13 do art. 2º da Lei nº 8.387, de 30 de dezembro de 1991, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 2º&nbsp;...................................................................................................<BR>................................................................................................................ <BR><BR>§ 13. Para as empresas beneficiárias, fabricantes de microcomputadores portáteis e de unidades de processamento digitais de pequena capacidade baseadas em microprocessadores, de valor até R$ 11.000,00 (onze mil reais), bem como de unidades de discos magnéticos e ópticos, circuitos impressos com componentes elétricos e eletrônicos montados, gabinetes e fontes de alimentação, reconhecíveis como exclusiva ou principalmente destinados a tais equipamentos, e exclusivamente sobre o faturamento bruto decorrente da comercialização desses produtos no mercado interno, os percentuais para investimentos estabelecidos neste artigo serão reduzidos em 50% (cinqüenta por cento) até 31 de dezembro de 2009. <BR>........................................................................................................................" (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;O prazo previsto no art. 17 da Lei nº 9.432, de 8 de janeiro de 1997, fica prorrogado até 8 de janeiro de 2012, nas navegações de cabotagem, interior fluvial e lacustre. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;O item 2.2.2 - Relação Descritiva das Rodovias do Sistema Rodoviário Nacional, constante do Anexo da Lei nº 5.917, de 10 de setembro de 1973, passa a vigorar acrescido da ligação rodoviária a seguir descrita: <BR><BR>
+<DIR>"2.2.2. ....................................................................................................... <BR>...................................................................................................................</DIR>
+<DIR></DIR>
+<DIR>
+<TABLE cellSpacing=1 cellPadding=4 width=589 border=1>
+<TBODY>
+<TR>
+<TD vAlign=top width="7%"><FONT size=2>
+<P align=center>BR</FONT></P></TD>
+<TD vAlign=top width="34%"><FONT size=2>
+<P align=center>PONTOS DE PASSAGEM</FONT></P></TD>
+<TD vAlign=top width="21%"><FONT size=2>
+<P align=center>UNIDADES DA FEDERAÇÃO</FONT></P></TD>
+<TD vAlign=top width="16%"><FONT size=2>
+<P align=center>EXTENSÃO (KM)</FONT></P></TD>
+<TD vAlign=top width="22%"><FONT size=2>
+<P align=center>SUPERPOSIÇÃO BR/KM</FONT></P></TD></TR>
+<TR>
+<TD vAlign=top width="7%"><FONT size=2>
+<P>440</FONT></P></TD>
+<TD vAlign=top width="34%"><FONT size=2>
+<P>Entroncamento BR-040/MG-<BR>Entroncamento BR-267/MG</FONT></P></TD>
+<TD vAlign=top width="21%"><FONT size=2>
+<P align=center>MG</FONT></P></TD>
+<TD vAlign=top width="16%"><FONT size=2>
+<P align=center>9,0</FONT></P></TD>
+<TD vAlign=top width="22%"><FONT size=2>
+<P align=center>-</FONT></P></TD></TR></TBODY></TABLE></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR></DIR>
+<DIR>.................................................................................................................................." (NR)</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;O traçado definitivo e o número da ligação rodoviária de que trata o art. 12 desta Lei serão definidos pelo órgão competente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;(VETADO) </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 15. (VETADO) </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 16. O art. 53 da Lei nº 8.884, de 11 de junho de 1994, passa a vigorar com a seguinte redação: <BR><BR></P>
+<DIR>"Art. 53.&nbsp;Em qualquer das espécies de processo administrativo, o Cade poderá tomar do representado compromisso de cessação da prática sob investigação ou dos seus efeitos lesivos, sempre que, em juízo de conveniência e oportunidade, entender que atende aos interesses protegidos por lei. <BR><BR>§ 1º Do termo de compromisso deverão constar os seguintes elementos: <BR><BR>I - a especificação das obrigações do representado para fazer cessar a prática investigada ou seus efeitos lesivos, bem como obrigações que julgar cabíveis; <BR><BR>II - a fixação do valor da multa para o caso de descumprimento, total ou parcial, das obrigações compromissadas; <BR><BR>III - a fixação do valor da contribuição pecuniária ao Fundo de Defesa de Direitos Difusos quando cabível. <BR><BR>§ 2º Tratando-se da investigação da prática de infração relacionada ou decorrente das condutas previstas nos incisos I, II, III ou VIII do <EM><I>caput</I></EM> do art. 21 desta Lei, entre as obrigações a que se refere o inciso I do § 1º deste artigo figurará, necessariamente, a obrigação de recolher ao Fundo de Defesa de Direitos Difusos um valor pecuniário que não poderá ser inferior ao mínimo previsto no art. 23 desta Lei. <BR><BR>§ 3º A celebração do termo de compromisso poderá ser proposta até o início da sessão de julgamento do processo administrativo relativo à prática investigada. <BR><BR>§ 4º O termo de compromisso constitui título exclusivo extrajudicial. <BR><BR>§ 5º O processo administrativo ficará suspenso enquanto estiver sendo cumprido o compromisso e será arquivado ao término do prazo fixado se atendidas todas as condições estabelecidas no termo. <BR><BR>§ 6º A suspensão do processo administrativo a que se refere o § 5º deste artigo dar-se-á somente em relação ao representado que firmou o compromisso, seguindo o processo seu curso regular para os demais representados. <BR><BR>§ 7º Declarado o descumprimento do compromisso, o Cade aplicará as sanções nele previstas e determinará o prosseguimento do processo administrativo e as demais medidas administrativas e judiciais cabíveis para sua execução. <BR><BR>§ 8º As condições do termo de compromisso poderão ser alteradas pelo Cade se comprovar sua excessiva onerosidade para o representado, desde que a alteração não acarrete prejuízo para terceiros ou para a coletividade. <BR><BR>§ 9º O Cade definirá, em resolução, normas complementares sobre cabimento, tempo e modo da celebração do termo de compromisso de cessação." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;O art. 40 da Lei nº 10.865, de 30 de abril de 2004, passa a vigorar acrescido do seguinte § 6º: <BR><BR>
+<DIR>"Art. 40.&nbsp;............................................................................................................<BR>............................................................................................................................. <BR><BR>§ 6º As disposições deste artigo aplicam-se à Contribuição para o PIS/Pasep-Importação e à Cofins-Importação incidentes sobre os produtos de que trata o <EM><I>caput</I></EM> deste artigo." (NR)</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;(VETADO) </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 19. (VETADO) </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 20. (VETADO) </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 21. (VETADO) </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 22. (VETADO) </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 23. (VETADO) </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Art. 24. Esta Lei entra em vigor na data de sua publicação, produzindo efeitos em relação: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - aos arts. 1º a 3º, a partir de 1º de janeiro de 2007; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - aos arts. 20 a 22, após decorridos 90 (noventa) dias da publicação desta Lei;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - aos demais artigos, a partir da data de publicação desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Ficam revogados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - a partir de 1º de janeiro de 2007: <BR><BR></P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a Lei nº 11.119, de 25 de maio de 2005; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>os arts. 1º e 2º da Lei nº 11.311, de 13 de junho de 2006; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a partir da data de publicação desta Lei: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>(VETADO) </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o art. 131 da Lei nº 11.196, de 21 de novembro de 2005; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o § 2º do art. 17 do Decreto-Lei nº 2.433, de 19 de maio de 1988. </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 31 de maio de 2007; 186º da Independência e 119º da República. </P>
+<P>LUIZ INÁCIO LULA DA SILVA <BR>Tarso Genro <BR>Guido Mantega <BR>Alfredo Nascimento <BR>Fernando Haddad <BR>Miguel Jorge <BR>José Antonio Dias Toffoli </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 - Edição Extra de 31/05/2007
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1 - Edição Extra
+                                                         - 31/5/2007, Página 5 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

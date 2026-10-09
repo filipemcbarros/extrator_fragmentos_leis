@@ -36,7 +36,29 @@ def _para_linhas(elemento) -> list[str]:
     bruto = re.sub(r"<[^>]+>", " ", bruto)
 
     linhas = [_normalizar(l) for l in bruto.split("\n")]
-    return _separar_rotulos_colados([l for l in linhas if l])
+    return _separar_rotulos_colados(_juntar_rotulos_partidos([l for l in linhas if l]))
+
+
+#: Rótulo de artigo que ficou sem a numeração, sozinho na linha.
+_ROTULO_SOLTO = re.compile(r"^(?:Art|ART)(?:igo|IGO)?\s*\.?$")
+#: Início da linha que traz a numeração que faltou ao rótulo.
+_NUMERO_SOLTO = re.compile(r"^(?:\d|[ÚUúu]nico|[ÚU]NICO)")
+
+
+def _juntar_rotulos_partidos(linhas: list[str]) -> list[str]:
+    """Reúne o rótulo de artigo que a fonte partiu em duas linhas.
+
+    Em parte do acervo o HTML traz uma quebra de linha no meio do rótulo —
+    `Art. \\n\\n1º É denominada...` —, e ela chega aqui como duas linhas, "Art."
+    e "1º É denominada...". Nenhuma das duas é rótulo, e o artigo se perderia.
+    """
+    juntas: list[str] = []
+    for linha in linhas:
+        if juntas and _ROTULO_SOLTO.match(juntas[-1]) and _NUMERO_SOLTO.match(linha):
+            juntas[-1] = f"{juntas[-1]} {linha}"
+        else:
+            juntas.append(linha)
+    return juntas
 
 
 #: Fim de uma citação de alteração colado ao início do artigo seguinte.

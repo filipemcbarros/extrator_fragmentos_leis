@@ -1,0 +1,970 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 12.815, DE 5 DE JUNHO DE 2013 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre a exploração direta e indireta pela União de portos e instalações portuárias e sobre as atividades desempenhadas pelos operadores portuários; altera as Leis nºs 5.025, de 10 de junho de 1966, 10.233, de 5 de junho de 2001, 10.683, de 28 de maio de 2003, 9.719, de 27 de novembro de 1998, e 8.213, de 24 de julho de 1991; revoga as Leis nºs 8.630, de 25 de fevereiro de 1993, e 11.610, de 12 de dezembro de 2007, e dispositivos das Leis nºs 11.314, de 3 de julho de 2006, e 11.518, de 5 de setembro de 2007; e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 12.815, DE 5 DE JUNHO DE 2013 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-12815-5-junho-2013-776175-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-12815-5-junho-2013-776175-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-12815-5-junho-2013-776175-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-12815-5-junho-2013-776175-veto-140050-pl.html">Veto</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=562615">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-12815-5-junho-2013-776175-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 12.815, DE 5 DE JUNHO DE 2013</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre a exploração direta e indireta pela União de portos e instalações portuárias e sobre as atividades desempenhadas pelos operadores portuários; altera as Leis nºs 5.025, de 10 de junho de 1966, 10.233, de 5 de junho de 2001, 10.683, de 28 de maio de 2003, 9.719, de 27 de novembro de 1998, e 8.213, de 24 de julho de 1991; revoga as Leis nºs 8.630, de 25 de fevereiro de 1993, e 11.610, de 12 de dezembro de 2007, e dispositivos das Leis nºs 11.314, de 3 de julho de 2006, e 11.518, de 5 de setembro de 2007; e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							&nbsp;&nbsp;&nbsp;&nbsp; <STRONG>A PRESIDENTA DA REPÚBLICA <BR></STRONG>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER>CAPÍTULO I <BR>DEFINIÇÕES E OBJETIVOS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;Esta Lei regula a exploração pela União, direta ou indiretamente, dos portos e instalações portuárias e as atividades desempenhadas pelos operadores portuários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A exploração indireta do porto organizado e das instalações portuárias nele localizadas ocorrerá mediante concessão e arrendamento de bem público. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A exploração indireta das instalações portuárias localizadas fora da área do porto organizado ocorrerá mediante autorização, nos termos desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º As concessões, os arrendamentos e as autorizações de que trata esta Lei serão outorgados a pessoa jurídica que demonstre capacidade para seu desempenho, por sua conta e risco. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Para os fins desta Lei, consideram-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - porto organizado: bem público construído e aparelhado para atender a necessidades de navegação, de movimentação de passageiros ou de movimentação e armazenagem de mercadorias, e cujo tráfego e operações portuárias estejam sob jurisdição de autoridade portuária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - área do porto organizado: área delimitada por ato do Poder Executivo que compreende as instalações portuárias e a infraestrutura de proteção e de acesso ao porto organizado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - instalação portuária: instalação localizada dentro ou fora da área do porto organizado e utilizada em movimentação de passageiros, em movimentação ou armazenagem de mercadorias, destinadas ou provenientes de transporte aquaviário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - terminal de uso privado: instalação portuária explorada mediante autorização e localizada fora da área do porto organizado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - estação de transbordo de cargas: instalação portuária explorada mediante autorização, localizada fora da área do porto organizado e utilizada exclusivamente para operação de transbordo de mercadorias em embarcações de navegação interior ou cabotagem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - instalação portuária pública de pequeno porte: instalação portuária explorada mediante autorização, localizada fora do porto organizado e utilizada em movimentação de passageiros ou mercadorias em embarcações de navegação interior; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - instalação portuária de turismo: instalação portuária explorada mediante arrendamento ou autorização e utilizada em embarque, desembarque e trânsito de passageiros, tripulantes e bagagens, e de insumos para o provimento e abastecimento de embarcações de turismo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - (VETADO): <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>(VETADO); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>(VETADO); e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>(VETADO); </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - concessão: cessão onerosa do porto organizado, com vistas à administração e à exploração de sua infraestrutura por prazo determinado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - delegação: transferência, mediante convênio, da administração e da exploração do porto organizado para Municípios ou Estados, ou a consórcio público, nos termos da Lei nº 9.277, de 10 de maio de 1996; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - arrendamento: cessão onerosa de área e infraestrutura públicas localizadas dentro do porto organizado, para exploração por prazo determinado;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XII - autorização: outorga de direito à exploração de instalação portuária localizada fora da área do porto organizado e formalizada mediante contrato de adesão; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIII - operador portuário: pessoa jurídica pré-qualificada para exercer as atividades de movimentação de passageiros ou movimentação e armazenagem de mercadorias, destinadas ou provenientes de transporte aquaviário, dentro da área do porto organizado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;A exploração dos portos organizados e instalações portuárias, com o objetivo de aumentar a competitividade e o desenvolvimento do País, deve seguir as seguintes diretrizes: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - expansão, modernização e otimização da infraestrutura e da superestrutura que integram os portos organizados e instalações portuárias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - garantia da modicidade e da publicidade das tarifas e preços praticados no setor, da qualidade da atividade prestada e da efetividade dos direitos dos usuários; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - estímulo à modernização e ao aprimoramento da gestão dos portos organizados e instalações portuárias, à valorização e à qualificação da mão de obra portuária e à eficiência das atividades prestadas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - promoção da segurança da navegação na entrada e na saída das embarcações dos portos; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - estímulo à concorrência, incentivando a participação do setor privado e assegurando o amplo acesso aos portos organizados, instalações e atividades portuárias. <BR><BR>
+<CENTER>CAPÍTULO II<BR>DA EXPLORAÇÃO DOS PORTOS E INSTALAÇÕES <BR>PORTUÁRIAS </CENTER>
+<CENTER><BR>&nbsp;</CENTER>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Da Concessão de Porto Organizado e do Arrendamento de </CENTER></B>
+<CENTER><B>Instalação Portuária </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;A concessão e o arrendamento de bem público destinado à atividade portuária serão realizados mediante a celebração de contrato, sempre precedida de licitação, em conformidade com o disposto nesta Lei e no seu regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;São essenciais aos contratos de concessão e arrendamento as cláusulas relativas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ao objeto, à área e ao prazo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - ao modo, forma e condições da exploração do porto organizado ou instalação portuária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - aos critérios, indicadores, fórmulas e parâmetros definidores da qualidade da atividade prestada, assim como às metas e prazos para o alcance de determinados níveis de serviço; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - ao valor do contrato, às tarifas praticadas e aos critérios e procedimentos de revisão e reajuste; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - aos investimentos de responsabilidade do contratado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - aos direitos e deveres dos usuários, com as obrigações correlatas do contratado e as sanções respectivas;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - às responsabilidades das partes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - à reversão de bens; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - aos direitos, garantias e obrigações do contratante e do contratado, inclusive os relacionados a necessidades futuras de suplementação, alteração e expansão da atividade e consequente modernização, aperfeiçoamento e ampliação das instalações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - à forma de fiscalização das instalações, dos equipamentos e dos métodos e práticas de execução das atividades, bem como à indicação dos órgãos ou entidades competentes para exercê-las; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - às garantias para adequada execução do contrato; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XII - à responsabilidade do titular da instalação portuária pela inexecução ou deficiente execução das atividades; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIII - às hipóteses de extinção do contrato; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIV - à obrigatoriedade da prestação de informações de interesse do poder concedente, da Agência Nacional de Transportes Aquaviários - ANTAQ e das demais autoridades que atuam no setor portuário, inclusive as de interesse específico da Defesa Nacional, para efeitos de mobilização; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XV - à adoção e ao cumprimento das medidas de fiscalização aduaneira de mercadorias, veículos e pessoas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVI - ao acesso ao porto organizado ou à instalação portuária pelo poder concedente, pela Antaq e pelas demais autoridades que atuam no setor portuário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVII - às penalidades e sua forma de aplicação; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XVIII - ao foro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Findo o prazo dos contratos, os bens vinculados à concessão ou ao arrendamento reverterão ao patrimônio da União, na forma prevista no contrato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Nas licitações dos contratos de concessão e arrendamento, serão considerados como critérios para julgamento, de forma isolada ou combinada, a maior capacidade de movimentação, a menor tarifa ou o menor tempo de movimentação de carga, e outros estabelecidos no edital, na forma do regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As licitações de que trata este artigo poderão ser realizadas na modalidade leilão, conforme regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Compete à Antaq, com base nas diretrizes do poder concedente, realizar os procedimentos licitatórios de que trata este artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Os editais das licitações de que trata este artigo serão elaborados pela Antaq, observadas as diretrizes do poder concedente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Sem prejuízo das diretrizes previstas no art. 3º, o poder concedente poderá determinar a transferência das competências de elaboração do edital e a realização dos procedimentos licitatórios de que trata este artigo à Administração do Porto, delegado ou não. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º O poder concedente poderá autorizar, mediante requerimento do arrendatário, na forma do regulamento, expansão da área arrendada para área contígua dentro da poligonal do porto organizado, sempre que a medida trouxer comprovadamente eficiência na operação portuária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;A Antaq poderá disciplinar a utilização em caráter excepcional, por qualquer interessado, de instalações portuárias arrendadas ou exploradas pela concessionária, assegurada a remuneração adequada ao titular do contrato. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Da Autorização de Instalações Portuárias </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;Serão exploradas mediante autorização, precedida de chamada ou anúncio públicos e, quando for o caso, processo seletivo público, as instalações portuárias localizadas fora da área do porto organizado, compreendendo as seguintes modalidades: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - terminal de uso privado; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - estação de transbordo de carga; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - instalação portuária pública de pequeno porte; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - instalação portuária de turismo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A autorização será formalizada por meio de contrato de adesão, que conterá as cláusulas essenciais previstas no <I>caput</I> do art. 5º, com exceção daquelas previstas em seus incisos IV e VIII. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A autorização de instalação portuária terá prazo de até 25 (vinte e cinco) anos, prorrogável por períodos sucessivos, desde que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a atividade portuária seja mantida; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o autorizatário promova os investimentos necessários para a expansão e modernização das instalações portuárias, na forma do regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A Antaq adotará as medidas para assegurar o cumprimento dos cronogramas de investimento previstos nas autorizações e poderá exigir garantias ou aplicar sanções, inclusive a cassação da autorização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Os interessados em obter a autorização de instalação portuária poderão requerê-la à Antaq a qualquer tempo, na forma do regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Recebido o requerimento de autorização de instalação portuária, a Antaq deverá: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - publicar o extrato do requerimento, inclusive na internet; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - promover a abertura de processo de anúncio público, com prazo de 30 (trinta) dias, para identificar a existência de outros interessados na obtenção de autorização de instalação portuária na mesma região e com características semelhantes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;O poder concedente poderá determinar à Antaq, a qualquer momento e em consonância com as diretrizes do planejamento e das políticas do setor portuário, a abertura de processo de chamada pública para identificar a existência de interessados na obtenção de autorização de instalação portuária, na forma do regulamento e observado o prazo previsto no inciso II do § 1º do art. 9º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;O instrumento da abertura de chamada ou anúncio público indicará obrigatoriamente os seguintes parâmetros: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a região geográfica na qual será implantada a instalação portuária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o perfil das cargas a serem movimentadas; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - a estimativa do volume de cargas ou de passageiros a ser movimentado nas instalações portuárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O interessado em autorização de instalação portuária deverá apresentar título de propriedade, inscrição de ocupação, certidão de aforamento, cessão de direito real ou outro instrumento jurídico que assegure o direito de uso e fruição do respectivo terreno, além de outros documentos previstos no instrumento de abertura. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Encerrado o processo de chamada ou anúncio público, o poder concedente deverá analisar a viabilidade locacional das propostas e sua adequação às diretrizes do planejamento e das políticas do setor portuário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Observado o disposto no regulamento, poderão ser expedidas diretamente as autorizações de instalação portuária quando: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - o processo de chamada ou anúncio público seja concluído com a participação de um único interessado; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - havendo mais de uma proposta, não haja impedimento locacional à implantação de todas elas de maneira concomitante. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Havendo mais de uma proposta e impedimento locacional que inviabilize sua implantação de maneira concomitante, a Antaq deverá promover processo seletivo público, observados os princípios da legalidade, impessoalidade, moralidade, publicidade e eficiência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O processo seletivo público de que trata o § 2º atenderá ao disposto no regulamento e considerará como critério de julgamento, de forma isolada ou combinada, a maior capacidade de movimentação, a menor tarifa ou o menor tempo de movimentação de carga, e outros estabelecidos no edital. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Em qualquer caso, somente poderão ser autorizadas as instalações portuárias compatíveis com as diretrizes do planejamento e das políticas do setor portuário, na forma do <I>caput</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;A Antaq poderá disciplinar as condições de acesso, por qualquer interessado, em caráter excepcional, às instalações portuárias autorizadas, assegurada remuneração adequada ao titular da autorização. <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Dos Requisitos para a Instalação dos Portos e Instalações Portuárias </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;A celebração do contrato de concessão ou arrendamento e a expedição de autorização serão precedidas de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - consulta à autoridade aduaneira; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - consulta ao respectivo poder público municipal; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - emissão, pelo órgão licenciador, do termo de referência para os estudos ambientais com vistas ao licenciamento. <BR><BR>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Da Definição da Área de Porto Organizado </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;Ato do Presidente da República disporá sobre a definição da área dos portos organizados, a partir de proposta da Secretaria de Portos da Presidência da República. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A delimitação da área deverá considerar a adequação dos acessos marítimos e terrestres, os ganhos de eficiência e competitividade decorrente da escala das operações e as instalações portuárias já existentes. <BR><BR>
+<CENTER>CAPÍTULO III <BR>DO PODER CONCEDENTE </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Ao poder concedente compete: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - elaborar o planejamento setorial em conformidade com as políticas e diretrizes de logística integrada; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - definir as diretrizes para a realização dos procedimentos licitatórios, das chamadas públicas e dos processos seletivos de que trata esta Lei, inclusive para os respectivos editais e instrumentos convocatórios; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - celebrar os contratos de concessão e arrendamento e expedir as autorizações de instalação portuária, devendo a Antaq fiscalizá-los em conformidade com o disposto na Lei nº 10.233, de 5 de junho de 2001; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - estabelecer as normas, os critérios e os procedimentos para a pré-qualificação dos operadores portuários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para os fins do disposto nesta Lei, o poder concedente poderá celebrar convênios ou instrumentos congêneres de cooperação técnica e administrativa com órgãos e entidades da administração pública federal, dos Estados, do Distrito Federal e dos Municípios, inclusive com repasse de recursos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No exercício da competência prevista no inciso II do <I>caput</I>, o poder concedente deverá ouvir previamente a Agência Nacional do Petróleo, Gás Natural e Biocombustíveis sempre que a licitação, a chamada pública ou o processo seletivo envolver instalações portuárias voltadas à movimentação de petróleo, gás natural, seus derivados e biocombustíveis. <BR><BR>
+<CENTER>CAPÍTULO IV <BR>DA ADMINISTRAÇÃO DO PORTO ORGANIZADO </CENTER>
+<CENTER><BR>&nbsp;</CENTER>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Das Competências </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;A administração do porto é exercida diretamente pela União, pela delegatária ou pela entidade concessionária do porto organizado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Compete à administração do porto organizado, denominada autoridade portuária: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - cumprir e fazer cumprir as leis, os regulamentos e os contratos de concessão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - assegurar o gozo das vantagens decorrentes do melhoramento e aparelhamento do porto ao comércio e à navegação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - pré-qualificar os operadores portuários, de acordo com as normas estabelecidas pelo poder concedente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - arrecadar os valores das tarifas relativas às suas atividades; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - fiscalizar ou executar as obras de construção, reforma, ampliação, melhoramento e conservação das instalações portuárias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - fiscalizar a operação portuária, zelando pela realização das atividades com regularidade, eficiência, segurança e respeito ao meio ambiente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - promover a remoção de embarcações ou cascos de embarcações que possam prejudicar o acesso ao porto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - autorizar a entrada e saída, inclusive atracação e desatracação, o fundeio e o tráfego de embarcação na área do porto, ouvidas as demais autoridades do porto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - autorizar a movimentação de carga das embarcações, ressalvada a competência da autoridade marítima em situações de assistência e salvamento de embarcação, ouvidas as demais autoridades do porto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - suspender operações portuárias que prejudiquem o funcionamento do porto, ressalvados os aspectos de interesse da autoridade marítima responsável pela segurança do tráfego aquaviário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XI - reportar infrações e representar perante a Antaq, visando à instauração de processo administrativo e aplicação das penalidades previstas em lei, em regulamento e nos contratos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XII - adotar as medidas solicitadas pelas demais autoridades no porto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIII - prestar apoio técnico e administrativo ao conselho de autoridade portuária e ao órgão de gestão de mão de obra; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XIV - estabelecer o horário de funcionamento do porto, observadas as diretrizes da Secretaria de Portos da Presidência da República, e as jornadas de trabalho no cais de uso público; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XV - organizar a guarda portuária, em conformidade com a regulamentação expedida pelo poder concedente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A autoridade portuária elaborará e submeterá à aprovação da Secretaria de Portos da Presidência da República o respectivo Plano de Desenvolvimento e Zoneamento do Porto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O disposto nos incisos IX e X do § 1º não se aplica à embarcação militar que não esteja praticando comércio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º A autoridade marítima responsável pela segurança do tráfego pode intervir para assegurar aos navios da Marinha do Brasil a prioridade para atracação no porto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º ( VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;Dentro dos limites da área do porto organizado, compete à administração do porto: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - sob coordenação da autoridade marítima: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>estabelecer, manter e operar o balizamento do canal de acesso e da bacia de evolução do porto; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>delimitar as áreas de fundeadouro, de fundeio para carga e descarga, de inspeção sanitária e de polícia marítima; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>delimitar as áreas destinadas a navios de guerra e submarinos, plataformas e demais embarcações especiais, navios em reparo ou aguardando atracação e navios com cargas inflamáveis ou explosivas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>estabelecer e divulgar o calado máximo de operação dos navios, em função dos levantamentos batimétricos efetuados sob sua responsabilidade; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>estabelecer e divulgar o porte bruto máximo e as dimensões máximas dos navios que trafegarão, em função das limitações e características físicas do cais do porto; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - sob coordenação da autoridade aduaneira: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>delimitar a área de alfandegamento; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>organizar e sinalizar os fluxos de mercadorias, veículos, unidades de cargas e de pessoas. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;A administração do porto poderá, a critério do poder concedente, explorar direta ou indiretamente áreas não afetas às operações portuárias, observado o disposto no respectivo Plano de Desenvolvimento e Zoneamento do Porto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O disposto no <I>caput</I> não afasta a aplicação das normas de licitação e contratação pública quando a administração do porto for exercida por órgão ou entidade sob controle estatal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;Será instituído em cada porto organizado um conselho de autoridade portuária, órgão consultivo da administração do porto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O regulamento disporá sobre as atribuições, o funcionamento e a composição dos conselhos de autoridade portuária, assegurada a participação de representantes da classe empresarial, dos trabalhadores portuários e do poder público. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A representação da classe empresarial e dos trabalhadores no conselho a que alude o <I>caput</I> será paritária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A distribuição das vagas no conselho a que alude o <I>caput</I> observará a seguinte proporção: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - 50% (cinquenta por cento) de representantes do poder público; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - 25% (vinte e cinco por cento) de representantes da classe empresarial; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - 25% (vinte e cinco por cento) de representantes da classe trabalhadora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;Fica assegurada a participação de um representante da classe empresarial e outro da classe trabalhadora no conselho de administração ou órgão equivalente da administração do porto, quando se tratar de entidade sob controle estatal, na forma do regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A indicação dos representantes das classes empresarial e trabalhadora a que alude o <I>caput</I> será feita pelos respectivos representantes no conselho de autoridade portuária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;A Secretaria de Portos da Presidência da República coordenará a atuação integrada dos órgãos e entidades públicos nos portos organizados e instalações portuárias, com a finalidade de garantir a eficiência e a qualidade de suas atividades, nos termos do regulamento. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Da Administração Aduaneira nos Portos Organizados e nas </CENTER></B>
+<CENTER><B>Instalações Portuárias Alfandegadas </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;A entrada ou a saída de mercadorias procedentes do exterior ou a ele destinadas somente poderá efetuar-se em portos ou instalações portuárias alfandegados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>O alfandegamento de portos organizados e instalações portuárias destinados à movimentação e armazenagem de mercadorias importadas ou à exportação será efetuado após cumpridos os requisitos previstos na legislação específica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;Compete ao Ministério da Fazenda, por intermédio das repartições aduaneiras: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - cumprir e fazer cumprir a legislação que regula a entrada, a permanência e a saída de quaisquer bens ou mercadorias do País; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - fiscalizar a entrada, a permanência, a movimentação e a saída de pessoas, veículos, unidades de carga e mercadorias, sem prejuízo das atribuições das outras autoridades no porto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - exercer a vigilância aduaneira e reprimir o contrabando e o descaminho, sem prejuízo das atribuições de outros órgãos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - arrecadar os tributos incidentes sobre o comércio exterior; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - proceder ao despacho aduaneiro na importação e na exportação; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - proceder à apreensão de mercadoria em situação irregular, nos termos da legislação fiscal; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - autorizar a remoção de mercadorias da área portuária para outros locais, alfandegados ou não, nos casos e na forma prevista na legislação aduaneira; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIII - administrar a aplicação de regimes suspensivos, exonerativos ou devolutivos de tributos às mercadorias importadas ou a exportar; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IX - assegurar o cumprimento de tratados, acordos ou convenções internacionais no plano aduaneiro; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X - zelar pela observância da legislação aduaneira e pela defesa dos interesses fazendários nacionais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º No exercício de suas atribuições, a autoridade aduaneira terá livre acesso a quaisquer dependências do porto ou instalação portuária, às embarcações atracadas ou não e aos locais onde se encontrem mercadorias procedentes do exterior ou a ele destinadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º No exercício de suas atribuições, a autoridade aduaneira poderá, sempre que julgar necessário, requisitar documentos e informações e o apoio de força pública federal, estadual ou municipal. <BR><BR>
+<CENTER>CAPÍTULO V <BR>DA OPERAÇÃO PORTUÁRIA </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;A pré-qualificação do operador portuário será efetuada perante a administração do porto, conforme normas estabelecidas pelo poder concedente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As normas de pré-qualificação devem obedecer aos princípios da legalidade, impessoalidade, moralidade, publicidade e eficiência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A administração do porto terá prazo de 30 (trinta) dias, contado do pedido do interessado, para decidir sobre a pré-qualificação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Em caso de indeferimento do pedido mencionado no § 2º, caberá recurso, no prazo de 15 (quinze) dias, dirigido à Secretaria de Portos da Presidência da República, que deverá apreciá-lo no prazo de 30 (trinta) dias, nos termos do regulamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Considera-se pré-qualificada como operador portuário a administração do porto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;O operador portuário responderá perante: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a administração do porto pelos danos culposamente causados à infraestrutura, às instalações e ao equipamento de que a administração do porto seja titular, que se encontre a seu serviço ou sob sua guarda; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o proprietário ou consignatário da mercadoria pelas perdas e danos que ocorrerem durante as operações que realizar ou em decorrência delas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - o armador pelas avarias ocorridas na embarcação ou na mercadoria dada a transporte; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - o trabalhador portuário pela remuneração dos serviços prestados e respectivos encargos; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - o órgão local de gestão de mão de obra do trabalho avulso pelas contribuições não recolhidas; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - os órgãos competentes pelo recolhimento dos tributos incidentes sobre o trabalho portuário avulso; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - a autoridade aduaneira pelas mercadorias sujeitas a controle aduaneiro, no período em que lhe estejam confiadas ou quando tenha controle ou uso exclusivo de área onde se encontrem depositadas ou devam transitar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Compete à administração do porto responder pelas mercadorias a que se referem os incisos II e VII do <I>caput</I> quando estiverem em área por ela controlada e após o seu recebimento, conforme definido pelo regulamento de exploração do porto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;As atividades do operador portuário estão sujeitas às normas estabelecidas pela Antaq. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O operador portuário é titular e responsável pela coordenação das operações portuárias que efetuar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A atividade de movimentação de carga a bordo da embarcação deve ser executada de acordo com a instrução de seu comandante ou de seus prepostos, responsáveis pela segurança da embarcação nas atividades de arrumação ou retirada da carga, quanto à segurança da embarcação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;É dispensável a intervenção de operadores portuários em operações: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - que, por seus métodos de manipulação, suas características de automação ou mecanização, não requeiram a utilização de mão de obra ou possam ser executadas exclusivamente pela tripulação das embarcações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - de embarcações empregadas: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>em obras de serviços públicos nas vias aquáticas do País, executadas direta ou indiretamente pelo poder público; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>no transporte de gêneros de pequena lavoura e da pesca, para abastecer mercados de âmbito municipal; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>na navegação interior e auxiliar; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>no transporte de mercadorias líquidas a granel; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>no transporte de mercadorias sólidas a granel, quando a carga ou descarga for feita por aparelhos mecânicos automáticos, salvo quanto às atividades de rechego; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - relativas à movimentação de: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>cargas em área sob controle militar, quando realizadas por pessoal militar ou vinculado a organização militar; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>materiais por estaleiros de construção e reparação naval; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>peças sobressalentes, material de bordo, mantimentos e abastecimento de embarcações; e </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - relativas ao abastecimento de aguada, combustíveis e lubrificantes para a navegação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;As cooperativas formadas por trabalhadores portuários avulsos, registrados de acordo com esta Lei, poderão estabelecer- se como operadores portuários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;A operação portuária em instalações localizadas fora da área do porto organizado será disciplinada pelo titular da respectiva autorização, observadas as normas estabelecidas pelas autoridades marítima, aduaneira, sanitária, de saúde e de polícia marítima. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;O disposto nesta Lei não prejudica a aplicação das demais normas referentes ao transporte marítimo, inclusive as decorrentes de convenções internacionais ratificadas, enquanto vincularem internacionalmente o País. <BR><BR>
+<CENTER>CAPÍTULO VI <BR>DO TRABALHO PORTUÁRIO </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;Os operadores portuários devem constituir em cada porto organizado um órgão de gestão de mão de obra do trabalho portuário, destinado a: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - administrar o fornecimento da mão de obra do trabalhador portuário e do trabalhador portuário avulso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - manter, com exclusividade, o cadastro do trabalhador portuário e o registro do trabalhador portuário avulso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - treinar e habilitar profissionalmente o trabalhador portuário, inscrevendo-o no cadastro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - selecionar e registrar o trabalhador portuário avulso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - estabelecer o número de vagas, a forma e a periodicidade para acesso ao registro do trabalhador portuário avulso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - expedir os documentos de identificação do trabalhador portuário; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - arrecadar e repassar aos beneficiários os valores devidos pelos operadores portuários relativos à remuneração do trabalhador portuário avulso e aos correspondentes encargos fiscais, sociais e previdenciários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Caso celebrado contrato, acordo ou convenção coletiva de trabalho entre trabalhadores e tomadores de serviços, o disposto no instrumento precederá o órgão gestor e dispensará sua intervenção nas relações entre capital e trabalho no porto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;Compete ao órgão de gestão de mão de obra do trabalho portuário avulso: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - aplicar, quando couber, normas disciplinares previstas em lei, contrato, convenção ou acordo coletivo de trabalho, no caso de transgressão disciplinar, as seguintes penalidades: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>repreensão verbal ou por escrito; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>suspensão do registro pelo período de 10 (dez) a 30 (trinta) dias; ou </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>cancelamento do registro; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - promover: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>a formação profissional do trabalhador portuário e do trabalhador portuário avulso, adequando-a aos modernos processos de movimentação de carga e de operação de aparelhos e equipamentos portuários; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o treinamento multifuncional do trabalhador portuário e do trabalhador portuário avulso; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>a criação de programas de realocação e de cancelamento do registro, sem ônus para o trabalhador; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - arrecadar e repassar aos beneficiários contribuições destinadas a incentivar o cancelamento do registro e a aposentadoria voluntária; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - arrecadar as contribuições destinadas ao custeio do órgão; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - zelar pelas normas de saúde, higiene e segurança no trabalho portuário avulso; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - submeter à administração do porto propostas para aprimoramento da operação portuária e valorização econômica do porto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O órgão não responde por prejuízos causados pelos trabalhadores portuários avulsos aos tomadores dos seus serviços ou a terceiros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O órgão responde, solidariamente com os operadores portuários, pela remuneração devida ao trabalhador portuário avulso e pelas indenizações decorrentes de acidente de trabalho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O órgão pode exigir dos operadores portuários garantia prévia dos respectivos pagamentos, para atender a requisição de trabalhadores portuários avulsos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º As matérias constantes nas alíneas <EM>a</EM> e <EM>b</EM> do inciso II deste artigo serão discutidas em fórum permanente, composto, em caráter paritário, por representantes do governo e da sociedade civil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º A representação da sociedade civil no fórum previsto no&nbsp;§ 4º será paritária entre trabalhadores e empresários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;O exercício das atribuições previstas nos arts. 32 e 33 pelo órgão de gestão de mão de obra do trabalho portuário avulso não implica vínculo empregatício com trabalhador portuário avulso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;O órgão de gestão de mão de obra pode ceder trabalhador portuário avulso, em caráter permanente, ao operador portuário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;A gestão da mão de obra do trabalho portuário avulso deve observar as normas do contrato, convenção ou acordo coletivo de trabalho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;Deve ser constituída, no âmbito do órgão de gestão de mão de obra, comissão paritária para solucionar litígios decorrentes da aplicação do disposto nos arts. 32, 33 e 35. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Em caso de impasse, as partes devem recorrer à arbitragem de ofertas finais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Firmado o compromisso arbitral, não será admitida a desistência de qualquer das partes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Os árbitros devem ser escolhidos de comum acordo entre as partes, e o laudo arbitral proferido para solução da pendência constitui título executivo extrajudicial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º As ações relativas aos créditos decorrentes da relação de trabalho avulso prescrevem em 5 (cinco) anos até o limite de 2 (dois) anos após o cancelamento do registro ou do cadastro no órgão gestor de mão de obra. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;O órgão de gestão de mão de obra terá obrigatoriamente 1 (um) conselho de supervisão e 1 (uma) diretoria executiva. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O conselho de supervisão será composto por 3 (três) membros titulares e seus suplentes, indicados na forma do regulamento, e terá como competência: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - deliberar sobre a matéria contida no inciso V do <I>caput</I> do art. 32; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - editar as normas a que se refere o art. 42; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - fiscalizar a gestão dos diretores, examinar, a qualquer tempo, os livros e papéis do órgão e solicitar informações sobre quaisquer atos praticados pelos diretores ou seus prepostos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A diretoria executiva será composta por 1 (um) ou mais diretores, designados e destituíveis na forma do regulamento, cujo prazo de gestão será de 3 (três) anos, permitida a redesignação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Até 1/3 (um terço) dos membros do conselho de supervisão poderá ser designado para cargos de diretores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º No silêncio do estatuto ou contrato social, competirá a qualquer diretor a representação do órgão e a prática dos atos necessários ao seu funcionamento regular. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;O órgão de gestão de mão de obra é reputado de utilidade pública, sendo-lhe vedado ter fins lucrativos, prestar serviços a terceiros ou exercer qualquer atividade não vinculada à gestão de mão de obra. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;O trabalho portuário de capatazia, estiva, conferência de carga, conserto de carga, bloco e vigilância de embarcações, nos portos organizados, será realizado por trabalhadores portuários com vínculo empregatício por prazo indeterminado e por trabalhadores portuários avulsos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para os fins desta Lei, consideram-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - capatazia: atividade de movimentação de mercadorias nas instalações dentro do porto, compreendendo o recebimento, conferência, transporte interno, abertura de volumes para a conferência aduaneira, manipulação, arrumação e entrega, bem como o carregamento e descarga de embarcações, quando efetuados por aparelhamento portuário; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - estiva: atividade de movimentação de mercadorias nos conveses ou nos porões das embarcações principais ou auxiliares, incluindo o transbordo, arrumação, peação e despeação, bem como o carregamento e a descarga, quando realizados com equipamentos de bordo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - conferência de carga: contagem de volumes, anotação de suas características, procedência ou destino, verificação do estado das mercadorias, assistência à pesagem, conferência do manifesto e demais serviços correlatos, nas operações de carregamento e descarga de embarcações; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - conserto de carga: reparo e restauração das embalagens de mercadorias, nas operações de carregamento e descarga de embarcações, reembalagem, marcação, remarcação, carimbagem, etiquetagem, abertura de volumes para vistoria e posterior recomposição; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - vigilância de embarcações: atividade de fiscalização da entrada e saída de pessoas a bordo das embarcações atracadas ou fundeadas ao largo, bem como da movimentação de mercadorias nos portalós, rampas, porões, conveses, plataformas e em outros locais da embarcação; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - bloco: atividade de limpeza e conservação de embarcações mercantes e de seus tanques, incluindo batimento de ferrugem, pintura, reparos de pequena monta e serviços correlatos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A contratação de trabalhadores portuários de capatazia, bloco, estiva, conferência de carga, conserto de carga e vigilância de embarcações com vínculo empregatício por prazo indeterminado será feita exclusivamente dentre trabalhadores portuários avulsos registrados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O operador portuário, nas atividades a que alude o <I>caput</I>, não poderá locar ou tomar mão de obra sob o regime de trabalho temporário de que trata a Lei nº 6.019, de 3 de janeiro de 1974. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º As categorias previstas no <I>caput</I> constituem categorias profissionais diferenciadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;O órgão de gestão de mão de obra: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - organizará e manterá cadastro de trabalhadores portuários habilitados ao desempenho das atividades referidas no § 1º do art. 40; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - organizará e manterá o registro dos trabalhadores portuários avulsos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A inscrição no cadastro do trabalhador portuário dependerá exclusivamente de prévia habilitação profissional do trabalhador interessado, mediante treinamento realizado em entidade indicada pelo órgão de gestão de mão de obra. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O ingresso no registro do trabalhador portuário avulso depende de prévia seleção e inscrição no cadastro de que trata o inciso I do <I>caput</I>, obedecidas a disponibilidade de vagas e a ordem cronológica de inscrição no cadastro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A inscrição no cadastro e o registro do trabalhador portuário extinguem-se por morte ou cancelamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;A seleção e o registro do trabalhador portuário avulso serão feitos pelo órgão de gestão de mão de obra avulsa, de acordo com as normas estabelecidas em contrato, convenção ou acordo coletivo de trabalho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;A remuneração, a definição das funções, a composição dos ternos, a multifuncionalidade e as demais condições do trabalho avulso serão objeto de negociação entre as entidades representativas dos trabalhadores portuários avulsos e dos operadores portuários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A negociação prevista no <I>caput</I> contemplará a garantia de renda mínima inserida no item 2 do Artigo 2 da Convenção nº 137 da Organização Internacional do Trabalho - OIT. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;É facultada aos titulares de instalações portuárias sujeitas a regime de autorização a contratação de trabalhadores a prazo indeterminado, observado o disposto no contrato, convenção ou acordo coletivo de trabalho. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;(VETADO). <BR><BR>
+<CENTER>CAPÍTULO VII <BR>DAS INFRAÇÕES E PENALIDADES </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Constitui infração toda ação ou omissão, voluntária ou involuntária, que importe em: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - realização de operações portuárias com infringência ao disposto nesta Lei ou com inobservância dos regulamentos do porto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - recusa injustificada, por parte do órgão de gestão de mão de obra, da distribuição de trabalhadores a qualquer operador portuário; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - utilização de terrenos, área, equipamentos e instalações portuárias, dentro ou fora do porto organizado, com desvio de finalidade ou com desrespeito à lei ou aos regulamentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Responde pela infração, conjunta ou isoladamente, qualquer pessoa física ou jurídica que, intervindo na operação portuária, concorra para sua prática ou dela se beneficie. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;As infrações estão sujeitas às seguintes penas, aplicáveis separada ou cumulativamente, de acordo com a gravidade da falta: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - advertência; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - multa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - proibição de ingresso na área do porto por período de 30 (trinta) a 180 (cento e oitenta) dias; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - suspensão da atividade de operador portuário, pelo período de 30 (trinta) a 180 (cento e oitenta) dias; ou <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - cancelamento do credenciamento do operador portuário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Sem prejuízo do disposto nesta Lei, aplicam- se subsidiariamente às infrações previstas no art. 46 as penalidades estabelecidas na Lei nº 10.233, de 5 de junho de 2001, separada ou cumulativamente, de acordo com a gravidade da falta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;Apurada, no mesmo processo, a prática de 2 (duas) ou mais infrações pela mesma pessoa física ou jurídica, aplicam-se cumulativamente as penas a elas cominadas, se as infrações não forem idênticas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Serão reunidos em um único processo os diversos autos ou representações de infração continuada, para aplicação da pena. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Serão consideradas continuadas as infrações quando se tratar de repetição de falta ainda não apurada ou objeto do processo, de cuja instauração o infrator não tenha conhecimento, por meio de intimação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;Na falta de pagamento de multa no prazo de 30 (trinta) dias, contado da ciência pelo infrator da decisão final que impuser a penalidade, será realizado processo de execução. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;As importâncias pecuniárias resultantes da aplicação das multas previstas nesta Lei reverterão para a Antaq, na forma do inciso V do <I>caput</I> do art. 77 da Lei nº 10.233, de 5 de junho de 2001. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;O descumprimento do disposto nos arts. 36, 39 e 42 desta Lei sujeitará o infrator à multa prevista no inciso I do art. 10 da Lei nº 9.719, de 27 de novembro de 1998, sem prejuízo das demais sanções cabíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;O descumprimento do disposto no <I>caput</I> e no § 3º do art. 40 desta Lei sujeitará o infrator à multa prevista no inciso III do art. 10 da Lei nº 9.719, de 27 de novembro de 1998, sem prejuízo das demais sanções cabíveis. <BR><BR>
+<CENTER>CAPÍTULO VIII <BR>DO PROGRAMA NACIONAL DE DRAGAGEM PORTUÁRIA E <BR>HIDROVIÁRIA II </CENTER><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;Fica instituído o Programa Nacional de Dragagem Portuária e Hidroviária II, a ser implantado pela Secretaria de Portos da Presidência da República e pelo Ministério dos Transportes, nas respectivas áreas de atuação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O Programa de que trata o <I>caput</I> abrange, dentre outras atividades: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - as obras e serviços de engenharia de dragagem para manutenção ou ampliação de áreas portuárias e de hidrovias, inclusive canais de navegação, bacias de evolução e de fundeio, e berços de atracação, compreendendo a remoção do material submerso e a escavação ou derrocamento do leito; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - o serviço de sinalização e balizamento, incluindo a aquisição, instalação, reposição, manutenção e modernização de sinais náuticos e equipamentos necessários às hidrovias e ao acesso aos portos e terminais portuários; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - o monitoramento ambiental; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - o gerenciamento da execução dos serviços e obras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Para fins do Programa de que trata o <I>caput</I>, consideram-se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - dragagem: obra ou serviço de engenharia que consiste na limpeza, desobstrução, remoção, derrocamento ou escavação de material do fundo de rios, lagos, mares, baías e canais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - draga: equipamento especializado acoplado à embarcação ou à plataforma fixa, móvel ou flutuante, utilizado para execução de obras ou serviços de dragagem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - material dragado: material retirado ou deslocado do leito dos corpos d'água decorrente da atividade de dragagem e transferido para local de despejo autorizado pelo órgão competente; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - empresa de dragagem: pessoa jurídica que tenha por objeto a realização de obra ou serviço de dragagem com a utilização ou não de embarcação; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - sinalização e balizamento: sinais náuticos para o auxílio à navegação e à transmissão de informações ao navegante, de forma a possibilitar posicionamento seguro de acesso e tráfego. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;A dragagem por resultado compreende a contratação de obras de engenharia destinadas ao aprofundamento, alargamento ou expansão de áreas portuárias e de hidrovias, inclusive canais de navegação, bacias de evolução e de fundeio e berços de atracação, bem como os serviços de sinalização, balizamento, monitoramento ambiental e outros com o objetivo de manter as condições de profundidade e segurança estabelecidas no projeto implantado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º As obras ou serviços de dragagem por resultado poderão contemplar mais de um porto, num mesmo contrato, quando essa medida for mais vantajosa para a administração pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Na contratação de dragagem por resultado, é obrigatória a prestação de garantia pelo contratado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º A duração dos contratos de que trata este artigo será de até 10 (dez) anos, improrrogável. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º As contratações das obras e serviços no âmbito do Programa Nacional de Dragagem Portuária e Hidroviária II poderão ser feitas por meio de licitações internacionais e utilizar o Regime Diferenciado de Contratações Públicas, de que trata a Lei nº 12.462, de 4 de agosto de 2011. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º A administração pública poderá contratar empresa para gerenciar e auditar os serviços e obras contratados na forma do <I>caput</I>. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;As embarcações destinadas à dragagem sujeitam-se às normas específicas de segurança da navegação estabelecidas pela autoridade marítima e não se submetem ao disposto na Lei nº 9.432, de 8 de janeiro de 1997. <BR><BR>
+<CENTER>CAPÍTULO IX <BR>DISPOSIÇÕES FINAIS E TRANSITÓRIAS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;Os contratos de arrendamento em vigor firmados sob a Lei n° 8.630, de 25 de fevereiro de 1993, que possuam previsão expressa de prorrogação ainda não realizada, poderão ter sua prorrogação antecipada, a critério do poder concedente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A prorrogação antecipada de que trata o <I>caput</I> dependerá da aceitação expressa de obrigação de realizar investimentos, segundo plano elaborado pelo arrendatário e aprovado pelo poder concedente em até 60 (sessenta) dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Caso, a critério do poder concedente, a antecipação das prorrogações de que trata o <I>caput</I> não seja efetivada, tal decisão não implica obrigatoriamente na recusa da prorrogação contratual prevista originalmente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º O Poder Executivo deverá encaminhar ao Congresso Nacional, até o último dia útil do mês de março de cada ano, relatório detalhado sobre a implementação das iniciativas tomadas com base nesta Lei, incluindo, pelo menos, as seguintes informações: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - relação dos contratos de arrendamento e concessão em vigor até 31 de dezembro do ano anterior, por porto organizado, indicando data dos contratos, empresa detentora, objeto detalhado, área, prazo de vigência e situação de adimplemento com relação às cláusulas contratuais; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - relação das instalações portuárias exploradas mediante autorizações em vigor até 31 de dezembro do ano anterior, segundo a localização, se dentro ou fora do porto organizado, indicando data da autorização, empresa detentora, objeto detalhado, área, prazo de vigência e situação de adimplemento com relação às cláusulas dos termos de adesão e autorização; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - relação dos contratos licitados no ano anterior com base no disposto no art. 56 desta Lei, por porto organizado, indicando data do contrato, modalidade da licitação, empresa detentora, objeto, área, prazo de vigência e valor dos investimentos realizados e previstos nos contratos de concessão ou arrendamento; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - relação dos termos de autorização e os contratos de adesão adaptados no ano anterior, com base no disposto nos arts. 58 e 59 desta Lei, indicando data do contrato de autorização, empresa detentora, objeto, área, prazo de vigência e valor dos investimentos realizados e previstos nos termos de adesão e autorização; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - relação das instalações portuárias operadas no ano anterior com base no previsto no art. 7º desta Lei, indicando empresa concessionária, empresa que utiliza efetivamente a instalação portuária, motivo e justificativa da utilização por interessado não detentor do arrendamento ou concessão e prazo de utilização. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;Os termos de autorização e os contratos de adesão em vigor deverão ser adaptados ao disposto nesta Lei, em especial ao previsto nos §§ 1º a 4º do art. 8º, independentemente de chamada pública ou processo seletivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A Antaq deverá promover a adaptação de que trata o <I>caput</I> no prazo de 1 (um) ano, contado da data de publicação desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;As instalações portuárias enumeradas nos incisos I a IV do <I>caput</I> do art. 8º, localizadas dentro da área do porto organizado, terão assegurada a continuidade das suas atividades, desde que realizada a adaptação nos termos do art. 58. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Os pedidos de autorização para exploração de instalações portuárias enumeradas nos incisos I a IV do art. 8º, localizadas dentro da área do porto organizado, protocolados na Antaq até dezembro de 2012, poderão ser deferidos pelo poder concedente, desde que tenha sido comprovado até a referida data o domínio útil da área. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;Os procedimentos licitatórios para contratação de dragagem homologados e os contratos de dragagem em vigor na data da publicação desta Lei permanecem regidos pelo disposto na Lei nº 11.610, de 12 de dezembro de 2007. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61.&nbsp;Até a publicação do regulamento previsto nesta Lei, ficam mantidas as regras para composição dos conselhos da autoridade portuária e dos conselhos de supervisão e diretorias executivas dos órgãos de gestão de mão de obra. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;O inadimplemento, pelas concessionárias, arrendatárias, autorizatárias e operadoras portuárias no recolhimento de tarifas portuárias e outras obrigações financeiras perante a administração do porto e a Antaq, assim declarado em decisão final, impossibilita a inadimplente de celebrar ou prorrogar contratos de concessão e arrendamento, bem como obter novas autorizações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Para dirimir litígios relativos aos débitos a que se refere o <I>caput</I>, poderá ser utilizada a arbitragem, nos termos da Lei nº 9.307, de 23 de setembro de 1996. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O impedimento previsto no <I>caput</I> também se aplica às pessoas jurídicas, direta ou indiretamente, controladoras, controladas, coligadas, ou de controlador comum com a inadimplente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;As Companhias Docas observarão regulamento simplificado para contratação de serviços e aquisição de bens, observados os princípios constitucionais da publicidade, impessoalidade, moralidade, economicidade e eficiência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;As Companhias Docas firmarão com a Secretaria de Portos da Presidência da República compromissos de metas e desempenho empresarial que estabelecerão, nos termos do regulamento: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - objetivos, metas e resultados a serem atingidos, e prazos para sua consecução; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - indicadores e critérios de avaliação de desempenho; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - retribuição adicional em virtude do seu cumprimento; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - critérios para a profissionalização da gestão das Docas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;Ficam transferidas à Secretaria de Portos da Presidência da República as competências atribuídas ao Ministério dos Transportes e ao Departamento Nacional de Infraestrutura de Transportes - DNIT em leis gerais e específicas relativas a portos fluviais e lacustres, exceto as competências relativas a instalações portuárias públicas de pequeno porte. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 66.&nbsp;Aplica-se subsidiariamente às licitações de concessão de porto organizado e de arrendamento de instalação portuária o disposto nas Leis nºs 12.462, de 4 de agosto de 2011, 8.987, de 13 de fevereiro de 1995, e 8.666, de 21 de junho de 1993. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 67.&nbsp;Aplica-se subsidiariamente a esta Lei o disposto na Lei nº 10.233, de 5 de junho de 2001, em especial no que se refere às competências e atribuições da Antaq. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 68.&nbsp;As poligonais de áreas de portos organizados que não atendam ao disposto no art. 15 deverão ser adaptadas no prazo de 1 (um) ano. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 69.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 70.&nbsp;O art. 29 da Lei nº 5.025, de 10 de junho de 1966, passa a vigorar com a seguinte redação: <BR><BR>
+<DIR>"Art. 29.&nbsp;Os serviços públicos necessários à importação e exportação deverão ser centralizados pela administração pública em todos os portos organizados. <BR><BR>§ 1º Os serviços de que trata o <I>caput</I> serão prestados em horário corrido e coincidente com a operação de cada porto, em turnos, inclusive aos domingos e feriados. <BR><BR>§ 2º O horário previsto no § 1º poderá ser reduzido por ato do Poder Executivo, desde que não haja prejuízo à segurança nacional e à operação portuária. <BR>..............................................................................................." (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 71.&nbsp;A Lei nº 10.233, de 5 de junho de 2001, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 13.&nbsp;Ressalvado o disposto em legislação específica, as outorgas a que se refere o inciso I do <I>caput</I> do art. 12 serão realizadas sob a forma de: <BR>..............................................................................................." (NR)</DIR>
+<DIR>"Art. 14.&nbsp;Ressalvado o disposto em legislação específica, o disposto no art. 13 aplica-se conforme as seguintes diretrizes: <BR>........................................................................................................... <BR><BR>III - depende de autorização: <BR>......................................................................................................... </DIR>
+<DIR><EM>c) </EM>a construção e a exploração das instalações portuárias de que trata o art. 8º da Lei na qual foi convertida a Medida Provisória nº 595, de 6 de dezembro de 2012; <BR>......................................................................................................... </DIR>
+<DIR><EM>g) </EM>(revogada); </DIR>
+<DIR><EM>h) </EM>(revogada); <BR>..............................................................................................&nbsp; " (NR)<BR><BR>"Art. 20.&nbsp;.................................................................................. <BR><BR>I - implementar, nas respectivas esferas de atuação, as políticas formuladas pelo Conselho Nacional de Integração de Políticas de Transporte, pelo Ministério dos Transportes e pela Secretaria de Portos da Presidência da República, nas respectivas áreas de competência, segundo os princípios e diretrizes estabelecidos nesta Lei; <BR>.............................................................................................." (NR)</DIR>
+<DIR>"Art. 21.&nbsp;Ficam instituídas a Agência Nacional de Transportes Terrestres - ANTT e a Agência Nacional de Transportes Aquaviários - ANTAQ, entidades integrantes da administração federal indireta, submetidas ao regime autárquico especial e vinculadas, respectivamente, ao Ministério dos Transportes e à Secretaria de Portos da Presidência da República, nos termos desta Lei. <BR>............................................................................................." (NR)</DIR>
+<DIR>"Art. 23.&nbsp;Constituem a esfera de atuação da Antaq: <BR>........................................................................................................ <BR><BR>II - os portos organizados e as instalações portuárias neles localizadas; <BR><BR>III - as instalações portuárias de que trata o art. 8º da Lei na qual foi convertida a Medida Provisória nº 595, de 6 de dezembro de 2012; <BR>......................................................................................................... <BR><BR>§ 1º A Antaq articular-se-á com órgãos e entidades da administração, para resolução das interfaces do transporte aquaviário com as outras modalidades de transporte, com a finalidade de promover a movimentação intermodal mais econômica e segura de pessoas e bens. <BR>.............................................................................................." (NR)</DIR>
+<DIR>"Art. 27.&nbsp;................................................................................. <BR><BR>I - promover estudos específicos de demanda de transporte aquaviário e de atividades portuárias; <BR>.......................................................................................................... <BR><BR>III - propor ao Ministério dos Transportes o plano geral de outorgas de exploração da infraestrutura aquaviária e de prestação de serviços de transporte aquaviário; <BR><BR><EM>a) </EM>(revogada);<BR><EM>b) </EM>(revogada); <BR>........................................................................................................&nbsp;<BR><BR>VII - promover as revisões e os reajustes das tarifas portuárias, assegurada a comunicação prévia, com antecedência mínima de 15 (quinze) dias úteis, ao poder concedente e ao Ministério da Fazenda; <BR>.......................................................................................................... <BR><BR>XIV - estabelecer normas e padrões a serem observados pelas administrações portuárias, concessionários, arrendatários, autorizatários e operadores portuários, nos termos da Lei na qual foi convertida a Medida Provisória nº 595, de 6 de dezembro de 2012; <BR><BR>XV - elaborar editais e instrumentos de convocação e promover os procedimentos de licitação e seleção para concessão, arrendamento ou autorização da exploração de portos organizados ou instalações portuárias, de acordo com as diretrizes do poder concedente, em obediência ao disposto na Lei na qual foi convertida a Medida Provisória nº 595, de 6 de dezembro de 2012; <BR><BR>XVI - cumprir e fazer cumprir as cláusulas e condições dos contratos de concessão de porto organizado ou dos contratos de arrendamento de instalações portuárias quanto à manutenção e reposição dos bens e equipamentos reversíveis à União de que trata o inciso VIII do <I>caput</I> do art. 5º da Lei na qual foi convertida a Medida Provisória nº 595, de 6 de dezembro de 2012; <BR>.......................................................................................................... <BR><BR>XXII - fiscalizar a execução dos contratos de adesão das autorizações de instalação portuária de que trata o art. 8º da Lei na qual foi convertida a Medida Provisória nº 595, de 6 de dezembro de 2012;<BR>......................................................................................................... <BR><BR>XXV - celebrar atos de outorga de concessão para a exploração da infraestrutura aquaviária, gerindo e fiscalizando os respectivos contratos e demais instrumentos administrativos; <BR><BR>XXVI - fiscalizar a execução dos contratos de concessão de porto organizado e de arrendamento de instalação portuária, em conformidade com o disposto na Lei na qual foi convertida a Medida Provisória nº 595, de 6 de dezembro de 2012; <BR><BR>XXVII - (revogado). <BR><BR>§ 1º ......................................................................................... <BR>................................................................................................... <BR><BR>II - participar de foros internacionais, sob a coordenação do Poder Executivo; e <BR>........................................................................................................ <BR><BR>§ 3º (Revogado). <BR><BR>§ 4º (Revogado)." (NR)</DIR>
+<DIR>"Art. 33.&nbsp;Ressalvado o disposto em legislação específica, os atos de outorga de autorização, concessão ou permissão editados e celebrados pela ANTT e pela Antaq obedecerão ao disposto na Lei nº 8.987, de 13 de fevereiro de 1995, nas Subseções II, III, IV e V desta Seção e nas regulamentações complementares editadas pelas Agências." (NR)</DIR>
+<DIR>"Art. 34-A.&nbsp;............................................................................. <BR>.................................................................................................. <BR><BR>§ 2º O edital de licitação indicará obrigatoriamente, ressalvado o disposto em legislação específica: <BR>......................................................................................." (NR)</DIR>
+<DIR>"Art. 35.&nbsp;O contrato de concessão deverá refletir fielmente as condições do edital e da proposta vencedora e terá como cláusulas essenciais, ressalvado o disposto em legislação específica, as relativas a: <BR>............................................................................................" (NR)</DIR>
+<DIR>"Art. 43.&nbsp;A autorização, ressalvado o disposto em legislação específica, será outorgada segundo as diretrizes estabelecidas nos arts. 13 e 14 e apresenta as seguintes características: <BR>............................................................................................" (NR)</DIR>
+<DIR>"Art. 44.&nbsp;A autorização, ressalvado o disposto em legislação específica, será disciplinada em regulamento próprio e será outorgada mediante termo que indicará: <BR>............................................................................................." (NR)</DIR>
+<DIR>"Art. 51-A.&nbsp;Fica atribuída à Antaq a competência de fiscalização das atividades desenvolvidas pelas administrações de portos organizados, pelos operadores portuários e pelas arrendatárias ou autorizatárias de instalações portuárias, observado o disposto na Lei na qual foi convertida a Medida Provisória nº 595, de 6 de dezembro de 2012. <BR><BR>§ 1º Na atribuição citada no <I>caput</I> incluem-se as administrações dos portos objeto de convênios de delegação celebrados nos termos da Lei nº 9.277, de 10 de maio de 1996. <BR><BR>§ 2º A Antaq prestará ao Ministério dos Transportes ou à Secretaria de Portos da Presidência da República todo apoio necessário à celebração dos convênios de delegação." (NR)</DIR>
+<DIR>"Art. 56.&nbsp;.................................................................................. <BR><BR><I>Parágrafo único. </I>Cabe ao Ministro de Estado dos Transportes ou ao Ministro de Estado Chefe da Secretaria de Portos da Presidência da República, conforme o caso, instaurar o processo administrativo disciplinar, competindo ao Presidente da República determinar o afastamento preventivo, quando for o caso, e proferir o julgamento." (NR)</DIR>
+<DIR>"Art. 67.&nbsp;As decisões das Diretorias serão tomadas pelo voto da maioria absoluta de seus membros, cabendo ao Diretor-Geral o voto de qualidade, e serão registradas em atas. <BR><BR><I>Parágrafo único. </I>As datas, as pautas e as atas das reuniões de Diretoria, assim como os documentos que as instruam, deverão ser objeto de ampla publicidade, inclusive por meio da internet, na forma do regulamento." (NR)</DIR>
+<DIR>"Art. 78.&nbsp;A ANTT e a Antaq submeterão ao Ministério dos Transportes e à Secretaria de Portos da Presidência da República, respectivamente, suas propostas orçamentárias anuais, nos termos da legislação em vigor. <BR>............................................................................................." (NR)</DIR>
+<DIR>"Art. 78-A.&nbsp;............................................................................ <BR><BR>§ 1º Na aplicação das sanções referidas no <I>caput</I>, a Antaq observará o disposto na Lei na qual foi convertida a Medida Provisória nº 595, de 6 de dezembro de 2012. <BR><BR>§ 2º A aplicação da sanção prevista no inciso IV do <I>caput</I>, quando se tratar de concessão de porto organizado ou arrendamento e autorização de instalação portuária, caberá ao poder concedente, mediante proposta da Antaq." (NR)</DIR>
+<DIR>"Art. 81.&nbsp;.................................................................................. <BR>.................................................................................................... <BR><BR>III - instalações e vias de transbordo e de interface intermodal, exceto as portuárias; <BR><BR>IV - (revogado)." (NR)</DIR>
+<DIR>"Art. 82.&nbsp;................................................................................... <BR>.................................................................................................... <BR><BR>§ 2º No exercício das atribuições previstas neste artigo e relativas a vias navegáveis, o DNIT observará as prerrogativas específicas da autoridade marítima. <BR>............................................................................................" (NR)</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 72.&nbsp;A Lei nº 10.683, de 28 de maio de 2003, passa a vigorar com as seguintes alterações: <BR><BR>
+<DIR>"Art. 24-A.&nbsp;À Secretaria de Portos compete assessorar direta e imediatamente o Presidente da República na formulação de políticas e diretrizes para o desenvolvimento e o fomento do setor de portos e instalações portuárias marítimos, fluviais e lacustres e, especialmente, promover a execução e a avaliação de medidas, programas e projetos de apoio ao desenvolvimento da infraestrutura e da superestrutura dos portos e instalações portuárias marítimos, fluviais e lacustres. <BR>......................................................................................................... <BR><BR>§ 2º ........................................................................................ <BR>................................................................................................. <BR><BR>III - a elaboração dos planos gerais de outorgas;<BR>.......................................................................................................... <BR><BR>V - o desenvolvimento da infraestrutura e da superestrutura aquaviária dos portos e instalações portuárias sob sua esfera de atuação, com a finalidade de promover a segurança e a eficiência do transporte aquaviário de cargas e de passageiros. <BR>............................................................................................." (NR)</DIR>
+<DIR>"Art. 27.&nbsp;.................................................................................. <BR>.................................................................................................. <BR><BR>XXII - .................................................................................... </DIR>
+<DIR><EM>a) </EM>política nacional de transportes ferroviário, rodoviário e aquaviário;<BR><EM>b) </EM>marinha mercante e vias navegáveis; e <BR><EM>c) </EM>participação na coordenação dos transportes aeroviários; <BR>............................................................................................." (NR)&nbsp;<BR><BR></DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 73.&nbsp;A Lei nº 9.719, de 27 de novembro de 1998, passa a vigorar acrescida do seguinte art. 10-A: <BR><BR>
+<DIR>"Art. 10-A.&nbsp;É assegurado, na forma do regulamento, benefício assistencial mensal, de até 1 (um) salário mínimo, aos trabalhadores portuários avulsos, com mais de 60 (sessenta) anos, que não cumprirem os requisitos para a aquisição das modalidades de aposentadoria previstas nos arts. 42, 48, 52 e 57 da Lei nº 8.213, de 24 de julho de 1991, e que não possuam meios para prover a sua subsistência. <BR><BR><I>Parágrafo único. </I>O benefício de que trata este artigo não pode ser acumulado pelo beneficiário com qualquer outro no âmbito da seguridade social ou de outro regime, salvo os da assistência médica e da pensão especial de natureza indenizatória."</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 74.&nbsp;(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 75.&nbsp;Esta Lei entra em vigor na data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 76.&nbsp;Ficam revogados: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - a Lei nº 8.630, de 25 de fevereiro de 1993; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - a Lei nº 11.610, de 12 de dezembro de 2007; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - o art. 21 da Lei nº 11.314, de 3 de julho de 2006; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - o art. 14 da Lei nº 11.518, de 5 de setembro de 2007; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - os seguintes dispositivos da Lei nº 10.233, de 5 de junho de 2001: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>as alíneas <EM>g</EM> e <EM>h</EM> do inciso III do <I>caput</I> do art. 14; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>as alíneas <EM>a</EM> e <EM>b</EM> do inciso III do <I>caput</I> do art. 27; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>o inciso XXVII do <I>caput</I> do art. 27; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>os §§ 3º e 4º do art. 27; e </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>o inciso IV do <I>caput</I> do art. 81; e </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - o art. 11 da Lei nº 9.719, de 27 de novembro de 1998. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 5 de junho de 2013; 192º da Independência e 125º da República. </P>
+<P>DILMA ROUSSEFF <BR>José Eduardo Cardozo <BR>Guido Mantega <BR>César Borges <BR>Manoel Dias <BR>Miriam Belchior <BR>Garibaldi Alves Filho <BR>Luis Inácio Lucena Adams <BR>Mário Lima Júnior </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 - Edição Extra de 05/06/2013
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1 - Edição Extra
+                                                         - 5/6/2013, Página 1 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

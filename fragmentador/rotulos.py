@@ -28,6 +28,10 @@ PADROES: list[tuple[Tipo, re.Pattern]] = [
     # dentro do texto — por exemplo, o conteúdo de uma alínea de revogação.
     (Tipo.ARTIGO, re.compile(
         rf"^(?:Art|ART)(?:igo|IGO)?\s*\.?\s*(?P<num>{_NUM_ARTIGO})\s*[-–—.]?\s*(?P<resto>.*)$")),
+    # Lei de um só artigo: "Artigo unico." na grafia antiga, e também
+    # "Art. único." e "Artigo único:". Sem isto a lei inteira ficaria no preâmbulo.
+    (Tipo.ARTIGO, re.compile(
+        r"^(?:Art|ART)(?:igo|IGO)?\s*\.?\s*(?P<num>[ÚUúu]nico|[ÚU]NICO)\s*[-–—.:]?\s*(?P<resto>.*)$")),
     (Tipo.PARAGRAFO, re.compile(
         r"^(?P<num>Par[áa]grafo\s+[úu]nico)\s*[-–—.:]?\s*(?P<resto>.*)$", re.I)),
     (Tipo.PARAGRAFO, re.compile(
@@ -122,7 +126,8 @@ def reconhecer(linha: str) -> tuple[Tipo, str | None, str] | None:
         if not m:
             continue
         num = m.group("num")
-        if tipo is Tipo.PARAGRAFO and num.lower().startswith("par"):
+        if _sem_acento(num).lower().endswith("unico"):
+            # "Parágrafo único", "Artigo unico": uma só forma na saída.
             num = "único"
         else:
             num = _limpar_numero(num)

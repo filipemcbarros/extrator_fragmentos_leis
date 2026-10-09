@@ -1,0 +1,958 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 4.595, DE 31 DE DEZEMBRO DE 1964 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sôbre a Política e as Instituições Monetárias, Bancárias e Creditícias, cria o Conselho Monetário Nacional e dá outras providências. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- CSS do portal-tema: necessário para o botão de compartilhamento -->
+<link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 4.595, DE 31 DE DEZEMBRO DE 1964 - Publicação Original</h2>
+
+			<div class="g-contexto-compartilhamento g-contexto-compartilhamento--extendido g-impressao">
+				<!-- Elemento propositalmente vazio, preenchido pelo JS de compartilhamento do portal -->
+			</div>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-4595-31-dezembro-1964-353886-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-4595-31-dezembro-1964-353886-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-4595-31-dezembro-1964-353886-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-4595-31-dezembro-1964-353886-retificacao-30924-pl.html">Retificação</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=170144">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-4595-31-dezembro-1964-353886-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 4.595, DE 31 DE DEZEMBRO DE 1964</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sôbre a Política e as Instituições Monetárias, Bancárias e Creditícias, cria o Conselho Monetário Nacional e dá outras providências. 
+						</p>
+				
+						<div class="texto">
+							O PRESIDENTE DA REPÚBLICA, <BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei: <BR><BR>
+<CENTER><B>CAPÍTULO I </CENTER></B>
+<CENTER><B>Do Sistema Financeiro Nacional </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;O Sistema Financeiro Nacional, estruturado e regulado pela presente Lei, será constituído: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - do Conselho Monetário Nacional; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - do Banco Central da República do Brasil; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - do Banco do Brasil S.A.; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - do Banco Nacional do Desenvolvimento Econômico; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - das demais instituições financeiras públicas e privadas. <BR><BR>
+<CENTER><B>CAPÍTULO II </CENTER></B>
+<CENTER><B>Do Conselho Monetário Nacional </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;Fica extinto o Conselho da atual Superintendência da Moeda e do Crédito, e criado, em substituição, o Conselho Monetário Nacional, com a finalidade de formular a política da moeda e do crédito como previsto nesta lei, objetivando o progresso econômico e social do País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;A política do Conselho Monetário Nacional objetivará: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Adaptar o volume dos meios de pagamento às reais necessidades da economia nacional e seu processo de desenvolvimento; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - regular o valor interno da moeda, para tanto prevenindo ou corrigindo os surtos inflacionários ou deflacionários de origem interna ou externa, as depressões econômicas e outros desequilíbrios oriundos de fenômenos conjunturais; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Regular o valor externo da moeda e o equilíbrio no balanço de pagamento do País, tendo em vista a melhor utilização dos recursos em moeda estrangeira; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Orientar a aplicação dos recursos das instituições financeiras, quer públicas, quer privadas; tendo em vista propiciar, nas diferentes regiões do País, condições favoráveis ao desenvolvimento harmônico da economia nacional; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - Propiciar o aperfeiçoamento das instituições e dos instrumentos financeiros, com vistas à maior eficiência do sistema de pagamentos e de mobilização de recursos; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - Zelar pela liquidez e solvência das instituições financeiras; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - Coordenar as políticas monetária, creditícia, orçamentária, fiscal e da dívida pública, interna e externa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;Compete privativamente ao Conselho Monetário Nacional: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Autorizar as emissões de papel-moeda (VETADO) as quais ficarão na prévia dependência de autorização legislativa, quando se destinarem ao financiamento direto, pelo Banco Central da República do Brasil, das operações de crédito com o Tesouro Nacional, nos termos do artigo 49 desta Lei.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; O Conselho Monetário Nacional pode, ainda autorizar o Banco Central da República do Brasil a emitir, anualmente, até o limite de 10% (dez por cento) dos meios de pagamentos existentes a 31 de dezembro do ano anterior, para atender as exigências das atividades produtivas e da circulação da riqueza do País, devendo, porém, solicitar autorização do Poder Legislativo, mediante Mensagem do Presidente da República, para as emissões que, justificadamente, se tornarem necessárias além daquele limite.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Quando necessidades urgentes e imprevistas para o financiamento dessas atividades o determinarem, pode o Conselho Monetário Nacional autorizar as emissões que se fizerem indispensáveis, solicitando imediatamente, através de Mensagem do Presidente da República, homologação do Poder Legislativo para as emissões assim realizadas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Estabelecer condições para que o Banco Central da República do Brasil emita moeda-papel (VETADO) de curso forçado, nos têrmos e limites decorrentes desta Lei, bem como as normas reguladoras do meio circulante; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Aprovar os orçamentos monetários, preparados pelo Banco Central da República do Brasil, por meio dos quais se estimarão as necessidades globais de moeda e crédito; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Determinar as características gerais (VETADO) das cédulas e das moedas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - Fixar as diretrizes e normas (VETADO) da política cambial, inclusive compra e venda de ouro e quaisquer operações em moeda estrangeira; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - Disciplinar o crédito em tôdas as suas modalidades e as operações creditícias em tôdas as suas formas, inclusive aceites, avais e prestações de quaisquer garantias por parte das instituições financeiras; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - Coordenar a política de que trata o art. 3º desta lei com a de investimentos do Gôverno Federal; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - Regular a constituição, funcionamento e fiscalização dos que exercerem atividades subordinadas a esta lei, bem como a aplicação das penalidades previstas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - Limitar, sempre que necessário, as taxas de juros, descontos, comissões e qualquer outra forma de remuneração de operações e serviços bancários ou financeiros, inclusive os prestados pelo Banco Central da República do Brasil, assegurando taxas favorecidas aos financiamentos que se destinem a promover:&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - recuperação e fertilização do solo;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - reflorestamento;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - combate a epizootias e pragas, nas atividades rurais;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - eletrificação rural;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - mecanização;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - irrigação;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - investimentos indispensáveis às atividades agropecuárias; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - Determinar a percentagem máxima dos recursos que as instituições financeiras poderão emprestar a um mesmo cliente ou grupo de emprêsas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - Estipular índices e outras condições técnicas sôbre encaixes, mobilizações e outras relações patrimoniais, a serem observadas pelas instituições financeiras; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XII - Expedir normas gerais de contabilidade e estatística a serem observadas pelas instituições financeiras; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIII - Delimitar, com periodicidade não inferior a dois anos o capital mínimo das instituições financeiras privadas, levando em conta sua natureza, bem como a localização de suas sedes e agências ou filiais; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIV - Determinar recolhimento (VETADO) de até 25% (vinte e cinco por cento) do total dos depósitos das instituições financeiras, seja na forma de subscrição de letras ou obrigações do Tesouro Nacional ou compra de títulos da Dívida Pública Federal, até 50% do montante global devido, seja através de recolhimento em espécie, em ambos os casos entregues ao Banco Central da República do Brasil, na forma e condições que o Conselho Monetário Nacional determinar podendo êste:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>adotar percentagens diferentes em função: </TD></TR></TBODY></TABLE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - das regiões geo-econômicas;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - das prioridades que atribuir às aplicações;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - da natureza das instituições financeiras; <BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>(VETADO). </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>determinar percentuais que não serão recolhidos, desde que tenham sido reaplicados em financiamentos à agricultura, sob juros favorecidos e outras condições fixadas pelo Conselho Monetário Nacional. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XV - Estabelecer para as instituições financeiras públicas, a dedução dos depósitos de pessoas jurídicas de direito público que lhes detenham o contrôle acionário, bem como dos das respectivas autarquias e sociedades de economia mista, no cálculo a que se refere o inciso anterior; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XVI - Enviar obrigatòriamente ao Congresso Nacional, até o último dia do mês subsequente, relatório e mapas demonstrativos da aplicação dos recolhimentos compulsórios, (VETADO). <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XVII - Regulamentar, fixando limites, prazos e outras condições as operações de redesconto e de empréstimo, efetuadas com quaisquer instituições financeiras públicas e privadas de natureza bancária; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XVIII - Outorgar ao Banco Central da República do Brasil o monopólio das operações de câmbio quando ocorrer grave desequilíbrio no balanço de pagamentos ou houver sérias razões para prever a iminência de tal situação; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XIX - Estabelecer normas a serem observadas pelo Banco Central da República do Brasil em suas transações com títulos públicos e de entidades de que participe o Estado; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XX - Autoriza o Banco Central da República do Brasil e as instituições financeiras públicas federais a efetuar a subscrição, compra e venda de ações e outros papéis emitidos ou de responsabilidade das sociedades de economia mista e emprêsas do Estado; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXI - Disciplinar as atividades das Bôlsas de Valores e dos corretores de fundos públicos;&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXII - Estatuir normas para as operações das instituições financeiras públicas, para preservar sua solidez e adequar seu funcionamento aos objetivos desta lei; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXIII - Fixar, até quinze (15) vêzes a soma do capital realizado e reservas livres, o limite além do qual os excedentes dos depósitos das instituições financeiras serão recolhidos ao Banco Central da República do Brasil ou aplicados de acôrdo com as normas que o Conselho estabelecer; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXIV - Decidir de sua própria organização, elaborando seu regimento interno no prazo máximo de 30 (trinta) dias; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXV - Decidir da estrutura técnica e administrativa do Banco Central da República do Brasil e fixar seu quadro de pessoal, bem como estabelecer os vencimentos e vantagens de seus funcionários, servidores e diretores, cabendo ao Presidente dêste apresentar as respectivas propostas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXVI - Conhecer dos recursos de decisões do Banco Central da República do Brasil; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXVII - Aprovar o regimento interno e as contas do Banco Central da República do Brasil, sem prejuízo da competência do Tribunal de Contas da União; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXVIII - Aplicar aos bancos estrangeiros que funcionem no País as mesmas vedações ou restrições equivalentes, que vigorem, nas praças de suas matrizes, em relação a bancos brasileiros ali instalados ou que nelas desejem estabeler-se; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXIX - Colaborar com o Senado Federal, na instrução dos processos de empréstimos externos dos Estados, do Distrito Federal e dos Municípios, para cumprimento do disposto no art. 63, nº II, da Constituição Federal; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXX - Expedir normas e regulamentação para as designações e demais efeitos do art. 7º, desta lei. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XXXI - Baixar normas que regulem as operações de câmbio, inclusive swaps , fixando limites, taxas, prazos e outras condições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Conselho Monetário Nacional, no exercício das atribuições previstas no inciso VIII dêste artigo, poderá determinar que o Banco Central da República do Brasil recuse autorização para o funcionamento de novas instituições financeiras, em função de conveniências de ordem geral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Competirá ao Banco Central da República do Brasil acompanhar a execução dos orçamentos monetários e relatar a matéria ao Conselho Monetário Nacional, apresentando as sugestões que considerar convenientes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As emissões de moeda metálica serão feitas sempre contra recolhimento (VETADO) de igual montante em cédulas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O Conselho Monetário Nacional poderá convidar autoridades, pessoas ou entidades para prestar esclarecimentos considerados necessários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Nas hipóteses do art. 4,º inciso I, e do § 6º do art. 49, desta lei, se o Congresso Nacional negar homologação à emissão extraordinária efetuada, as autoridades responsáveis serão responsabilizadas nos têrmos da Lei nº 1.059, de 10 de abril de 1950. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º O Conselho Monetário Nacional encaminhará ao Congresso Nacional, até 31 de março de cada ano, relatório da evolução da situação monetária e creditícia do País no ano anterior, no qual descreverá, minudentemente, as providências adotadas para cumprimento dos objetivos estabelecidos nesta lei, justificando destacadamente os montantes das emissões de papel-moeda que tenham sido feitas para atendimento das atividades produtivas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp; § 7º O Banco Nacional da Habitação é o principal instrumento de execução da política habitacional do Gôverno Federal e integra o sistema financeiro nacional, juntamente com as sociedades de crédito imobiliário, sob orientação, autorização, coordenação e fiscalização do Conselho Monetário Nacional e do Banco Central da República do Brasil, quanto à execução, nos têrmos desta lei, revogadas as disposições especiais em contrário. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;As deliberações do Conselho Monetário Nacional entende-se de responsabilidade de seu Presidente para os efeitos do art. 104, nº I, letra " b ", da Constituição Federal e obrigarão também os órgãos oficiais, inclusive autarquias e sociedades de economia mista, nas atividades que afetem o mercado financeiro e o de capitais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;O Conselho Monetário Nacional será integrado pelos seguintes membros: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Ministro da Fazenda, que será o Presidente; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Presidente do Banco do Brasil S.A; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Presidente do Banco Nacional do Desenvolvimento Econômico; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Seis (6) membros nomeados pelo Presidente da República, após aprovação do Senado Federal, escolhidos entre brasileiros de ilibada reputação e notória capacidade em assuntos econômicos-financeiros, com mandato de seis (6) anos podendo ser reconduzidos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Conselho Monetário Nacional deliberará por maioria de votos, com a presença, no mínimo, de 6 (seis) membros, cabendo ao Presidente também o voto de qualidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Poderão participar das reuniões do Conselho Monetário Nacional (VETADO) o Ministro da Indústria e do Comércio e o Ministro para Assuntos de Planejamento e Economia, cujos pronunciamentos constarão obrigatòriamente da ata das reuniões. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Em suas faltas ou impedimentos, o Ministro da Fazenda será substituído, na Presidência do Conselho Monetário Nacional, pelo Ministro da Indústria e do Comércio, ou, na falta dêste, pelo Ministro para Assuntos de Planejamento e Economia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Exclusivamente motivos relevantes, expostos em representação fundamentada do Conselho Monetário Nacional, poderão determinar a exoneração de seus membros referidos no inciso IV, dêste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Vagando-se cargo com mandato o substituto será nomeado com observância do disposto no inciso IV dêste artigo, para completar o tempo do substituído. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º Os membros do Conselho Monetário Nacional, a que se refere o inciso IV dêste artigo, devem ser escolhidos levando-se em atenção, o quanto possível, as diferentes regiões geo-ecônomicas do País. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Junto ao Conselho Monetário Nacional funcionarão as seguintes Comissões Consultivas: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Bancária, constituída de representantes:&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1 - do Conselho Nacional de Economia;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 - do Banco Central da República do Brasil;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 - do Banco do Brasil S.A.;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4 - do Banco Nacional do Desenvolvimento Econômico;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5 - do Conselho Superior das Caixas Econômicas Federais;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 - do Banco Nacional de Crédito Cooperativo;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7 - do Banco do Nordeste do Brasil S.A.;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8 - do Banco de Crédito da Amazônia S.A.;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9 - dos Bancos e Caixas Econômicas Estaduais;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10 - dos Bancos Privados;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 11 - das Sociedades de Crédito, Financiamento e Investimentos;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12 - das Bôlsas de Valores;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13 - do Comércio;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 14 - da Indústria;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 15 - da Agropecuária;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 16 - das Cooperativas que operam em crédito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - de Mercado de Capitais, constituída de representantes:&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1 - do Ministério da Indústria e Comércio;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 - do Conselho Nacional de Economia;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 - do Banco Central da República do Brasil;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4 - do Banco Nacional do Desenvolvimento Econômico;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5 - dos Bancos Privados;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 - das Sociedades de Crédito, Financiamento e Investimentos;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7 - das Bôlsas de Valores;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8 - das Companhias de Seguros Privados e Capitalização;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9 - da Caixa de Amortização; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - de Crédito Rural, constituída de representantes:&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1 - do Ministério da Agricultura;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 - da Superintendência da Reforma Agrária;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 - da Superintendência Nacional de Abastecimento;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4 - do Banco Central da República do Brasil;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5 - da Carteira de Crédito Agrícola e Industrial do Banco do Brasil S.A.;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 - da Carteira de Colonização do Banco do Brasil S.A.;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7 - do Banco Nacional de Crédito Cooperativo;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8 - do Banco do Nordeste do Brasil S.A.;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9 - do Banco de Crédito da Amazônia S.A.;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10 - do Instituto Brasileiro do Café;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 11 - do Instituto do Açúcar e do Álcool;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12 - dos Bancos privados;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13 - da Confederação Rural Brasileira;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 14 - das Instituições Financeiras Públicas Estaduais ou Municipais, que operem em crédito rural;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 15 - das Cooperativas de Crédito Agrícola. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1 - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4 - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5 - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7 - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8 - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9 - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10 - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 11 - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12 - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13 - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 14 - (VETADO).&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 15 - (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - de Crédito Industrial, constituída de representantes:&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1 - do Ministério da Indústria e do Comércio;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2 - do Ministério Extraordinário para os Assuntos de Planejamento e Economia;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 - do Banco Central da República do Brasil;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4 - do Banco Nacional do Desenvolvimento Econômico;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5 - da Carteira de Crédito Agrícola e Industrial do Banco do Brasil S.A.;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 - dos Bancos privados;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7 - das Sociedades de Crédito, Financiamento e Investimentos;&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8 - da Indústria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A organização e o funcionamento das Comissões Consultivas serão regulados pelo Conselho Monetário Nacional, inclusive prescrevendo normas que:&nbsp; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>lhes concedam iniciativa própria junto ao mesmo Conselho; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>estabeleçam prazos para o obrigatório preenchimento dos cargos nas referidas Comissões; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>tornem obrigatória a audiência das Comissões Consultivas, pelo Conselho Monetário Nacional, no trato das matérias atinentes às finalidades específicas, das referidas Comissões, ressalvado os casos em que se impuser sigilo. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Os representantes a que se refere êste artigo serão indicados pelas entidades nêle referidas e designados pelo Conselho Monetário Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O Conselho Monetário Nacional, pelo voto de 2/3 (dois têrços) de seus membros, poderá ampliar a competência das Comissões Consultivas, bem como admitir a participação de representantes de entidades não mencionadas neste artigo, desde que tenham funções diretamente relacionadas com suas atribuições. <BR><BR>
+<CENTER><B>CAPÍTULO III </CENTER></B>
+<CENTER><B>Do Banco Central da República do Brasil </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;A atual Superintendência da Moeda e do Crédito é transformada em autarquia federal, tendo sede e fôro na Capital da República, sob a denominação de Banco Central da República do Brasil, com personalidade jurídica e patrimônio próprios, êste constituído dos bens, direito e vâlores que lhe são transferidos na forma desta Lei e ainda da apropriação dos juros e rendas resultantes, na data da vigência desta lei, do dispôsto no art. 9º do Decreto-Lei número 8.495, de 28 de dezembro de 1945, dispositivo que ora é expressamente revogado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Os resultados obtidos pelo Banco Central da República do Brasil serão incorporados ao seu patrimônio. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;Compete ao Banco Central da República do Brasil cumprir e fazer cumprir as disposições que lhe são atribuídas pela legislação em vigor e as normas expedidas pelo Conselho Monetário Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Compete privativamente ao Banco Central da República do Brasil: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Emitir moeda-papel e moeda metálica, nas condições e limites autorizados pelo Conselho Monetário Nacional (VETADO). <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Executar os serviços do meio-circulante; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Receber os recolhimentos compulsórios de que trata o inciso XIV, do art. 4º, desta lei, e também os depósitos voluntários das instituições financeiras, nos têrmos do inciso III e § 2º do art. 19, desta lei; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Realizar operações de redesconto e empréstimos a instituições financeiras bancárias e as referidas no Art. 4º, inciso XIV, letra "b", e no § 4º do Art. 49 desta lei; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - Exercer o contrôle do crédito sob tôdas as suas formas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - Efetuar o contrôle dos capitais estrangeiros, nos têrmos da lei; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - Ser depositário das reservas oficiais de ouro e moeda estrangeira; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - Exercer a fiscalização das instituições financeiras e aplicar as penalidades previstas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - Conceder autorização às instituições financeiras, a fim de que possam: <BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>funcionar no País; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>instalar ou transferir suas sedes, ou dependências, inclusive no exterior; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>ser transformadas, fundidas, incorporadas ou encampadas; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>praticar operações de câmbio, crédito real e venda habitual de títulos da dívida pública federal, estadual ou municipal, ações debêntures, letras hipotecárias e outros títulos de crédito ou mobiliários; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>ter prorrogados os prazos concedidos para funcionamento; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>alterar seus estatutos. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - Estabelecer condições para a posse e para o exercício de quaisquer cargos de administração de instituições financeiras privadas, assim como para o exercício de quaisquer funções em órgãos consultivos, fiscais e semelhantes, segundo normas que forem expedidas pelo Conselho Monetário Nacional; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - Efetuar, como instrumento de política monetária, operações de compra e venda de títulos públicos federais; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XII - Determinar que as matrizes as instituições financeiras registrem os cadastros das firmas que operam com suas agências há mais de um ano.&nbsp;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º No exercício das atribuições a que se refere o inciso IX deste artigo, com base nas normas estabelecidas pelo Conselho Monetário Nacional do Banco Central da República do Brasil estudará os pedidos que lhe sejam formulados e resolverá conceder ou recusar a autorização pleiteada, podendo (VETADO) incluir as cláusulas que reputar convenientes ao interêsse público. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Observado o disposto no parágrafo anterior, as instituições financeiras estrangeiras dependem de autorização do Poder Executivo, mediante decreto, para que possam funcionar no País (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Compete ainda ao Banco Central da República do Brasil: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Entender-se, em nome do Govêrno Brasileiro, com as instituições financeiras estrangeiras e internacionais; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Promover, como agente do Govêrno Federal, a colocação de empréstimos internos ou externos, podendo, também, encarregar-se dos respectivos serviços; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Atuar no sentido do funcionamento regular do mercado cambial da estabilidade relativa das taxas de câmbio e do equilíbrio no balanço de pagamentos, podendo para êsse fim comprar e vender ouro e moeda estrangeira, bem como realizar operações de crédito no exterior e eparar os mercados de câmbio financeiro e comercial; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Efetuar compra e venda de títulos de sociedades de economia mista e emprêsas do Estado; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - Emitir títulos de responsabilidade própria, de acôrdo com condições estabelecidas pelo Conselho Monetário Nacional; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - Regular a execução dos serviços de compensação de cheques e outros papéis; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - Exercer permanente vigilância nos mercados financeiros e de capitais sôbre emprêsas que, direta ou indiretamente, interfiram nesses mercados e em relação às modalidades ou processos operacionais que utilizem; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - Prover, sob contrôle do Conselho Monetário Nacional, os serviços de sua Secretaria. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O Banco Central da República do Brasil instalará delegacias, com autorização do Conselho Monetário Nacional, nas diferentes regiões geo-econômicas do País, tendo em vista a descentralização administrativa para distribuição e recolhimento da moeda e o cumprimento das decisões adotadas pelo mesmo Conselho ou prescritas em lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;O Banco Central da República do Brasil operará exclusivamente com instituições financeiras públicas e privadas, vedadas operações bancárias de qualquer natureza com outras pessoas de direito público ou privado, salvo as expressamente autorizadas por lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;A execução de encargos e serviços de competência do Banco Central da República do Brasil poderá ser contratada com o Banco do Brasil S.A. por determinação do Conselho Monetário Nacional, pelo prazo e nas condições por êste fixados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A execução de referidos encargos e serviços poderá também ser confiada a outras instituições financeiras em praças onde não houver agências do Banco do Brasil S.A., mediante contratação expressamente autorizada pelo Conselho Monetário Nacional, pelo prazo e nas condições por êle fixados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;O Banco Central da República do Brasil será administrado por uma Diretoria de 4 (quatro) membros, um dos quais será o Presidente, escolhidos pelo Conselho Monetário Nacional dentre seus membros mencionados no inciso IV, do artigo 6º, desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Presidente do Banco Central da República do Brasil será substituído pelo Diretor que o Conselho Monetário Nacional designar. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O término do mandato, a renúncia ou a perda da qualidade Membro do Conselho Monetário Nacional determinam, igualmente, a perda da função de Diretor do Banco Central da República do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;O regimento interno do Banco Central da República do Brasil, a que se refere o inciso XXVII, do art. 4º, desta lei, prescreverá as atribuições do Presidente e dos Diretores e especificará os casos que dependerão de deliberação da Diretoria, a qual será tomada por maioria de votos, presentes no mínimo o Presidente ou seu substituto eventual e dois outros Diretores, cabendo ao Presidente também o voto de qualidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A Diretoria se reunirá, ordinàriamente, uma vez por semana, e, extraordinàriamente, sempre que necessário, por convocação do Presidente ou a requerimento de, pelo menos, dois de seus membros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Constituem receita do Banco Central da República do Brasil: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Juros de redescontos de empréstimos e de outras aplicações de seus recursos; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - resultado das operações de câmbio, de compra e venda de ouro e quaisquer outras operações; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - produto da arrecadação da taxa de fiscalização, prevista nesta lei; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - receitas eventuais, inclusive multa e móra, aplicadas por fôrça do disposto na legislação em vigor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A partir do exercício de 1965, a taxa anual de fiscalização será devida semestralmente, devendo ser paga até 30 de abril e 31 de outubro de cada ano e passará a ser recolhida diretamente ao Banco Central da República do Brasil, pela forma que êste estabelecer, e a ela ficam sujeitas tôdas as instituições financeiras referidas no art. 17 desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A taxa de fiscalização será cobrada até 0,5/1.000 (meio por mil) sôbre o montante global do passivo das instituições financeiras, exclusive o de compensação verificado no último balanço do ano anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Dentro do limite de que trata o parágrafo anterior, o Conselho Monetário Nacional fixará, anualmente, a taxa de fiscalização, tendo em vista cobrir, juntamente com as outras receitas previstas, a despesa do Banco Central da República do Brasil, levando em consideração a natureza das instituições financeiras. <BR><BR>
+<CENTER><B>CAPÍTULO IV </CENTER></B>
+<CENTER><B>Das Instituições Financeiras</B><BR><BR></CENTER>
+<CENTER><B>Seção I </CENTER></B>
+<CENTER><B>Da caracterização e subordinação </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Consideram-se instituições financeiras, para os efeitos da legislação em vigor, as pessoas jurídicas públicas ou privadas, que tenham como atividade principal ou acessória a coleta, intermediação ou aplicação de recursos financeiros próprios ou de terceiros, em moeda nacional ou estrangeira, e a custódia de valor de propriedade de terceiros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Para os efeitos desta lei e da legislação em vigor, equiparam-se às instituições financeiras as pessoas físicas que exerçam qualquer das atividades referidas neste artigo, de forma permanente ou eventual. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;As instituições financeiras sòmente poderão funcionar no País mediante prévia autorização do Banco Central da República do Brasil ou decreto do Poder Executivo, quando forem estrangeiras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Além dos estabelecimentos bancários oficiais ou privados, das sociedades de crédito, financiamento e investimentos, das caixas econômicas e das cooperativas de crédito ou a seção de crédito das cooperativas que a tenham, também se subordinam às disposições e disciplina desta lei no que fôr aplicável, as bôlsas de valores, companhias de seguros e de capitalização, as sociedades que efetuam distribuição de prêmios em imóveis, mercadorias ou dinheiro, mediante sorteio de títulos de sua emissão ou por qualquer forma, e as pessoas físicas ou jurídicas que exerçam, por conta própria ou de terceiros, atividade relacionada com a compra e venda de ações e outros quaisquer títulos, realizando nos mercados financeiros e de capitais operações ou serviços de natureza dos executados pela instituições financeiras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O Banco Central da República do Brasil, no exercício da fiscalização que lhe compete, regulará as condições de concorrência entre instituições financeiras, coibindo-lhes os abusos com a aplicação da pena (VETADO) nos têrmos desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Dependerão de prévia autorização do Banco Central da República do Brasil as campanhas destinadas à coleta de recursos do público, praticadas por pessoas físicas ou jurídicas abrangidas neste artigo, salvo para subscrição pública de ações, nos têrmos da lei das sociedades por ações. <BR><BR>
+<CENTER><B>Seção II </CENTER></B>
+<CENTER><B>Do Banco do Brasil S.A. </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;Ao Banco do Brasil S.A. competirá precipuamente, sob a supervisão do Conselho Monetário Nacional e como instrumento de execução da política creditícia e financeira do Govêrno Federal: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - na qualidade de Agente Financeiro do Tesouro Nacional, sem prejuízo de outras funções que lhe venham a ser atribuídas e ressalvado o disposto no art. 8º, da Lei nº 1.628, de 20 de junho de 1952:<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>receber, a crédito do Tesouro Nacional, as importâncias provenientes da arrecadação de tributos ou rendas federais e ainda o produto das operações de que trata o art. 49, desta lei; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>realizar os pagamentos, e suprimentos necessários à execução do Orçamento Geral da União e leis complementares, de acôrdo com as autorizações que forem transmitidas pelo Ministério da Fazenda, as quais não poderão exceder o montante global dos recursos a que se refere a letra anterior, vedada a concessão, pelo Banco, de créditos de qualquer natureza ao Tesouro Nacional; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>conceder aval, fiança e outras garantias, consoante expressa autorização legal; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>d)</I></TD>
+<TD>adquirir e financiar estoques de produção exportável; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>e)</I></TD>
+<TD>executar a política de preços mínimos dos produtos agropastoris; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>f)</I></TD>
+<TD>ser agente pagador e recebedor fora do País; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>g)</I></TD>
+<TD>executar os serviços da dívida pública consolidada; </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - como principal executor dos serviços bancários de interêsse do Govêrno Federal, inclusive suas autarquias, receber em depósito, com exclusividade, as disponibilidades de quaisquer entidades federais, compreendendo as repartições de todos os ministérios civis e militares, instituições de previdência e outras autarquias, comissões, departamentos, entidades em regime especial de administração e quaisquer pessoas físicas ou jurídicas responsáveis por adiantamentos, ressalvados o disposto no § 5º dêste artigo, as exceções previstas em lei ou casos especiais, expressamente autorizados pelo Conselho Monetário Nacional, por proposta do Banco Central da República do Brasil; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - arrecadar os depósitos voluntários das instituições financeiras de que trata o inciso III, do art. 10, desta lei, escriturando as respectivas contas; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - executar os serviços de compensação de cheques e outros papéis; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - receber, com exclusividade, os depósitos de que tratam os artigos 38, item 3º, do Decreto-lei nº 2.627, de 26 de setembro de 1940, e 1º do Decreto-lei nº 5.956, de 1.11.43, ressalvado o disposto no art. 27, desta lei; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - realizar, por conta própria, operações de compra e venda de moeda estrangeira e, por conta do Banco Central da República do Brasil, nas condições estabelecidas pelo Conselho Monetário Nacional; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - realizar recebimentos ou pagamentos e outros serviços de interêsse do Banco Central da República do Brasil, mediante contratação na forma do art. 13, desta lei; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - dar execução à política de comércio exterior (VETADO). <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IX - financiar a aquisição e instalação da pequena e média propriedade rural, nos têrmos da legislação que regular a matéria; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X - financiar as atividades industriais e rurais, estas com o favorecimento referido no art. 4º, inciso IX, e art. 53, desta lei; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XI - difundir e orientar o crédito, inclusive às atividades comerciais suplementando a ação da rêde bancária;<BR><BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>no financiamento das atividades econômicas, atendendo às necessidades creditícias das diferentes regiões do País; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>no financiamento das exportações e importações. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Conselho Monetário Nacional assegurará recursos específicos que possibilitem ao Banco do Brasil S.A., sob adequada remuneração, o atendimento dos encargos previstos nesta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Do montante global dos depósitos arrecadados, na forma do inciso III dêste artigo, o Banco do Brasil S.A. colocará à disposição do Banco Central da República do Brasil, observadas as normas que forem estabelecidas pelo Conselho Monetário Nacional, a parcela que exceder as necessidades normais de movimentação das contas respectivas, em função dos serviços aludidos no inciso IV dêste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Os encargos referidos no inciso I, dêste artigo, serão objeto de contratação entre o Banco do Brasil S.A. e a União Federal, esta representada pelo Ministro da Fazenda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º O Banco do Brasil S.A. prestará ao Banco Central da República do Brasil tôdas as informações por êste julgadas necessárias para a exata execução desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Os depósitos de que trata o inciso II dêste artigo, também poderão ser feitos nas Caixas Econômicas Federais, nos limites e condições fixados pelo Conselho Monetário Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;O Banco do Brasil S.A. e o Banco Central da República do Brasil elaborarão, em conjunto, o programa global de aplicações e recursos do primeiro, para fins de inclusão nos orçamentos monetários de que trata o inciso III, do artigo 4º desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;O Presidente e os Diretores do Banco do Brasil S.A. deverão ser pessoas de reputação ilibada e notória capacidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A nomeação do Presidente do Banco do Brasil S.A. será feita pelo Presidente da República, após aprovação do Senado Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As substituições eventuais do Presidente do Banco do Brasil S.A. não poderão exceder o prazo de 30 (trinta) dias consecutivos, sem que o Presidente da República submeta ao Senado Federal o nome do substituto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º (VETADO). <BR><BR>
+<CENTER><B>Seção III </CENTER></B>
+<CENTER><B>Das instituições financeiras públicas </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;As instituições financeiras públicas são órgãos auxiliares da execução da política de crédito do Govêrno Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Conselho Monetário Nacional regulará as atividades, capacidade e modalidade operacionais das instituições financeiras públicas federais, que deverão submeter à aprovação daquele órgão, com a prioridade por êle prescrita, seus programas de recursos e aplicações, de forma que se ajustem à política de crédito do Govêrno Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A escolha dos Diretores ou Administradores das instituições financeiras públicas federais e a nomeação dos respectivos Presidentes e designação dos substitutos observarão o disposto no art. 21, parágrafos 1º e 2º, desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A atuação das instituições financeiras públicas será coordenada nos têrmos do art. 4º desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;O Banco Nacional do Desenvolvimento Econômico é o principal instrumento de execução de política de investimentos do Govêrno Federal, nos têrmos das Leis números 1.628, de 20 de junho de 1952 e 2.973, de 26 de novembro de 1956. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;As instituições financeiras públicas não federais ficam sujeitas às disposições relativas às instituições financeiras privadas, assegurada a forma de constituição das existentes na data da publicação desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As Caixas Econômicas Estaduais equiparam-se, no que couber, às Caixas Econômicas Federais, para os efeitos da legislação em vigor, estando isentas do recolhimento a que se refere o art. 4º, inciso XIV, e à taxa de fiscalização, mencionada no art. 16, desta lei. <BR><BR>
+<CENTER><B>Seção IV </CENTER></B>
+<CENTER><B>Das instituições financeiras privadas </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;As instituições financeiras privadas, exceto as cooperativas de crédito, constituir-se-ão únicamente sob a forma de sociedade anônima, com a totalidade de seu capital representado por ações nominativas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;O capital inicial das instituições financeiras públicas e privadas será sempre realizado em moeda corrente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;Na subscrição do capital inicial e na de seus aumentos em moeda corrente, será exigida no ato a realização de, pelo menos, 50% (cinqüenta por cento) do montante subscrito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As quantias recebidas dos subscritores de ações serão recolhidas no prazo de 5 (cinco) dias, contados do recebimento, ao Banco Central da República do Brasil, permanecendo indisponíveis até a solução do respectivo processo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O remanescente do capital subscrito, inicial ou aumentado, em moeda corrente, deverá ser integralizado dentro de um ano da data da solução do respectivo processo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Os aumentos de capital que não forem realizados em moeda corrente, poderão decorrer da incorporação de reservas, segundo normas expedidas pelo Conselho Monetário Nacional, e da reavaliação da parcela dos bens do ativo imobilizado, representado por imóveis de uso e instalações, aplicados no caso, como limite máximo, os índices fixados pelo Conselho Nacional de Economia. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;As instituições financeiras privadas deverão aplicar, de preferência, não menos de 50% (cinqüenta por cento) dos depósitos do público que recolherem, na respectiva Unidade Federada ou Território. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Conselho Monetário Nacional poderá, em casos especiais, admitir que o percentual referido neste artigo seja aplicado em cada Estado e Território isoladamente ou por grupos de Estados e Territórios componentes da mesma região geoeconômica. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As agências ou filiais das instituições financeiras, sediadas em municípios que não o da matriz, publicarão, anualmente, no principal órgão da imprensa local, ou inexistindo esta, afixarão no edifício das mesmas boletins assinalando o volume dos depósitos e das aplicações localmente efetuadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;As instituições financeiras de direito privado, exceto as de investimento, só poderão participar de capital de quaisquer sociedades com prévia autorização do Banco Central da República do Brasil, solicitada justificadamente e concedida expressamente, ressalvados os casos de garantia de subscrição, nas condições que forem estabelecidas, em caráter geral, pelo Conselho Monetário Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>(VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;As instituições financeiras levantarão balanços gerais a 30 de junho e 31 de dezembro de cada ano, obrigatòriamente, com observância das regras contábeis estabelecidas pelo Conselho Monetário Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;As instituições financeiras deverão comunicar ao Banco Central da República do Brasil a nomeação ou a eleição de diretores e membros de órgãos consultivos, fiscais e semelhantes, no prazo de 15 dias da data de sua ocorrência. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;As instituições financeiras privadas deverão comunicar ao Banco Central da República do Brasil os atos relativos à eleição de diretores e membros de órgãos consultivos, fiscais e semelhantes, no prazo de 15 dias de sua ocorrência, de acôrdo com o estabelecido no art. 10, inciso X, desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Banco Central da República do Brasil, no prazo máximo de 60 (sessenta) dias, decidirá aceitar ou recusar o nome do eleito, que não atender às condições a que se refere o artigo 10, inciso X, desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A posse do eleito dependerá da aceitação a que se refere o parágrafo anterior. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Oferecida integralmente a documentação prevista nas normas referidas no art. 10, inciso X, desta lei, e decorrido, sem manifestação do Banco Central da República do Brasil, o prazo mencionado no § 1º, dêste artigo, entender-se-á não ter havido recusa a posse. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;É vedado às instituições financeiras conceder empréstimos ou adiantamentos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - A seus diretores e membros dos conselhos consultivo ou administrativo, fiscais e semelhantes, bem como aos respectivos cônjuges; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Aos parentes, até o 2º grau, das pessoas a que se refere o inciso anterior; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Às pessoas físicas ou jurídicas que participem de seu capital, com mais de 10% (dez por cento), salvo autorização específica do Banco Central da República do Brasil, em cada caso, quando se tratar de operações lastreadas por efeitos comerciais resultantes de transações de compra e venda ou penhor de mercadorias, em limites que forem fixados pelo Conselho Monetário Nacional, em caráter geral; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - As pessoas jurídicas de cujo capital participem, com mais de 10% (dez por cento); <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - As pessoas jurídicas de cujo capital participem com mais de 10% (dez por cento), quaisquer dos diretores ou administradores da própria instituição financeira, bem como seus cônjuges e respectivos parentes, até o 2º grau. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A infração ao disposto no inciso I, dêste artigo, constitui crime e sujeitará os responsáveis pela transgressão à pena de reclusão de um a quatro anos, aplicando-se, no que couber, o Código Penal e o Código de Processo Penal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O disposto no inciso IV dêste artigo não se aplica às instituições financeiras públicas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;É vedado ainda às instituições financeiras: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Emitir debêntures e partes beneficiárias; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Adquirir bens imóveis não destinados ao próprio uso, salvo os recebidos em liquidação de empréstimos de difícil ou duvidosa solução, caso em que deverão vendê-los dentro do prazo de um (1) ano, a contar do recebimento, prorrogável até duas vêzes a critério do Banco Central da República do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As instituições financeiras que não recebem depósitos, poderão emitir debêntures, desde que prèviamente autorizadas pelo Banco Central da República do Brasil, em cada caso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;As instituições financeiras não poderão manter aplicações em imóveis de uso próprio que, somadas a seu ativo em instalações, excedam o valor de seu capital realizado e reservas livres. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;As instituições financeiras, entidades e pessoas referidas nos artigos 17 e 18 desta lei, bem como os corretores de fundos públicos, ficam obrigados a fornecer ao Banco Central da República do Brasil, na forma por êle determinada, os dados ou informes julgados necessários para o fiel desempenho de suas atribuições. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;As instituições financeiras conservarão sigilo em suas operações ativas e passivas e serviços prestados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As informações e esclarecimentos ordenados pelo Poder Judiciário, prestados pelo Banco Central da República do Brasil ou pelas instituições financeiras, e a exibição de livros e documento em Juízo, se revestirão sempre do mesmo caráter sigiloso, só podendo a êles ter acesso as partes legítimas na causa, que dêles não poderão servir-se para fins estranhos à mesma. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O Banco Central da República do Brasil e as instituições financeiras públicas prestarão informações ao Poder Legislativo, podendo, havendo relevantes motivos, solicitar sejam mantidas em reserva ou sigilo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As Comissões Parlamentares de Inquérito, no exercício da competência constitucional e legal de ampla investigação (art. 53 da Constituição Federal e Lei nº 1.579, de 18 de março de 1952), obterão as informações que necessitarem das instituições financeiras, inclusive através do Banco Central da República do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Os pedidos de informações a que se referem aos §§ 2º e 3º, dêste artigo, deverão ser aprovados pelo Plenário da Câmara dos Deputados ou do Senado Federal e, quando se tratar de Comissão Parlamentar de Inquérito, pela maioria absoluta de seus membros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Os agentes fiscais tributários do Ministério da Fazenda e dos Estados sòmente poderão proceder a exame de documentos, livros e registros de contas de depósitos quando houver processo instaurado e os mesmos forem considerados indispensáveis pela autoridade competente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º O disposto no parágrafo anterior se aplica igualmente à prestação de esclarecimentos e informes pelas instituições financeiras às autoridades fiscais, devendo sempre estas e os exames serem conservados em sigilo, não podendo ser utilizados se não reservadamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º A quebra do sigilo de que trata êste artigo constitui crime e sujeita os responsáveis à pena de reclusão, de um a quatro anos, aplicando-se, no que couber, o Código Penal e o Código de Processo Penal, sem prejuízo de outras sanções cabíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Aplicam-se às instituições financeiras estrangeiras, em funcionamento ou que venham a se instalar no País, as disposições da presente lei, sem prejuízo das que se contêm na legislação vigente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;As cooperativas de crédito não poderão conceder empréstimos senão a seus cooperados com mais de 30 dias de inscrição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Aplica-se às seções de crédito das cooperativas, em qualquer tipo o disposto neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;Não se consideram como sendo operações de seções de crédito as vendas a prazo realizadas pelas cooperativas agropastoris a seus associados, de bens e produtos destinados às suas atividades econômicas. <BR><BR>
+<CENTER><B>CAPÍTULO V </CENTER></B>
+<CENTER><B>Das penalidades </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;O art. 2º, da Lei nº 1.808, de 7 de janeiro de 1953, terá a seguinte redação: <BR><BR>
+<DIR>"Art. 2º&nbsp;Os diretores e gerentes das instituições financeiras respondem solidàriamente pelas obrigações assumidas pelas mesmas durante sua gestão, até que elas se cumpram. <BR><BR><I>Parágrafo único. </I>Havendo prejuízos, a responsabilidade solidária se circunscreverá ao respectivo montante."</DIR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;O responsável pela instituição financeira que autorizar a concessão de empréstimo ou adiantamento vedado nesta lei, se o fato não constituir crime ficará sujeito, sem prejuízo das sanções administrativas ou civis cabíveis, à multa igual ao dôbro do valor do empréstimo ou adiantamento concedido, cujo processamento obedecerá no que couber, ao disposto no art. 44, desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;As infrações aos dispositivos desta lei sujeitam as instituições financeiras, seus diretores, membros de conselhos administrativos, fiscais e semelhantes, e gerentes, às seguintes penalidades, sem prejuízo de outras estabelecidas na legislação vigente: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Advertência. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Multa pecuniária variável. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Suspensão do exercício de cargos. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - Inabilitação temporária ou permanente para o exercício de cargos de direção na administração ou gerência em instituições financeiras. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - Cassação da autorização de funcionamento das instituições financeiras públicas, exceto as federais, ou privadas. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - Detenção, nos têrmos do § 7º dêste artigo. <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - Reclusão, nos têrmos dos artigos 34 e 38, desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A pena de advertência será aplicada pela inobservância das disposições constantes da legislação em vigor, ressalvadas as sanções nela previstas, sendo cabível também nos casos de fornecimento de informações inexatas, de escrituração mantida em atraso ou processada em desacôrdo com as normas expedidas de conformidade com o art. 4º, inciso XII, desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º As multas serão aplicadas até 200 (duzentas) vêzes o maior salário-mínimo vigente no País, sempre que as instituições financeiras, por negligência ou dolo:&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>advertidas por irregularidades que tenham sido praticadas, deixarem de saná-las no prazo que lhes fôr assinalado pelo Banco Central da República do Brasil; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>infringirem as disposições desta lei relativas ao capital, fundos de reserva, encaixe, recolhimentos compulsórios, taxa de fiscalização, serviços e operações, não atendimento ao disposto nos arts. 27 e 33, inclusive as vedadas nos arts. 34 (incisos II a V), 35 a 40 desta lei, e abusos de concorrência (art. 18, § 2º); </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>opuserem embaraço à fiscalização do Banco Central da República do Brasil. </TD></TR></TBODY></TABLE>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As multas cominadas neste artigo serão pagas mediante recolhimento ao Banco Central da República do Brasil, dentro do prazo de 15 (quinze) dias, contados do recebimento da respectiva notificação, ressalvado o disposto no § 5º dêste artigo e serão cobradas judicialmente, com o acréscimo da mora de 1% (um por cento) ao mês, contada da data da aplicação da multa, quando não forem liquidadas naquele prazo; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º As penas referidas nos incisos III e IV, dêste artigo, serão aplicadas quando forem verificadas infrações graves na condução dos interêsses da instituição financeira ou quando da reencidência específica, devidamente caracterizada em transgressões anteriormente punidas com multa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º As penas referidas nos incisos II, III e IV dêste artigo serão aplicadas pelo Banco Central da República do Brasil admitido recurso, com efeito suspensivo, ao Conselho Monetário Nacional, interposto dentro de 15 dias, contados do recebimento da notificação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º É vedada qualquer participação em multas, as quais serão recolhidas integralmente ao Banco Central da República do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º Quaisquer pessoas físicas ou jurídicas que atuem como instituição financeira, sem estar devidamente autorizadas pelo Banco Central da República do Brasil, ficam sujeitas à multa referida neste artigo e detenção de 1 a 2 anos, ficando a esta sujeitos, quando pessoa jurídica, seus diretores e administradores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º No exercício da fiscalização prevista no art. 10, inciso VIII, desta lei, o Banco Central da República do Brasil poderá exigir das instituições financeiras ou das pessoas físicas ou jurídicas, inclusive as referidas no parágrafo anterior, a exibição a funcionários seus, expressamente credenciados, de documentos, papéis e livros de escrituração, considerando-se a negativa de atendimento como embaraço à fiscalização, sujeito à pena de multa, prevista no 2º dêste artigo, sem prejuízo de outras medidas e sanções cabíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 9º A pena de cassação, referida no inciso V, dêste artigo, será aplicada pelo Conselho Monetário Nacional, por proposta do Banco Central da República do Brasil, nos casos de reincidência específica de infrações anteriormente punidas com as penas previstas nos incisos III e IV dêste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.&nbsp;As instituições financeiras públicas não federais e as privadas estão sujeitas, nos têrmos da legislação vigente, à intervenção efetuada pelo Banco Central da República do Brasil ou à liquidação extrajudicial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A partir da vigência desta lei, as instituições de que trata êste artigo não poderão impetrar concordata.</P>
+<CENTER><B>CAPÍTULO VI </CENTER></B>
+<CENTER><B>Disposições Gerais</B></CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.&nbsp;Ficam transferidas as atribuições legais e regulamentares do Ministério da Fazenda relativamente ao meio circulante inclusive as exercidas pela Caixa de Amortização para o Conselho Monetário Nacional, e (VETADO) para o Banco Central da República do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 47.&nbsp;Será transferida à responsabilidade do Tesouro Nacional, mediante encampação, sendo definitivamente incorporado ao meio circulante, o montante das emissões feitas por solicitação da Carteira de Redescontos do Banco do Brasil S.A. e da Caixa de Mobilização Bancária. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O valor correspondente à encampação será destinado à liquidação das responsabilidades financeiras do Tesouro Nacional no Banco do Brasil S.A., inclusive as decorrentes de operações de câmbio concluídas até a data da vigência desta lei, mediante aprovação específica do Poder Legislativo, ao qual será submetida a lista completa dos débitos assim amortizados. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Para a liquidação do saldo remanescente das responsabilidades do Tesouro Nacional, após a encampação das emissões atuais por solicitação da Carteira de Redescontos do Banco do Brasil S.A. e da Caixa de Mobilização Bancária, o Poder Executivo submeterá ao Poder Legislativo proposta específica, indicando os recursos e os meios necessários a êsse fim. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 48.&nbsp;Concluídos os acertos financeiros previstos no artigo anterior, a responsabilidade da moeda em circulação passará a ser do Banco Central da República do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 49.&nbsp;As operações de crédito da União, por antecipação de receita orçamentária ou a qualquer outro título, dentro dos limites legalmente autorizados, somente serão realizadas mediante colocação de obrigações, apólices ou letras do Tesouro Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A lei de orçamento, nos têrmos do artigo 73, § 1º inciso II, da Constituição Federal, determinará, quando for o caso, a parcela do deficit que poderá ser coberta pela venda de títulos do Tesouro Nacional diretamente ao Banco Central da República do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O Banco Central da República do Brasil mediante autorização do Conselho Monetário Nacional baseada na lei orçamentária do exercício, poderá adquirir diretamente letras do Tesouro Nacional, com emissão de papel-moeda. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º O Conselho Monetário Nacional decidirá, a seu exclusivo critério, a política de sustentação em bôlsa da cotação dos títulos de emissão do Tesouro Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º No caso de despesas urgentes e inadiáveis do Govêrno Federal, a serem atendidas mediante créditos suplementares ou especiais, autorizados após a lei do orçamento, o Congresso Nacional determinará, especificamente, os recursos a serem utilizados na cobertura de tais despesas, estabelecendo, quando a situação do Tesouro Nacional for deficitária, a discriminação prevista neste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Na ocorrência das hipóteses citadas no parágrafo único, do artigo 75, da Constituição Federal, o Presidente da República poderá determinar que o Conselho Monetário Nacional, através do Banco Central da República do Brasil, faça a aquisição de letras do Tesouro Nacional com a emissão de papel-moeda até o montante de crédito extraordinário que tiver sido decretado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º O Presidente da República fará acompanhar a determinação ao Conselho Monetário Nacional, mencionada no parágrafo anterior, de cópia da mensagem que deverá dirigir ao Congresso Nacional, indicando os motivos que tornaram indispensável a emissão e solicitando a sua homologação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º As letras do Tesouro Nacional, colocadas por antecipação de receita, não poderão ter vencimentos posteriores a 120 (cento e vinte) dias do encerramento do exercício respectivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 8º Até 15 de março do ano seguinte, o Poder Executivo enviará mensagem ao Poder Legislativo, propondo a forma de liquidação das letras do Tesouro Nacional emitidas no exercício anterior e não resgatadas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 9º É vedada a aquisição dos títulos mencionados neste artigo pelo Banco do Brasil S.A. e pelas instituições bancárias de que a União detenha a maioria das ações. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 50.&nbsp;O Conselho Monetário Nacional, o Banco Central da República do Brasil, o Banco Nacional do Desenvolvimento Econômico, o Banco do Brasil S.A., o Banco do Nordeste do Brasil S.A. e o Banco de Crédito da Amazônia S.A. gozarão dos favores, isenções e privilégios, inclusive fiscais, que são próprios da Fazenda Nacional, ressalvado quanto aos três últimos, o regime especial de tributação do Impôsto de Renda a que estão sujeitos, na forma da legislação em vigor. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>São mantidos os favores, isenções e privilégios de que atualmente gozam as instituições financeiras. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 51.&nbsp;Ficam abolidas, após 3 (três) meses da data da vigência desta Lei, as exigências de "visto" em "pedidos de licença" para efeitos de exportação, excetuadas as referentes a armas, munições, entorpecentes, materiais estratégicos, objetos e obras de valor artístico, cultural ou histórico. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Quando o interesse nacional exigir, o Conselho Monetário Nacional, criará o "visto" ou exigência equivalente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 52.&nbsp;O quadro de pessoal do Banco Central da República do Brasil será constituído de: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - Pessoal próprio, admitido mediante concurso público de provas ou de títulos e provas, sujeita a pena de nulidade a admissão que se processar com inobservância destas exigências; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - Pessoal requisitado ao Banco do Brasil S.A. e a outras instituições financeiras federais, de comum acôrdo com as respectivas administrações; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - Pessoal requisitado a outras instituições e que venham prestando serviços à Superintendência da Moeda e do Crédito há mais de 1 (um) ano, contado da data da publicação desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º O Banco Central da República do Brasil baixará dentro de 90 (noventa) dias da vigência desta lei, o Estatuto de seus funcionários e servidores, no qual serão garantidos deveres e obrigações que lhes são inerentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Aos funcionários e servidores requisitados, na forma dêste artigo as instituições de origem lhes assegurarão os direitos e vantagens que lhes cabem ou lhes venham a ser atribuídos, como se em efetivo exercício nelas estivessem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º Correrão por conta do Branco Central da República do Brasil tôdas as despesas decorrentes do cumprimento do disposto no parágrafo anterior, inclusive as de aposentadoria e pensão que sejam de responsabilidade das instituições de origem ali mencionadas, estas últimas rateadas proporcionalmente em função dos prazos de vigência da requisição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Os funcionários do quadro de pessoal próprio permanecerão com seus direitos e garantias regidos pela legislação de proteção ao trabalho e de previdência social, incluídos na categoria profissional de bancários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º Durante o prazo de 10 (dez) anos, contados da data da vigência desta lei, é facultado aos funcionários de que tratam os incisos II e III dêste artigo, manifestarem opção para transferência para o Quadro do pessoal próprio do Banco Central da República do Brasil, dêsde que:&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<BR></P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>tenham sido admitidos nas respectivas instituições de origem, consoantes determina o inciso I, dêste artigo; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>estejam em exercício (VETADO) há mais de dois anos; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>seja a opção aceita pela Diretoria do Banco Central da República do Brasil, que sôbre ela deverá pronunciar-se conclusivamente no prazo máximo de três meses, contados da entrega do respectivo requerimento. </TD></TR></TBODY></TABLE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 53.&nbsp;As operações de financiamento rural ou pecuário, de valor até 50 (cinqüenta) vêzes o maior salário-mínimo vigente no País, ficam isentas de taxas, despesas de avaliação, impôsto do sêlo e independem de registro cartorário. <BR><BR>
+<CENTER><B>CAPÍTULO VII </CENTER></B>
+<CENTER><B>Disposições Transitórias </CENTER></B><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 54.&nbsp;. O Poder Executivo, com base em proposta do Conselho Monetário Nacional, que deverá ser apresentada dentro de 90 (noventa) dias de sua instalação, submeterá ao Poder Legislativo projeto de lei que institucionalize o crédito rural, regule seu campo específico e caracterize as modalidades de aplicação, indicando as respectivas fontes de recursos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A Comissão Consultiva do Crédito Rural dará Assessoramento ao Conselho Monetário Nacional, na elaboração da proposta que estabelecerá a coordenação das instituições existentes ou que venham a ser criadas, com o objetivo de garantir sua melhor utilização e da rêde bancária privada na difusão do crédito rural, inclusive com redução de seu custo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 55.&nbsp;Ficam transferidas ao Banco Central da República do Brasil as atribuições cometidas por lei ao Ministério da Agricultura, no que concerne à autorização de funcionamento e fiscalização de cooperativas de crédito de qualquer tipo, bem assim da seção de crédito das cooperativas que a tenham. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 56.&nbsp;Ficam extintas a Carteira de Redescontos do Banco do Brasil S.A. e a Caixa de Mobilização Bancária, incorporando-se seus bens, direitos e obrigações ao Banco Central da República do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As atribuições e prerrogativas legais da Caixa de Mobilização Bancária passam a ser exercidas pelo Banco Central da República do Brasil, sem solução de continuidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 57.&nbsp;Passam à competência do Conselho Monetário Nacional as atribuições de caráter normativo da legislação cambial vigente e as executivas ao Banco Central da República do Brasil e ao Banco do Brasil S.A., nos têrmos desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Fica extinta a Fiscalização Bancária do Banco do Brasil S.A., passando suas atribuições e prerrogativas legais ao Banco Central da República do Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 58.&nbsp;Os prejuízos decorrentes das operações de câmbio concluídas e eventualmente não regularizadas nos têrmos desta lei bem como os das operações de câmbio contratadas e não concluídas até a data de vigência desta lei, pelo Banco do Brasil S.A., como mandatário do Govêrno Federal, serão na medida em que se efetivarem, transferidos ao Banco Central da República do Brasil, sendo neste registrados como responsabilidade do Tesouro Nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Os débitos do Tesouro Nacional perante o Banco Central da República do Brasil, provenientes das transferências de que trata êste artigo serão regularizados com recursos orçamentários da União. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O disposto neste artigo se aplica também aos prejuízos decorrentes de operações de câmbio que outras instituições financeiras federais, de natureza bancária, tenham realizado como mandatárias do Govêrno Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 59.&nbsp;É mantida, no Banco do Brasil S.A., a Carteira de Comércio Exterior, criada nos têrmos da Lei nº 2.145, de 29 de dezembro de 1953, e regulamentada pelo Decreto nº 42.820, de 16 de dezembro de 1957, como órgão executor da política de comércio exterior, (VETADO). <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 60.&nbsp;O valor equivalente aos recursos financeiros que, nos têrmos desta lei, passarem a responsabilidade do Banco Central da República do Brasil, e estejam, na data de sua vigência em poder do Banco do Brasil S.A., será neste escriturado em conta em nome do primeiro, considerando-se como suprimento de recursos, nos têrmos do § 1º do artigo 19, desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 61. Para cumprir as disposições desta lei o Banco do Brasil S.A. tomará providência no sentido de que seja remodelada sua estrutura administrativa, a fim de que possa eficazmente exercer os encargos e executar os serviços que lhe estão reservados, como principal instrumento de execução da política de crédito do Govêrno Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 62.&nbsp;O Conselho Monetário Nacional determinará providências no sentido de que a transferência de atribuições dos órgãos existentes para o Banco Central da República do Brasil se processe sem solução de continuidade dos serviços atingidos por esta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 63.&nbsp;Os mandatos dos primeiros membros do Conselho Monetário Nacional, a que alude o inciso IV, do artigo 6º desta lei, serão respectivamente de 6 (seis), 5 (cinco), 4 (quatro), 3 (três), 2 (dois) e 1 (um) anos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 64.&nbsp;O Conselho Monetário Nacional fixará prazo de até 1 (um) ano da vigência desta lei para a adaptação das instituições financeiras às disposições desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Em casos excepcionais, o Conselho Monetário Nacional poderá prorrogar até mais 1 (um) ano o prazo para que seja complementada a adaptação a que se refere êste artigo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Será de um ano, prorrogável, nos têrmos do parágrafo anterior, o prazo para cumprimento do estabelecido por força do art. 30 desta lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 65.&nbsp;Esta lei entrará em vigor 90 (noventa) dias após a data de sua publicação, revogadas as disposições em contrário. <BR><BR>Brasília em 31 de dezembro de 1964; 143º da Independência e 76º da República. <BR><BR>H. CASTELLO BRANCO <BR>Otávio Gouveia de Bulhões <BR>Daniel Faraco <BR>Roberto de Oliveira Campos 
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 - Suplemento de 31/12/1964
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1 - Suplemento
+                                                         - 31/12/1964, Página 28         
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 31/12/1964, Página 12081 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1964, Página 519 
+                                                        Vol. 7          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+
+<!-- JS do portal-tema: necessário para o botão de compartilhamento -->
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/vendor-bundle.js"></script>
+<script type="text/javascript" src="https://www.camara.leg.br/tema/global/camara-bundle.js"></script>
+
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

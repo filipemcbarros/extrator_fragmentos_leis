@@ -1,0 +1,805 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 818, DE 18 DE SETEMBRO DE 1949 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Regula a aquisição, a perda e a reaquisição da nacionalidade, e a perda dos direitos políticos. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 818, DE 18 DE SETEMBRO DE 1949 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-818-18-setembro-1949-364080-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-818-18-setembro-1949-364080-normaatualizada-pl.docx">formato docx</a>)
+                                                &nbsp;
+                                                    (<a href="lei-818-18-setembro-1949-364080-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                            <li>  	
+                                                <a href="lei-818-18-setembro-1949-364080-retificacao-13162-pl.html">Retificação</a>
+                                            </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=606951">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-818-18-setembro-1949-364080-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 818, DE 18 DE SETEMBRO DE 1949</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Regula a aquisição, a perda e a reaquisição da nacionalidade, e a perda dos direitos políticos. 
+						</p>
+				
+						<div class="texto">
+							<P>O PRESIDENTE DA REPÚBLICA resolve<BR>Faço saber que o CONGRESSO NACIONAL decreta e eu sanciono a seguinte Lei: </P>
+<P align=center>DA NACIONALIDADE </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º.</STRONG> São brasileiros: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - os nascidos no Brasil, ainda que de pais estrangeiros, desde que não residam êstes a serviço de seu país; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - os filhos de brasileiro ou brasileira, nascidos no estrangeiro, se os pais estiverem a serviço do Brasil, ou, não o estando, se vierem residir no país. Neste caso, atingida a maioridade, deverão, para conservar a nacionalidade brasileira, optar por ela dentro em quatro anos; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - os que adquiriram a nacionalidade brasileira, nos têrmos do artigo 69, ns. 4 e 5, da Constituição de 24 de fevereiro de 1891; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - os naturalizados, pela forma estabelecida em lei. </P>
+<P align=center>DA OPÇÃO </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º.</STRONG> Quando um dos pais fôr estrangeiro, residente no Brasil a serviço de seu govêrno, e o outro fôr brasileiro, o filho, aqui nascido, poderá optar pela nacionalidade brasileira, na forma do art. 129, nº II, da Constituição Federal. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º.</STRONG> A opção a que se referem o art. 1º, nº II, e o art. 2º, constará de têrmo assinado pelo optante ou seu procurador, no Registro Civil de nascimentos. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º.</STRONG> O filho de brasileiro ou brasileira, nascido no estrangeiro e cujos pais ali não estejam a serviço do Brasil, poderá, após sua chegada ao país, para nele residir, requerer ao Juiz de Direito de seu domicílio, se transcreva, no Registo Civil, o têrmo de nascimento, fazendo-se constar dêste e das respectivas certidões que o mesmo só valerá como prova da nacionalidade brasileira até quatro anos depois de atingida a maioridade. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º.</STRONG> São brasileiros natos os de que tratam os ns. I e II do art. 129 da Constituição Federal. </P>
+<P align=center>DA NACIONALIDADE BRASILEIRA DECLARADA <BR>JUDICIALMENTE </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º.</STRONG> Os que, até 16 de julho de 1934, hajam adquirido nacionalidade brasileira, nos têrmos do art. 69, números 4 e 5, da Constituição de 24 de fevereiro de 1891, poderão requerer, em qualquer tempo, ao Juiz de Direito do seu domicílio, o título declaratório. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O processo para concessão do título será iniciado mediante petição assinada pelo próprio naturalizado, ou por procurador com poderes especiais, devendo constar dela o seu nome, naturalidade, profissão e domicílio, nome do cônjuge e dos filhos brasileiros, e a indicação precisa do imóvel ou dos imóveis possuídos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Recebida a petição, devidamente instruída com a prova dos requisitos exigidos, conforme o caso, pelo nº 4 ou pelo nº 5 do art. 69 da Constituição de 1891, determinará o Juiz a publicação dos editais, para ciência pública, podendo qualquer cidadão impugnar o pedido, no prazo de dez dias, ainda que sem o oferecimento de documentos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Com impugnação ou sem ela, será aberta vista dos autos, por outros dez dias, ao representante do Ministério Público Federal, que, por sua vez, poderá impugnar o pedido, oferecendo documentos ou limitando-se a opinar, em face da prova oferecida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Em seguida, serão os autos conclusos ao Juiz, que os despachará no prazo de trinta dias, cabendo, do seu despacho, dentro em cinco dias, agravo de petição para o Tribunal Federal de Recursos. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Neste processo, aplicar-se-ão subsidiàriamente as regras do Código do Processo Civil, e as partes poderão funcionar pessoalmente, ou por intermédio de advogado, não sendo admissíveis senão provas documentais. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 6º Da expedição do título declaratório, o Juiz dará ciência ao Ministério da Justiça e Negócios Interiores e ao órgão criado pelo art. 162, parágrafo único, da Constituição Federal. </P>
+<P align=center>DA NATURALIZAÇÃO </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º.</STRONG> A concessão da naturalização é de faculdade exclusiva do Presidente da República, em decreto referendado pelo Ministro da Justiça e Negócios Interiores. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º.</STRONG> São condições para a naturalização: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - capacidade civil do naturalizando, segundo a lei brasileira; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - residência contínua no território nacional pelo prazo mínimo de cinco anos, imediatamente anteriores ao pedido de naturalização; <BR>&nbsp;&nbsp;&nbsp;&nbsp; III - ler e escrever a língua portuguêsa, levada em conta a condição do naturalizando; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - exercício de profissão ou posse de bens suficientes à manutenção própria e da família; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - bom procedimento; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - ausência de pronúncia ou condenação no Brasil, por crime cuja pena seja superior a um ano de prisão; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - sanidade física. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Aos portuguêses não se exigirá o requisito do nº IV e, quando aos dos ns. II e III, bastará a residência ininterrupta durante um ano e o uso adequado da língua portuguêsa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Não se exigirá a prova de sanidade física a nenhum estrangeiro, quando o prazo de residência fôr superior a um ano. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º.</STRONG> O Prazo de residência, fixado no art. 8º, nº II, será reduzido, quando o naturalizando preencher qualquer das seguintes condições: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - ter filho ou cônjuge brasileiro; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - ser filho de brasileiro ou brasileira; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - recomendar-se por sua capacidade profissional, científica ou artística; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - ser agricultor ou trabalhador especializado em qualquer setor industrial; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - ter prestado ou poder prestar seviços relevantes ao Brasil, a juízo do Govêrno; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - ser ou ter sido empregado em legação ou consulado do Brasil e contar vinte anos de bons serviços; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VII - ter, no Brasil, bem imóvel, do valor mínimo de Cr$100.000,00 (cem mil cruzeiros), ser agricultor ou industrial que disponha de fundos de igual valor, ou possuir cota integralizada de montante, pelo menos, idêntico, em sociedade comercial ou civil destinada principal e permanentemente, ao exercício da indústria ou da agricultura. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A residência será de um ano, no caso do nº II, de dois anos, nos casos dos ns. I e VI; e de três anos, nos demais. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.</STRONG> O estrangeiro que pretender naturalizar-se deverá requerê-lo ao Presidente da República, declarando na petição o nome por extenso, nacionalidade, naturalidade, filiação, estado civil, dia, mês e ano de nascimento, profissão e os lugares onde tenha residido anteriormente, aqui ou no estrangeiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>A petição será assinada pelo naturalizando ou, se fôr português e analfabeto, por procurador com poderes especiais, devendo ter reconhecida a firma a ser instruída com os seguintes documentos: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - carteira de identidade para estrangeiro; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - atestado policial de residência continua no Brasil (art. 3º, nº II); <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - atestado policial de bons antecedentes e fôlha corrida, passados peIos serviços competentes dos lugares do Brasil, onde haja residido; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV - carteira profissional, diplomas, atestados de associações, sindicatos ou emprêsas empregadoras (artigo 8º, nº IV); <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V - atestado de sanidade física; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VI - certidões ou atestados que provem, quando fôr o caso, as condições do art. 9º, ns. I a VII. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.</STRONG> Serão exigidas únicamente para a naturalização das estrangeiras, casadas há mais de cinco anos, com diplomatas brasileiros em atividade, as condições estatuídas nas alíneas III e VII do art. 8º, devendo o pedido de naturalização ser instruído com a prova do casamento devidamente autorizado pelo Govêrno brasileiro, se assim era necessário ao tempo de ser contraído o matrimônio. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.</STRONG> A petição de que trata o art. 10 será apresentada, no Distrito Federal ao Ministério da Justiça e Negócios Interiores, que, depois de lhe examinar a conformidade com os dispositivos desta lei, a remeterá ao Departamento Federal de Segurança Pública, para a sindicância prevista no § 1º do artigo seguinte. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.</STRONG> Nos Estados e Territórios, a petição, dirigida ao Presidente da República, será apresentada à Prefeitura Municipal da localidade em que residir o naturalizando, e daí remetida à Secretaria de Segurança ou órgão correspondente, do Govêrno do Estado, o qual poderá, entretanto, recebê-la diretamente. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A Secretaria de Segurança, antes de opinar sôbre a naturalização, fará a remessa das individuais dactiloscópicas do naturalizando aos órgãos congêneres dos Estados, onde tenha êle residido, e fará sindicância sôbre a sua vida pregressa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O processo deverá ultimar-se dentro em cento e vinte dias, findos os quais será devolvido imediatamente, no Distrito Federal, ao Ministério da Justiça e Negócios Interiores, e, nos Estados e Territórios, aos respectivos Governadores. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O Departamento Federal de Segurança Pública, a Secretaria de Segurança Pública, ou o órgão congênere dos Estados e Territórios quando ouvidos pelo serviço que houver sido inicialmente provocado, deverá prestar as informações dentro em noventa dias, sob pena de responsabilidade dos funcionários culpados pela demora. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Recebidas, ou não, as informações, será o processo devolvido diretamente ao Ministério da Justiça e Negócios Interiores, pelo Departamento Federal de Segurança Pública, ou pela repartição correspondente dos Estados ou Territórios, por intermédio do Governador. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.</STRONG> Recebido o processo pelo Ministro da Justiça, êste, se não julgar necessárias novas diligências, ou depois de realizadas as que determinar, submetê-lo-á, com o seu parecer, ao Presidente da República. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Ressalvadas as prioridades decorrentes do art. 9º, os processos serão examinados e informados dentro de cada classe, em ordem cronológica rigorosa, sob pena de responsabilidade. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º O Ministério da Justiça e Negócios Interiores, quando houver despacho cujo cumprimento dependa do naturalizando, poderá marcar-lhe prazo para êsse fim, caso em que, se o mesmo não fôr observado, o pedido se tornará caduco. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Se a diligência determinada independer do interessado, a repartição ou o serviço a que fôr requisitada, deverá executá-la dentro em sessenta dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Das exigências feitas, a seção competente do Ministério da Justiça e Negócios Interiores dará conhecimento ao interessado mediante carta registrada. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.</STRONG> Uma vez publicado, será o decreto de naturalização remetido ao Juiz de Direito do domicílio do naturalizando, para que a êste o entregue, imediata e solenemente, em audiência pública, onde lhe explicará a significação da sua nova qualidade advertindo-o dos deveres e direitos que esta lhe acarreta. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Onde houver mais de um Juiz de Direito, a entrega será feita pelo competente para os feitos da União; se mais de um houver com essa competência, pelo da 1ª Vara; e, não havendo Juiz especial para tais feitos, pelo da 1ª Vara Cível. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Caso o Município em que residir o naturalizando não fôr sede de comarca, a entrega poderá ser feita, mediante autorização do Juiz de Direito, por substituto togado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º Na mesma audiência poderá ser entregue mais de um decreto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º O naturalizando não pagará outras custas senão as da audiência, do expediente e das publicações, observado o Regimento de Custas. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.</STRONG> A entrega do decreto constará de têrmo lavrado no livro de audiências e assinado pelo Juiz e pelo naturalizando, devendo êste: </P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=5></TD>
+<TD vAlign=UP width=30 align=right><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a)</I></TD>
+<TD>demonstrar que sabe ler e escrever a língua portuguêsa, segundo a sua condição, pela leitura de trechos da Constituição Federal; </TD></TR></TBODY></TABLE></TD></TR></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>declarar expressamente que renuncia à nacionalidade anterior; </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>c)</I></TD>
+<TD>assumir o compromisso de bem cumprir os deveres de brasileiro. </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Ao naturalizando de nacionalidade portuguêsa, exigir-se-á, quanto ao inciso a , apenas a comprovação do uso adequado da língua. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Será anotada, no decreto e comunicada, assim ao Ministério da Justiça e Negócios Interiores, como a repartição encarregada do recrutamento militar, a data da entrega, e dêle também constará a declaração de haver sido prestado o compromisso e lavrado o têrmo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º O decreto ficará sem efeito, salvo motivo de fôrça maior devidamente comprovado, se a entrega não fôr solicitada no prazo de seis ou de dezoito meses, contados da data da publicação, conforme o naturalizando residir no Distrito Federal, ou noutro ponto do território brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 4º Decorrido qualquer dêsses prazos, será o decreto devolvido ao Ministro, que, por simples despacho mandará arquivá-lo, anotando-se esta circunstância no respectivo registro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 5º Se o naturalizando no curso do processo, mudar de residência, poderá requerer lhe seja efetuada a entrega do decreto no lugar para onde se houver mudado. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.</STRONG> Durante o processo de naturalização, poderá qualquer cidadão brasileiro impugná-la, desde que o faça fundamentadamente, devendo ser junta ao processo a impugnação e os documentos que a acompanharem. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.</STRONG> Será suspensa a entrega quando verificada, pelas autoridades federais ou estaduais, mudança nas condições que autorizavam a naturalização. </P>
+<P align=center>DOS EFEITOS DA NATURALIZAÇÃO </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.</STRONG> A naturalização só produzirá efeito após a entrega do decreto, na forma dos arts. 15 e 16, e confere ao naturalizado o gôzo de todos os direitos civis e políticos, excetuados os que a Constituição Federal atribui exclusivamente a brasileiros natos. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.</STRONG> A naturalização, não importa a aquisição da nacionalidade brasileira pelo cônjuge do naturalizado ou pelos seus filhos. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.</STRONG> O Ministro da Justiça e Negócios Interiores, no ato da naturalização, poderá autorizar a tradução do nome do naturalizando, se êste o requerer. </P>
+<P align=center>DA PERDA DA NACIONALIDADE </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.</STRONG> Perde a nacionalidade o brasileiro: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I - que, por naturalização voluntária, adquirir outra nacionalidade; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;II - que, sem licença do Presidente da República, aceitar, de govêrno estrangeiro, comissão, emprêgo ou pensão; <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;III - que, por sentença judiciária, tiver cancelada a naturalização, por exercer atividade nociva ao interêsse nacional. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.</STRONG> A perda da nacionalidade, nos casos do art. 22, I e II, será decretada pelo Presidente da República, apuradas as causas em processo que, iniciado de ofício, ou mediante representação fundamentada, correrá no Ministério da Justiça e Negócios Interiores, ouvido sempre o interessado. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.</STRONG> O processo para cancelamento da naturalização será da atribuição do Juiz de Direito competente para os feitos da União, do domicílio do naturalizado, e iniciado mediante solicitação do Ministro da Justiça e Negócios Interiores, ou representação de qualquer pessoa. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.</STRONG> A representação que deverá mencionar, expressamente, a atividade reputada nociva ao interêsse nacional, será dirigida à autoridade policial competente, que mandará instaurar o necessário inquérito. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.</STRONG> Ao receber a requisição ou inquérito, o Juiz mandará dar vista ao Procurador da República, que opinará, no prazo de cinco dias, oferecendo a denúncia ou requerendo o arquivamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Se o órgão do Ministério Público Federal requerer o arquivamento, o Juiz, caso considere improcedentes as razões invocadas, remeterá os autos ao Procurador Geral da República, que oferecerá denúncia, designará outro órgão do Ministério Público, para oferecê-la, ou insistirá no pedido de arquivamento que não poderá, então, ser recusado. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.</STRONG> O Juiz, ao receber a denúncia, marcará dia e hora para qualificação do denunciado, determinando a citação, que se fará por mandado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º Se não fôr êle encontrado a citação será feita por edital, com o prazo de quinze dias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º Se o denunciado não comparecer no dia e hora determinados, prosseguir-se-á, à sua revelia, dando-se-Ihe, neste caso, curador. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.</STRONG> O denunciado ou seu procurador, a partir da audiência em que fôr qualificado, terá o prazo de cinco dias, independente de notificação, para oferecer alegações escritas, requerer diligências e indicar o rol de testemunhas. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Quando se tratar de revel, o prazo será concedido ao curador nomeado. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.</STRONG> Decorrido o prazo do artigo anterior, determinará o Juiz a realização das diligências requeridas pelas partes, inclusive inquirição de testemunhas, e outras que lhe parecerem necessárias, tudo no prazo de vinte dias. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.</STRONG> O Ministério Público Federal e o denunciado, a seguir, terão o prazo de quarenta e oito horas, cada um, para requerer as diligências, cuja necessidade ou conveniência tenha resultado da instrução. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.</STRONG> Esgotados êstes prazos, sem requerimento das partes, ou concluídas as diligências requeridas e ordenadas, será aberta vista dos autos, ao Ministério Público, e ao denunciado que terão três dias, cada um, para o oferecimento das razões finais. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.</STRONG> Findos êstes prazos, serão os autos conclusos ao Juiz que, dentro de dez dias, em audiência, com a presença do denunciado, e do órgão do Ministério Público, procederá à leitura da sentença. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.</STRONG> Da sentença que concluir pelo cancelamento a naturalização, caberá apelação sem efeito suspensivo para o Tribunal Federal de Recursos, no prazo de dez dias, contados da audiência em que se tiver realizado a leitura independente de notificação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Será também de dez dias, e nas mesmas condições, o prazo para o Ministério Público Federal apelar de sentença absolutória. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.</STRONG> A decisão que concluir pelo cancelamento da naturalização, depois de transitar em julgado será remetida, por cópia, ao Ministério da Justiça e Negócios Interiores, a fim de ser averbada à margem do registro do respectivo decreto. </P>
+<P align=center>DA NULIDADE DO DECRETO DE NATURALIZAÇÃO </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.</STRONG> Será nulo o Decreto de naturalização, se provada a falsidade ideológica ou material de qualquer dos documentos destinados a comprovação dos requisitos exigidos pelos artigos 8º e 9º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º A nulidade será declarada em ação, com o rito constante dos artigos 24 a 34, e poderá ser promovida pelo Ministério Público Federal ou por qualquer cidadão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A ação de nulidade deverá ser proposta dentro dos quatro anos que se seguirem à entrega do Decreto de naturalização.</P>
+<P align=center>DA REAQUISIÇÃO DA NACIONALIDADE</P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.</STRONG> O brasileiro que, por qualquer das causas do art. 22, números I e II, desta lei, houver perdido a nacionalidade, poderá readquirí-la por decreto, se estiver domiciliado no Brasil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 1º O pedido de requisição, dirigido ao Presidente da República, será processado no Ministério da Justiça e Negócios Interiores, ao qual será encaminhado por intermédio dos respectivos Governadores, se o requerente residir nos Estados ou Territórios. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 2º A reaquisição, no caso do art. 22, nº I, não será concedida, se apurar que o brasileiro, ao eleger outra nacionalidade, o fêz para se eximir de deveres a cujo cumprimento estaria obrigado, se se conservasse brasileiro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;§ 3º No caso do art. 22, nº II, é necessário tenha renunciado à comissão, ao emprêgo ou pensão de Govêrno estrangeiro. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.</STRONG> A verificação do disposto nos §§ 2º e 3º do artigo anterior, quando necessária, será efetuada por intermédio do Ministério das Relações Exteriores.</P>
+<P align=center>DOS DIREITOS POLÍTICOS</P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.</STRONG> São direitos políticos aquêles que a Constituição e as Leis atribuem a brasileiros, precipuamente o de votar e ser votado. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.</STRONG> Os direitos políticos sómente se suspendem ou perdem, nos casos previstos no art. 135, §§ 1º e 2º, da Constituição Federal. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.</STRONG> O brasileiro que houver perdido direitos políticos, poderá readquirí-los: </P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=5></TD>
+<TD vAlign=UP width=30 align=right><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a)</I></TD>
+<TD>declarando, em têrmo lavrado no Ministério da Justiça e Negócios Interiores, se residir no Distrito Federal, ou nas Secretarias congêneres dos Estados e Territórios, se neles residir, que se acha pronto para suportar o ônus de que se havia libertado, contanto que êsse procedimento não importe fraude da lei; </TD></TR></TBODY></TABLE></TD></TR></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>afirmando, por têrmo idêntico, ter renunciado a condecoração ou título nobiliário, renúncia que deverá ser comunicada, por via diplomática, ao Govêrno estrangeiro respectivo. <BR></TD></TR></TBODY></TABLE>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.</STRONG> A perda e a reaquisição dos direitos políticos serão declaradas por decreto, referendado pelo Ministro da Justiça e Negócios Interiores. </P>
+<P align=center>DISPOSIÇÕES GERAIS </P>
+<P><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.</STRONG> Serão seladas as petições e os documentos relativos à naturalização e ao título declaratório. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.</STRONG> Haverá, no Departamento competente do Ministério da Justiça e Negócios Interiores, dois livros especiais destinados, um, ao registro dos decretos de naturalização, e outro ao registro dos títulos declaratórios expedidos na forma do art. 6º. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Parágrafo único. </I>Êste Departamento comunicará ao órgão criado pelo art. 162, parágrafo único, da Constituição Federal as naturalizações efetivamente concedidas e seus cancelamentos, para efeito de registro em livros próprios, quer de naturalização, quer de título declaratório. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.</STRONG> A naturalização não isenta o naturalizado das responsabilidades a que estava anteriormente obrigado perante o seu país de origem. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 45.</STRONG> Os requerimentos de naturalização que já se encontrarem no Ministério da Justiça e Negócios Interiores serão despachados na conformidade desta Lei. <BR><BR><STRONG>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 46.</STRONG> Esta Lei entrará em vigor na data da sua publicação, revogadas as disposições em contrário. </P>
+<P>Rio de Janeiro, 18 de setembro de 1949; 128º da Independência e 61º da República. </P>
+<P align=left>EURICO G. DUTRA&nbsp; <BR>Adroaldo Mesquita da Costa&nbsp; <BR>Raul Fernandes</P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 19/09/1949
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 19/9/1949, Página 13465      
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1949, Página 49 
+                                                        Vol. 5          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
