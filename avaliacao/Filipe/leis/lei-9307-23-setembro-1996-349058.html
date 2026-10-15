@@ -1,0 +1,805 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br" xml:lang="pt-br">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-itunes-app" content="app-id=1049343067" />
+    <meta name="google-play-app" content="app-id=br.leg.camara.infolegmovel" />
+    <script>
+      (function () {
+        let initialized = false;
+        let loading = false;
+
+        function ensureBody(callback) {
+          if (document.body) {
+            callback();
+          } else {
+            setTimeout(() => ensureBody(callback), 50);
+          }
+        }
+
+        function loadScript() {
+          if (loading || window.VLibras) return;
+          loading = true;
+
+          ensureBody(() => {
+            const s = document.createElement("script");
+            s.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
+            s.onload = initVLibras;
+            document.body.appendChild(s);
+          });
+        }
+
+        function initVLibras() {
+          if (initialized || !window.VLibras) return;
+
+          ensureBody(() => {
+            if (!document.querySelector("[vw]")) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+              <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                  <div class="vw-plugin-top-wrapper"></div>
+                </div>
+              </div>
+            `;
+              document.body.appendChild(container);
+            }
+
+            (new window.VLibras.Widget(
+              "https://vlibras.gov.br/app",
+              "https://vlibras.gov.br/config/camara.json",
+            ),
+              $("body").append(
+                '<aside><div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div></aside>',
+              ));
+            initialized = true;
+
+            injectCSS();
+            if (!window.location.pathname.includes("/comissoes")) {
+              bindButton();
+            }
+          });
+        }
+
+        function injectCSS() {
+          if (document.getElementById("vlibras-style")) return;
+          const style = document.createElement("style");
+          style.id = "vlibras-style";
+          style.innerHTML = `
+          [vw-access-button] { display: none !important; }
+          div[vw] { z-index: 999999 !important; }
+        `;
+          document.head.appendChild(style);
+        }
+
+        function bindButton() {
+          const btn = document.getElementById("meu-botao-vlibras");
+          if (!btn) {
+            setTimeout(bindButton, 300);
+            return;
+          }
+
+          btn.onclick = function (e) {
+            e.preventDefault();
+            const original = document.querySelector("[vw-access-button]");
+            if (original) original.click();
+          };
+        }
+
+        // OBSERVA MUTA&#199;&#213;ES DO DOM (ESSENCIAL NO PLONE)
+        const observer = new MutationObserver(() => {
+          if (!document.querySelector("[vw]") && !initialized) {
+            loadScript();
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.addEventListener("load", loadScript);
+      })();
+    </script>
+
+    <title>Portal da Câmara dos Deputados</title>
+  <style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/member-cachekey-46bb2e0fc9968a457e63f356c0ff3900.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/portlets-cachekey-8a45f49b338591ae0c9c8a91f261dc78.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/deprecated-cachekey-32595b622b36f2eee9478f07796d4f67.css);</style><style type="text/css" media="screen">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/resourceplone.app.discussion.stylesheetsdiscussion-cachekey-5b23f388acd88bdb65020b51a5a278fb.css);</style><style type="text/css">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/elements-cachekey-57e40a70bd8192a6f63782abff5c2748.css);</style><style type="text/css" media="all">@import url(https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/ploneCustom-cachekey-7fb44e17264e070fccf4e31d9f2ada1c.css);</style><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/themecamara.leg.viradadigitalcsslibsbootstrap-datetimepicker.min-cachekey-ab2d257c1b49d2d194633e2ecb4564a2.css" /><link rel="stylesheet" type="text/css" href="https://www.camara.leg.br/tema/global/camara-custom.css" /><link rel="stylesheet" type="text/css" href="https://www2.camara.leg.br/portal_css/camara_leg_viradadigital/++theme++camara.leg.viradadigital/css/all.min.css" /><link rel="apple-touch-icon" sizes="180x180" href="https://www.camara.leg.br/tema/apple-touch-icon.png" /><link rel="icon" type="image/png" sizes="32x32" href="https://www.camara.leg.br/tema/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="https://www.camara.leg.br/tema/favicon-16x16.png" /><link rel="manifest" href="https://www.camara.leg.br/tema/site.webmanifest" /><link rel="mask-icon" href="https://www.camara.leg.br/tema/safari-pinned-tab.svg" color="#009e49" /><link rel="search" href="http://www2.camara.leg.br/busca-geral" title="Buscar neste site" /><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/resourceplone.app.jquery-cachekey-3fa72abea58e1799bd3b0bc237335d45.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/styleswitcher-cachekey-9178d2d1bc80488214ac8d40a46c7bdf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/impressaoIframes-cachekey-7de901cf3c737563606c12fa53b7a321.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/GoogleAnalyticsTracker.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/kss-bbb-cachekey-df10a37e7aa4176c3b122c2e3b0ee128.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/inline_validation-cachekey-35d4d75a94cdb17b403a636871dd92cb.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsbootstrap.min-cachekey-c15df71e2ec454087fe4c4eab0ce9d3e.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment.min-cachekey-860514b918ea422f7e82fa48125015c4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsmoment-pt-br-cachekey-0aafba4fb000126f1ed0f6701186de00.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsbootstrap-datetimepicker.min-cachekey-fac2884b384d9c99236b26d0746facc4.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljslibsjquery.maskedinput.min-cachekey-e2f8b2523378532cc132594675b6dc6f.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljsacoes-tema-cachekey-a0084cf69f1785571a18f6a58a4986ac.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitaljscorrecoes-bootstrap-tema-cachekey-bd4c19550531506aa59d8b0aa7e8d6c5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitalvendorjquery.mmenu.all-cachekey-f0e297313e30d6b2b2c2588ef23b5ef2.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsvd_correcoes-cachekey-52a3614631388ad9e07bf35264bc73d5.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsmmenu-correcoes-cachekey-8e45cc1e451978774afbfe2f5f1e95cf.js"></script><script type="text/javascript" src="https://www2.camara.leg.br/portal_javascripts/camara_leg_viradadigital/themecamara.leg.viradadigitalviradadigitaljsselecao-idioma-cachekey-998dbb210e1353a5d7f94011740ee16c.js"></script><meta name="msapplication-TileColor" content="#00a300" /><meta name="msapplication-TileImage" content="https://www.camara.leg.br/tema/mstile-144x144.png" /><meta name="theme-color" content="#009e49" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="canonical" href="" /><script type="text/javascript">
+          $("link[rel='canonical']").attr("href", window.location.href);
+        </script>
+
+
+
+
+
+
+
+<title>LEI Nº 9.307, DE 23 DE SETEMBRO DE 1996 - Publicação Original - Portal Câmara dos Deputados</title>
+
+<meta name="description" content="Publicação de Lei Ordinária: Dispõe sobre a arbitragem. " />
+
+<!-- Coloque aqui sua referência ao CSS local -->
+<link rel="stylesheet" type="text/css" href="../../../_css/legislacao-v1.css" />
+
+<!-- Coloque aqui seu javascript -->
+<!-- script type="text/javascript" src="caminho-e-nome-do-arquivo.js"></script -->
+
+</head>
+<body>
+    <header class="l-cabecalho-portal" role="banner" id="portal-header">
+        <ul aria-label="Acesso direto" class="acesso-direto">
+          <!-- Links para saltar diretamente para &#225;reas importantes da p&#225;gina accesskey 2 = conte&#250;do e 3 = navega&#231;&#227;o -->
+          <li>
+            <a class="acesso-direto__link" href="#main-content" accesskey="2">Ir ao conteúdo</a>
+          </li>
+          <li>
+            <a class="acesso-direto__link" href="#main-nav" accesskey="3">Ir à navegação principal</a>
+          </li>
+        </ul>
+
+        <!--[if lte IE 9]>
+          <p class="browserupgrade">
+            Voc&#234; est&#225; usando um navegador <strong>defasado</strong>. Por favor,
+            <a href="https://browsehappy.com/">atualize seu navegador</a> para
+            melhorar sua experi&#234;ncia e sua seguran&#231;a.
+          </p>
+        <![endif]-->
+
+        <div class="nav-top">
+          <div class="container nav-top--container">
+            <a href="https://www2.camara.leg.br" class="logo-camara" accesskey="1"><span class="sr-only">Página inicial</span></a>
+
+            <div class="nav-top__palacio"></div>
+
+            <div class="nav-top__menu-superior">
+              <ul aria-label="Ferramentas de apoio" class="links-apoio">
+                <li class="links-apoio__item links-apoio__item--vlibras">
+                  <a id="meu-botao-vlibras" href="javascript:void(0);">
+                    <span>
+                      <img src="https://www.camara.leg.br/tema/assets/images/ico-vlibras-branco.png" alt="Ativar VLibras" width="28px" height="30px" />
+                    </span>
+                  </a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--acessibilidade">
+                  <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+                </li>
+                <li class="links-apoio__item links-apoio__item--faleconosco">
+                  <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+                </li>
+              </ul>
+
+              <ul class="orgaos-parceiros" aria-label="Órgãos parceiros">
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--congresso">
+                  <a href="http://www.congressonacional.leg.br"><span>Congresso</span></a>
+                </li>
+                <li class="orgaos-parceiros__item orgaos-parceiros__item--senado">
+                  <a href="http://www.senado.leg.br"><span>Senado</span></a>
+                </li>
+              </ul>
+
+              <div class="lista-idiomas">
+                <button class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                  <span class="botao-idioma-topo__sigla">PT</span>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-right l-lista-idiomas" aria-label="Idioma">
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">English</span>
+                      <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                  </li>
+                  <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                      <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                      <span class="idioma-topo__nome">Español</span>
+                      <span class="idioma-topo__sigla">ES</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="home-camara-menu">
+    <nav class="menu-global navbar navbar-expand-lg" role="navigation" aria-label="Navegação principal" id="menuglobal">
+      <div class="container menu-global--container">
+      
+
+        <a href="https://www.camara.leg.br" class="logo-camara" accesskey="1">
+          <span class="sr-only">Página inicial</span>
+        </a>
+
+      
+        
+        <!-- icone menu -->
+        <button class="menu-global--btnmenu navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarportal" aria-controls="navbarportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="menu-global--icon"></span>
+        </button>
+
+        <!-- icone busca -->
+        <button class="menu-global--btnsearch" type="button" data-toggle="collapse" data-target="#buscaportal" aria-controls="buscaportal" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="fa fa-search"></span>
+        </button>
+
+        <div class="navbar-collapse hidden-sm hidden-md hidden-xs" id="navbarportal">
+          <ul title="Navegação Principal" id="main-nav" class="navbar-nav">
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-temas nav-link dropdown-toggle" id="temas">Assuntos</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="temas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/agropecuaria">Agropecuária</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/cidades-e-transportes">Cidades e transportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/ciencia-tecnologia-e-comunicacoes">Ciência, tecnologia e comunicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/consumidor">Consumidor</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/direitos-humanos">Direitos humanos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/economia">Economia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/educacao-cultura-e-esportes">Educação, cultura e esportes</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/meio-ambiente-e-energia">Meio ambiente e energia</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/politica-e-administracao-publica">Política e administração pública</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/relacoes-exteriores">Relações exteriores</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/saude">Saúde</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/seguranca">Segurança</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assuntos/trabalho-previdencia-e-assistencia">Trabalho, previdência e assistência</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-institucional nav-link dropdown-toggle" id="institucional">Institucional</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="institucional">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/agenda">Agenda</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/servicos-ao-cidadao">Serviços</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/estruturaadm/mesa/presidencia">Presidência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/biblioteca-e-publicacoes/">Biblioteca e publicações</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/escola-da-camara/">Escola da Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/papel-e-estrutura/">Papel e estrutura</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/historia-e-arquivo/">História e arquivo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/a-camara/visiteacamara">Visite</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-deputados nav-link dropdown-toggle" id="deputados">Deputados</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="deputados">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/quem-sao">Quem são</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/deputados/liderancas-e-bancadas-partidarias">Lideranças e bancadas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/deputados/frentes-e-grupos-parlamentares">Frentes e grupos parlamentares</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-atvlegislativa nav-link dropdown-toggle" id="atvlegislativa">Atividade Legislativa</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="atvlegislativa">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/busca-portal/proposicoes/pesquisa-simplificada">Propostas legislativas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/plenario">Plenário</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comissoes">Comissões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/sessoesereunioes">Sessões e reuniões</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas">Estudos legislativos</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/orcamento-da-uniao">Orçamento da União</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/legislacao">Legislação</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/entenda-o-processo-legislativo/">Entenda o processo legislativo</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/atividade-legislativa/participe">Participe</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-comunicacao nav-link dropdown-toggle" id="comunicacao">Comunicação</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="comunicacao">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/noticias">Agência Câmara de Notícias</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/radio">Rádio Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/tv">TV Câmara</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/banco-imagens">Banco de Imagens</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/assessoria-de-imprensa">Assessoria de Imprensa</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/comprove">Comprove uma notícia</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+            
+              
+                <li class="nav-item dropdown">
+                  <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="menu-global__item-transprestcontas nav-link dropdown-toggle" id="transprestcontas">Transparência e prestação de contas</a>
+
+                  
+                    <ul class="dropdown-menu" aria-labelledby="transprestcontas">
+                      <li class="dropdown-item">
+                        <a href="https://www.camara.leg.br/transparencia/">Transparência</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://www2.camara.leg.br/transparencia/prestacao-de-contas">Prestação de contas</a>
+                      </li>
+                      <li class="dropdown-item">
+                        <a href="https://dadosabertos.camara.leg.br/">Dados abertos</a>
+                      </li>
+                    </ul>
+                  
+                </li>
+              
+            
+          </ul>
+          <div class="outras-opcoes-menu-usuario hidden-md hidden-lg">
+            <ul aria-label="Ferramentas de apoio" class="links-apoio links-apoio--menu-mobile">
+              <li class="links-apoio__item links-apoio__item--acessibilidade">
+                <a href="https://www2.camara.leg.br/acessibilidade/recursos-de-acessibilidade" accesskey="0">Acessibilidade</a>
+              </li>
+              <li class="links-apoio__item links-apoio__item--faleconosco">
+                <a href="https://www.camara.leg.br/fale-conosco" accesskey="9">Fale Conosco</a>
+              </li>
+            </ul>
+          </div>
+          <div class="lista-idiomas hidden-md hidden-lg">
+            <button id="botao-idioma-topo" class="botao-idioma-topo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="4,0">
+                <span class="botao-idioma-topo__sigla">PT</span>
+            </button>
+        
+            <ul class="dropdown-menu-right l-lista-idiomas " aria-label="Idioma">
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/english" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--ingles" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">English</span>
+                        <span class="idioma-topo__sigla">EN</span>
+                    </a>
+                </li>
+                <li class="l-lista-idiomas__item">
+                    <a href="https://www2.camara.leg.br/espanol" class="idioma-topo">
+                        <span class="idioma-topo__bandeira idioma-topo__bandeira--espanhol" aria-hidden="true"></span>
+                        <span class="idioma-topo__nome">Español</span>
+                        <span class="idioma-topo__sigla">ES</span>            
+                    </a>
+                </li>
+            </ul>
+        </div>
+        </div>
+
+
+        <div class="collapse box-search" id="buscaportal">
+          <form role="search" accesskey="4" class="box-search__busca form-inline" action="https://www.camara.leg.br/busca-geral">
+            <label for="termo" class="sr-only box-search__label">Pesquise no Portal da Câmara</label>
+            <input class="form-control box-search__campo" type="search" name="termo" id="termo" placeholder="Buscar" aria-label="Search" />
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+      </header>
+
+    <div class="breadcrumbs-marcacao">
+        <div class="container">
+            <nav aria-label="Onde estou">
+                <ol class="breadcrumb portal-breadcrumbs">
+                    <li class="breadcrumb-item"><a href="//www.camara.leg.br">Início</a></li>
+                    
+	<li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa'>Atividade Legislativa</a></li>
+    <li class='breadcrumb-item'><a href='http://www2.camara.gov.br/atividade-legislativa/legislacao'>Legislação</a></li>
+
+                    <li class="breadcrumb-item active" aria-current="page">Esta página</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <div id="menu-secoes-internas" class="menu-secoes-internass">
+                <div id="portal-mainsection">
+                    <div class="l-identificacao-landing">
+                        <div class="container">
+                            <h1 class="titulo-landing">Legislação</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marcacao-conteudo-portal" class="conteudo-portal container nopadding-right nopadding-left">
+        <div class="coluna-centro col-md-12">
+
+
+<div id="portal-column-content">
+	<div id="portal-content-wrapper">
+		<div class="documentContent">
+			<div id="content">
+	
+				<h2 class="documentFirstHeading">Legislação Informatizada - LEI Nº 9.307, DE 23 DE SETEMBRO DE 1996 - Publicação Original</h2>
+				<div class="vejaTambem">
+			    	<p>Veja também:</p>
+			    	<ul>
+                                        <li>
+
+
+                                                <a href="lei-9307-23-setembro-1996-349058-normaatualizada-pl.html" target="_blank">Texto Atualizado <span class="descricaoArquivo">(HTML)</span></a>&nbsp;
+                                                (<a href="lei-9307-23-setembro-1996-349058-normaatualizada-pl.doc">formato doc</a>)
+                                                &nbsp;
+                                                    (<a href="lei-9307-23-setembro-1996-349058-normaatualizada-pl.pdf">formato pdf</a>)
+
+                                            
+                                        </li>
+                                        <li>
+                                            <a href="http://www.camara.gov.br/sileg/Prop_Detalhe.asp?id=218042">Proposição Originária</a>
+                                        </li>
+                                    <li>
+                                        <a href="lei-9307-23-setembro-1996-349058-norma-pl.html">Dados da Norma</a>
+                                    </li>
+                                </ul>
+			    </div>	
+                                
+
+					<h1>LEI Nº 9.307, DE 23 DE SETEMBRO DE 1996</h1>
+				
+				<div class="textoNorma">
+				
+						<p class="ementa">
+							Dispõe sobre a arbitragem. <BR>
+						</p>
+				
+						<div class="texto">
+							&nbsp;&nbsp;&nbsp;&nbsp;<STRONG> O PRESIDENTE DA REPÚBLICA</STRONG>&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp; Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: <BR><BR><BR>
+<CENTER>Capítulo I<BR>DISPOSIÇÕES GERAIS<STRONG> </STRONG></CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 1º&nbsp;As pessoas capazes de contratar poderão valer-se da arbitragem para dirimir litígios relativos a direitos patrimoniais disponíveis. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 2º&nbsp;A arbitragem poderá ser de direito ou de eqüidade, a critério das partes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Poderão as partes escolher, livremente, as regras de direito que serão aplicadas na arbitragem, desde que não haja violação aos bons costumes e à ordem pública. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Poderão, também, as partes convencionar que a arbitragem se realize com base nos princípios gerais de direito, nos usos e costumes e nas regras internacionais de comércio. <BR><BR><BR>
+<CENTER>Capítulo II <BR>DA CONVENÇÃO DE ARBITRAGEM E SEUS EFEITOS </CENTER>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 3º&nbsp;As partes interessadas podem submeter a solução de seus litígios ao juízo arbitral mediante convenção de arbitragem, assim entendida a cláusula compromissória e o compromisso arbitral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 4º&nbsp;A cláusula compromissória é a convenção através da qual as partes em um contrato comprometem-se a submeter à arbitragem os litígios que possam vir a surgir, relativamente a tal contrato. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º A cláusula compromissória deve ser estipulada por escrito, podendo estar inserta no próprio contrato ou em documento apartado que a ele se refira. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Nos contratos de adesão, a cláusula compromissória só terá eficácia se o aderente tomar a iniciativa de instituir a arbitragem ou concordar, expressamente, com a sua instituição, desde que por escrito em documento anexo ou em negrito, com a assinatura ou visto especialmente para essa cláusula. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 5º&nbsp;Reportando-se as partes, na cláusula compromissória, às regras de algum órgão arbitral institucional ou entidade especializada, a arbitragem será instituída e processada de acordo com tais regras, podendo, igualmente, as partes estabelecer na própria cláusula, ou em outro documento, a forma convencionada para a instituição da arbitragem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 6º&nbsp;Não havendo acordo prévio sobre a forma de instituir a arbitragem, a parte interessada manifestará à outra parte sua intenção de dar início à arbitragem, por via postal ou por outro meio qualquer de comunicação, mediante comprovação de recebimento, convocando-a para, em dia, hora e local certos, firmar o compromisso arbitral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Não comparecendo a parte convocada ou, comparecendo, recusar-se a firmar o compromisso arbitral, poderá a outra parte propor a demanda de que trata o art. 7º desta Lei, perante o órgão do Poder Judiciário a que, originariamente, tocaria o julgamento da causa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 7º&nbsp;Existindo cláusula compromissória e havendo resistência quanto à instituição da arbitragem, poderá a parte interessada requerer a citação da outra parte para comparecer em juízo a fim de lavrar-se o compromisso, designando o juiz audiência especial para tal fim. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º O autor indicará, com precisão, o objeto da arbitragem, instruindo o pedido com o documento que contiver a cláusula compromissória. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Comparecendo as partes à audiência, o juiz tentará, previamente, a conciliação acerca do litígio. Não obtendo sucesso, tentará o juiz conduzir as partes à celebração, de comum acordo, do compromisso arbitral. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 3º Não concordando as partes sobre os termos do compromisso, decidirá o juiz, após ouvir o réu, sobre seu conteúdo, na própria audiência ou no prazo de dez dias, respeitadas as disposições da cláusula compromissória e atendendo ao disposto nos arts. 10 e 21, § 2º, desta Lei. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 4º Se a cláusula compromissória nada dispuser sobre a nomeação de árbitros, caberá ao juiz, ouvidas as partes, estatuir a respeito, podendo nomear árbitro único para a solução do litígio. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 5º A ausência do autor, sem justo motivo, à audiência designada para a lavratura do compromisso arbitral, importará a extinção do processo sem julgamento de mérito. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 6º Não comparecendo o réu à audiência, caberá ao juiz, ouvido o autor, estatuir a respeito do conteúdo do compromisso, nomeando árbitro único. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 7º A sentença que julgar procedente o pedido valerá como compromisso arbitral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 8º&nbsp;A cláusula compromissória é autônoma em relação ao contrato em que estiver inserta, de tal sorte que a nulidade deste não implica, necessariamente, a nulidade da cláusula compromissória. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; <EM>Parágrafo único.</EM> Caberá ao árbitro decidir de ofício, ou por provocação das partes, as questões acerca da existência, validade e eficácia da convenção de arbitragem e do contrato que contenha a cláusula compromissória. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 9º&nbsp;O compromisso arbitral é a convenção através da qual as partes submetem um litígio à arbitragem de uma ou mais pessoas, podendo ser judicial ou extrajudicial. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º O compromisso arbitral judicial celebrar-se-á por termo nos autos, perante o juízo ou tribunal, onde tem curso a demanda. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º O compromisso arbitral extrajudicial será celebrado por escrito particular, assinado por duas testemunhas, ou por instrumento público. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 10.&nbsp;Constará, obrigatoriamente, do compromisso arbitral: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o nome, profissão, estado civil e domicílio das partes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o nome, profissão e domicílio do árbitro, ou dos árbitros, ou, se for o caso, a identificação da entidade à qual as partes delegaram a indicação de árbitros; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - a matéria que será objeto da arbitragem; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - o lugar em que será proferida a sentença arbitral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 11.&nbsp;Poderá, ainda, o compromisso arbitral conter: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - local, ou locais, onde se desenvolverá a arbitragem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a autorização para que o árbitro ou os árbitros julguem por eqüidade, se assim for convencionado pelas partes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o prazo para apresentação da sentença arbitral; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a indicação da lei nacional ou das regras corporativas aplicáveis à arbitragem, quando assim convencionarem as partes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - a declaração da responsabilidade pelo pagamento dos honorários e das despesas com a arbitragem; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - a fixação dos honorários do árbitro, ou dos árbitros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Fixando as partes os honorários do árbitro, ou dos árbitros, no compromisso arbitral, este constituirá título executivo extrajudicial; não havendo tal estipulação, o árbitro requererá ao órgão do Poder Judiciário que seria competente para julgar, originariamente, a causa que os fixe por sentença. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 12.&nbsp;Extingue-se o compromisso arbitral: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - escusando-se qualquer dos árbitros, antes de aceitar a nomeação, desde que as partes tenham declarado, expressamente, não aceitar substituto; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - falecendo ou ficando impossibilitado de dar seu voto algum dos árbitros, desde que as partes declarem, expressamente, não aceitar substituto; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - tendo expirado o prazo a que se refere o art. 11, inciso III, desde que a parte interessada tenha notificado o árbitro, ou o presidente do tribunal arbitral, concedendo-lhe o prazo de dez dias para a prolação e apresentação da sentença arbitral. <BR><BR><BR></P>
+<CENTER>Capítulo III <BR>DOS ÁRBITROS </CENTER>
+<P><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 13.&nbsp;Pode ser árbitro qualquer pessoa capaz e que tenha a confiança das partes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º As partes nomearão um ou mais árbitros, sempre em número ímpar, podendo nomear, também, os respectivos suplentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º Quando as partes nomearem árbitros em número par, estes estão autorizados, desde logo, a nomear mais um árbitro. Não havendo acordo, requererão as partes ao órgão do Poder Judiciário a que tocaria, originariamente, o julgamento da causa a nomeação do árbitro, aplicável, no que couber, o procedimento previsto no art. 7º desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º As partes poderão, de comum acordo, estabelecer o processo de escolha dos árbitros, ou adotar as regras de um órgão arbitral institucional ou entidade especializada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 4º Sendo nomeados vários árbitros, estes, por maioria, elegerão o presidente do tribunal arbitral. Não havendo consenso, será designado presidente o mais idoso. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 5º O árbitro ou o presidente do tribunal designará, se julgar conveniente, um secretário, que poderá ser um dos árbitros. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 6º No desempenho de sua função, o árbitro deverá proceder com imparcialidade, independência, competência, diligência e discrição. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 7º Poderá o árbitro ou o tribunal arbitral determinar às partes o adiantamento de verbas para despesas e diligências que julgar necessárias. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 14.&nbsp;Estão impedidos de funcionar como árbitros as pessoas que tenham, com as partes ou com o litígio que lhes for submetido, algumas das relações que caracterizam os casos de impedimento ou suspeição de juízes, aplicando-se-lhes, no que couber, os mesmos deveres e responsabilidades, conforme previsto no Código de Processo Civil. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º As pessoas indicadas para funcionar como árbitro têm o dever de revelar, antes da aceitação da função, qualquer fato que denote dúvida justificada quanto à sua imparcialidade e independência. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º O árbitro somente poderá ser recusado por motivo ocorrido após sua nomeação. Poderá, entretanto, ser recusado por motivo anterior à sua nomeação, quando:&nbsp;</P>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>a)</I></TD>
+<TD>não for nomeado, diretamente, pela parte; ou </TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY>
+<TR>
+<TD width=20></TD>
+<TD vAlign=UP width=30 align=right><I>b)</I></TD>
+<TD>o motivo para a recusa do árbitro for conhecido posteriormente à sua nomeação. </TD></TR></TBODY></TABLE>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 15.&nbsp;A parte interessada em argüir a recusa do árbitro apresentará, nos termos do art. 20, a respectiva exceção, diretamente ao árbitro ou ao presidente do tribunal arbitral, deduzindo suas razões e apresentando as provas pertinentes. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Acolhida a exceção, será afastado o árbitro suspeito ou impedido, que será substituído, na forma do art. 16 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 16.&nbsp;Se o árbitro escusar-se antes da aceitação da nomeação, ou, após a aceitação, vier a falecer, tornar-se impossibilitado para o exercício da função, ou for recusado, assumirá seu lugar o substituto indicado no compromisso, se houver. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Não havendo substituto indicado para o árbitro, aplicar-se-ão as regras do órgão arbitral institucional ou entidade especializada, se as partes as tiverem invocado na convenção de arbitragem. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Nada dispondo a convenção de arbitragem e não chegando as partes a um acordo sobre a nomeação do árbitro a ser substituído, procederá a parte interessada da forma prevista no art. 7º desta Lei, a menos que as partes tenham declarado, expressamente, na convenção de arbitragem, não aceitar substituto. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 17.&nbsp;Os árbitros, quando no exercício de suas funções ou em razão delas, ficam equiparados aos funcionários públicos, para os efeitos da legislação penal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 18.&nbsp;O árbitro é juiz de fato e de direito, e a sentença que proferir não fica sujeita a recurso ou a homologação pelo Poder Judiciário. <BR><BR><BR></P>
+<CENTER>Capítulo IV <BR>DO PROCEDIMENTO ARBITRAL </CENTER>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 19.&nbsp;Considera-se instituída a arbitragem quando aceita a nomeação pelo árbitro, se for único, ou por todos, se forem vários. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Instituída a arbitragem e entendendo o árbitro ou o tribunal arbitral que há necessidade de explicitar alguma questão disposta na convenção de arbitragem, será elaborado, juntamente com as partes, um adendo, firmado por todos, que passará a fazer parte integrante da convenção de arbitragem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 20.&nbsp;A parte que pretender argüir questões relativas à competência, suspeição ou impedimento do árbitro ou dos árbitros, bem como nulidade, invalidade ou ineficácia da convenção de arbitragem, deverá fazê-lo na primeira oportunidade que tiver de se manifestar, após a instituição da arbitragem. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Acolhida a argüição de suspeição ou impedimento, será o árbitro substituído nos termos do art. 16 desta Lei, reconhecida a incompetência do árbitro ou do tribunal arbitral, bem como a nulidade, invalidade ou ineficácia da convenção de arbitragem, serão as partes remetidas ao órgão do Poder Judiciário competente para julgar a causa. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Não sendo acolhida a argüição, terá normal prosseguimento a arbitragem, sem prejuízo de vir a ser examinada a decisão pelo órgão do Poder Judiciário competente, quando da eventual propositura da demanda de que trata o art. 33 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 21.&nbsp;A arbitragem obedecerá ao procedimento estabelecido pelas partes na convenção de arbitragem, que poderá reportar-se às regras de um órgão arbitral institucional ou entidade especializada, facultando-se, ainda, às partes delegar ao próprio árbitro, ou ao tribunal arbitral, regular o procedimento. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º Não havendo estipulação acerca do procedimento, caberá ao árbitro ou ao tribunal arbitral discipliná-lo. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Serão, sempre, respeitados no procedimento arbitral os princípios do contraditório, da igualdade das partes, da imparcialidade do árbitro e de seu livre convencimento. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 3º As partes poderão postular por intermédio de advogado, respeitada, sempre, a faculdade de designar quem as represente ou assista no procedimento arbitral. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 4º Competirá ao árbitro ou ao tribunal arbitral, no inicio do procedimento, tentar a conciliação das partes, aplicando-se, no que couber, o art. 28 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 22.&nbsp;Poderá o árbitro ou o tribunal arbitral tomar o depoimento das partes, ouvir testemunhas e determinar a realização de perícias ou outras provas que julgar necessárias, mediante requerimento das partes ou de ofício. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 1º O depoimento das partes e das testemunhas será tomado em local, dia e hora previamente comunicados, por escrito, e reduzido a termo, assinado pelo depoente, ou a seu rogo, e pelos árbitros. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 2º Em caso de desatendimento, sem justa causa, da convocação para prestar depoimento pessoal, o árbitro ou o tribunal arbitral levará em consideração o comportamento da parte faltosa, ao proferir sua sentença; se a ausência for de testemunha, nas mesmas circunstâncias, poderá o árbitro ou o presidente do tribunal arbitral requerer à autoridade judiciária que conduza a testemunha renitente, comprovando a existência da convenção de arbitragem. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 3º A revelia da parte não impedirá que seja proferida a sentença arbitral. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 4º Ressalvado o disposto no § 2º, havendo necessidade de medidas coercitivas ou cautelares, os árbitros poderão solicitá-las ao órgão do Poder Judiciário que seria, originariamente, competente para julgar a causa. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; § 5º Se, durante o procedimento arbitral, um árbitro vier a ser substituído fica a critério do substituto repetir as provas já produzidas. <BR><BR><BR></P>
+<CENTER>Capítulo V<BR>DA SENTENÇA ARBITRAL </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 23.&nbsp;A sentença arbitral será proferida no prazo estipulado pelas partes. Nada tendo sido convencionado, o prazo para a apresentação da sentença é de seis meses, contado da instituição da arbitragem ou da substituição do árbitro. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>As partes e os árbitros, de comum acordo, poderão prorrogar o prazo estipulado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 24.&nbsp;A decisão do árbitro ou dos árbitros será expressa em documento escrito. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º Quando forem vários os árbitros, a decisão será tomada por maioria. Se não houver acordo majoritário, prevalecerá o voto do presidente do tribunal arbitral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º O árbitro que divergir da maioria poderá, querendo, declarar seu voto em separado. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 25.&nbsp;Sobrevindo no curso da arbitragem controvérsia acerca de direitos indisponíveis e verificando-se que de sua existência, ou não, dependerá o julgamento, o árbitro ou o tribunal arbitral remeterá as partes à autoridade competente do Poder Judiciário, suspendendo o procedimento arbitral. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Resolvida a questão prejudicial e juntada aos autos a sentença ou acórdão transitados em julgado, terá normal seguimento a arbitragem. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 26.&nbsp;São requisitos obrigatórios da sentença arbitral: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o relatório, que conterá os nomes das partes e um resumo do litígio; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - os fundamentos da decisão, onde serão analisadas as questões de fato e de direito, mencionando-se, expressamente, se os árbitros julgaram por eqüidade; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - o dispositivo, em que os árbitros resolverão as questões que lhes forem submetidas e estabelecerão o prazo para o cumprimento da decisão, se for o caso; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a data e o lugar em que foi proferida. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>A sentença arbitral será assinada pelo árbitro ou por todos os árbitros. Caberá ao presidente do tribunal arbitral, na hipótese de um ou alguns dos árbitros não poder ou não querer assinar a sentença, certificar tal fato. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 27.&nbsp;A sentença arbitral decidirá sobre a responsabilidade das partes acerca das custas e despesas com a arbitragem, bem como sobre verba decorrente de litigância de má-fé, se for o caso, respeitadas as disposições da convenção de arbitragem, se houver. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 28.&nbsp;Se, no decurso da arbitragem, as partes chegarem a acordo quanto ao litígio, o árbitro ou o tribunal arbitral poderá, a pedido das partes, declarar tal fato mediante sentença arbitral, que conterá os requisitos do art. 26 desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 29.&nbsp;Proferida a sentença arbitral, dá-se por finda a arbitragem, devendo o árbitro, ou o presidente do tribunal arbitral, enviar cópia da decisão às partes, por via postal ou por outro meio qualquer de comunicação, mediante comprovação de recebimento, ou, ainda, entregando-a diretamente às partes, mediante recibo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 30.&nbsp;No prazo de cinco dias, a contar do recebimento da notificação ou da ciência pessoal da sentença arbitral, a parte interessada, mediante comunicação à outra parte, poderá solicitar ao árbitro ou ao tribunal arbitral que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - corrija qualquer erro material da sentença arbitral; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - esclareça alguma obscuridade, dúvida ou contradição da sentença arbitral, ou se pronuncie sobre ponto omitido a respeito do qual devia manifestar-se a decisão. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>O árbitro ou o tribunal arbitral decidirá, no prazo de dez dias, aditando a sentença arbitral e notificando as partes na forma do art. 29. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 31.&nbsp;A sentença arbitral produz, entre as partes e seus sucessores, os mesmos efeitos da sentença proferida pelos órgãos do Poder Judiciário e, sendo condenatória, constitui título executivo. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 32.&nbsp;É nula a sentença arbitral se: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - for nulo o compromisso; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - emanou de quem não podia ser árbitro; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - não contiver os requisitos do art. 26 desta Lei; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - for proferida fora dos limites da convenção de arbitragem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - não decidir todo o litígio submetido à arbitragem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - comprovado que foi proferida por prevaricação, concussão ou corrupção passiva; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VII - proferida fora do prazo, respeitado o disposto no art. 12, inciso III, desta Lei; e <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIII - forem desrespeitados os princípios de que trata o art. 21, § 2º, desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 33.&nbsp;A parte interessada poderá pleitear ao órgão do Poder Judiciário competente a decretação da nulidade da sentença arbitral, nos casos previstos nesta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 1º A demanda para a decretação de nulidade da sentença arbitral seguirá o procedimento comum, previsto no Código de Processo Civil, e deverá ser proposta no prazo de até noventa dias após o recebimento da notificação da sentença arbitral ou de seu aditamento. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 2º A sentença que julgar procedente o pedido: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - decretará a nulidade da sentença arbitral, nos casos do art. 32, incisos I, II, VI, VII e VIII; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - determinará que o árbitro ou o tribunal arbitral profira novo laudo, nas demais hipóteses. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; § 3º A decretação da nulidade da sentença arbitral também poderá ser argüida mediante ação de embargos do devedor, conforme o art. 741 e seguintes do Código de Processo Civil, se houver execução judicial. <BR><BR><BR>
+<CENTER>Capítulo VI <BR>DO RECONHECIMENTO E EXECUÇÃO DE SENTENÇAS <BR>ARBITRAIS ESTRANGEIRAS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 34.&nbsp;A sentença arbitral estrangeira será reconhecida ou executada no Brasil de conformidade com os tratados internacionais com eficácia no ordenamento interno e, na sua ausência, estritamente de acordo com os termos desta Lei. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Considera-se sentença arbitral estrangeira a que tenha sido proferida fora do território nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 35.&nbsp;Para ser reconhecida ou executada no Brasil, a sentença arbitral estrangeira está sujeita, unicamente, à homologação do Supremo Tribunal Federal. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 36.&nbsp;Aplica-se à homologação para reconhecimento ou execução de sentença arbitral estrangeira, no que couber, o disposto nos arts. 483 e 484 do Código de Processo Civil. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 37.&nbsp;A homologação de sentença arbitral estrangeira será requerida pela parte interessada, devendo a petição inicial conter as indicações da lei processual, conforme o art. 282 do Código de Processo Civil, e ser instruída, necessariamente, com: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - o original da sentença arbitral ou uma cópia devidamente certificada, autenticada pelo consulado brasileiro e acompanhada de tradução oficial; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - o original da convenção de arbitragem ou cópia devidamente certificada, acompanhada de tradução oficial. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 38.&nbsp;Somente poderá ser negada a homologação para o reconhecimento ou execução de sentença arbitral estrangeira, quando o réu demonstrar que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - as partes na convenção de arbitragem eram incapazes; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a convenção de arbitragem não era válida segundo a lei a qual as partes a submeteram, ou, na falta de indicação, em virtude da lei do país onde a sentença arbitral foi proferida; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; III - não foi notificado da designação do árbitro ou do procedimento de arbitragem, ou tenha sido violado o princípio do contraditório, impossibilitando a ampla defesa; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IV - a sentença arbitral foi proferida fora dos limites da convenção de arbitragem, e não foi possível separar a parte excedente daquela submetida à arbitragem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V - a instituição da arbitragem não está de acordo com o compromisso arbitral ou cláusula compromissória; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VI - a sentença arbitral não se tenha, ainda, tornado obrigatória para as partes, tenha sido anulada, ou, ainda, tenha sido suspensa por órgão judicial do país onde a sentença arbitral for prolatada. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 39.&nbsp;Também será denegada a homologação para o reconhecimento ou execução da sentença arbitral estrangeira, se o Supremo Tribunal Federal constatar que: <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I - segundo a lei brasileira, o objeto do litígio não é suscetível de ser resolvido por arbitragem; <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; II - a decisão ofende a ordem pública nacional. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>Parágrafo único. </I>Não será considerada ofensa à ordem pública nacional a efetivação da citação da parte residente ou domiciliada no Brasil, nos moldes da convenção de arbitragem ou da lei processual do país onde se realizou a arbitragem, admitindo-se, inclusive, a citação postal com prova inequívoca de recebimento, desde que assegure à parte brasileira tempo hábil para o exercício do direito de defesa. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 40.&nbsp;A denegação da homologação para reconhecimento ou execução de sentença arbitral estrangeira por vícios formais, não obsta que a parte interessada renove o pedido, uma vez sanados os vícios apresentados. <BR><BR><BR>
+<CENTER>Capítulo VII <BR>DISPOSIÇÕES FINAIS </CENTER><BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 41.&nbsp;Os arts. 267, inciso VII; 301, inciso IX; e 584, inciso III, do Código de Processo Civil passam a ter a seguinte redação: <BR><BR>
+<DIR>"Art. 267.&nbsp;.........................................................................................<BR>........................................................................................................... <BR><BR>VII - pela convenção de arbitragem;"</DIR>
+<DIR>"Art. 301.&nbsp;........................................................................................<BR>.......................................................................................................... <BR><BR>IX - convenção de arbitragem;"</DIR>
+<DIR>"Art. 584.&nbsp;.........................................................................................<BR>........................................................................................................... <BR><BR>III - a sentença arbitral e a sentença homologatória de transação ou de conciliação;"</DIR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 42.&nbsp;O art. 520 do Código de Processo Civil passa a ter mais um inciso, com a seguinte redação: <BR><BR>
+<DIR>"Art. 520.&nbsp;.........................................................................................<BR>........................................................................................................... <BR><BR>VI - julgar procedente o pedido de instituição de arbitragem."</DIR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 43.&nbsp;Esta Lei entrará em vigor sessenta dias após a data de sua publicação. <BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Art. 44.&nbsp;Ficam revogados os arts. 1.037 a 1.048 da Lei nº 3.071, de 1º de janeiro de 1916, Código Civil Brasileiro; os arts. 101 e 1.072 a 1.102 da Lei nº 5.869, de 11 de janeiro de 1973, Código de Processo Civil; e demais disposições em contrário. </P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp; Brasília, 23 de setembro de 1996; 175º da Independência e 108º da República. </P>
+<P>FERNANDO HENRIQUE CARDOSO <BR>Nelson A. Jobim </P>
+						</div>
+					    
+				</div>
+				
+
+                                            <br>
+                                            <div class="rodapeTexto">
+                                                <div class="texto">
+                                                    Este texto não substitui o original publicado no Diário Oficial da União - Seção 1 de 24/09/1996
+                                                </div>
+                                            </div>
+
+					<br><br>
+					<div class="publicacoesTI">
+                                            <strong>Publicação:</strong>
+                                            <ul class="listaMarcada">
+                                                    <li>
+                                                        
+                                                        Diário Oficial da União - Seção 1
+                                                         - 24/9/1996, Página 18897 
+                                                        
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                                    <li>
+                                                        
+                                                        Coleção de Leis do Brasil
+                                                         - 1995, Página 4271 
+                                                        Vol. 9          
+                                                        (Publicação Original)
+                                                        
+                                                    </li>
+                                            </ul>
+					</div>
+
+
+
+			</div> <!-- content // -->
+		</div> <!-- documentContent // -->
+	</div> <!-- portal-content-wrapper // -->
+</div> <!-- portal-column-content // --> 
+</div></div>
+<div class="js-mmenu-container">
+      
+
+      
+      
+
+      
+
+      <footer role="contentinfo" class="rodape-portal">
+        <!-- Coloque aqui o endere&#231;o e demais informa&#231;&#245;es de assinatura -->
+        <address class="rodape-portal-info">
+          <div class="container">
+            <div class="rodape-portal-info__nome">
+              <p>
+                <strong id="legislaturaRodape">57ª Legislatura - 4ª Sessão Legislativa Ordinária</strong>
+              </p>
+            </div>
+
+            <div class="l-rodape-info">
+              <div class="l-rodape-info__local rodape-portal-info__texto">
+                <span class="rodape-info">Câmara dos Deputados - Palácio do Congresso Nacional - Praça
+                  dos Três Poderes</span>
+                <span class="rodape-info">Brasília - DF - Brasil - CEP 70160-900</span>
+                <span class="rodape-info"><span class="rodape-info__destaque">CNPJ:</span>
+                  00.530.352/0001-59</span>
+              </div>
+
+              <div class="l-rodape-info__telefones rodape-portal-info__texto">
+                <ul class="list-unstyled" aria-label="Número para contato e horário de atendimento">
+                  <li>
+                    <span class="rodape-info__destaque">Disque-Câmara:</span>
+                    <a href="tel:0800-0-619-619">0800-0-619-619</a>, das 8h às
+                    20h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento por WhatsApp:</span>
+                    <a href="https://wa.me//556132160000?text">(61) 3216-0000</a>, das 8h às 19h
+                  </li>
+                  <li>
+                    <span class="rodape-info__destaque">Atendimento presencial:</span>
+                    das 9h às 19h
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="acesso-provedor text-right">
+              <a title="Autenticar-se no site" href="/login_form">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </address>
+        <!-- Coloque aqui a lista de redes sociais da C&#226;mara -->
+        <div class="rodape-portal-links rodape-portal-links--redes-sociais">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Câmara nas redes sociais">
+              <li class="rodape-portal-links__item">
+                <a href="https://whatsapp.com/channel/0029Va2fexI3gvWgfMs6Fv31" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--whatsapp" aria-hidden="true"></span>
+                  <span class="sr-only">Whatsapp</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://t.me/CamaradosDeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--telegram" aria-hidden="true"></span>
+                  <span class="sr-only">Telegram</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.facebook.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--facebook" aria-hidden="true"></span>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://twitter.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--twitter" aria-hidden="true"></span>
+                  <span class="sr-only">X</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.youtube.com/channel/UC-ZkSRh-7UEuwXJQ9UMCFJA" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--youtube" aria-hidden="true"></span>
+                  <span class="sr-only">Youtube</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://tiktok.com/@camaradosdeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--tiktok" aria-hidden="true"></span>
+                  <span class="sr-only">Tiktok</span>
+                </a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.instagram.com/camaradeputados" class="rodape-portal-links__link">
+                  <span class="g-social-icon-outline g-social-icon-outline--instagram" aria-hidden="true"></span>
+                  <span class="sr-only">Instagram</span>
+                </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://www.threads.com/@camaradosdeputados" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--threads" aria-hidden="true"></span>
+                      <span class="sr-only">Threads</span>
+                  </a>
+              </li>
+              <li class="rodape-portal-links__item">
+                  <a href="https://bsky.app/profile/camara.leg.br" class="rodape-portal-links__link">
+                      <span class="g-social-icon-outline g-social-icon-outline--bluesky" aria-hidden="true"></span>
+                      <span class="sr-only">Bluesky</span>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Coloque aqui a lista de links de apoio do rodap&#233; -->
+        <div class="rodape-portal-links rodape-portal-links--apoio">
+          <div class="container">
+            <ul class="rodape-portal-links__lista" aria-label="Links de apoio">
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/sobre-o-portal" class="rodape-portal-links__link">Sobre o portal</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/termo-de-uso-e-politica-de-privacidade" class="rodape-portal-links__link">Termos de uso</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www2.camara.leg.br/aplicativos/" class="rodape-portal-links__link">Aplicativos</a>
+              </li>
+
+              <li class="rodape-portal-links__item">
+                <a href="https://www.camara.leg.br/extranet" class="rodape-portal-links__link">Extranet</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+
+      <div class="barra-carregando" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Carregando</h5>
+            </div>
+            <div class="modal-body">
+              <p>Por favor, aguarde.</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
