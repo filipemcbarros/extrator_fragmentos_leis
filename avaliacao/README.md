@@ -27,5 +27,6 @@ As 376 leis foram divididas em três pastas, uma por anotador (`Paulo/`, `Pedro/
 - `amostra/ouro_rascunho.csv`: a árvore do regex em linhas, ponto de partida para os anotadores corrigirem.
 - `amostra_ouro.ipynb` e `ver_leis.ipynb`: notebooks para montar a amostra e visualizar as leis.
 - `piloto/`: piloto com 5 leis.
+- `extrair_ouro_lc95.py`: refaz a extração das 376 leis com o extrator ajustado à LC 95/1998, com a mesma divisão por revisor, e grava `<revisor>/ouro_<revisor>_lc95.json` e `.xlsx`. Compara cada lei com o ouro já revisado (`ouro_<revisor>.json`; `paulo_ouro_v3.json` no caso do Paulo), que não é alterado.
 
 **Atenção:** o mini-ouro do piloto (`piloto/`) foi feito pelo Claude, não por um anotador humano. É provisório e serve só para testar a métrica; não deve entrar nos resultados.
