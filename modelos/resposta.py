@@ -12,7 +12,7 @@ import json
 import re
 import unicodedata
 
-from fragmentador.modelos import NIVEL, Fragmento, Lei, Tipo
+from fragmentador.modelos import NIVEL, Fragmento, Lei, Tipo, campo_da_lei
 from fragmentador.rotulos import _limpar_numero
 
 #: Rótulo que o modelo às vezes repete dentro de "numero" ("Art. 1º", "§ 2º").
@@ -187,9 +187,11 @@ def normalizar(resposta: dict | list[dict | None], origem: str = "",
     for indice, objeto in enumerate(trechos):
         if objeto is None:
             continue
-        for campo in ("titulo", "ementa", "preambulo"):
+        # O prompt pede "epigrafe"; as respostas gravadas antes da mudança trazem
+        # "titulo", e campo_da_lei lê as duas.
+        for campo in ("epigrafe", "ementa", "preambulo"):
             if not getattr(lei, campo):
-                setattr(lei, campo, _texto(objeto.get(campo)))
+                setattr(lei, campo, _texto(campo_da_lei(objeto, campo)))
         lei.fecho = _texto(objeto.get("fecho")) or lei.fecho
 
         raizes: list[Fragmento] = []

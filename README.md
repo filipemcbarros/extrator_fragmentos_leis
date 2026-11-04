@@ -41,7 +41,7 @@ from fragmentador import fragmentar_referencia, Tipo
 
 lei = fragmentar_referencia("exemplos/lei-14133-2021.html")
 
-print(lei.titulo)        # LEI Nº 14.133, DE 1º DE ABRIL DE 2021
+print(lei.epigrafe)      # LEI Nº 14.133, DE 1º DE ABRIL DE 2021
 print(lei.contagem())    # {'alinea': 151, 'artigo': 194, 'capitulo': 32, ...}
 
 for alinea in lei.por_tipo(Tipo.ALINEA):
@@ -78,18 +78,43 @@ erro e a lista dos textos disponíveis.
 
 ## A hierarquia
 
-Segue a articulação da Lei Complementar 95/1998. A unidade básica é o artigo; o
-artigo desdobra-se em parágrafos e incisos; o inciso, em alíneas; a alínea, em
-itens. Acima do artigo ficam os agrupadores, que organizam sem comandar.
+Segue a articulação da Lei Complementar 95/1998 (art. 10). A unidade básica é o
+artigo; o artigo desdobra-se em parágrafos e incisos; o inciso, em alíneas; a
+alínea, em itens. Acima do artigo ficam os agrupadores, que organizam sem
+comandar, e os agrupamentos em Disposições Preliminares, Gerais, Finais ou
+Transitórias.
 
 ```
-PARTE > LIVRO > TÍTULO > CAPÍTULO > SEÇÃO > SUBSEÇÃO
+PARTE > LIVRO > TÍTULO > CAPÍTULO > SEÇÃO > SUBSEÇÃO      (+ DISPOSIÇÕES, ver abaixo)
         └─ ARTIGO
              ├─ PARÁGRAFO ─┐
              └─ INCISO  ───┴─ (o inciso pende do artigo ou do parágrafo)
                   └─ ALÍNEA
                        └─ ITEM
 ```
+
+| Tipo (`tipo`) | Rótulo reconhecido | LC 95/1998 |
+|---|---|---|
+| `parte` | PARTE GERAL, PARTE ESPECIAL, PARTE PRIMEIRA, PARTE I | art. 10, V e VI |
+| `livro` | LIVRO I, LIVRO COMPLEMENTAR | art. 10, V e VI |
+| `titulo` | TÍTULO I, TÍTULO ÚNICO | art. 10, V e VI |
+| `capitulo` | CAPÍTULO I, CAPÍTULO IV-A, CAPITULO PRIMEIRO | art. 10, V e VI |
+| `secao`, `subsecao` | Seção I, Subseção II, Seção 1ª | art. 10, V e VII |
+| `disposicoes` | DISPOSIÇÕES PRELIMINARES, Disposições Gerais, DAS DISPOSIÇÕES FINAIS E TRANSITÓRIAS | art. 10, VIII |
+| `artigo` | Art. 1º, Art. 10., Art. 5º-A, Artigo único, Arts. 5º a 7º (VETADOS) | art. 10, I |
+| `paragrafo` | § 1º, Parágrafo único, §§ 1º e 2º (Revogados) | art. 10, III |
+| `inciso` | III -, IV (VETADO) | art. 10, IV |
+| `alinea` | a) | art. 10, IV |
+| `item` | 1., 1), 1 -, 1º) | art. 10, IV |
+
+Os campos da lei seguem a LC 95: `epigrafe` (art. 4º), `ementa` (art. 5º) e
+`preambulo` (art. 6º). O fecho (local, data e assinaturas) não é nomeado pela
+LC 95 e fica em `fecho`. O caput é o `texto` do artigo.
+
+Até a versão anterior a epígrafe se chamava `titulo`. O prompt dos modelos e o
+esquema da decodificação restrita já usam só `epigrafe`. Os JSONs antigos, como
+o padrão-ouro e as respostas já gravadas dos modelos, continuam legíveis: a
+comparação (`modelos/comparar.py`) lê `epigrafe` e, na falta dele, `titulo`.
 
 O encaixe é decidido por uma pilha e pelo nível de cada tipo, e não pelo
 fragmento anterior. É o que reproduz, sem exceção codificada, o caso em que o
@@ -117,6 +142,29 @@ sequência.
 **Inciso exige travessão.** `III -` é inciso; uma linha que começa por `I` ou `V`
 sem travessão é texto corrido. Da mesma forma, `1.` só é item quando há alínea
 aberta; fora disso é numeração dentro do próprio texto.
+
+**Agrupador exige numeração.** A palavra só abre agrupador quando começa por
+maiúscula e vem seguida de numeração (romano, `ÚNICO`, ordinal por extenso ou
+`1ª`), e depois dela só pode vir nada, um separador ou a rubrica. Sem isso,
+linhas de texto corrido como "parte do valor…", "título de eleitor…" ou
+"Capítulo VI desta Lei" abriam agrupadores falsos e desmontavam a árvore. A
+rubrica que vem na mesma linha ("CAPÍTULO III – DAS PENALIDADES") ou em
+minúsculas na linha seguinte ("Capítulo I" / "Da Definição") vai para `rubrica`.
+
+**Disposições.** "DISPOSIÇÕES FINAIS" logo abaixo de "CAPÍTULO VI" é a rubrica
+dele. Sozinha, é um agrupamento (`disposicoes`) que toma o nível do agrupador
+anterior e fica ao lado dele; se esse agrupador acabou de abrir, sem
+dispositivo algum, fica dentro dele.
+
+**Item exige enumeração.** O item abre sob alínea, como prevê a LC 95; depois de
+outro item, só se a numeração continuar a dele; sob inciso ou parágrafo — prática
+das leis anteriores à LC 95 —, só como item 1 de uma enumeração anunciada por
+dois-pontos. Sob artigo, ou fora dessas condições, "1." e "1 -" são texto (em
+geral, linhas de tabela de orçamento).
+
+**Veto e revogação agrupados.** "Arts. 5º a 7º (VETADOS)" e "§§ 1º e 2º
+(Revogados)" viram um fragmento com a numeração em intervalo ("5º a 7º"). Sem
+a marca de situação, "Arts. 82 e 83" é remissão e fica no texto.
 
 **Fidelidade à fonte.** O texto não é corrigido. A Lei 5.603/1970 traz
 "Denominar-se-à" no acervo, com crase, e assim é devolvida.
@@ -163,6 +211,12 @@ exemplos/         páginas reais usadas na conferência
   não foi exercitado em portais com outra diagramação.
 - Não há tratamento de texto compilado com marcas de vigência ("Revogado pela Lei
   nº ..."), que hoje permanecem no texto do dispositivo.
-- O item (`1.`, `2.`) só é reconhecido sob alínea. Leis que numeram itens sob
-  inciso, prática minoritária, não terão esse nível separado.
+- Enumerações em algarismos arábicos diretamente sob o artigo, comuns nas leis
+  do início do século XX, ficam no texto do artigo: a LC 95 não prevê item ali,
+  e chamá-las de inciso falsearia a numeração.
+- Incisos sem travessão ("I. Ficam pertencendo…") só são reconhecidos quando
+  trazem a marca de veto ou revogação; nas leis antigas que os escrevem assim,
+  ficam no texto.
+- Itens na mesma linha do dispositivo que os anuncia ("…seguintes: 1. x; 2. y")
+  não são separados, porque o reconhecimento é por início de linha.
 ```

@@ -11,31 +11,33 @@ import json
 INSTRUCOES = """\
 Você recebe o texto de uma lei brasileira, em {descricao}, e deve devolvê-lo fragmentado em seus dispositivos, em JSON.
 
-A hierarquia segue a Lei Complementar 95/1998:
-- agrupadores, do maior para o menor: parte > livro > titulo > capitulo > secao > subsecao;
-- artigo ("Art. 1º", "Art. 10."), dentro do agrupador aberto, ou na raiz se não houver;
-- paragrafo ("§ 1º", "Parágrafo único") e inciso ("I -", "II -") pendem do artigo;
+A estrutura e os nomes seguem a Lei Complementar 95/1998:
+- agrupadores, do maior para o menor (art. 10, V): parte > livro > titulo > capitulo > secao > subsecao;
+- disposicoes: o agrupamento em Disposições Preliminares, Gerais, Finais ou Transitórias (art. 10, VIII), quando aparece sozinho, e não como nome de um agrupador;
+- artigo ("Art. 1º", "Art. 10."), a unidade básica (art. 10, I), dentro do agrupador aberto, ou na raiz se não houver;
+- paragrafo ("§ 1º", "Parágrafo único") e inciso ("I -", "II -") pendem do artigo (art. 10, II e III);
 - o inciso que vem depois de um parágrafo pende desse parágrafo;
-- alinea ("a)", "b)") pende do inciso; item ("1.", "2.") pende da alínea.
+- alinea ("a)", "b)") pende do inciso; item ("1.", "2.") pende da alínea (art. 10, II e IV). Nas leis anteriores a 1998, o item também pende do inciso ou do parágrafo que anuncia a enumeração com dois-pontos.
 
 Responda com um único objeto JSON, sem comentários e sem cercas de código, com as chaves:
-- "titulo": o nome da lei ("LEI Nº 1.234, DE 5 DE MAIO DE 1990");
-- "ementa": o resumo que vem logo abaixo do título;
-- "preambulo": o que vem entre a ementa e o primeiro dispositivo ("O PRESIDENTE DA REPÚBLICA Faço saber...");
+- "epigrafe": a epígrafe (art. 4º), com a espécie, o número e a data da lei ("LEI Nº 1.234, DE 5 DE MAIO DE 1990");
+- "ementa": a ementa (art. 5º), logo abaixo da epígrafe, que resume o objeto da lei;
+- "preambulo": o preâmbulo (art. 6º), entre a ementa e o primeiro dispositivo ("O PRESIDENTE DA REPÚBLICA Faço saber...");
 - "fecho": local, data e assinaturas, depois do último dispositivo;
 - "dispositivos": a lista dos dispositivos de primeiro nível.
 
 Cada dispositivo é um objeto com:
-- "tipo": parte, livro, titulo, capitulo, secao, subsecao, artigo, paragrafo, inciso, alinea ou item;
-- "numero": a numeração como está na lei, sem o rótulo: "1º", "10", "5º-A", "II", "a", "único";
-- "rubrica": só nos agrupadores, o nome que os acompanha ("DAS DISPOSIÇÕES GERAIS");
-- "texto": o texto do dispositivo sem o rótulo; no artigo, é o caput; no agrupador, fica vazio;
+- "tipo": parte, livro, titulo, capitulo, secao, subsecao, disposicoes, artigo, paragrafo, inciso, alinea ou item;
+- "numero": a numeração como está na lei, sem o rótulo: "1º", "10", "5º-A", "II", "a", "único"; no veto ou revogação agrupados ("Arts. 5º a 7º (VETADOS)"), o intervalo: "5º a 7º"; em disposicoes, vazio;
+- "rubrica": só nos agrupadores e em disposicoes, o nome que os acompanha ("DAS DISPOSIÇÕES GERAIS");
+- "texto": o texto do dispositivo sem o rótulo; no artigo, é o caput; no agrupador e em disposicoes, fica vazio;
 - "filhos": os dispositivos subordinados, na ordem; omita a chave quando não houver.
 
 Regras:
-- copie o texto exatamente como está, sem corrigir grafia, resumir ou traduzir;
+- copie o texto exatamente como está, sem corrigir grafia, resumir ou traduzir, mantendo marcas como "(VETADO)", "(Revogado)" e "(NR)";
 - todo o texto da lei deve aparecer na resposta, cada trecho uma única vez;
-- crie só os dispositivos que estão escritos na lei: nenhum dispositivo vazio, e nenhum agrupador (parte, livro, titulo, capitulo, secao, subsecao) que a lei não traga. Na lei sem agrupadores, os artigos vão direto em "dispositivos";
+- crie só os dispositivos que estão escritos na lei: nenhum dispositivo vazio, e nenhum agrupador (parte, livro, titulo, capitulo, secao, subsecao, disposicoes) que a lei não traga. Na lei sem agrupadores, os artigos vão direto em "dispositivos";
+- "DISPOSIÇÕES FINAIS" logo abaixo de "CAPÍTULO VI" é a rubrica do capítulo, e não um dispositivo disposicoes;
 - o artigo sem parágrafos nem incisos não tem "filhos";
 - quando a lei altera outra e transcreve entre aspas o texto alterado, a transcrição inteira é texto do artigo que faz a alteração: não crie dispositivos para o que está entre aspas.
 """
@@ -66,7 +68,7 @@ Beltrano de Tal""",
 }
 
 _EXEMPLO_MINIMO_SAIDA = {
-    "titulo": "LEI Nº 8.888, DE 7 DE JUNHO DE 1994",
+    "epigrafe": "LEI Nº 8.888, DE 7 DE JUNHO DE 1994",
     "ementa": "Institui o Dia Nacional do Livro.",
     "preambulo": "O PRESIDENTE DA REPÚBLICA Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei:",
     "fecho": "Brasília, 7 de junho de 1994; 173º da Independência e 106º da República. FULANO DE TAL Beltrano de Tal",
@@ -110,7 +112,7 @@ Beltrano de Tal""",
 }
 
 _EXEMPLO_SAIDA = {
-    "titulo": "LEI Nº 9.999, DE 3 DE MARÇO DE 1999",
+    "epigrafe": "LEI Nº 9.999, DE 3 DE MARÇO DE 1999",
     "ementa": "Dispõe sobre o registro de embarcações e altera a Lei nº 1.111, de 1950.",
     "preambulo": "O PRESIDENTE DA REPÚBLICA Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei:",
     "fecho": "Brasília, 3 de março de 1999; 178º da Independência e 111º da República. FULANO DE TAL Beltrano de Tal",
@@ -139,7 +141,7 @@ Atenção: esta lei é longa e foi dividida em {trechos} trechos. Este é o prim
 
 _TRECHO_SEGUINTE = """\
 Atenção: esta lei é longa e foi dividida em {trechos} trechos. Este é o trecho {trecho}, que começa no meio da lei.
-- Deixe "titulo", "ementa" e "preambulo" vazios.{sem_fecho}
+- Deixe "epigrafe", "ementa" e "preambulo" vazios.{sem_fecho}
 - Se o trecho começar por texto que continua o dispositivo anterior, antes de qualquer rótulo, ponha esse texto na chave "continuacao".
 - O dispositivo cujo pai ficou em trecho anterior (um inciso sem o seu artigo, por exemplo) vai direto em "dispositivos".
 """

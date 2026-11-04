@@ -17,7 +17,7 @@ O regex é a referência, não um gabarito: as medidas dizem o quanto o modelo c
 
 1. **Entrada.** De cada página da lei recorta-se o título e o bloco `div.textoNorma`, sem menus, scripts e atributos.
 2. **Prompt.** Um texto fixo, igual para todas as leis e modelos: a hierarquia da Lei Complementar 95/1998, o formato da resposta e dois exemplos. A lei entra no fim.
-3. **Geração.** O modelo devolve um JSON com `titulo`, `ementa`, `preambulo`, `fecho` e a árvore de `dispositivos`.
+3. **Geração.** O modelo devolve um JSON com `epigrafe`, `ementa`, `preambulo`, `fecho` e a árvore de `dispositivos`, com os nomes da LC 95/1998 (a epígrafe é o art. 4º; os tipos incluem `disposicoes`, do art. 10, VIII). As respostas das rodadas anteriores trazem `titulo` no lugar de `epigrafe` e continuam legíveis na comparação.
 4. **Comparação.** A resposta é convertida para o formato do JSON do regex e as duas árvores são comparadas, lei a lei.
 
 ## Modelos
@@ -122,7 +122,7 @@ A recomendação do relatório é rodar só o Qwen: é o melhor nas leis médias
 | `relatorios/` | O relatório técnico atual e, em `anteriores/`, os dois que vieram antes. |
 | `../tests/test_modelos.py` | Testes do recorte, da divisão, da resposta e da comparação, sem GPU. |
 
-O prompt e as funções de recorte e divisão estão repetidos dentro dos notebooks, que precisam rodar sozinhos no Colab. Uma mudança em `prompt.py` ou `entrada.py` tem de ser copiada para eles.
+O prompt e as funções de recorte e divisão estão repetidos dentro dos notebooks, que precisam rodar sozinhos no Colab. Uma mudança em `prompt.py` ou `entrada.py` tem de ser copiada para eles. O teste `test_notebooks_trazem_o_mesmo_prompt_e_esquema` falha quando o prompt ou o esquema dos notebooks diverge de `prompt.py`.
 
 ### Dentro de cada notebook
 

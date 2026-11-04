@@ -7,7 +7,21 @@ rótulo, devolve o tipo e a numeração, e separa o texto que vem depois dele.
 As expressões são deliberadamente exigentes. O inciso, por exemplo, só é
 reconhecido quando o algarismo romano vem seguido de travessão: sem isso,
 qualquer linha iniciada por "I" ou "V" seria confundida com um. O mesmo vale
-para o item, que exige contexto de alínea aberta — ver fragmentador.
+para o item, que exige contexto de enumeração aberta — ver fragmentador.
+
+Representação de cada tipo, conforme a LC 95/1998, art. 10:
+
+- artigo: "Art." e numeração ordinal até o nono, cardinal a partir dele (I);
+- parágrafo: "§" e a mesma numeração, ou "Parágrafo único" por extenso (III);
+- inciso: algarismo romano; alínea: letra minúscula; item: algarismo arábico (IV);
+- Capítulo, Título, Livro e Parte: caixa alta e algarismo romano; a Parte pode
+  ser Geral, Especial ou ordinal por extenso (VI);
+- Seção e Subseção: algarismo romano, em minúsculas com inicial maiúscula (VII);
+- Disposições Preliminares, Gerais, Finais ou Transitórias (VIII).
+
+O acervo traz também leis anteriores à LC 95, com grafias que ela não prevê
+("CAPITULO PRIMEIRO", "Seção 1ª", "1º) o curso…", "DISPOSIÇÕES GERAES"). Elas
+são aceitas quando não há ambiguidade, porque o tipo do dispositivo é o mesmo.
 """
 from __future__ import annotations
 
@@ -22,6 +36,11 @@ from .modelos import Tipo
 _NUM_ARTIGO = r"\d+\s*(?:[ºo°]|[.º])?(?:\s*-\s*[A-Z])?"
 _NUM_PARAGRAFO = r"\d+\s*(?:[ºo°])?(?:\s*-\s*[A-Z])?"
 _ROMANO = r"[IVXLCDM]+(?:\s*-\s*[A-Z])?"
+#: Situação normativa que dispensa o travessão do inciso: "IV (VETADO);".
+_SITUACAO = r"\(?\s*(?:VETAD|Vetad|vetad|REVOGAD|Revogad|revogad)"
+#: Intervalo ou lista de numerações num só rótulo: "5º a 7º", "1º, 2º e 5º",
+#: "5º - 6º - 7º". Só aparece em veto ou revogação agrupados.
+_LISTA_NUM = (rf"{_NUM_PARAGRAFO}\.?(?:\s*(?:,|\ba\b|\be\b|-)\s*{_NUM_PARAGRAFO}\.?)+")
 
 PADROES: list[tuple[Tipo, re.Pattern]] = [
     # Sem re.I: o rótulo é "Art." ou "ART."; "art. 6º" em minúscula é remissão
@@ -32,26 +51,81 @@ PADROES: list[tuple[Tipo, re.Pattern]] = [
     # "Art. único." e "Artigo único:". Sem isto a lei inteira ficaria no preâmbulo.
     (Tipo.ARTIGO, re.compile(
         r"^(?:Art|ART)(?:igo|IGO)?\s*\.?\s*(?P<num>[ÚUúu]nico|[ÚU]NICO)\s*[-–—.:]?\s*(?P<resto>.*)$")),
+    # Veto ou revogação agrupados: "Arts. 5º a 7º (VETADOS).". Sem a marca de
+    # situação, "Arts. 82 e 83" é remissão ou tabela, e fica como texto.
+    (Tipo.ARTIGO, re.compile(
+        rf"^(?:Arts|ARTS)\s*\.?\s*(?P<num>{_LISTA_NUM})\s*[-–—.]?\s*(?P<resto>{_SITUACAO}.*)$")),
     (Tipo.PARAGRAFO, re.compile(
         r"^(?P<num>Par[áa]grafo\s+[úu]nico)\s*[-–—.:]?\s*(?P<resto>.*)$", re.I)),
+    (Tipo.PARAGRAFO, re.compile(
+        rf"^§§\s*(?P<num>{_LISTA_NUM})\s*[-–—.]?\s*(?P<resto>{_SITUACAO}.*)$")),
     (Tipo.PARAGRAFO, re.compile(
         rf"^§\s*(?P<num>{_NUM_PARAGRAFO})\s*[-–—.]?\s*(?P<resto>.*)$")),
     (Tipo.INCISO, re.compile(
         rf"^(?P<num>{_ROMANO})\s*[-–—]\s*(?P<resto>.*)$")),
+    (Tipo.INCISO, re.compile(
+        rf"^(?P<num>{_ROMANO})\s+(?P<resto>{_SITUACAO}.*)$")),
     (Tipo.ALINEA, re.compile(
         r"^(?P<num>[a-z])\s*\)\s*(?P<resto>.*)$")),
+    # Item: "1.", "1)", "1 -" e, nas leis antigas, "1º)". O contexto de
+    # enumeração é exigido pelo fragmentador, não aqui.
     (Tipo.ITEM, re.compile(
-        r"^(?P<num>\d+)\s*[.)]\s+(?P<resto>.*)$")),
+        r"^(?P<num>\d+(?:\s*[ºo°](?=\s*\)))?)\s*(?:[.)]|\s[-–—]|[-–—](?=\s))\s+(?P<resto>.*)$")),
 ]
 
+#: Numeração dos agrupadores: romano ("IV", "IV-A"), "ÚNICO", ordinal por
+#: extenso ("PRIMEIRA", "DÉCIMA SEGUNDA") ou arábico ordinal das leis antigas
+#: ("1ª"), sem zero à esquerda: "Capítulo 08 – Frutos" é linha de tabela.
+#: O romano aceita minúsculas ("Título ii", erro frequente de digitação no
+#: acervo) e o romano partido por espaço ("Capítulo I I"); o lookahead impede
+#: que ele engula a palavra seguinte.
+_ORDINAL = (r"(?:PRIMEIR|SEGUND|TERCEIR|QUART|QUINT|SEXT|S[ÉE]TIM|OITAV|NON|"
+            r"D[ÉE]CIM|VIG[ÉE]SIM|TRIG[ÉE]SIM)[OA]")
+_NUM_AGRUPADOR = (
+    rf"(?:(?i:[IVXLCDM]+(?: [IVX]+)*)(?:\s*-\s*[A-Z])?(?![^\W\d_])"
+    rf"|(?i:[ÚU]NIC[OA])(?![^\W\d_])"
+    rf"|(?i:{_ORDINAL}(?:\s+{_ORDINAL})?)(?![^\W\d_])"
+    rf"|[1-9]\d*\s*[ºª°o]?(?!\w))"
+)
+
+
+def _agrupador(palavra: str, numeracao: str = _NUM_AGRUPADOR) -> re.Pattern:
+    """Rótulo de agrupador: a palavra, a numeração e, opcional, a rubrica.
+
+    A palavra começa por maiúscula ("CAPÍTULO", "Capítulo"): em minúscula é
+    texto corrido — "parte do valor", "título de eleitor". O restante da
+    palavra aceita caixa mista ("CAPíTULO", "TíTULO"), como no acervo. Depois
+    da numeração só pode vir nada, um separador seguido da rubrica, ou a
+    rubrica; qualquer outra coisa ("Capítulo VI desta Lei") é remissão.
+    """
+    return re.compile(
+        rf"^{palavra[0]}(?i:{palavra[1:]})\s+(?P<num>{numeracao})"
+        rf"(?P<resto>\s*(?:[-–—.:]\s*.*)?|\s+.*)$")
+
+
 AGRUPADORES: list[tuple[Tipo, re.Pattern]] = [
-    (Tipo.PARTE, re.compile(r"^PARTE\s+(?P<num>[^\s].*)$", re.I)),
-    (Tipo.LIVRO, re.compile(r"^LIVRO\s+(?P<num>[^\s].*)$", re.I)),
-    (Tipo.TITULO, re.compile(r"^T[ÍI]TULO\s+(?P<num>[^\s].*)$", re.I)),
-    (Tipo.CAPITULO, re.compile(r"^CAP[ÍI]TULO\s+(?P<num>[^\s].*)$", re.I)),
-    (Tipo.SUBSECAO, re.compile(r"^SUBSE[ÇC][ÃA]O\s+(?P<num>[^\s].*)$", re.I)),
-    (Tipo.SECAO, re.compile(r"^SE[ÇC][ÃA]O\s+(?P<num>[^\s].*)$", re.I)),
+    # A Parte pode ser Geral ou Especial (art. 10, VI); nas leis antigas há
+    # também Preliminar, Processual e Final.
+    (Tipo.PARTE, _agrupador(
+        "PARTE", rf"(?i:GERAL|ESPECIAL|PRELIMINAR|PROCESSUAL|FINAL)(?![^\W\d_])|{_NUM_AGRUPADOR}")),
+    # "LIVRO COMPLEMENTAR": o livro final do Código Civil, fora da numeração.
+    (Tipo.LIVRO, _agrupador("LIVRO", rf"(?i:COMPLEMENTAR)(?![^\W\d_])|{_NUM_AGRUPADOR}")),
+    (Tipo.TITULO, _agrupador("T[ÍI]TULO")),
+    (Tipo.CAPITULO, _agrupador("CAP[ÍI]TULO")),
+    (Tipo.SUBSECAO, _agrupador("SUBSE[ÇC][ÃA]O")),
+    (Tipo.SECAO, _agrupador("SE[ÇC][ÃA]O")),
 ]
+
+#: Rubrica fora da caixa alta na mesma linha do rótulo: "Seção II Da Fixação da
+#: Despesa". Começa por "Da", "Do", "Das", "Dos" ou "De" e palavra maiúscula.
+_RUBRICA_MISTA = re.compile(r"^D[aoe]s?\s+[A-ZÀ-Ý]")
+
+#: Agrupamento do art. 10, VIII, na linha inteira: "DISPOSIÇÕES FINAIS",
+#: "Das Disposições Gerais e Transitórias", "DISPOSIÇÕES GERAES:".
+_ADJ_DISPOSICOES = r"(?:PRELIMINAR(?:ES)?|GERA(?:IS|ES|L)|FINA(?:IS|ES|L)|TRANSIT[ÓO]RIAS?)"
+DISPOSICOES = re.compile(
+    rf"^(?i:(?:DAS?\s+)?DISPOSI[ÇC](?:[ÕO]ES|[ÃA]O)\s+{_ADJ_DISPOSICOES}"
+    rf"(?:\s*(?:,|\bE\b)\s*{_ADJ_DISPOSICOES})*)\s*[.:]?$")
 
 #: Fecho de promulgação: a partir dele o que vem é assinatura, não dispositivo.
 #:
@@ -78,6 +152,25 @@ def _limpar_numero(num: str) -> str:
     num = num.replace("°", "º")
     num = re.sub(r"(?<=\d)o\b", "º", num)
     return num
+
+
+def _limpar_agrupador(num: str) -> str:
+    """Numeração de agrupador: espaços simples, sem os do sufixo ("IV-A")."""
+    num = re.sub(r"\s+", " ", num.strip()).replace("°", "º")
+    num = re.sub(r"\s*-\s*", "-", num)
+    # Romano sempre em maiúsculas e sem espaço: "ii", "Iii" e "I I" são erros
+    # de digitação da fonte.
+    if re.fullmatch(r"(?i:[IVXLCDM]+(?: [IVX]+)*)(?:-[A-Z])?", num):
+        num = num.upper().replace(" ", "")
+    return num
+
+
+def _limpar_lista(num: str) -> str:
+    """Intervalo ou lista ("5º a 7º", "1º, 2º e 5º"): cada número limpo, separadores mantidos."""
+    partes = re.split(r"(\s*(?:,|\ba\b|\be\b|\s-\s)\s*)", num.strip())
+    return "".join(
+        _limpar_numero(p) if i % 2 == 0 else (", " if p.strip() == "," else f" {p.strip()} ")
+        for i, p in enumerate(partes))
 
 
 def _sem_acento(texto: str) -> str:
@@ -110,7 +203,9 @@ def reconhecer(linha: str) -> tuple[Tipo, str | None, str] | None:
     """Devolve (tipo, numero, resto) do rótulo que abre a linha, ou None.
 
     `resto` é o texto do dispositivo já sem o rótulo — pode vir vazio quando a
-    lei quebra a linha logo após ele, caso frequente nas alíneas.
+    lei quebra a linha logo após ele, caso frequente nas alíneas. Nos
+    agrupadores, `resto` é a rubrica que vem na mesma linha ("CAPÍTULO III –
+    DAS PENALIDADES"); nas disposições, é a linha inteira.
     """
     bruta = linha.strip()
     if not bruta:
@@ -118,8 +213,21 @@ def reconhecer(linha: str) -> tuple[Tipo, str | None, str] | None:
 
     for tipo, padrao in AGRUPADORES:
         m = padrao.match(bruta)
-        if m:
-            return tipo, _limpar_numero(m.group("num")), ""
+        if not m:
+            continue
+        resto = m.group("resto").strip()
+        if resto[:1] in ("-", "–", "—", ".", ":"):
+            resto = resto.lstrip("-–—.: ")
+        elif resto and not (eh_rubrica(resto) or _RUBRICA_MISTA.match(resto)
+                            or DISPOSICOES.match(resto)):
+            # "Capítulo VI desta Lei": a palavra abre uma remissão, não um agrupador.
+            return None
+        # `resto` é a rubrica, quando vem na mesma linha do rótulo.
+        return tipo, _limpar_agrupador(m.group("num")), resto
+
+    if DISPOSICOES.match(bruta) and bruta[0].isupper():
+        # O agrupamento não tem numeração: o nome dele é a própria rubrica.
+        return Tipo.DISPOSICOES, None, bruta
 
     for tipo, padrao in PADROES:
         m = padrao.match(bruta)
@@ -129,6 +237,8 @@ def reconhecer(linha: str) -> tuple[Tipo, str | None, str] | None:
         if _sem_acento(num).lower().endswith("unico"):
             # "Parágrafo único", "Artigo unico": uma só forma na saída.
             num = "único"
+        elif re.search(r"\d\s*[ºo°]?\.?\s*(?:,|\ba\b|\be\b|-\s*\d)", num):
+            num = _limpar_lista(num)
         else:
             num = _limpar_numero(num)
         return tipo, num, m.group("resto").strip()

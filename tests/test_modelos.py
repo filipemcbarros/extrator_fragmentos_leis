@@ -116,7 +116,8 @@ class LeiEmTrechos(unittest.TestCase):
             "capitulo i", "capitulo i, art. 1º", "capitulo i, art. 1º, i",
             "capitulo i, art. 1º, ii", "capitulo i, art. 2º", "capitulo ii"])
         self.assertEqual(achatar(dados)[2]["texto"], "primeiro, que continua aqui;")
-        self.assertEqual((dados["titulo"], dados["fecho"]), ("LEI", "Brasília."))
+        self.assertEqual((dados["epigrafe"], dados["fecho"]), ("LEI", "Brasília."))
+        self.assertNotIn("titulo", dados)
 
     def test_trecho_sem_json_nao_derruba_os_outros(self):
         dados, _ = normalizar([RESPOSTA, None, {"dispositivos": [{"tipo": "artigo", "numero": "2º"}]}])
@@ -165,7 +166,7 @@ class Comparacao(unittest.TestCase):
 
     def test_json_invalido_zera_as_medidas(self):
         medidas = comparar_lei(self.regex, None)
-        self.assertEqual((medidas["id_f1"], medidas["caminho_f1"], medidas["titulo_igual"]), (0.0, 0.0, 0))
+        self.assertEqual((medidas["id_f1"], medidas["caminho_f1"], medidas["epigrafe_igual"]), (0.0, 0.0, 0))
 
 
 class Prompt(unittest.TestCase):
@@ -176,7 +177,34 @@ class Prompt(unittest.TestCase):
             regex = fragmentar(TextoExtraido(titulo=titulo, ementa=ementa, linhas=linhas)).para_dicionario()
             medidas = comparar_lei(regex, normalizar(resposta)[0])
             self.assertEqual(medidas["identica"], 1)
-            self.assertEqual([medidas[f"{c}_igual"] for c in ("titulo", "ementa", "preambulo", "fecho")], [1] * 4)
+            self.assertEqual([medidas[f"{c}_igual"] for c in ("epigrafe", "ementa", "preambulo", "fecho")], [1] * 4)
+
+    def test_nomenclatura_da_lc95(self):
+        """Campos e tipos com os nomes da LC 95/1998; "titulo" só como agrupador."""
+        texto = montar("", "html")
+        self.assertIn('"epigrafe": a epígrafe (art. 4º)', texto)
+        self.assertNotIn('"titulo":', texto)
+        self.assertIn("disposicoes", texto)
+        for _, resposta in EXEMPLOS:
+            self.assertEqual(list(resposta)[:4], ["epigrafe", "ementa", "preambulo", "fecho"])
+        self.assertIn('Deixe "epigrafe", "ementa" e "preambulo" vazios.', montar("x", "html", 2, 3))
+
+    def test_notebooks_trazem_o_mesmo_prompt_e_esquema(self):
+        """Os notebooks rodam sozinhos no Colab e repetem o prompt: não podem divergir."""
+        import pathlib
+        raiz = pathlib.Path(__file__).resolve().parents[1]
+        prompt = "%%writefile /content/prompt.txt\n" + montar("", "html").rstrip("\n")
+        for caminho in [*(raiz / "modelos" / "notebooks").glob("*.ipynb"), raiz / "avaliacao" / "gemma_a100.ipynb"]:
+            with self.subTest(notebook=caminho.name):
+                celulas = ["".join(c["source"]) for c in json.loads(caminho.read_text(encoding="utf-8"))["cells"]]
+                self.assertIn(prompt, celulas)
+                script = next(c for c in celulas if c.startswith("%%writefile /content/fragmentar.py"))
+                ns: dict = {}
+                exec(script[script.index("ESQUEMA = {"):script.index("# O trecho que começa")], ns)
+                esquema = ns["ESQUEMA"]
+                self.assertEqual(esquema["required"], ["epigrafe", "ementa", "preambulo", "fecho", "dispositivos"])
+                self.assertNotIn("titulo", esquema["properties"])
+                self.assertIn("disposicoes", esquema["$defs"]["dispositivo"]["properties"]["tipo"]["enum"])
 
     def test_os_dois_formatos_de_cada_exemplo_trazem_a_mesma_lei(self):
         for entrada, _ in EXEMPLOS:

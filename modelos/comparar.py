@@ -41,11 +41,11 @@ from collections import Counter
 
 from fragmentador.extracao import extrair
 from fragmentador.fonte import ler
-from fragmentador.modelos import NIVEL, Tipo
+from fragmentador.modelos import NIVEL, Tipo, campo_da_lei
 
 from .resposta import extrair_json, normalizar, separar_trechos
 
-CAMPOS = ("titulo", "ementa", "preambulo", "fecho")
+CAMPOS = ("epigrafe", "ementa", "preambulo", "fecho")
 
 #: Agrupadores não têm texto próprio: a falta dele não é dispositivo vazio.
 _AGRUPADORES = {t.value for t in NIVEL if NIVEL[t] < NIVEL[Tipo.ARTIGO]}
@@ -130,7 +130,9 @@ def comparar_lei(regex: dict, modelo: dict | None) -> dict:
                               if semelhancas else 0.0)
 
     for campo in CAMPOS:
-        a, b = " ".join(regex.get(campo, "").split()), " ".join((modelo or {}).get(campo, "").split())
+        # campo_da_lei lê também os JSONs antigos, em que a epígrafe é "titulo".
+        a = " ".join(campo_da_lei(regex, campo).split())
+        b = " ".join(campo_da_lei(modelo, campo).split())
         medidas[f"{campo}_igual"] = int(modelo is not None and a == b)
 
     # Árvore idêntica: mesmos dispositivos, nos mesmos lugares, com o mesmo texto.

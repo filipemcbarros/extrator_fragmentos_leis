@@ -22,23 +22,27 @@ _ABRE_CITACAO = re.compile(r'^["“«]')
 #: Fecho da citação, com ou sem a marca de nova redação.
 _FECHA_CITACAO = re.compile(r'["”»]\s*(?:\(NR\))?\s*$')
 
+#: Agrupadores: ficam acima do artigo e não têm comando próprio.
+_AGRUPADORES = {t for t in NIVEL if NIVEL[t] < NIVEL[Tipo.ARTIGO]}
+
 #: Abre o corpo da lei: antes disso vem o preâmbulo ("O PRESIDENTE DA REPÚBLICA…").
-_TIPOS_DE_ABERTURA = {
-    Tipo.ARTIGO, Tipo.PARTE, Tipo.LIVRO, Tipo.TITULO,
-    Tipo.CAPITULO, Tipo.SECAO, Tipo.SUBSECAO,
-}
+_TIPOS_DE_ABERTURA = _AGRUPADORES | {Tipo.ARTIGO}
+
+#: Dispositivos que podem anunciar uma enumeração em itens. A LC 95/1998 só
+#: prevê item sob alínea (art. 10, II); as leis anteriores a ela também
+#: enumeram em algarismos arábicos sob inciso e parágrafo.
+_PAIS_DE_ITEM = {Tipo.INCISO, Tipo.PARAGRAFO}
 
 
 def fragmentar(texto: TextoExtraido, origem: str = "") -> Lei:
     """Monta a árvore de dispositivos a partir das linhas extraídas."""
-    lei = Lei(titulo=texto.titulo, ementa=texto.ementa, origem=origem)
+    lei = Lei(epigrafe=texto.titulo, ementa=texto.ementa, origem=origem)
 
     pilha: list[Fragmento] = []
     preambulo: list[str] = []
     fecho: list[str] = []
     corpo_comecou = False
     no_fecho = False
-    alinea_aberta = False
 
     em_citacao = False
     ultimo_artigo: int | None = None
@@ -74,9 +78,15 @@ def fragmentar(texto: TextoExtraido, origem: str = "") -> Lei:
 
         reconhecido = reconhecer(linha)
 
-        # O item só existe sob alínea. Fora desse contexto, "1." é numeração
-        # corrente dentro do texto, e não um dispositivo.
-        if reconhecido and reconhecido[0] is Tipo.ITEM and not alinea_aberta:
+        # O item só existe dentro de uma enumeração. Fora dela, "1." é
+        # numeração corrente dentro do texto, ou linha de tabela.
+        if reconhecido and reconhecido[0] is Tipo.ITEM and not _item_cabe(pilha, reconhecido[1]):
+            reconhecido = None
+
+        # "DISPOSIÇÕES GERAIS" logo abaixo de "CAPÍTULO I" é a rubrica dele, e
+        # não um agrupamento à parte.
+        if (reconhecido and reconhecido[0] is Tipo.DISPOSICOES
+                and pilha and _sem_rubrica(pilha[-1])):
             reconhecido = None
 
         # Dispositivo aberto ainda sem texto não se fecha: quando a fonte põe o
@@ -99,6 +109,11 @@ def fragmentar(texto: TextoExtraido, origem: str = "") -> Lei:
                 fecho.append(linha)
                 pilha.clear()
                 continue
+            if pilha and _sem_rubrica(pilha[-1]) and _rubrica_em_minusculas(linha):
+                # Rubrica fora da caixa alta, comum nas leis antigas:
+                # "Capítulo I" / "Da Definição de Microempresa".
+                pilha[-1].rubrica = linha
+                continue
             if pilha:
                 _acrescentar_texto(pilha[-1], linha)
             else:
@@ -113,14 +128,20 @@ def fragmentar(texto: TextoExtraido, origem: str = "") -> Lei:
                 continue
             corpo_comecou = True
 
-        fragmento = Fragmento(tipo=tipo, numero=numero, texto=resto, linha=indice)
-        alinea_aberta = tipo is Tipo.ALINEA
+        if tipo in _AGRUPADORES:
+            # No agrupador, o que segue o rótulo na mesma linha é a rubrica.
+            fragmento = Fragmento(tipo=tipo, numero=numero, rubrica=resto or None, linha=indice)
+        else:
+            fragmento = Fragmento(tipo=tipo, numero=numero, texto=resto, linha=indice)
         if tipo is Tipo.ARTIGO:
-            base = _numero_base(numero)
+            # Num veto agrupado ("Arts. 5º a 7º"), vale o último da lista.
+            base = _numero_final(numero)
             if base is not None:
                 ultimo_artigo = base
 
-        nivel = NIVEL[tipo]
+        if tipo is Tipo.DISPOSICOES:
+            fragmento._nivel = _nivel_das_disposicoes(pilha)
+        nivel = fragmento.nivel
         while pilha and pilha[-1].nivel >= nivel:
             pilha.pop()
 
@@ -146,6 +167,65 @@ def _numero_base(numero: str | None) -> int | None:
         return None
     m = re.match(r"(\d+)", numero)
     return int(m.group(1)) if m else None
+
+
+def _numero_final(numero: str | None) -> int | None:
+    """Último inteiro da numeração: '5º a 7º' devolve 7; '5º-A' devolve 5."""
+    if not numero:
+        return None
+    achados = re.findall(r"\d+", numero)
+    return int(achados[-1]) if achados else None
+
+
+def _item_cabe(pilha: list[Fragmento], numero: str | None) -> bool:
+    """O item pode abrir aqui?
+
+    Sob alínea, sempre, como prevê a LC 95/1998. Depois de outro item, só se a
+    numeração continuar a dele. Sob inciso ou parágrafo, só como primeiro item
+    de uma enumeração anunciada por dois-pontos ("…as seguintes multas:").
+    """
+    if not pilha:
+        return False
+    topo = pilha[-1]
+    n = _numero_base(numero)
+    if topo.tipo is Tipo.ALINEA:
+        return True
+    if topo.tipo is Tipo.ITEM:
+        anterior = _numero_base(topo.numero)
+        return n is not None and anterior is not None and n == anterior + 1
+    if topo.tipo in _PAIS_DE_ITEM:
+        return n == 1 and topo.texto.rstrip().endswith(":")
+    return False
+
+
+def _nivel_das_disposicoes(pilha: list[Fragmento]) -> int:
+    """Nível do agrupamento em disposições (LC 95/1998, art. 10, VIII).
+
+    Ele integra a mesma composição dos demais agrupadores: "DISPOSIÇÕES FINAIS"
+    depois do Capítulo V é irmã dele, e não parte dele. A exceção é o agrupador
+    que acabou de abrir, sem dispositivo algum — "TÍTULO II" / "DISPOSIÇÃO
+    PRELIMINAR" / "Art. 4º" —, caso em que as disposições estão dentro dele.
+    """
+    abertos = [f for f in pilha if f.tipo in _AGRUPADORES]
+    if not abertos:
+        return NIVEL[Tipo.DISPOSICOES]
+    ultimo = abertos[-1]
+    if ultimo.filhos or ultimo.tipo is Tipo.DISPOSICOES:
+        return ultimo.nivel
+    return max(ultimo.nivel + 1, NIVEL[Tipo.DISPOSICOES])
+
+
+def _sem_rubrica(fragmento: Fragmento) -> bool:
+    """Agrupador recém-aberto, que ainda espera a rubrica na linha seguinte."""
+    return (fragmento.tipo in _AGRUPADORES and fragmento.tipo is not Tipo.DISPOSICOES
+            and not fragmento.rubrica and not fragmento.texto)
+
+
+def _rubrica_em_minusculas(linha: str) -> bool:
+    """Linha curta que nomeia o agrupador, sem ser caixa alta nem enumeração."""
+    linha = linha.strip()
+    return (0 < len(linha) <= 120 and linha[0].isupper() and not eh_rubrica(linha)
+            and not linha.endswith((";", ",")))
 
 
 def _retoma_sequencia(linha: str, ultimo_artigo: int | None) -> bool:
@@ -176,17 +256,17 @@ def _preencher_rubricas(lei: Lei, linhas: list[str]) -> None:
     No Legin, "CAPÍTULO I" e "DAS DISPOSIÇÕES GERAIS" são linhas distintas: a
     segunda chega ao fragmento como texto, e é a rubrica dele.
     """
-    agrupadores = {Tipo.PARTE, Tipo.LIVRO, Tipo.TITULO,
-                   Tipo.CAPITULO, Tipo.SECAO, Tipo.SUBSECAO}
     for fragmento in lei.percorrer():
-        if fragmento.tipo not in agrupadores or not fragmento.texto:
+        if fragmento.tipo not in _AGRUPADORES or not fragmento.texto:
             continue
         partes = fragmento.texto.split(" ")
         # A rubrica é a primeira sentença em caixa alta do texto acumulado.
         for corte in range(len(partes), 0, -1):
             candidata = " ".join(partes[:corte])
             if eh_rubrica(candidata):
-                fragmento.rubrica = candidata
+                # A rubrica pode ter começado na linha do rótulo.
+                fragmento.rubrica = (f"{fragmento.rubrica} {candidata}"
+                                     if fragmento.rubrica else candidata)
                 fragmento.texto = " ".join(partes[corte:]).strip()
                 break
 

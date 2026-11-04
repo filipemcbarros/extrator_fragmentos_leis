@@ -13,7 +13,8 @@ import unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
-from fragmentador import Tipo, fragmentar, fragmentar_html, fragmentar_referencia  # noqa: E402
+from fragmentador import Lei, Tipo, fragmentar, fragmentar_html, fragmentar_referencia  # noqa: E402
+from fragmentador.modelos import campo_da_lei  # noqa: E402
 from fragmentador.extracao import TextoExtraido  # noqa: E402
 from fragmentador.rotulos import eh_fecho, reconhecer  # noqa: E402
 
@@ -169,6 +170,235 @@ class TestHierarquia(unittest.TestCase):
         self.assertTrue(lei.fecho.startswith("Rio de Janeiro"))
 
 
+class TestAgrupadoresLC95(unittest.TestCase):
+    """LC 95/1998, art. 10, V a VIII: agrupadores e a sua numeração."""
+
+    def test_numeracoes_previstas_e_das_leis_antigas(self):
+        for linha, tipo, numero in [
+            ("PARTE GERAL", Tipo.PARTE, "GERAL"),
+            ("PARTE ESPECIAL", Tipo.PARTE, "ESPECIAL"),
+            ("PARTE PRIMEIRA", Tipo.PARTE, "PRIMEIRA"),
+            ("LIVRO I", Tipo.LIVRO, "I"),
+            ("LIVRO COMPLEMENTAR", Tipo.LIVRO, "COMPLEMENTAR"),
+            ("TÍTULO ÚNICO", Tipo.TITULO, "ÚNICO"),
+            ("CAPÍTULO IV-A", Tipo.CAPITULO, "IV-A"),
+            ("CAPITULO DÉCIMO PRIMEIRO", Tipo.CAPITULO, "DÉCIMO PRIMEIRO"),
+            ("Seção II", Tipo.SECAO, "II"),
+            ("Seção 1ª", Tipo.SECAO, "1ª"),
+            ("Subseção Única", Tipo.SUBSECAO, "Única"),
+        ]:
+            with self.subTest(linha=linha):
+                self.assertEqual(reconhecer(linha)[:2], (tipo, numero))
+
+    def test_caixa_irregular_da_fonte(self):
+        """'CAPíTULO VI', 'Título ii': erros de digitação do acervo."""
+        self.assertEqual(reconhecer("CAPíTULO VI")[:2], (Tipo.CAPITULO, "VI"))
+        self.assertEqual(reconhecer("Título ii")[:2], (Tipo.TITULO, "II"))
+        self.assertEqual(reconhecer("Capítulo I I")[:2], (Tipo.CAPITULO, "II"))
+
+    def test_texto_corrido_nao_vira_agrupador(self):
+        for linha in [
+            "parte do valor arrecadado",   # minúscula: continuação de texto
+            "Título de eleitor expedido",   # numeração ausente
+            "Capítulo VI desta Lei",        # remissão
+            "Seção de Pessoal",
+            "Capítulo 08 - Frutos Comestíveis",  # linha de tabela
+            "Livro de Presença",
+        ]:
+            with self.subTest(linha=linha):
+                self.assertIsNone(reconhecer(linha))
+
+    def test_rubrica_na_mesma_linha_nao_cola_no_numero(self):
+        self.assertEqual(reconhecer("CAPÍTULO III DISPOSIÇÕES TRANSITÓRIAS E FINAIS"),
+                         (Tipo.CAPITULO, "III", "DISPOSIÇÕES TRANSITÓRIAS E FINAIS"))
+        self.assertEqual(reconhecer("Capítulo I - Da Definição"), (Tipo.CAPITULO, "I", "Da Definição"))
+        lei = arvore("Seção II Da Fixação da Despesa", "Art. 1º Caput.")
+        self.assertEqual((lei.dispositivos[0].numero, lei.dispositivos[0].rubrica),
+                         ("II", "Da Fixação da Despesa"))
+
+    def test_rubrica_fora_da_caixa_alta_na_linha_seguinte(self):
+        lei = arvore("Capítulo I", "Da Definição de Microempresa", "Art. 1º Caput.")
+        capitulo = lei.dispositivos[0]
+        self.assertEqual(capitulo.rubrica, "Da Definição de Microempresa")
+        self.assertEqual(capitulo.texto, "")
+        self.assertIs(capitulo.filhos[0].tipo, Tipo.ARTIGO)
+
+    def test_parte_livro_titulo_capitulo_secao_subsecao(self):
+        lei = arvore(
+            "PARTE ESPECIAL", "LIVRO I", "DO DIREITO DAS OBRIGAÇÕES", "TÍTULO I",
+            "DAS MODALIDADES", "CAPÍTULO I", "DAS OBRIGAÇÕES DE DAR", "Seção I",
+            "Das Obrigações de Dar Coisa Certa", "Subseção I", "Disposição comum",
+            "Art. 233. A obrigação de dar coisa certa...",
+        )
+        artigo = lei.por_tipo(Tipo.ARTIGO)[0]
+        self.assertEqual(artigo.caminho(),
+                         "PARTE ESPECIAL, LIVRO I, TITULO I, CAPITULO I, SECAO I, SUBSECAO I, Art. 233")
+        self.assertEqual(lei.por_tipo(Tipo.SECAO)[0].rubrica, "Das Obrigações de Dar Coisa Certa")
+
+
+class TestDisposicoes(unittest.TestCase):
+    """LC 95/1998, art. 10, VIII: Disposições Preliminares, Gerais, Finais ou Transitórias."""
+
+    def test_reconhece_as_quatro_e_as_combinacoes(self):
+        for linha in ["DISPOSIÇÕES PRELIMINARES", "DISPOSIÇÃO PRELIMINAR", "Disposições Gerais",
+                      "DISPOSIÇÕES GERAES", "DAS DISPOSIÇÕES FINAIS E TRANSITÓRIAS",
+                      "Disposições Gerais, Transitórias e Finais", "Disposições preliminares:"]:
+            with self.subTest(linha=linha):
+                self.assertEqual(reconhecer(linha), (Tipo.DISPOSICOES, None, linha))
+        self.assertIsNone(reconhecer("Disposições diversas sobre o tema"))
+        self.assertIsNone(reconhecer("disposições finais desta Lei"))
+
+    def test_sem_capitulo_agrupam_artigos(self):
+        lei = arvore(
+            "Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei:",
+            "DISPOSIÇÕES PRELIMINARES", "Art. 1º Primeiro.",
+            "DISPOSIÇÕES FINAIS", "Art. 2º Segundo.",
+        )
+        self.assertEqual(lei.preambulo,
+                         "Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei:")
+        self.assertEqual([(d.tipo, d.rubrica) for d in lei.dispositivos], [
+            (Tipo.DISPOSICOES, "DISPOSIÇÕES PRELIMINARES"), (Tipo.DISPOSICOES, "DISPOSIÇÕES FINAIS")])
+        self.assertEqual(lei.dispositivos[1].filhos[0].caminho(), "DISPOSIÇÕES FINAIS, Art. 2º")
+
+    def test_logo_abaixo_do_capitulo_e_rubrica_dele(self):
+        lei = arvore("CAPÍTULO VI", "DISPOSIÇÕES FINAIS", "Art. 9º Texto.")
+        self.assertEqual(lei.por_tipo(Tipo.DISPOSICOES), [])
+        self.assertEqual(lei.dispositivos[0].rubrica, "DISPOSIÇÕES FINAIS")
+
+    def test_depois_do_capitulo_e_irma_dele(self):
+        lei = arvore("CAPÍTULO V", "DO ACESSO", "Art. 22. Texto.", "DISPOSIÇÕES FINAIS", "Art. 23. Texto.")
+        self.assertEqual([d.tipo for d in lei.dispositivos], [Tipo.CAPITULO, Tipo.DISPOSICOES])
+        self.assertEqual(lei.por_tipo(Tipo.ARTIGO)[1].caminho(), "DISPOSIÇÕES FINAIS, Art. 23")
+
+    def test_no_titulo_recem_aberto_fica_dentro_dele(self):
+        """Lei 8.080/1990: 'TÍTULO II' / 'DISPOSIÇÃO PRELIMINAR' / 'Art. 4º'."""
+        lei = arvore("TÍTULO II", "DO SISTEMA ÚNICO DE SAÚDE", "DISPOSIÇÃO PRELIMINAR",
+                     "Art. 4º Texto.", "CAPÍTULO I", "DOS OBJETIVOS", "Art. 5º Texto.")
+        titulo = lei.dispositivos[0]
+        self.assertEqual([f.tipo for f in titulo.filhos], [Tipo.DISPOSICOES, Tipo.CAPITULO])
+
+
+class TestItens(unittest.TestCase):
+    """LC 95/1998, art. 10, II e IV: o item, em algarismo arábico, desdobra a alínea."""
+
+    def test_sequencia_de_itens_sob_alinea(self):
+        lei = arvore("Art. 1º Caput.", "I - inciso;", "a) alínea:", "1. um;", "2. dois;", "3. três.")
+        alinea = lei.por_tipo(Tipo.ALINEA)[0]
+        self.assertEqual([(f.numero, f.texto) for f in alinea.filhos],
+                         [("1", "um;"), ("2", "dois;"), ("3", "três.")])
+        self.assertEqual(alinea.filhos[2].caminho(), "Art. 1º, I, a), 3.")
+
+    def test_grafias_do_item(self):
+        for linha, numero in [("1. um;", "1"), ("2) dois;", "2"), ("3 - três;", "3"), ("1º) o curso", "1º")]:
+            with self.subTest(linha=linha):
+                self.assertEqual(reconhecer(linha)[:2], (Tipo.ITEM, numero))
+
+    def test_item_sob_inciso_em_enumeracao_anunciada(self):
+        """Lei 7.519/1986, art. 10: itens sob inciso, comuns antes da LC 95."""
+        lei = arvore(
+            "Art. 10. As infrações sujeitam o infrator às seguintes penalidades:",
+            "I - pelo descumprimento das obrigações acessórias:",
+            "1. normas do item I - multa de 3 valores;",
+            "2. normas do item II - multa de 1 valor;",
+            "II - outra hipótese;",
+        )
+        inciso = lei.por_tipo(Tipo.INCISO)[0]
+        self.assertEqual([f.numero for f in inciso.filhos], ["1", "2"])
+        self.assertEqual(lei.por_tipo(Tipo.INCISO)[1].numero, "II")
+
+    def test_item_sob_paragrafo_com_travessao(self):
+        """Lei 5.985/1973: '1 - Técnico Judiciário' sob o parágrafo único."""
+        lei = arvore("Art. 1º Caput.", "Parágrafo único. São Categorias Funcionais:",
+                     "1 - Técnico Judiciário;", "2 - Taquígrafo Judiciário.")
+        paragrafo = lei.por_tipo(Tipo.PARAGRAFO)[0]
+        self.assertEqual([(f.tipo, f.numero) for f in paragrafo.filhos],
+                         [(Tipo.ITEM, "1"), (Tipo.ITEM, "2")])
+
+    def test_numeracao_fora_de_enumeracao_e_texto(self):
+        # Sob artigo a LC 95 não prevê item.
+        lei = arvore("Art. 1º Caput:", "1. valor de referência;")
+        self.assertEqual(lei.dispositivos[0].filhos, [])
+        # Sob inciso sem dois-pontos, nem começando do 1, é linha de tabela.
+        lei = arvore("Art. 1º Caput.", "I - Pessoal Civil", "04 - Justiça Eleitoral")
+        self.assertEqual(lei.por_tipo(Tipo.ITEM), [])
+        self.assertIn("04 - Justiça Eleitoral", lei.por_tipo(Tipo.INCISO)[0].texto)
+        # Sequência quebrada: o "5." não continua o item 1.
+        lei = arvore("Art. 1º Caput.", "I - inciso:", "1. um;", "5. outro número")
+        self.assertEqual([f.numero for f in lei.por_tipo(Tipo.ITEM)], ["1"])
+
+    def test_alinea_depois_do_item_volta_ao_inciso(self):
+        lei = arvore("Art. 1º Caput.", "I - inciso:", "1. um:", "a) alínea;")
+        inciso = lei.por_tipo(Tipo.INCISO)[0]
+        self.assertEqual([f.tipo for f in inciso.filhos], [Tipo.ITEM, Tipo.ALINEA])
+
+
+class TestSituacaoNormativa(unittest.TestCase):
+    """Vetos e revogações: o rótulo é reconhecido e o texto fica como está."""
+
+    def test_veto_agrupado_de_artigos_e_paragrafos(self):
+        self.assertEqual(reconhecer("Arts. 5º a 7º (VETADOS)."), (Tipo.ARTIGO, "5º a 7º", "(VETADOS)."))
+        self.assertEqual(reconhecer("Arts. 3º e 4º - Vetados."), (Tipo.ARTIGO, "3º e 4º", "Vetados."))
+        self.assertEqual(reconhecer("§§ 5° - 6º - 7º - VETADO."),
+                         (Tipo.PARAGRAFO, "5º - 6º - 7º", "VETADO."))
+        self.assertEqual(reconhecer("§§ 1º e 2º (Revogados)."),
+                         (Tipo.PARAGRAFO, "1º e 2º", "(Revogados)."))
+        # Sem a marca de situação é remissão ou tabela.
+        self.assertIsNone(reconhecer("Arts. 82 e 83, para os fins"))
+        self.assertIsNone(reconhecer("§§ 1º, 2º e 5º do art. 1º;"))
+
+    def test_rotulo_e_sequencia_do_veto_agrupado(self):
+        lei = arvore(
+            "Art. 4º Texto.", "Arts. 5º a 7º (VETADOS).", "§§ 1º e 2º (VETADOS).",
+            "Art. 8º A Lei X passa a vigorar com a seguinte redação:",
+            '"Art. 1.048 ........', "Art. 9º Esta Lei entra em vigor.",
+        )
+        artigos = lei.por_tipo(Tipo.ARTIGO)
+        self.assertEqual([a.rotulo for a in artigos], ["Art. 4º", "Arts. 5º a 7º", "Art. 8º", "Art. 9º"])
+        self.assertEqual(artigos[1].filhos[0].rotulo, "§§ 1º e 2º")
+        self.assertEqual(artigos[1].texto, "(VETADOS).")
+
+    def test_inciso_vetado_sem_travessao(self):
+        self.assertEqual(reconhecer("IV (VETADO);"), (Tipo.INCISO, "IV", "(VETADO);"))
+        self.assertIsNone(reconhecer("IV de janeiro de cada ano"))
+
+    def test_marcas_preservadas_no_texto(self):
+        lei = arvore(
+            "Art. 1º Caput.",
+            "I - (revogado);",
+            "II - texto alterado (Redação dada pela Lei nº 9.999, de 1999);",
+            "§ 1º (VETADO).",
+            "Art. 2º (Declarado inconstitucional pela ADI nº 1.000).",
+        )
+        textos = [f.texto for f in lei.percorrer()]
+        self.assertEqual(textos, [
+            "Caput.", "(revogado);", "texto alterado (Redação dada pela Lei nº 9.999, de 1999);",
+            "(VETADO).", "(Declarado inconstitucional pela ADI nº 1.000)."])
+
+
+class TestNomenclaturaDaLei(unittest.TestCase):
+    """Campos da lei com os nomes da LC 95/1998: epígrafe (art. 4º), ementa, preâmbulo."""
+
+    def test_json_traz_epigrafe(self):
+        lei = fragmentar(TextoExtraido(titulo="LEI Nº 1, DE 2 DE JANEIRO DE 2000",
+                                       ementa="Dispõe sobre testes.", linhas=["Art. 1º Caput."]))
+        dados = lei.para_dicionario()
+        self.assertEqual(dados["epigrafe"], "LEI Nº 1, DE 2 DE JANEIRO DE 2000")
+        self.assertNotIn("titulo", dados)
+        self.assertEqual(list(dados)[:4], ["epigrafe", "ementa", "preambulo", "fecho"])
+
+    def test_titulo_continua_como_sinonimo(self):
+        lei = Lei(epigrafe="LEI Nº 1")
+        self.assertEqual(lei.titulo, "LEI Nº 1")
+        lei.titulo = "LEI Nº 2"
+        self.assertEqual(lei.epigrafe, "LEI Nº 2")
+
+    def test_le_json_antigo_e_novo(self):
+        self.assertEqual(campo_da_lei({"titulo": "LEI Nº 1"}, "epigrafe"), "LEI Nº 1")
+        self.assertEqual(campo_da_lei({"epigrafe": "LEI Nº 2", "titulo": "x"}, "epigrafe"), "LEI Nº 2")
+        self.assertEqual(campo_da_lei({"ementa": "E"}, "ementa"), "E")
+        self.assertEqual(campo_da_lei(None, "epigrafe"), "")
+
+
 class TestExtracao(unittest.TestCase):
     def test_rotulo_partido_pela_fonte_e_reunido(self):
         """Lei 6.051/1974: o HTML quebra a linha entre "Art." e o número."""
@@ -249,7 +479,7 @@ class TestLeisReais(unittest.TestCase):
 
     def test_lei_5603_1970(self):
         lei = fragmentar_referencia(str(EXEMPLOS / "lei-5603-1970.html"))
-        self.assertEqual(lei.titulo, "LEI Nº 5.603, DE 30 DE AGOSTO DE 1970")
+        self.assertEqual(lei.epigrafe, "LEI Nº 5.603, DE 30 DE AGOSTO DE 1970")
         self.assertIn("Via Dom Bosco", lei.ementa)
         self.assertEqual(lei.contagem(), {"artigo": 3})
 

@@ -18,6 +18,7 @@ REPO = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
 SAIDA = pathlib.Path(sys.argv[2] if len(sys.argv) > 2 else "amostra").resolve()
 sys.path.insert(0, str(REPO))
 
+from fragmentador.modelos import campo_da_lei
 from modelos.comparar import achatar, ler_rodada, _ler_resposta
 from modelos.entrada import preparar
 
@@ -77,7 +78,7 @@ for _, lei in amostra.iterrows():
     html_pagina = (COLETA / ano / "html" / f"{slug}.html").read_text(encoding="utf-8")
     regex = regex_de(slug)
     arvores = {"regex": regex}
-    linha = {**lei.to_dict(), "origem": regex.get("origem"), "titulo": regex.get("titulo"),
+    linha = {**lei.to_dict(), "origem": regex.get("origem"), "titulo": campo_da_lei(regex, "epigrafe"),
              "lei_html": preparar(html_pagina, "html"), "lei_texto": preparar(html_pagina, "texto")}
     for metodo, pasta in METODOS.items():
         info = rodadas[metodo][slug]

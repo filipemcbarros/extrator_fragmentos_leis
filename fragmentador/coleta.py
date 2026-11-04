@@ -46,7 +46,7 @@ class Registro:
     norma: str
     publicacao: str | None = None
     arquivo: str | None = None
-    titulo: str | None = None
+    epigrafe: str | None = None
     contagem: dict | None = None
     erro: str | None = None
 
@@ -193,7 +193,7 @@ def coletar_norma(url_norma: str, pastas: dict[str, pathlib.Path],
         _gravar_json(destino_json, dados)
 
         registro.arquivo = str(destino_json.relative_to(pastas["raiz"])).replace("\\", "/")
-        registro.titulo = lei.titulo
+        registro.epigrafe = lei.epigrafe
         registro.contagem = lei.contagem()
         if not registro.contagem.get("artigo"):
             registro.erro = "nenhum artigo reconhecido"

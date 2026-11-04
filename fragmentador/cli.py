@@ -26,10 +26,10 @@ def _imprimir_arvore(fragmentos: list[Fragmento], profundidade: int = 0) -> None
 
 
 def _resumo(lei: Lei) -> None:
-    print(f"Título : {lei.titulo}")
+    print(f"Epígrafe: {lei.epigrafe}")
     if lei.ementa:
-        print(f"Ementa : {lei.ementa}")
-    print(f"Origem : {lei.origem}")
+        print(f"Ementa  : {lei.ementa}")
+    print(f"Origem  : {lei.origem}")
     print("Estruturas encontradas:")
     for tipo, quantidade in lei.contagem().items():
         print(f"{_RECUO}{quantidade:5d}  {tipo}")
