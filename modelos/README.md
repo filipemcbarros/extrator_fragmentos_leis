@@ -59,6 +59,7 @@ Os três rodaram em precisão cheia. Gemma e Llama exigem aceitar a licença e u
 | Gramática sem espaço livre | Teste no Llama para evitar respostas em laço; piorou o resultado e foi descartado | 271 |
 | Leis divididas | Os três modelos, modo restrito, leis de 3.000 a 9.000 tokens, em trechos | cerca de 1.150 por modelo |
 | Leis restantes | Acima de 9.000 tokens; **não processadas** | cerca de 630 por modelo |
+| Prompt da LC 95/1998 | Os três modelos, modo restrito, com o prompt e o esquema ajustados à LC 95/1998, só sobre a amostra da avaliação (`avaliacao/amostra/amostra_leis.csv`) | 376 |
 
 ## Principais resultados
 
@@ -78,6 +79,30 @@ Sobre as 15.754 leis que os três modelos responderam (96% do acervo):
 - **Parte das respostas entra em laço** (quase sempre de espaços em branco) e é cortada pelo limite de tokens: 0,7% das leis inteiras no Qwen, 3,1% no Gemma e 10,4% no Llama, e mais nos trechos das leis divididas.
 - **Cada modelo tem um erro típico.** O Qwen achata a árvore, deixando parágrafos e incisos fora dos artigos; o Llama aninha artigos dentro de artigos; o Gemma cria itens e agrupadores que a lei não tem.
 - **O texto é copiado com fidelidade:** 93% a 94% dos dispositivos trazem o texto literal da lei.
+
+Esses números são das rodadas com o prompt anterior à LC 95/1998.
+
+## Rodada com o prompt da LC 95/1998
+
+Depois do ajuste do extrator e do prompt à LC 95/1998, os três modelos rodaram de novo, em modo restrito, só sobre as 376 leis da amostra da avaliação (ver [../avaliacao/README.md](../avaliacao/README.md)). As respostas estão em `resultados/lc95/`, em pastas próprias (`<modelo>_lc95_restrita`), separadas das rodadas antigas.
+
+| Medida | Qwen | Gemma | Llama |
+|---|---|---|---|
+| Leis respondidas | 376 | 376 | 376 |
+| JSON válido | 369 (98%) | 355 (94%) | 323 (86%) |
+| Cortadas pelo limite de tokens | 7 | 21 | 53 |
+| Divididas em trechos | 28 | 25 | 28 |
+
+Nas mesmas 376 leis, com o prompt anterior, eram válidas 372 respostas no Qwen, 360 no Gemma e 314 no Llama, e cortadas 4, 16 e 62. As contagens acima são as do `registro.csv`, antes do reparo das respostas cortadas.
+
+| Modelo | Tempo de geração | Tokens/s | Unidades | Custo |
+|---|---|---|---|---|
+| Qwen 2.5 7B | 3 min 25 s | 1.972 | 0,30 | R$ 0,18 |
+| Gemma 3 12B | 16 min 18 s | 396 | 1,44 | R$ 0,84 |
+| Llama 3.1 8B | 8 min 22 s | 973 | 0,74 | R$ 0,43 |
+| **Total** | **28 min 05 s** | | **2,48** | **R$ 1,44** |
+
+Os segundos são os impressos pelos notebooks e estão em `resultados/lc95/tempos.csv`. Como nas rodadas anteriores, não entram a instalação, a carga do modelo nem o tempo parado da sessão. Cada rodada gerou dois blocos, e o segundo mistura leis inteiras e divididas, por isso o tempo não é separado por etapa.
 
 ## Tempo e custo
 
@@ -119,6 +144,7 @@ A recomendação do relatório é rodar só o Qwen: é o melhor nas leis médias
 | `resultados/acervo/` | As rodadas restritas dos três modelos, as tabelas (`comparacao/` e `analise/`) e os tempos de geração (`tempos.csv`). É a base dos números acima. |
 | `resultados/amostra/` | As rodadas em modo livre, sobre a amostra de 300 leis. |
 | `resultados/testes/` | Os testes na T4 e o teste da gramática sem espaço livre. |
+| `resultados/lc95/` | As rodadas restritas com o prompt da LC 95/1998, sobre as 376 leis da amostra da avaliação. |
 | `relatorios/` | O relatório técnico atual e, em `anteriores/`, os dois que vieram antes. |
 | `../tests/test_modelos.py` | Testes do recorte, da divisão, da resposta e da comparação, sem GPU. |
 
@@ -128,7 +154,7 @@ O prompt e as funções de recorte e divisão estão repetidos dentro dos notebo
 
 | Célula | O que faz |
 |---|---|
-| Configuração | Modelo, pasta de saída e parâmetros: `LIMITE`, `MAX_TOKENS_LEI`, `TRECHO`, `JANELA`, `BLOCO`. |
+| Configuração | Modelo, nome da rodada (`NOME`, que dá o nome da pasta no Drive), modo (`RESTRITA`), leis a processar (`AMOSTRA` ou `LIMITE`) e parâmetros: `MAX_TOKENS_LEI`, `TRECHO`, `JANELA`, `BLOCO`. |
 | Preparação | Monta o Drive, clona o repositório e instala `vllm` e `lxml`. |
 | Prompt | Grava o texto do prompt. |
 | Programa | Grava `fragmentar.py`: recorta, divide, monta os pedidos, gera e grava as respostas. |
@@ -152,8 +178,12 @@ As pastas `bruto/` e `json/` somam cerca de 30 mil arquivos por rodada do acervo
 **Gerar as respostas** (Colab, GPU A100):
 
 1. Envie ao Colab o notebook do modelo, que está em `notebooks/`.
-2. Na primeira célula, ajuste `LIMITE` (`300` para a amostra, `None` para tudo o que falta) e `MAX_TOKENS_LEI` (`9000`, ou `None` para incluir as leis restantes).
-3. Execute todas as células. Ao fim, baixe o zip criado pela célula **Pacote** e extraia em `resultados/acervo/`, juntando à pasta da rodada.
+2. Na primeira célula, ajuste:
+   - `NOME`: o prefixo da pasta da rodada no Drive (hoje `<modelo>_lc95`). A pasta é `fragmentos_leis/<NOME>_restrita` (ou `_livre`). **A lei que já tem resposta nessa pasta é pulada**, então uma rodada com outro prompt precisa de outro `NOME`, ou as respostas antigas são aproveitadas no lugar de novas.
+   - `AMOSTRA`: o CSV com a coluna `slug` das leis a processar (hoje, as 376 leis de `avaliacao/amostra/amostra_leis.csv`). O programa para com erro se alguma não estiver na coleta. Com `AMOSTRA = None`, vale `LIMITE`: um número N sorteia N leis fixas do acervo, e `None` processa tudo o que falta.
+   - `RESTRITA`: `True` para a decodificação restrita ao esquema (mede o conteúdo), `False` para o modo livre (mede quantas respostas saem como JSON válido).
+   - `MAX_TOKENS_LEI`: `9000`, ou `None` para incluir as leis restantes.
+3. Execute todas as células. Gemma e Llama exigem o token do Hugging Face nos **Secrets** do Colab, com o nome `HF_TOKEN`. Ao fim, baixe o zip criado pela célula **Pacote** (`<pasta da rodada>_novas.zip`) e extraia no grupo de `resultados/` da rodada, juntando à pasta dela. Confira as contagens contra o `registro.csv`.
 4. Desconecte o ambiente, para não gastar unidades com a GPU parada.
 
 **Comparar com o regex** (máquina local, a partir da raiz do projeto):
@@ -161,6 +191,7 @@ As pastas `bruto/` e `json/` somam cerca de 30 mil arquivos por rodada do acervo
 ```
 python -m modelos.comparar
 python -m modelos.comparar --resultados modelos/resultados/amostra
+python -m modelos.comparar --resultados modelos/resultados/lc95
 ```
 
 O primeiro comando compara as rodadas de `resultados/acervo/`; as tabelas saem em `comparacao/`, dentro do grupo comparado. A comparação do acervo leva cerca de 15 minutos.
