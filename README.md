@@ -204,6 +204,10 @@ tests/            suíte em unittest, sem dependências
 exemplos/         páginas reais usadas na conferência
 ```
 
+O dataset ouro (376 leis anotadas e revisadas pelo grupo, consolidadas em
+`avaliacao/ouro_final/`) e a avaliação dos modelos estão descritos em
+[avaliacao/README.md](avaliacao/README.md).
+
 ## Limites conhecidos
 
 - O extrator genérico, para páginas fora do padrão Legin, escolhe o maior bloco
