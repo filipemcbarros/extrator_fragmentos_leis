@@ -95,6 +95,22 @@ Depois do ajuste do extrator e do prompt à LC 95/1998, os três modelos rodaram
 
 Nas mesmas 376 leis, com o prompt anterior, eram válidas 372 respostas no Qwen, 360 no Gemma e 314 no Llama, e cortadas 4, 16 e 62. As contagens acima são as do `registro.csv`, antes do reparo das respostas cortadas.
 
+As respostas cortadas são, na maioria, laços, e não leis longas demais. Os números são de uma leitura do fim de cada resposta bruta:
+
+| Por que cortou | Qwen | Gemma | Llama |
+|---|---|---|---|
+| Laço de espaços e quebras de linha | 4 | 9 | 40 |
+| Laço de estrutura (agrupadores vazios aninhados) | 0 | 8 | 3 |
+| Resposta longa | 3 | 4 | 10 |
+
+Para uma segunda tentativa só nessas leis, os notebooks têm `REFAZER = True`:
+- lê do `registro.csv` desta rodada as leis cortadas;
+- dobra a janela, para 24.576 tokens;
+- sobe o teto da resposta (`FATOR`) de 2,2 para 4 vezes o trecho;
+- grava em `<modelo>_lc95_restrita_refeitas/`, sem tocar a rodada original.
+
+A geração é determinística, então o laço de espaços se repete com qualquer teto. Para atacá-lo, ligue também `SEM_ESPACOS`, que grava em `_sem_espacos_refeitas`. Essa gramática já foi descartada no acervo inteiro (ver a tabela de experimentos); aqui ela vale só como segunda tentativa, e a escolha precisa ser registrada na avaliação.
+
 | Modelo | Tempo de geração | Tokens/s | Unidades | Custo |
 |---|---|---|---|---|
 | Qwen 2.5 7B | 3 min 25 s | 1.972 | 0,30 | R$ 0,18 |
