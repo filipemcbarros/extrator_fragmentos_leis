@@ -111,6 +111,21 @@ Para uma segunda tentativa só nessas leis, os notebooks têm `REFAZER = True`:
 
 A geração é determinística, então o laço de espaços se repete com qualquer teto. Para atacá-lo, ligue também `SEM_ESPACOS`, que grava em `_sem_espacos_refeitas`. Essa gramática já foi descartada no acervo inteiro (ver a tabela de experimentos); aqui ela vale só como segunda tentativa, e a escolha precisa ser registrada na avaliação.
 
+A segunda tentativa, sem `SEM_ESPACOS`, rodou em 10/11/2026 e está em `resultados/lc95/<modelo>_lc95_restrita_refeitas/`. Só as respostas longas foram resolvidas; todos os laços se repetiram, como previsto:
+
+| Medida | Qwen | Gemma | Llama |
+|---|---|---|---|
+| Leis refeitas | 7 | 21 | 53 |
+| Resolvidas (JSON válido) | 3 | 3 | 6 |
+| Ainda cortadas: laço de espaços e quebras de linha | 4 | 10 | 46 |
+| Ainda cortadas: laço de estrutura | 0 | 8 | 1 |
+| JSON válido somando as duas tentativas | 372 (99%) | 358 (95%) | 329 (88%) |
+| Pedidos | 14 | 33 | 81 |
+| Tempo de geração | 2 min 44 s | 11 min 13 s | 11 min 07 s |
+| Tokens/s | 254 | 269 | 625 |
+
+A classificação do que continua cortado vem da leitura do fim de cada trecho bruto e difere um pouco da tabela anterior: algumas respostas que pareciam longas tinham o laço num trecho do meio, ou um laço de `\t` escrito dentro do texto. Os segundos estão em `resultados/lc95/tempos.csv`; as três somam 25 min 04 s, cerca de 2,2 unidades e R$ 1,28 (5,3 unidades por hora, R$ 58 por 100 unidades). As pastas `_refeitas` trazem só as 81 leis refeitas; nenhum script junta ainda as duas tentativas, e a rodada original continua como estava.
+
 | Modelo | Tempo de geração | Tokens/s | Unidades | Custo |
 |---|---|---|---|---|
 | Qwen 2.5 7B | 3 min 25 s | 1.972 | 0,30 | R$ 0,18 |
