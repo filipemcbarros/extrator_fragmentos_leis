@@ -135,6 +135,10 @@ A classificação do que continua cortado vem da leitura do fim de cada trecho b
 
 Os segundos são os impressos pelos notebooks e estão em `resultados/lc95/tempos.csv`. Como nas rodadas anteriores, não entram a instalação, a carga do modelo nem o tempo parado da sessão. Cada rodada gerou dois blocos, e o segundo mistura leis inteiras e divididas, por isso o tempo não é separado por etapa.
 
+## Rodada LC 95 com janela de 24.576 tokens (j24k)
+
+Em 12/11/2026, os três modelos rodaram de novo as 376 leis da amostra, todos com a mesma configuração: janela de 24.576 tokens e teto de 4 × o trecho. Cada um rodou com e sem espaço livre no JSON, teve uma nova tentativa das falhas e uma junção. A GPU foi uma RTX PRO 6000 Blackwell (96 GB). Leis com JSON válido na junção: Qwen 376, Gemma 368 e Llama 373. Os detalhes, a origem de cada resposta e as leis que falharam estão em [resultados/lc95/README.md](resultados/lc95/README.md).
+
 ## Tempo e custo
 
 A A100 consome cerca de 5,3 unidades de computação do Colab por hora. Um pacote de 100 unidades custou R$ 58,00, ou R$ 0,58 por unidade.
