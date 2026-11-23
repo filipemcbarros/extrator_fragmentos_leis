@@ -52,9 +52,11 @@ Como conferência, a tabela de resumo também traz a média **por dispositivo** 
 Da raiz do repositório:
 
 ```bash
-pip install pandas rapidfuzz scipy xlsxwriter
+pip install pandas rapidfuzz==3.14.6 scipy==1.18.1 xlsxwriter
 python -m metricas.metricas_ouro
 ```
+
+Os resultados publicados foram gerados com a **SciPy 1.18.1** (testes de Friedman e de Wilcoxon) e a **RapidFuzz 3.14.6** (similaridade de Levenshtein). A correção de Holm é calculada no próprio `metricas_ouro.py`.
 
 Também dá para abrir `metricas/comparacao_ouro.ipynb` no Jupyter, no VS Code ou no Colab (com o repositório clonado) e rodar todas as células. O notebook faz o mesmo passo a passo e mostra cada tabela:
 
